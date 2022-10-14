@@ -1,0 +1,21 @@
+<div class="container my-container">
+    <div class="card">
+        <div class="card-header text-center">
+            <h1 class="card-title">Authentification</h1>
+        </div>
+        <div class="card-body">
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="mail" placeholder="name@example.com">
+                <label for="mail"><i class="fa-solid fa-user"></i>&nbsp;Adresse e-mail</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="motdepasse" placeholder="mot de passe">
+                <label for="motdepasse"><i class="fa-solid fa-key"></i>&nbsp;Mot de passe</label>
+              </div>
+              <div class="d-flex justify-content-between mp-3">
+                <a [routerLink]="['/inscription']" class="btn btn-link">S'inscrire</a>
+                <button type="button" class="btn btn-primary"><i class='fa-solid fa-check'></i>&nbsp;Se connecter</button>
+              </div>
+        </div>
+    </div>
+</div>
