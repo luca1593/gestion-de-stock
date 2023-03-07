@@ -27,6 +27,10 @@ export class ArtcleService {
     return this.articleService.ArticleApiFindByIdGET(idArticle);
   }
 
+  findArticleByCode(codeArticle: string): Observable<ArticleDto>{
+    return this.articleService.ArticleApiFindByCodeArticleGET(codeArticle);
+  }
+
   delete(idArticle: number): Observable<any> {
     return this.articleService.ArticleApiDELETE(idArticle);
   }

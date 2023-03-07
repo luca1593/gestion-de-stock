@@ -91,6 +91,8 @@ export class NouvelArticleComponent implements OnInit {
       }
       this.photoService.SavePhoto(params).subscribe(resp => {
         this.router.navigate(["articles"]);
+      }, error => {
+        this.errorMsgs[0] = error.message;
       })
     }else {
       this.router.navigate(["articles"]);

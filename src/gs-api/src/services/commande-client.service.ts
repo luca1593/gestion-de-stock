@@ -350,10 +350,10 @@ class CommandeClientService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande client
    * @return L'objet commande client creer ou modifier
    */
-   CommandeClientApiSavePOSTResponse(): __Observable<__StrictHttpResponse<CommandeClientDto>> {
+   CommandeClientApiSavePOSTResponse(body?: CommandeClientDto): __Observable<__StrictHttpResponse<CommandeClientDto>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __body = body;
     let req = new HttpRequest<any>(
       'POST',
       this.rootUrl + `gestiondestock/v1/commande-client/create`,
@@ -377,8 +377,8 @@ class CommandeClientService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande client
    * @return L'objet commande client creer ou modifier
    */
-  CommandeClientApiSavePOST(): __Observable<CommandeClientDto> {
-    return this.CommandeClientApiSavePOSTResponse().pipe(
+  CommandeClientApiSavePOST(body?: CommandeClientDto): __Observable<CommandeClientDto> {
+    return this.CommandeClientApiSavePOSTResponse(body).pipe(
       __map(_r => _r.body as CommandeClientDto)
     );
   }

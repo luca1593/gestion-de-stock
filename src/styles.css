@@ -65,3 +65,61 @@ div{
     overflow-y: scroll !important;
     overflow-x: hidden;
 }
+
+.hidden {
+    display: none;
+}
+
+.laoder-overlay{
+    position: absolute;
+    width: 100%;
+    z-index: 500000;
+    top: 0;
+}
+
+.laoder{
+    height: 18px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #FFF;
+}
+
+.laoder::before{
+    display: block;
+    position: absolute;
+    content: "";
+    left: -200px;
+    width: 200px;
+    height: 10px;
+    background-color: #007BFF;
+    animation: laoding 2s linear infinite;
+}
+
+@keyframes laoding {
+    from{
+        left: -200;
+        width: 30%;
+    }
+
+    50%{
+        width: 30%;
+    }
+
+    70%{
+        width: 70%;
+    }
+
+    80%{
+        left: 50%;
+    }
+
+    95%{
+        left: 120%;
+    }
+
+    to{
+        left: 100%;
+    }
+    
+}

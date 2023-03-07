@@ -1,0 +1,21 @@
+.autocomplete{
+    border: solid 1px #ced4da !important;
+    margin-top: 5px !important;
+    border-radius: 5px !important;
+    padding: 5px !important;
+    box-shadow: #ced4A5;
+    max-height: 350px !important;
+    overflow-y: scroll !important;
+}
+
+.autocomplete p{
+    border-bottom: solid 1px #ced4da !important;
+    cursor: pointer;
+}
+.autocomplete p:hover{
+   background-color: #ced4da;
+}
+
+.autocomplete p:last-child{
+    border-bottom: none !important;
+}

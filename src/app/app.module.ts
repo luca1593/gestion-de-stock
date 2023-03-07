@@ -38,6 +38,7 @@ import { ChangerMotDePasseComponent } from './pages/profil/changer-mot-de-passe/
 import { ApplicationGuardService } from './services/guard/application-guard.service';
 import { FormsModule } from '@angular/forms';
 import { HttpInterceptorService } from './services/interceptor/http-interceptor.service';
+import { LaoderComponent } from './composants/laoder/laoder.component';
 
 const routes: Routes = [
   { path: 'login', component: PageLoginComponent },
@@ -193,7 +194,8 @@ const routes: Routes = [
     DetailUtilisateurComponent,
     NouvelUtilisateurComponent,
     PageProfilComponent,
-    ChangerMotDePasseComponent
+    ChangerMotDePasseComponent,
+    LaoderComponent
   ],
   imports: [
     BrowserModule,

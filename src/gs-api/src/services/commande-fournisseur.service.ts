@@ -260,10 +260,10 @@ class CommandeFournisseurService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande fournisseur
    * @return L'objet commande fournisseur creer ou modifier
    */
-  CommandeFournisseurApiSavePOSTResponse(): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
+  saveResponse(body: CommandeFournisseurDto): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __body = body;
     let req = new HttpRequest<any>(
       'POST',
       this.rootUrl + `gestiondestock/v1/commande-fournisseur/create`,
@@ -287,8 +287,8 @@ class CommandeFournisseurService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande fournisseur
    * @return L'objet commande fournisseur creer ou modifier
    */
-  CommandeFournisseurApiSavePOST(): __Observable<CommandeFournisseurDto> {
-    return this.CommandeFournisseurApiSavePOSTResponse().pipe(
+  save(body: CommandeFournisseurDto): __Observable<CommandeFournisseurDto> {
+    return this.saveResponse(body).pipe(
       __map(_r => _r.body as CommandeFournisseurDto)
     );
   }
