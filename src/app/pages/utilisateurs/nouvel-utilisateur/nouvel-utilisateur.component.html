@@ -1,0 +1,53 @@
+<div class="col p-3 mb-3">
+    <div class="col-md-12 mb-3">
+        <img src="favicon.ico" alt="user" class="rounded-circle" width="100px" height="100px">
+    </div>
+    <hr>
+    <div class="col-md-12">
+        <div class="col-md-12 mb-3">
+            <h2><i class="fas fa-info-circle blue-color"></i>&nbsp;Informations de l'utilisateur</h2>
+        </div>
+        <div class="col-md-12">
+            <form class="row">
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="nom" placeholder="Nom">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="adresse1" placeholder="Adresse 1">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="prenom" placeholder="Prenom">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="adress2" placeholder="Adresse 2">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="email" class="form-control" id="mail" placeholder="E-mail">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="tel" placeholder="Telephone">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="ville" placeholder="Ville">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="codepostale" placeholder="Code postale">
+                </div>
+                <div class="col-md-6 mb-2">
+                    &nbsp;
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" class="form-control" id="pays" placeholder="pays">
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12 text-end">
+            <button class="btn btn-danger mx-1" (click)="cancelClick()">
+                <i class="fas fa-ban"></i>&nbsp;Annuler
+            </button>
+            <button class="btn btn-success mx-1" (click)="saveClick()">
+                <i class="fas fa-save"></i>&nbsp;Sauvegarder
+            </button>
+        </div>
+    </div>
+</div>

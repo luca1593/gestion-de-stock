@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-md-8 center-y">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Recherche">
+            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-9 text-end">
+                <span>Bonjour {{connectedUser.nom}}</span>
+            </div>
+            <div class="col-md-3">
+                <a href="javascript:void(0)" [routerLink]="['/profil']">
+                    <img src="favicon.ico" class="rounded-circle mx-auto d-block" alt="image">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

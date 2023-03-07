@@ -1,20 +1,25 @@
 <div class="col">
-    <div class="row m-3">
-        <div class="col-md-8 p-0">
-            <h1>List des articles</h1>
+    <div class="row mx-3 my-0 py-1">
+        <div class="col-md-7 p-0">
+            <h3>List des articles</h3>
         </div>
-        <div class="col-md-4 text-end">
-            les boutons
+        <div class="col-md-5 text-end">
+            <app-bouton-action
+                (clickEvent)="nouveauArticle()"
+            ></app-bouton-action>
+        </div>
+        <div class="alert alert-danger" *ngIf="errorMsg">
+            <span>{{ errorMsg }}</span>
         </div>
     </div>
     <div class="col m-3">
-        <app-detail-article></app-detail-article>
-        <app-detail-article></app-detail-article>
-        <app-detail-article></app-detail-article>
-        <app-detail-article></app-detail-article>
-        <app-detail-article></app-detail-article>
+        <app-detail-article *ngFor="let article of listArticle" 
+        (suppressioResult)="handleSuppression($event)"
+        [articleDTO]="article"></app-detail-article>
     </div>
-    <div class="row m-3 text-center">
-       pagignation
+    <div class="row m-2">
+       <div class="col-md-12 text-center">
+        <app-pagination></app-pagination>
+       </div>
     </div>
 </div>

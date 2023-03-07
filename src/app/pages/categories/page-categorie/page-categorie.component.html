@@ -1,0 +1,81 @@
+<div class="col">
+    <div class="row mx-3 my-0 py-1">
+        <div class="col-md-7 p-0">
+            <h3>List des categories</h3>
+        </div>
+        <div class="col-md-5 text-end">
+            <app-bouton-action (clickEvent)="nouveauCategorie()"></app-bouton-action>
+        </div>
+        <div class="alert alert-danger" *ngIf="errorMsg">
+            <span>{{ errorMsg }}</span>
+        </div>
+    </div>
+    <div class="col m-3">
+        <div class="row custom-border mb-3 p-3" *ngFor="let category of categoryDtoList">
+            <div class="col-md-3 border-right">
+                {{category.code}}
+            </div>
+            <div class="col-md-6 border-right">
+                {{category.designation}}
+            </div>
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-4 text-primary text-center small-text">
+                        <button class="btn btn-link" (click)="modiferCategorie(category.id)">
+                            <i class="fas fa-pencil-alt"></i>
+                            Modifier
+                        </button>
+                    </div>
+                    <div class="col-md-4 text-center small-text">
+                        <button class="btn btn-link text-danger" data-bs-toggle="modal" 
+                        (click)="selectCategory(category.id)"
+                            data-bs-target="#modalConfirmDeleteCat">
+                            <i class="fas fa-trash-alt"></i>
+                            Supprimer
+                        </button>
+                    </div>
+                    <div class="col-md-4 text-primary text-center small-text">
+                        <button class="btn btn-link">
+                            <i class="fas fa-list-alt"></i>
+                            Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row m-2" *ngIf="categoryDtoList.length > 5">
+        <div class="col-md-12 text-center">
+            <app-pagination></app-pagination>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalConfirmDeleteCat" data-bs-backdrop="static" 
+data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Etes vous sur de supprimer cette categories ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" 
+                (click)="annulerSuppression()">
+                    <i class="fas fa-ban"></i>&nbsp;
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="supprimerCategorie()">
+                    <i class="fas fa-trash-alt"></i>&nbsp;
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

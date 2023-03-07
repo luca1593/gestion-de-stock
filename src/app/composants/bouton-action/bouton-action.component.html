@@ -1,0 +1,17 @@
+<div class="d-flex m-0">
+    <div class="p-2 flex-fill" *ngIf="isImporterVisible">
+        <button class="btn btn-warning btn-sm">
+            <i class="fas fa-cloud-upload-alt"></i>&nbsp;Importer
+        </button>
+    </div>
+    <div class="p-2 flex-fill">
+        <button class="btn btn-success btn-sm" *ngIf="isExporterVisible">
+            <i class="fas fa-cloud-download-alt"></i>&nbsp;Exporter
+        </button>
+    </div>
+    <div class="p-2 flex-fill" *ngIf="isNouveauVisible">
+        <button class="btn btn-primary btn-sm" (click)="boutonNouveauClick()">
+            <i class="fas fa-plus"></i>&nbsp;Nouveau
+        </button>
+    </div>
+</div>

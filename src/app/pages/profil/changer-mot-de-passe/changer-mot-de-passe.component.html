@@ -1,0 +1,46 @@
+<div class="row m-3">
+    <div class="card col-md-5 custom-border">
+        <div class="card-body text-center">
+            <div class="col mb-3">
+                <img src="favicon.ico" class="rounded-circle mx-auto d-block" alt="image" width="150" height="150">
+            </div>
+            <div class="col mb-4">
+                <h2>Nom prenom</h2>
+                <small class="form-text text-muted">Adresse, Ville, cp-12345</small>
+            </div>
+        </div>
+    </div>
+    <div class="card col-md-6 custom-border mx-1">
+        <div class="card-body">
+            <form>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="mdpactuel" placeholder="Mot de passe actuel" 
+                    [(ngModel)]="ancienMdp" [ngModelOptions]="{standalone: true}">
+                    <label for="mdpactuel"><i class="fas fa-lock"></i>&nbsp;Mot de passe actuel</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="motDePasse" placeholder="Nouveau mot de passe" 
+                    [(ngModel)] = "changerMotdePasse.motDePasse" [ngModelOptions]="{standalone: true}">
+                    <label for="motDePasse"><i class="fas fa-lock"></i>&nbsp;Nouveau mot de passe</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="confirmMotDePasse" placeholder="Confirmer le mot de passe" 
+                    [(ngModel)]="changerMotdePasse.confirmMotDePasse" [ngModelOptions]="{standalone: true}">
+                    <label for="confirmMotDePasse"><i class="fas fa-lock"></i>&nbsp;Confirmer le mot de passe</label>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer mb-2">
+            <div class="text-end">
+                <button type="button" class="btn btn-danger small-text mx-1" (click)="cancelClick()">
+                    <i class='fas fa-ban'></i>&nbsp;
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-success small-text mx-1" (click)="saveClick()">
+                    <i class='fas fa-save'></i>&nbsp;
+                    Sauvegarder
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

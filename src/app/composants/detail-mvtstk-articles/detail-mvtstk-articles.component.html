@@ -1,0 +1,89 @@
+<div class="row mb-1 custom-border">
+    <div class="col-md-1">
+        <div class="border-right text-center p-2">
+            <img src="favicon.ico" alt="produit" width="50px" height="50px">
+        </div>
+    </div>
+    <!-- Detail article -->
+    <div class="col-md-4 border-right">
+        <div class="row small-text my-1">
+            <div class="row">
+                <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
+                <div class="col-md-11">Code article</div>
+            </div>
+            <div class="row">
+                <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
+                <div class="col-md-11">Designation</div>
+            </div>
+            <div class="row">
+                <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
+                <div class="col-md-11">Prix HT</div>
+            </div>
+            <div class="row">
+                <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
+                <div class="col-md-11">Prix TTC</div>
+            </div>
+        </div>
+    </div>
+    <!-- Detail categorie -->
+    <div class="col-md-4 border-right">
+        <div class="row">
+            <div class="col-md-2"><i class="fab fa-dropbox blue-color"></i></div>
+            <div class="col-md-10">
+                <div class="row small-text text-center">
+                    <div class="col-md-12 small-text">
+                        <h3>Stock actuel</h3>
+                    </div>
+                    <div class="col-md-12 small-text">
+                        <h3>154</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Boutton action -->
+    <div class="col-md-3">
+        <div class="row">
+            <div class="col-md-12 text-primary text-center small-text">
+                <button class="btn btn-link" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    data-bs-whatever="@mdo">
+                    <i class="fab fa-stack-overflow"></i>
+                    Correction de stock
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal correction de stock -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Correction de stock</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="quantite" placeholder="Quantiter">
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-control" name="" id="">
+                            <option value="correctionpos">Correction positive</option>
+                            <option value="correctionneg">Correction negative</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                    <i class="fas fa-ban"></i>&nbsp;Annuler
+                </button>
+                <button type="button" class="btn btn-primary">
+                    <i class="fas fa-save"></i>&nbsp;Sauvegarder
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

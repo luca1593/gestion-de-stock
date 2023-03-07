@@ -4,55 +4,62 @@
             <h1 class="card-title">Inscription</h1>
         </div>
         <div class="card-body">
+            <div class="alert alert-danger" *ngIf="errorMessage.length > 0">
+                <div *ngFor="let msg of errorMessage">
+                    <span>{{msg}}</span>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="nom" placeholder="Votre nom">
+                        <input type="text" class="form-control" id="nom" placeholder="Votre nom" [(ngModel)] = "entrepriseDto.nom">
                         <label for="nom"><i class="fa-solid fa-user"></i>&nbsp;Votre nom</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="codefiscal" placeholder="Votre code fiscal">
+                        <input type="text" class="form-control" id="codefiscal" placeholder="Votre code fiscal" [(ngModel)] = "entrepriseDto.codeFiscal">
                         <label for="codefiscal"><i class="fa-brands fa-cc-discover"></i>&nbsp;Votre code fiscal</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="mail" placeholder="name@example.com">
+                        <input type="email" class="form-control" id="mail" placeholder="name@example.com" [(ngModel)] = "entrepriseDto.email">
                         <label for="mail"><i class="fa-solid fa-envelope"></i>&nbsp;Adresse e-mail</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="mail" placeholder="Mot de passe">
-                        <label for="motdepasse"><i class="fa-solid fa-user"></i>&nbsp;Mot de passe</label>
+                        <textarea class="form-control" id="description" placeholder="Description" [(ngModel)]="entrepriseDto.description"></textarea>
+                        <label for="description"><i class="fa-solid fa-info-circle"></i>&nbsp;Description</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="confirmermotdepasse" placeholder="Confirmer mot de passe">
-                        <label for="confirmermotdepasse"><i class="fa-solid fa-key"></i>&nbsp;Confirmer mot de passe</label>
+                        <input type="text" class="form-control" id="numTel" placeholder="Telephone" [(ngModel)] = "entrepriseDto.numTel">
+                        <label for="numTel"><i class="fas fa-phone"></i>&nbsp;Telephone</label>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="adresse1" placeholder="">
+                        <input type="text" class="form-control" id="adresse1" placeholder="adresse 1" [(ngModel)] = "adresseDto.adresse1">
                         <label for="adresse1"><i class="fa-solid fa-address-card"></i>&nbsp;Adresse 1</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="adresse2" placeholder="">
+                        <input type="text" class="form-control" id="adresse2" placeholder="adresse 2" [(ngModel)] = "adresseDto.adresse2">
                         <label for="adresse2"><i class="fa-solid fa-address-card"></i>&nbsp;Adresse 2</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="ville" placeholder="ville">
+                        <input type="text" class="form-control" id="ville" placeholder="ville" [(ngModel)] = "adresseDto.ville">
                         <label for="ville"><i class="fa-solid fa-user"></i>&nbsp;Ville</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="codepostal" placeholder="Code postal">
+                        <input type="text" class="form-control" id="codepostal" placeholder="Code postal" [(ngModel)] = "adresseDto.codePostal">
                         <label for="codepostal"><i class="fa-solid fa-user"></i>&nbsp;Code postal</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="pays" placeholder="pays">
+                        <input type="text" class="form-control" id="pays" placeholder="pays" [(ngModel)] = "adresseDto.pays">
                         <label for="pays"><i class="fa-solid fa-user"></i>&nbsp;Pays</label>
                     </div>
                 </div>
             </div>
             <div class="d-flex justify-content-between mp-3">
                 <a [routerLink]="['/login']" class="btn btn-link">Se connecter</a>
-                <button type="button" class="btn btn-primary"><i class='fa-solid fa-check'></i>&nbsp;S'inscrire</button>
+                <button type="button" class="btn btn-primary" (click)="inscrire()" >
+                    <i class='fa-solid fa-check'></i>&nbsp;S'inscrire
+                </button>
             </div>
         </div>
     </div>

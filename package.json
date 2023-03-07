@@ -3,10 +3,17 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve - proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:local": "npm run gs-api && ng serve -- --proxyConfig=proxy.conf.json",
+    "gs-api": "npm run gs-api:create-dist && npm rum gs-api:download && npm run gs-api:extract && npm run gs-api:swagger-gen",
+    "gs-api:create-dist":"mkdir -p tools/swagger/dist && mkdir tools/swagger/src",
+    "gs-api:download":"cp /home/luca/eclipse-workspace/gestiondestock/target/gestiondestock-0.0.1-SNAPSHOT.jar ./tools/swagger/dist && cp /home/luca/eclipse-workspace/gestiondestock/target/swagger.json ./tools/swagger/src",
+    "gs-api:extract":"node ./tools/swagger/src/swagger.json 0.0.1-SNAPSHOT",
+    "gs-api:swagger-gen":"./node_modules/.bin/ng-swagger-gen -i ./tools/swagger/src/swagger.json -o src/gs-api/src"
+
   },
   "private": true,
   "dependencies": {
@@ -42,6 +49,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "ng-packagr": "^14.2.2",
+    "ng-swagger-gen": "^2.3.1",
     "typescript": "~4.7.2"
   }
 }
