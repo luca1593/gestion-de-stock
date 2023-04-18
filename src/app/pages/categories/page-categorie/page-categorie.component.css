@@ -1,0 +1,7 @@
+.border-right{
+    display: table !important;
+}
+.border-right span{
+    vertical-align: middle !important;
+    display: table-cell !important;
+}

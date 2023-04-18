@@ -1,8 +1,7 @@
 <div class="row mb-1 custom-border">
-    <div class="col-md-1">
-        <div class="border-right text-center p-2">
-            <img src="favicon.ico" alt="produit" width="50px" height="50px">
-        </div>
+    <div class="col-md-1 border-right py-2">
+        <img [attr.src]="clientFournisseur.photo ? clientFournisseur.photo : 'favicon.ico'"
+            [alt]="clientFournisseur.nom" width="50px" height="50px" />
     </div>
     <!-- Detail client / fournisseur -->
     <div class="col-md-4 border-right">
@@ -54,14 +53,14 @@
                 </button>
             </div>
             <div class="col-md-4 text-danger text-center small-text">
-                <button class="btn btn-link text-danger"  data-bs-toggle="modal"
-                [attr.data-bs-target]="'#modalConfirmDelete' + clientFournisseur.id">
+                <button class="btn btn-link text-danger" data-bs-toggle="modal"
+                    [attr.data-bs-target]="'#modalConfirmDelete' + clientFournisseur.id">
                     <i class="fas fa-trash-alt"></i>
                     Supprimer
                 </button>
             </div>
             <div class="col-md-4 text-danger text-center small-text">
-                <button class="btn btn-link">
+                <button class="btn btn-link" (click)="detailCltFrs()">
                     <i class="fas fa-list-alt"></i>
                     Details
                 </button>
@@ -69,8 +68,8 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="modalConfirmDelete{{clientFournisseur.id}}" data-bs-backdrop="static" data-bs-keyboard="false"
-        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="modalConfirmDelete{{clientFournisseur.id}}" data-bs-backdrop="static"
+        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

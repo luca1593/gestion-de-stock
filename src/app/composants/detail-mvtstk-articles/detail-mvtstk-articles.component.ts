@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ArticleDto, MvtStkDto } from 'src/gs-api/src/models';
 
 @Component({
   selector: 'app-detail-mvtstk-articles',
@@ -7,9 +9,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DetailMvtstkArticlesComponent implements OnInit {
 
-  constructor() { }
+  @Input()
+  article: ArticleDto = {};
+
+  @Input()
+  listMvtStk:Array<MvtStkDto> = [];
+
+  constructor(
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  detailArticle() {
+    this.router.navigate(["detail-mvtstk", this.article.id]);
   }
 
 }

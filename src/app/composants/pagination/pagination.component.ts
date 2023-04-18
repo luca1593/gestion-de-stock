@@ -7,6 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PaginationComponent implements OnInit {
 
+  curentIndex = -1;
+  page = 1; 
+  count = 0;
+  pageSize = 4;
+  pageSizes = [3, 6, 9];
+
   constructor() { }
 
   ngOnInit(): void {

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { AdresseDto, ClientDto, FournisseurDto } from 'src/gs-api/src/models';
+import { PhotoService } from 'src/gs-api/src/services';
+import SavePhotoParams = PhotoService.SavePhotoParams;
 
 @Component({
   selector: 'app-nouveau-clt-frs',
@@ -15,11 +17,14 @@ export class NouveauCltFrsComponent implements OnInit {
   clientFournisseur: any = {};
   adresseDto: AdresseDto = {};
   errorMsgs: Array<string> = [];
+  file: File | null = null;
+  imgUrl: string | ArrayBuffer = 'favicon.ico';
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private cltfrsService: CltfrsService
+    private cltfrsService: CltfrsService,
+    private photoService: PhotoService
     ) { }
 
   ngOnInit(): void {
@@ -54,12 +59,14 @@ export class NouveauCltFrsComponent implements OnInit {
     if(this.origin === "client"){
       this.cltfrsService.enregistreClient(this.mapToClient()).subscribe(resp =>{
         this.router.navigate(["clients"]);
+        this.savePhoto(resp.id, resp.nom + "_" + resp.prenom);
       }, error => {
         this.errorMsgs = error.error.errors;
       });
     }else if(this.origin === "fournisseur"){
       this.cltfrsService.enregistreFournisseur(this.mapToFournisseur()).subscribe(resp =>{
         this.router.navigate(["fournisseurs"]);
+        this.savePhoto(resp.id, resp.nom + "_" + resp.prenom);
       }, error => {
         this.errorMsgs = error.error.errors;
       });
@@ -67,11 +74,7 @@ export class NouveauCltFrsComponent implements OnInit {
   }
   
   cancelClick(): void {
-    if(this.origin === "client"){
-      this.router.navigate(["clients"]);
-    }else if(this.origin === "fournisseur"){
-      this.router.navigate(["fournisseurs"]);
-    }
+    this.router.navigate([ this.origin + "s"]);
   }
 
   mapToClient(): ClientDto{
@@ -84,6 +87,39 @@ export class NouveauCltFrsComponent implements OnInit {
     let fournisseurDto: FournisseurDto = this.clientFournisseur;
     fournisseurDto.adresse = this.adresseDto;
     return fournisseurDto;
+  }
+
+  onFileInput(files: FileList | null): void {
+    if (files) {
+      this.file = files.item(0);
+      if (this.file) {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(this.file);
+        fileReader.onload = (event) => {
+          if (fileReader.result) {
+            this.imgUrl = fileReader.result;
+            this.clientFournisseur.photo = "";
+          }
+        };
+      }
+    }
+  }
+
+  savePhoto(idArticle?: number, titre?: string): void {
+    if (idArticle && titre && this.file) {
+      const params: SavePhotoParams = {
+        id: idArticle,
+        file: this.file,
+        title: titre,
+        context: this.origin
+      };
+      this.photoService.SavePhoto(params)
+      .subscribe(res => {
+        this.router.navigate([this.origin + 's']);
+      });
+    } else {
+      this.router.navigate([this.origin + 's']);
+    }
   }
 
 }

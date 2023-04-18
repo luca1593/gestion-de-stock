@@ -334,7 +334,7 @@ class MvtstkService extends __BaseService {
   /**
    * @return successful operation
    */
-  MvtStkApiMvtStkArticleGETResponse(idArticle?: string): __Observable<__StrictHttpResponse<Array<MvtStkDto>>> {
+  MvtStkApiMvtStkArticleGETResponse(idArticle?: number): __Observable<__StrictHttpResponse<Array<MvtStkDto>>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -358,7 +358,7 @@ class MvtstkService extends __BaseService {
   /**
    * @return successful operation
    */
-  MvtStkApiMvtStkArticleGET(idArticle?: string): __Observable<Array<MvtStkDto>> {
+  MvtStkApiMvtStkArticleGET(idArticle?: number): __Observable<Array<MvtStkDto>> {
     return this.MvtStkApiMvtStkArticleGETResponse(idArticle).pipe(
       __map(_r => _r.body as Array<MvtStkDto>)
     );
@@ -442,7 +442,7 @@ class MvtstkService extends __BaseService {
    * Cette methode permet de rechercher un mouvement de stock par son ID
    * @return L'objet commande fournisseur a ete trouver dans la BDD
    */
-  MvtStkApiFindByIdGETResponse(idMvtstk?: string): __Observable<__StrictHttpResponse<MvtStkDto>> {
+  MvtStkApiFindByIdGETResponse(idMvtstk?: number): __Observable<__StrictHttpResponse<MvtStkDto>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -469,7 +469,7 @@ class MvtstkService extends __BaseService {
    * Cette methode permet de rechercher un mouvement de stock par son ID
    * @return L'objet commande fournisseur a ete trouver dans la BDD
    */
-  MvtStkApiFindByIdGET(idMvtstk?: string): __Observable<MvtStkDto> {
+  MvtStkApiFindByIdGET(idMvtstk?: number): __Observable<MvtStkDto> {
     return this.MvtStkApiFindByIdGETResponse(idMvtstk).pipe(
       __map(_r => _r.body as MvtStkDto)
     );

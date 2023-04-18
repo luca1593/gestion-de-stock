@@ -10,13 +10,13 @@
             <span>{{ errorMsg }}</span>
         </div>
     </div>
-    <div class="col m-3">
-        <div class="row custom-border mb-3 p-3" *ngFor="let category of categoryDtoList">
+    <div class="col m-3 p-3">
+        <div class="row custom-border mb-3 p-0" *ngFor="let category of categoryDtoList">
             <div class="col-md-3 border-right">
-                {{category.code}}
+                <span>{{category.code}}</span>
             </div>
             <div class="col-md-6 border-right">
-                {{category.designation}}
+                <span>{{category.designation}}</span>
             </div>
             <div class="col-md-3">
                 <div class="row">

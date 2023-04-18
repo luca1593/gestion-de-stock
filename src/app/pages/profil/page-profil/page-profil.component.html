@@ -9,7 +9,7 @@
                 <small class="form-text text-muted">Adresse, Ville, cp-12345</small>
             </div>
             <div class="d-flex align-content-between text-center">
-                <button type="button" class="btn btn-primary small-text mx-1">
+                <button type="button" class="btn btn-primary small-text mx-1" (click)="modifierProfil()">
                     <i class='fas fa-pencil-alt'></i>&nbsp;
                     Modifier le profil
                 </button>
@@ -20,12 +20,14 @@
             </div>
         </div>
     </div>
-    <div class="card col-md-6 custom-border mx-1">
-        <table class="table small-text">
+    <div class="card col-md-6 custom-border mx-1 pt-3">
+        <table class="table small-text" id="tableRef" name="tableRef">
             <tbody>
                 <tr>
                     <th scope="row">Nom complet</th>
-                    <td>Nom prenom</td>
+                    <td [attr.contenteditable]="editable ? 'true': 'false'" >
+                        Nom prenom
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row">E-mail</th>
@@ -33,11 +35,11 @@
                 </tr>
                 <tr>
                     <th scope="row">Telephone</th>
-                    <td>033 67 518 24</td>
+                    <td [attr.contenteditable]="editable ? 'true': 'false'">033 67 518 24</td>
                 </tr>
                 <tr>
                     <th scope="row">Adresse</th>
-                    <td>Adresse, ville, cp-12345</td>
+                    <td [attr.contenteditable]="editable ? 'true': 'false'">Adresse, ville, cp-12345</td>
                 </tr>
                 <tr>
                     <th scope="row">Entreprise</th>
@@ -45,5 +47,15 @@
                 </tr>
             </tbody>
         </table>
+        <div class="row" *ngIf="editable">
+            <div class="col-6 text-end">
+                <button class="btn btn-danger" (click)="cancelClick()">Annuler</button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-success">
+                    Enregistrer
+                </button>
+            </div>
+        </div>
     </div>
 </div>

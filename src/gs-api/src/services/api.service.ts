@@ -64,7 +64,7 @@ class ApiService extends __BaseService {
   static readonly MvtStkControllerSavePOSTPath = '/gestiondestock/v1/mvtstk/save';
   static readonly MvtStkControllerSortieMvtStkPOSTPath = '/gestiondestock/v1/mvtstk/sortie';
   static readonly MvtStkControllerFindByIdGETPath = '/gestiondestock/v1/mvtstk/{idMvtstk}';
-  static readonly PhotoControllerSavePhotoPOSTPath = '/gestiondestock/v1/photos/{id}/{title}/{context}';
+  static readonly PhotoControllerSavePhotoPOSTPath = '/gestiondestock/v1/photos/{context}/{id}';
   static readonly UtilisateurControllerDeleteDELETEPath = '/gestiondestock/v1/utilisateur/detele/{idUtilisateur}';
   static readonly UtilisateurControllerFindByEmailUtilisateurGETPath = '/gestiondestock/v1/utilisateur/email/{emailUtilisateur}';
   static readonly UtilisateurControllerFindByIdGETPath = '/gestiondestock/v1/utilisateur/{idUtilisateur}';

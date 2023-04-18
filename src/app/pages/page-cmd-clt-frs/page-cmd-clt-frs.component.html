@@ -4,42 +4,47 @@
             <h3>Commande {{origin}}</h3>
         </div>
         <div class="col-md-5 text-end">
-            <app-bouton-action
-            (clickEvent)="nouveauCommande()"
-            [isImporterVisible]="false"
-            ></app-bouton-action>
+            <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false"></app-bouton-action>
         </div>
     </div>
     <div class="col m-3">
-        <div class="accordion accordion-flush" id="accordionFlushExample">
-            <div class="card">
-                <div class="accordion-item m-0">
-                    <h3 class="accordion-header m-0" id="menu">
-                        <button class="accordion-button collapsed m-0" type="button" data-bs-toggle="collapse"
-                            [attr.data-bs-target]="'#collapse'" aria-expanded="true" [attr.aria-controls]="'menu'">
-                            <app-details-cmd-clt-frs></app-details-cmd-clt-frs>
-                        </button>
-                    </h3>
-                    <div id="collapse" class="accordion-collapse collapse" [attr.aria-labelledby]="'menu'"
-                        data-bs-parent="#accordionFlushExample">
-                        <div class="card">
-                            <div class="card-body scroll-body-max-height-130">
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                                <app-details-cmd></app-details-cmd>
-                            </div>
-                            <div class="card-footer">
-                                <div class="row">
-                                    <div class="col-md-6 text-start">20 articles commander</div>
-                                    <div class="col-md-6 text-end">Total commande : 123.9</div>
+        <div *ngFor="let cmd of listCommandes | paginate : {
+            itemsPerPage: 3,
+            currentPage: page,
+            totalItems: listCommandes.length }">
+            <div class="accordion accordion-flush" id="accordionFlushExample{{cmd.id}}">
+                <div class="card">
+                    <div class="accordion-item m-0">
+                        <h3 class="accordion-header m-0" id="cmd.code">
+                            <button class="accordion-button collapsed m-0" type="button" 
+                                data-bs-toggle="collapse"
+                                [attr.data-bs-target]="'#collapse'+cmd.id" aria-expanded="true" 
+                                [attr.aria-controls]="cmd.code">
+                                <app-details-cmd-clt-frs
+                                    [commande]="cmd"
+                                    [origin]="origin"
+                                ></app-details-cmd-clt-frs>
+                            </button> 
+                        </h3>
+                        <div id="collapse{{cmd.id}}" class="accordion-collapse collapse" 
+                        [attr.aria-labelledby]="cmd.code"
+                            [attr.data-bs-parent]="'#accordionFlushExample'+cmd.id">
+                            <div class="card">
+                                <div class="card-body scroll-body-max-height-130">
+                                    <div *ngFor="let ligne of mapLigneComandes.get(cmd.id)">
+                                        <app-details-cmd [ligneCommande]="ligne">
+                                        </app-details-cmd>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-md-6 text-start">
+                                            {{ calculNombreArticleCommande(cmd.id) }} articles commander
+                                        </div>
+                                        <div class="col-md-6 text-end">
+                                            Total commande : {{ calculTotalCommande(cmd.id) }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -47,9 +52,16 @@
                 </div>
             </div>
         </div>
+
         <div class="row m-2">
             <div class="col-md-12 text-center">
-                <app-pagination></app-pagination>
+                <pagination-controls class="small-text"
+                    previousLabel="Precedent"
+                    nextLabel="Suivant"
+                    (autoHide)="true"
+                    (responsive)="true"
+                    (pageChange)="page = $event" >
+                </pagination-controls>
             </div>
         </div>
     </div>

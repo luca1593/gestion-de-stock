@@ -1,66 +1,97 @@
 /* You can add global styles to this file, and also import other style files */
-body{
+body {
     background-color: darkgrey;
+    overflow-x: hidden;
 }
-.main-container{
+
+.main-container {
     margin: 30px;
 }
-.dashbord{
+
+.dashbord {
     margin-top: 10px;
     margin-bottom: 10px;
     margin-left: 30px;
     margin-right: 30px;
 }
-.min-height-600{
+
+.min-height-600 {
     min-height: 560px !important;
 }
-.no-flex-wrap{
+
+.no-flex-wrap {
     flex-wrap: inherit !important;
 }
-.min-height-50{
+
+.min-height-50 {
     min-height: 30px !important;
 }
-.max-height-30{
+
+.max-height-30 {
     max-height: 60px !important;
 }
-.min-height-440{
+
+.min-height-440 {
     min-height: 440px !important;
 }
-.backgound-grey{
+
+.max-height-440 {
+    min-height: 440px !important;
+    overflow-y: scroll !important;
+}
+
+.max-height-400 {
+    min-height: 400px !important;
+    overflow-y: scroll !important;
+}
+
+.backgound-grey {
     background-color: darkgrey !important;
 }
-div{
+
+.custom-tooltip {
+    --bs-tooltip-bg: var(--bs-primary);
+}
+
+div {
     border: 0 !important;
 }
-.border-right{
+
+.border-right {
     border-right: 2px solid darkgrey !important;
 }
-.custom-border{
+
+.custom-border {
     border: 2px solid darkgray !important;
     border-radius: 5px;
 }
 
-.color-white{
+.color-white {
     color: white !important;
 }
 
-.small-text{
+.small-text {
     font-size: small !important;
 }
-.center-y{
+
+.center-y {
     margin: auto !important;
     padding-top: 3px !important;
 }
-.blue-color{
+
+.blue-color {
     color: rgba(2, 64, 114, 0.904);
 }
-.btn-link{
+
+.btn-link {
     text-decoration: none !important;
 }
-.btn-link:hover{
+
+.btn-link:hover {
     text-decoration: underline !important;
 }
-.scroll-body-max-height-130{
+
+.scroll-body-max-height-130 {
     max-height: 130px !important;
     overflow-y: scroll !important;
     overflow-x: hidden;
@@ -70,14 +101,18 @@ div{
     display: none;
 }
 
-.laoder-overlay{
+.laoder-overlay {
     position: absolute;
     width: 100%;
     z-index: 500000;
     top: 0;
 }
 
-.laoder{
+.super-top {
+    z-index: 50000;
+}
+
+.laoder {
     height: 18px;
     width: 100%;
     position: relative;
@@ -85,7 +120,7 @@ div{
     background-color: #FFF;
 }
 
-.laoder::before{
+.laoder::before {
     display: block;
     position: absolute;
     content: "";
@@ -97,29 +132,29 @@ div{
 }
 
 @keyframes laoding {
-    from{
+    from {
         left: -200;
         width: 30%;
     }
 
-    50%{
+    50% {
         width: 30%;
     }
 
-    70%{
+    70% {
         width: 70%;
     }
 
-    80%{
+    80% {
         left: 50%;
     }
 
-    95%{
+    95% {
         left: 120%;
     }
 
-    to{
+    to {
         left: 100%;
     }
-    
+
 }

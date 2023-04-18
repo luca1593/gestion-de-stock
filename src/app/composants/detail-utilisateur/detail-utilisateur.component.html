@@ -9,15 +9,15 @@
         <div class="row small-text my-1">
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                <div class="col-md-11">Nom</div>
+                <div class="col-md-11">{{utilisateur.nom}}</div>
             </div>
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                <div class="col-md-11">Prenom</div>
+                <div class="col-md-11">{{utilisateur.prenom}}</div>
             </div>
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-phone blue-color"></i></div>
-                <div class="col-md-11">+261 33 67 518 24</div>
+                <div class="col-md-11">{{utilisateur.email}}</div>
             </div>
         </div>
     </div>
@@ -26,15 +26,21 @@
         <div class="row small-text my-1">
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-home blue-color"></i></div>
-                <div class="col-md-11">Adresse 1 adresse 2</div>
+                <div class="col-md-11">
+                    {{utilisateur.adresse?.adresse1}}&nbsp;
+                    <span *ngIf="utilisateur.adresse?.adresse2" >ou&nbsp;{{utilisateur.adresse?.adresse2}}</span>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-map-marker-alt blue-color"></i></div>
-                <div class="col-md-11">102 Ville</div>
+                <div class="col-md-11">
+                    {{utilisateur.adresse?.codePostal}}&nbsp;
+                    {{utilisateur.adresse?.ville}}
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-globe-europe blue-color"></i></div>
-                <div class="col-md-11">Pays</div>
+                <div class="col-md-11">{{utilisateur.adresse?.pays}}</div>
             </div>
         </div>
     </div>

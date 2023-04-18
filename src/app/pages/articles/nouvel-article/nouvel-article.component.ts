@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { CategoryService } from 'src/app/services/category/category.service';
-import { ArticleDto, CategoryDto, SavePhotoParams } from 'src/gs-api/src/models';
+import { ArticleDto, CategoryDto } from 'src/gs-api/src/models';
 import { PhotoService } from 'src/gs-api/src/services';
+import SavePhotoParams = PhotoService.SavePhotoParams;
 
 @Component({
   selector: 'app-nouvel-article',
@@ -16,6 +17,7 @@ export class NouvelArticleComponent implements OnInit {
   categoryDto: CategoryDto = {};
   listCategorie: Array<CategoryDto> = [];
   errorMsgs: Array<string> = [];
+  erreur = "";
   file: File | null = null;
   imgUrl: string | ArrayBuffer = 'favicon.ico';
 
@@ -41,17 +43,12 @@ export class NouvelArticleComponent implements OnInit {
   }
 
   saveClick(): void {
-    if (this.categoryDto.id !== undefined && String(this.categoryDto.id) !== "") {
-      this.articleDto.category = this.categoryDto;
-      this.articleService.enregistrerArticle(this.articleDto).subscribe(resp => {
-        this.savePhoto(resp.id, resp.codeArticle);
-        this.router.navigate(["articles"]);
-      }, error => {
-        this.errorMsgs = error.error.errors;
-      });
-    } else {
-      this.errorMsgs[0] = "Veuillez selectioner une categorie";
-    }
+    this.articleDto.category = this.categoryDto;
+    this.articleService.enregistrerArticle(this.articleDto).subscribe(art => {
+      this.savePhoto(art.id, art.codeArticle);
+    }, error => {
+      this.errorMsgs = error.error.errors;
+    });
   }
 
   cancelClick(): void {
@@ -70,32 +67,32 @@ export class NouvelArticleComponent implements OnInit {
     if (files) {
       this.file = files.item(0);
       if (this.file) {
-        const fileReader: FileReader = new FileReader();
+        const fileReader = new FileReader();
         fileReader.readAsDataURL(this.file);
         fileReader.onload = (event) => {
           if (fileReader.result) {
             this.imgUrl = fileReader.result;
+            this.articleDto.photo = "";
           }
-        }
+        };
       }
     }
   }
 
-  savePhoto(idArticle?: number, title?: string): void{
-    if (idArticle && title && this.file) {
+  savePhoto(idArticle?: number, titre?: string): void {
+    if (idArticle && titre && this.file) {
       const params: SavePhotoParams = {
         id: idArticle,
         file: this.file,
-        title: title,
-        context: "article"
-      }
-      this.photoService.SavePhoto(params).subscribe(resp => {
-        this.router.navigate(["articles"]);
-      }, error => {
-        this.errorMsgs[0] = error.message;
-      })
-    }else {
-      this.router.navigate(["articles"]);
+        title: titre,
+        context: 'article'
+      };
+      this.photoService.SavePhoto(params)
+      .subscribe(res => {
+        this.router.navigate(['articles']);
+      });
+    } else {
+      this.router.navigate(['articles']);
     }
   }
 

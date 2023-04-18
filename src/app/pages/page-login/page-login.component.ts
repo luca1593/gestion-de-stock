@@ -28,8 +28,8 @@ export class PageLoginComponent implements OnInit {
         this.userServices.setAccessToken(data);
         this.getUserByEmail();
         this.router.navigate(['']);
-      }, error =>{
-        this.errorMessage = "Login et/ou mot de passe incorrect";
+      }, error =>{  
+        this.errorMessage = error.error.message;
       }
     );
   }

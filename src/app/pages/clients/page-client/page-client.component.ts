@@ -12,6 +12,7 @@ export class PageClientComponent implements OnInit {
 
   listClients: Array<ClientDto> = [];
   errorMsg: string = '';
+  page: number = 1;
 
   constructor(
     private router: Router,

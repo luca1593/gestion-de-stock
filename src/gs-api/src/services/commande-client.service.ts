@@ -9,6 +9,7 @@ import { map as __map, filter as __filter } from 'rxjs/operators';
 
 import { CommandeClientDto } from '../models/commande-client-dto';
 import { LigneCommandeClientDto } from '../models/ligne-commande-client-dto';
+import { ClientDto } from '../models';
 @Injectable({
   providedIn: 'root',
 })
@@ -350,13 +351,13 @@ class CommandeClientService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande client
    * @return L'objet commande client creer ou modifier
    */
-   CommandeClientApiSavePOSTResponse(body?: CommandeClientDto): __Observable<__StrictHttpResponse<CommandeClientDto>> {
+   CommandeClientApiSavePOSTResponse(body: CommandeClientDto, dateCommandeClient: number): __Observable<__StrictHttpResponse<CommandeClientDto>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body = body;
     let req = new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/commande-client/create`,
+      this.rootUrl + `gestiondestock/v1/commande-client/create/${encodeURIComponent(String(dateCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -377,8 +378,8 @@ class CommandeClientService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande client
    * @return L'objet commande client creer ou modifier
    */
-  CommandeClientApiSavePOST(body?: CommandeClientDto): __Observable<CommandeClientDto> {
-    return this.CommandeClientApiSavePOSTResponse(body).pipe(
+  CommandeClientApiSavePOST(body: CommandeClientDto, dateCommandeClient: number): __Observable<CommandeClientDto> {
+    return this.CommandeClientApiSavePOSTResponse(body, dateCommandeClient).pipe(
       __map(_r => _r.body as CommandeClientDto)
     );
   }
@@ -410,6 +411,7 @@ class CommandeClientService extends __BaseService {
       })
     );
   }
+
   /**
    * Rechercher liste des commandes client par date
    *
@@ -454,6 +456,85 @@ class CommandeClientService extends __BaseService {
       __map(_r => _r.body as CommandeClientDto)
     );
   }
+
+  /**
+   * Recherche de la liste des lignes de commande d'une commande fournisseur
+   *
+   * Cette methode permet de rechercher la liste des lignes de commande d'une commande fournisseur par son id
+   * @return Liste des lignes de commande fournisseur a ete trouver avec success  Array<LigneCommandeClientDto>
+   */
+  findAllLigneCommadeByCommandeClientResponse(idCommande?: number): __Observable<__StrictHttpResponse<Array<LigneCommandeClientDto>>> {
+    let __params = this.newParams();
+    let __headers = new HttpHeaders();
+    let __body: any = null;
+    let req = new HttpRequest<any>(
+      'GET',
+      this.rootUrl + `gestiondestock/v1/commande-client/list/ligne-commande/${encodeURIComponent(String(idCommande))}`,
+      __body,
+      {
+        headers: __headers,
+        params: __params,
+        responseType: 'json'
+      });
+
+    return this.http.request<any>(req).pipe(
+      __filter(_r => _r instanceof HttpResponse),
+      __map((_r) => {
+        return _r as __StrictHttpResponse<Array<LigneCommandeClientDto>>;
+      })
+    );
+  }
+  /**
+   * Recherche de la liste des lignes de commande d'une commande client
+   *
+   * Cette methode permet de rechercher la liste des lignes de commande d'une commande client par son id
+   * @return Liste des lignes de commande client a ete trouver avec succesr
+   */
+  findAllLigneCommadeByCommandeClient(idCommande?: number): __Observable<Array<LigneCommandeClientDto>> {
+    return this.findAllLigneCommadeByCommandeClientResponse(idCommande).pipe(
+      __map(_r => _r.body as Array<LigneCommandeClientDto>)
+    );
+  }
+
+  /**
+   * Rechercher liste des commandes client selon le client
+   *
+   * Cette methode permet de rechercher liste des commandes client selon le client
+   * @return Aucune commande client n'a ete trouver dans la BDD
+   */
+  findAllByClientResponse(clientDto?: ClientDto): __Observable<__StrictHttpResponse<Array<CommandeClientDto>>> {
+    let __params = this.newParams();
+    let __headers = new HttpHeaders();
+    let __body: any = clientDto;
+    let req = new HttpRequest<any>(
+      'POST',
+      this.rootUrl + `gestiondestock/v1/commande-client`,
+      __body,
+      {
+        headers: __headers,
+        params: __params,
+        responseType: 'json'
+      });
+
+    return this.http.request<any>(req).pipe(
+      __filter(_r => _r instanceof HttpResponse),
+      __map((_r) => {
+        return _r as __StrictHttpResponse<Array<CommandeClientDto>>;
+      })
+    );
+  }
+  /**
+   * Rechercher liste des commandes client selon le client
+   *
+   * Cette methode permet de rechercher liste des commandes client selon le client
+   * @return Aucune commande client n'a ete trouver dans la BDD
+   */
+  findAllByClientPOST(body: ClientDto): __Observable<Array<CommandeClientDto>> {
+    return this.findAllByClientResponse(body).pipe(
+      __map(_r => _r.body as Array<CommandeClientDto>)
+    );
+  }
+
 
   /**
    * Supprimer une commande client

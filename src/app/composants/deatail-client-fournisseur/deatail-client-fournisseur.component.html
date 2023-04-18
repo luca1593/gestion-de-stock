@@ -1,0 +1,199 @@
+<div class="row m-3 custom-border">
+    <div class="col-1 my-3">
+        <img class="circle" [attr.src]="clientFrournisseurDTO.photo ? clientFrournisseurDTO.photo : 'favicon.ico'"
+            [alt]="clientFrournisseurDTO.nom" width="100px" height="100px" />
+    </div>
+    <div class="col-8 mx-4 mt-3">
+        <h3>
+            {{clientFrournisseurDTO.nom}}&nbsp;{{clientFrournisseurDTO.prenom}}
+        </h3>
+        <div class="row mx-1 small-text my-1 custom-border">
+            <div class="col-6 border-right p-2">
+                <div class="row">
+                    <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
+                    <div class="col-md-10"><strong>Tel :</strong>&nbsp;{{clientFrournisseurDTO.numTel}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
+                    <div class="col-md-10">
+                        <strong>E-mail :</strong>&nbsp;{{clientFrournisseurDTO.email}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
+                    <div class="col-md-10">
+                        <strong>Adresse :</strong>&nbsp;
+                        {{clientFrournisseurDTO.adresse?.adresse1}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 border-right py-2">
+                <div class="row">
+                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
+                    <div class="col-md-10">
+                        <strong>Ville et pays :</strong>&nbsp;&nbsp;
+                        {{clientFrournisseurDTO.adresse?.ville}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
+                    <div class="col-md-10">
+                        <strong>Code postal :</strong>&nbsp;
+                        {{clientFrournisseurDTO.adresse?.codePostal}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
+                    <div class="col-md-10">
+                        <strong>Pays :</strong>&nbsp;{{clientFrournisseurDTO.adresse?.pays}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div>Modifier</div>
+        <div>Supprimer</div>
+    </div>
+</div>
+<div class="card m-3">
+    <div class="card-header text-bg-primary border">
+        <h4>Liste commande {{origin}}</h4>
+        <hr>
+        <div class="row px-3">
+            <table class="table-sm">
+                <tr>
+                    <td>
+                        <span (click)="nouveauxCommande()" data-bs-custom-class="custom-tooltip"
+                            data-toggle="tooltip" title="Nouveau commande {{origin}}">
+                            <i class="fa-solid fa-file-circle-plus fa-sm"></i>
+                        </span>&nbsp;
+                        <span (click)="exportCommande()" data-bs-custom-class="custom-tooltip"
+                            data-toggle="tooltip" title="Exporter commande {{origin}}">
+                            <i class="fa-solid fa-cloud-arrow-down fa-sm"></i>
+                        </span>&nbsp;
+                        <span (click)="imprimerCommande()" data-bs-custom-class="custom-tooltip"
+                            data-toggle="tooltip" title="Imprimer commande {{origin}}">
+                            <i class="fa-solid fa-print fa-sm"></i>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered border-dark table-sm table-hover align-middle">
+            <thead class="text-bg-secondary">
+                <tr class="fs-6 fw-bold">
+                    <th class="px-2">Code</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Nombre Article</th>
+                    <th class="text-center">Net A Payer</th>
+                    <th class="text-center">Etat</th>
+                    <th>...</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                <tr *ngFor="let command of listCmd  | paginate : {
+                    itemsPerPage: 6,
+                    currentPage: pageCmd,
+                    totalItems: listCmd.length }">
+                    <td class="px-2">{{ command.code }}</td>
+                    <td class="text-center">{{ command.dateCommande | date:"dd/MM/YYYY" }}</td>
+                    <td class="text-center">{{ calculNombreArticleCommande(command.id) }}</td>
+                    <td class="text-center">{{ calculTotalCommande(command.id) }}</td>
+                    <td class="text-center">{{ command.etatcommande }}</td>
+                    <td>
+                        <button class="btn btn-link" data-bs-toggle="modal" (click)="setCommandeSelectione(command.id)"
+                            [attr.data-bs-target]="'#modalDetail'">
+                            <i class="fas fa-list-alt"></i>
+                            Details
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-end">
+        <pagination-controls class="small-text" previousLabel="Precedent" nextLabel="Suivant" (autoHide)="true"
+            (responsive)="true" (pageChange)="pageCmd = $event">
+        </pagination-controls>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade max-height-400" id="modalDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content modal-70">
+            <div class="modal-header mb-0 py-0">
+                <h1 class="modal-title text-primary fs-3" id="staticBackdropLabel">Detail commande {{origin}}</h1>
+                <button type="button" class="btn-close text-bg-danger" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="row px-3 m-0">
+                <table class="table-sm small-text">
+                    <tbody>
+                        <tr>
+                            <th>Code : </th>
+                            <td>{{ cmdCltFrs.code }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date du commande : </th>
+                            <td>{{ cmdCltFrs.dateCommande | date: "dd/MM/YYYY" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Etat du commande : </th>
+                            <td> {{ cmdCltFrs.etatcommande }} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <hr>
+            <div class="modal-body max-height-440 shadow">
+                <table class="table table-bordered border-dark table-sm table-hover align-middle">
+                    <thead class="text-bg-primary">
+                        <tr class="fs-6 fw-bold">
+                            <th>Code article</th>
+                            <th class="text-center">Designation</th>
+                            <th class="text-center">Catégorie</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-center">Prix unitaire HT</th>
+                            <th class="text-center">Prix unitaire TTC</th>
+                            <th class="text-center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr *ngFor="let ligne of mapLigneComandes.get(idCommandeSelectione)">
+                            <td class="text-center">{{ligne.article?.codeArticle}}</td>
+                            <td class="text-center">{{ligne.article?.designation}}</td>
+                            <td class="text-center">{{ligne.article?.category.designation}}</td>
+                            <td class="text-center">{{ligne.quantite}}</td>
+                            <td class="text-center">{{ligne.article?.prixUnitaireht}}</td>
+                            <td class="text-center">{{ligne.article?.prixTtc}}</td>
+                            <td class="text-center">
+                                {{
+                                ligne.article?.prixTtc && ligne.quantite ? ligne.article?.prixTtc * ligne.quantite : 0
+                                }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="fs-6 fw-bold">
+                            <td colspan="7">
+                                <div class="row px-3">
+                                    <div class="col-6 text-start">
+                                        Nombre article :&nbsp;{{ mapNmbrArticle.get(idCommandeSelectione) }}
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        Net a payer :&nbsp;{{ mapTotalTtc.get(idCommandeSelectione) }}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

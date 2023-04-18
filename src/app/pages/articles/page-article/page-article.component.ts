@@ -13,6 +13,7 @@ export class PageArticleComponent implements OnInit {
   listArticle: Array<ArticleDto> = [];
 
   errorMsg: string = "";
+  page: number = 1;
 
   constructor(
     private router: Router,

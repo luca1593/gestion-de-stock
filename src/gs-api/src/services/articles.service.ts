@@ -304,7 +304,7 @@ class ArticlesService extends __BaseService {
   /**
    * @return successful operation
    */
-  ArticleApiFindHistoriqueCommandeFournisseurGETResponse(idArticle?: string): __Observable<__StrictHttpResponse<Array<LigneCommandeFournisseurDto>>> {
+  ArticleApiFindHistoriqueCommandeFournisseurGETResponse(idArticle?: number): __Observable<__StrictHttpResponse<Array<LigneCommandeFournisseurDto>>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -328,7 +328,7 @@ class ArticlesService extends __BaseService {
   /**
    * @return successful operation
    */
-  ArticleApiFindHistoriqueCommandeFournisseurGET(idArticle?: string): __Observable<Array<LigneCommandeFournisseurDto>> {
+  ArticleApiFindHistoriqueCommandeFournisseurGET(idArticle?: number): __Observable<Array<LigneCommandeFournisseurDto>> {
     return this.ArticleApiFindHistoriqueCommandeFournisseurGETResponse(idArticle).pipe(
       __map(_r => _r.body as Array<LigneCommandeFournisseurDto>)
     );
@@ -337,7 +337,7 @@ class ArticlesService extends __BaseService {
   /**
    * @return successful operation
    */
-  ArticleApiFindHistoriqueVenteGETResponse(idArticle?: string): __Observable<__StrictHttpResponse<Array<LigneVenteDto>>> {
+  ArticleApiFindHistoriqueVenteGETResponse(idArticle?: number): __Observable<__StrictHttpResponse<Array<LigneVenteDto>>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -361,7 +361,7 @@ class ArticlesService extends __BaseService {
   /**
    * @return successful operation
    */
-  ArticleApiFindHistoriqueVenteGET(idArticle?: string): __Observable<Array<LigneVenteDto>> {
+  ArticleApiFindHistoriqueVenteGET(idArticle?: number): __Observable<Array<LigneVenteDto>> {
     return this.ArticleApiFindHistoriqueVenteGETResponse(idArticle).pipe(
       __map(_r => _r.body as Array<LigneVenteDto>)
     );

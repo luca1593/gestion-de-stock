@@ -1,8 +1,8 @@
 <div class="col p-3 mb-3">
     <div class="col-md-12 mb-3">
-        <button (click)="inputimage.click()" style="background: transparent !important; border: none !important;">
-            <img [src]='imgUrl' alt="user" class="rounded-circle" width="100px" height="100px">
-            <input hidden type="file" #inputimage (change)="onFileInput(inputimage.files)">
+        <button (click)="fileInput.click()" style="background: transparent !important; border: none !important;">
+            <img [src]='articleDto.photo ? articleDto.photo : imgUrl' alt="articleDto.designation" class="rounded-circle" width="150px" height="150px">
+            <input hidden type="file" #fileInput (change)="onFileInput(fileInput.files)">
         </button>
     </div>
     <hr>

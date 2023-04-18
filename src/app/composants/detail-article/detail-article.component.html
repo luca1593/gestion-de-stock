@@ -1,28 +1,26 @@
 <div class="row mb-1 custom-border">
-    <div class="col-md-1">
-        <div class="border-right text-center p-2">
-            <img [attr.src]="articleDTO.photo ? articleDTO.photo : 'favicon.ico'" 
-            [alt]="articleDTO.designation" width="50px" height="50px">
-        </div>
+    <div class="col-md-1 border-right p-2">
+        <img [attr.src]="articleDTO.photo ? articleDTO.photo : 'favicon.ico'"
+            [alt]="articleDTO.designation" width="70px" height="70px" />
     </div>
     <!-- Detail article -->
     <div class="col-md-4 border-right">
         <div class="row small-text my-1">
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                <div class="col-md-11">{{articleDTO.codeArticle}}</div>
+                <div class="col-md-11"><strong>Code article :</strong>&nbsp;{{articleDTO.codeArticle}}</div>
             </div>
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                <div class="col-md-11">{{articleDTO.designation}}</div>
+                <div class="col-md-11"><strong>Designation : </strong>{{articleDTO.designation}}</div>
             </div>
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                <div class="col-md-11">{{articleDTO.prixUnitaireht}}&nbsp;Ariary</div>
+                <div class="col-md-11"><strong>PU HT : </strong>{{articleDTO.prixUnitaireht}}&nbsp;Ariary</div>
             </div>
             <div class="row">
                 <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                <div class="col-md-11">{{articleDTO.prixTtc}}&nbsp;Ariary</div>
+                <div class="col-md-11"><strong>PU TTC : </strong> {{articleDTO.prixTtc}}&nbsp;Ariary</div>
             </div>
         </div>
     </div>
@@ -55,14 +53,14 @@
                 </button>
             </div>
             <div class="col-md-4 text-primary text-center small-text">
-                <button class="btn btn-link">
+                <button class="btn btn-link" (click)="detailArticle()">
                     <i class="fas fa-list-alt"></i>
                     Details
                 </button>
             </div>
         </div>
     </div>
-    <!-- Modal -->
+    <!-- Modal suppression article-->
     <div class="modal fade" id="modalConfirmDelete{{articleDTO.id}}" data-bs-backdrop="static" data-bs-keyboard="false"
         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">

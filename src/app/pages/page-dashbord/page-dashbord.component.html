@@ -14,7 +14,15 @@
                     <router-outlet></router-outlet>
                 </div>
                 <div class="card min-height-50">
-                    Footer
+                    <div class="row px-3">
+                        <div class="col-6">
+                            Footer / CopyRight
+                        </div>
+                        <div class="col-6 text-end">
+                            <span>{{dateDuJour | date: 'EEEE dd MMMM YYYY'}}</span>&nbsp;
+                            <span class="badge text-bg-secondary">{{dateDuJour | date: 'HH:mm:ss'}}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

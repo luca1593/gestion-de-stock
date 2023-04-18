@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,6 +8,11 @@ import { Router } from '@angular/router';
 })
 export class PageProfilComponent implements OnInit {
 
+  @ViewChild("table")
+  tableRef!: ElementRef;
+
+  editable: boolean = false;
+
   constructor(private router: Router) { }
 
   ngOnInit(): void {
@@ -15,6 +20,15 @@ export class PageProfilComponent implements OnInit {
 
   changerMotdePasse() {
     this.router.navigate(["changer-mot-de-passe"]);
+  }
+
+  modifierProfil(){
+    this.editable = true;
+    this.tableRef.nativeElement.focus();
+  }
+
+  cancelClick(){
+    this.editable = false;
   }
 
 }

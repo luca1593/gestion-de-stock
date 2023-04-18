@@ -8,6 +8,7 @@ import { Observable as __Observable } from 'rxjs';
 import { map as __map, filter as __filter } from 'rxjs/operators';
 
 import { CommandeFournisseurDto } from '../models/commande-fournisseur-dto';
+import { LigneCommandeFournisseurDto } from '../models';
 @Injectable({
   providedIn: 'root',
 })
@@ -260,13 +261,13 @@ class CommandeFournisseurService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande fournisseur
    * @return L'objet commande fournisseur creer ou modifier
    */
-  saveResponse(body: CommandeFournisseurDto): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
+  saveResponse(body: CommandeFournisseurDto, dateCommandeFournisseur?: number): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body = body;
     let req = new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/create`,
+      this.rootUrl + `gestiondestock/v1/commande-fournisseur/create/${encodeURIComponent(String(dateCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -287,8 +288,8 @@ class CommandeFournisseurService extends __BaseService {
    * Cette methode permet d'enregidtre ou de modifier une commande fournisseur
    * @return L'objet commande fournisseur creer ou modifier
    */
-  save(body: CommandeFournisseurDto): __Observable<CommandeFournisseurDto> {
-    return this.saveResponse(body).pipe(
+  save(body: CommandeFournisseurDto, dateCommandeFournisseur: number): __Observable<CommandeFournisseurDto> {
+    return this.saveResponse(body, dateCommandeFournisseur).pipe(
       __map(_r => _r.body as CommandeFournisseurDto)
     );
   }
@@ -328,6 +329,45 @@ class CommandeFournisseurService extends __BaseService {
    */
   CommandeFournisseurApiFindByDateCommandeGET(dateCommandeFournisseur?: string): __Observable<Array<CommandeFournisseurDto>> {
     return this.CommandeFournisseurApiFindByDateCommandeGETResponse(dateCommandeFournisseur).pipe(
+      __map(_r => _r.body as Array<CommandeFournisseurDto>)
+    );
+  }
+
+   /**
+   * Rechercher la liste des commandes fournisseur selon le fournisseur
+   *
+   * Cette methode permet de rechercher la liste des commandes fournisseur selon le fournisseur
+   * @return Aucune commande fournisseur n'a ete trouver dans la BDD
+   */
+   findAllByFournisseuResponse(commandeFournisseurDto?: CommandeFournisseurDto): __Observable<__StrictHttpResponse<Array<CommandeFournisseurDto>>> {
+    let __params = this.newParams();
+    let __headers = new HttpHeaders();
+    let __body: any = commandeFournisseurDto;
+    let req = new HttpRequest<any>(
+      'POST',
+      this.rootUrl + `gestiondestock/v1/commande-fournisseur`,
+      __body,
+      {
+        headers: __headers,
+        params: __params,
+        responseType: 'json'
+      });
+
+    return this.http.request<any>(req).pipe(
+      __filter(_r => _r instanceof HttpResponse),
+      __map((_r) => {
+        return _r as __StrictHttpResponse<Array<CommandeFournisseurDto>>;
+      })
+    );
+  }
+  /**
+   * Rechercher la liste des commandes fournisseur selon le fournisseur
+   *
+   * Cette methode permet de rechercher la liste des commandes fournisseur selon le fournisseur
+   * @return Aucune commande fournisseur n'a ete trouver dans la BDD
+   */
+  findAllByFournisseurPOST(body: CommandeFournisseurDto): __Observable<Array<CommandeFournisseurDto>> {
+    return this.findAllByFournisseuResponse(body).pipe(
       __map(_r => _r.body as Array<CommandeFournisseurDto>)
     );
   }
@@ -377,7 +417,7 @@ class CommandeFournisseurService extends __BaseService {
    * Cette methode permet de rechercher la liste des lignes de commande d'une commande fournisseur par son id
    * @return Liste des lignes de commande fournisseur a ete trouver avec succesr
    */
-  CommandeFournisseurApiFindAllByCommandeFournisseurGETResponse(idCommande?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
+  findAllLigneCommadeByCommandeFournisseurResponse(idCommande?: number): __Observable<__StrictHttpResponse<Array<LigneCommandeFournisseurDto>>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -394,7 +434,7 @@ class CommandeFournisseurService extends __BaseService {
     return this.http.request<any>(req).pipe(
       __filter(_r => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<CommandeFournisseurDto>;
+        return _r as __StrictHttpResponse<Array<LigneCommandeFournisseurDto>>;
       })
     );
   }
@@ -404,9 +444,9 @@ class CommandeFournisseurService extends __BaseService {
    * Cette methode permet de rechercher la liste des lignes de commande d'une commande fournisseur par son id
    * @return Liste des lignes de commande fournisseur a ete trouver avec succesr
    */
-  CommandeFournisseurApiFindAllByCommandeFournisseurGET(idCommande?: string): __Observable<CommandeFournisseurDto> {
-    return this.CommandeFournisseurApiFindAllByCommandeFournisseurGETResponse(idCommande).pipe(
-      __map(_r => _r.body as CommandeFournisseurDto)
+  findAllLigneCommadeByCommandeFournisseur(idCommande?: number): __Observable<Array<LigneCommandeFournisseurDto>> {
+    return this.findAllLigneCommadeByCommandeFournisseurResponse(idCommande).pipe(
+      __map(_r => _r.body as Array<LigneCommandeFournisseurDto>)
     );
   }
 

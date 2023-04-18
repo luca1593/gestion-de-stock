@@ -13,13 +13,22 @@
         </div>
     </div>
     <div class="col m-3">
-        <app-detail-clt-frs *ngFor="let client of listClients"
+        <app-detail-clt-frs *ngFor="let client of listClients | paginate : {
+            itemsPerPage: 4,
+            currentPage: page,
+            totalItems: listClients.length }"
         [origin]="'client'" (suppressioResult)="handleSuppression($event)"
         [clientFournisseur]="client"></app-detail-clt-frs>
     </div>
     <div class="row m-2">
         <div class="col-md-12 text-center">
-            <app-pagination></app-pagination>
+            <pagination-controls class="small-text"
+                previousLabel="Precedent"
+                nextLabel="Suivant"
+                (autoHide)="true"
+                (responsive)="true"
+                (pageChange)="page = $event">
+            </pagination-controls>
         </div>
     </div>
 </div>

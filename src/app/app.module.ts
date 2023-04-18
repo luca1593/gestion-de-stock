@@ -39,6 +39,14 @@ import { ApplicationGuardService } from './services/guard/application-guard.serv
 import { FormsModule } from '@angular/forms';
 import { HttpInterceptorService } from './services/interceptor/http-interceptor.service';
 import { LaoderComponent } from './composants/laoder/laoder.component';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { DetailArticlesMvtstkComponent } from './composants/detail-articles-mvtstk/detail-articles-mvtstk.component';
+import { DeatailClientFournisseurComponent } from './composants/deatail-client-fournisseur/deatail-client-fournisseur.component';
+import { ModifProfilComponent } from './pages/profil/modif-profil/modif-profil.component';
+
+registerLocaleData(localeFr, 'fr');
 
 const routes: Routes = [
   { path: 'login', component: PageLoginComponent },
@@ -65,8 +73,22 @@ const routes: Routes = [
         canActivate: [ApplicationGuardService]
       },
       { 
+        path: 'detail-article/:id', component: DetailArticlesMvtstkComponent,
+        canActivate: [ApplicationGuardService],
+        data: {
+          origin: "article"
+        }
+      },
+      { 
         path: 'mvtstk', component: PageMvtstkComponent,
         canActivate: [ApplicationGuardService]
+      },
+      { 
+        path: 'detail-mvtstk/:id', component: DetailArticlesMvtstkComponent,
+        canActivate: [ApplicationGuardService],
+        data: {
+          origin: "mvtstk"
+        }
       },
       { 
         path: 'clients', component: PageClientComponent,
@@ -81,6 +103,13 @@ const routes: Routes = [
       },
       {
         path: 'nouveau-client/:id', component: NouveauCltFrsComponent,
+        canActivate: [ApplicationGuardService],
+        data: {
+          origin: "client"
+        }
+      },
+      {
+        path: 'detail-client/:id', component: DeatailClientFournisseurComponent,
         canActivate: [ApplicationGuardService],
         data: {
           origin: "client"
@@ -113,6 +142,13 @@ const routes: Routes = [
 
       {
         path: 'nouveau-fournisseur/:id', component: NouveauCltFrsComponent,
+        data: {
+          origin: "fournisseur"
+        }
+      },
+      {
+        path: 'detail-fournisseur/:id', component: DeatailClientFournisseurComponent,
+        canActivate: [ApplicationGuardService],
         data: {
           origin: "fournisseur"
         }
@@ -195,7 +231,9 @@ const routes: Routes = [
     NouvelUtilisateurComponent,
     PageProfilComponent,
     ChangerMotDePasseComponent,
-    LaoderComponent
+    LaoderComponent,
+    DeatailClientFournisseurComponent,
+    ModifProfilComponent
   ],
   imports: [
     BrowserModule,
@@ -203,7 +241,8 @@ const routes: Routes = [
     AppRoutingModule,
     FontAwesomeModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxPaginationModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

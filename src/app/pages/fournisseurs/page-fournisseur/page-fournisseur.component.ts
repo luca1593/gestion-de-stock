@@ -12,6 +12,7 @@ export class PageFournisseurComponent implements OnInit {
 
   listFournisseur:Array<FournisseurDto> = [];
   errorMsg: string = '';
+  page: number = 1;
 
   constructor(
     private router: Router,

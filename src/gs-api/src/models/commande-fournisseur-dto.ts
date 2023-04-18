@@ -9,6 +9,6 @@ export interface CommandeFournisseurDto {
   commandeLivree?: boolean;
   etatcommande?: 'EN_PREPARATIOM' | 'VALIDEE' | 'LIVREE';
   dateCommande?: number;
-  ligneCommandeFournisseurs: Array<LigneCommandeFournisseurDto>;
+  ligneCommandeFournisseurs?: Array<LigneCommandeFournisseurDto>;
   identreprise?: number;
 }

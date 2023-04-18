@@ -12,13 +12,17 @@
             <div class="col-md-3 border-right">
                 <form class="p-2">
                     <div class="mb-2">
-                        <input type="text" class="form-control" id="codecommande" placeholder="Code commande">
+                        <input type="text" disabled class="form-control" id="codecommande"
+                        name="codecmd"
+                        [(ngModel)]="codeCmd"
+                         placeholder="Code commande">
                     </div>
                     <div class="mb-2">
-                        <input type="date" class="form-control" id="designation" placeholder="Date commande">
+                        <input type="text" disabled class="form-control" name="datecmd" 
+                        [(ngModel)]="dateCmd" id="dateCmd" placeholder="Date commande">
                     </div>
                     <div class="mb-2">
-                        <select class="form-control" id="cltfrs" name="cltFrs" [(ngModel)]="selectedClientFournisseur">
+                        <select class="form-control" autofocus id="cltfrs" name="cltFrs" [(ngModel)]="selectedClientFournisseur">
                             <option value="">Selectione un {{origin}}</option>
                             <option *ngFor="let obj of listClientFouenisseur" [ngValue]="obj">
                                 {{obj.nom}}&nbsp;{{obj.prenom}}
@@ -37,7 +41,15 @@
                     </div>
                     <div class="row">
                         <div class="col-md-1"><i class="fas fa-map-marker blue-color"></i></div>
-                        <div class="col-md-11">Adresse</div>
+                        <div class="col-md-11">
+                            {{selectedClientFournisseur.adresse?.adresse1}}&nbsp;
+                            <span *ngIf="selectedClientFournisseur.adresse?.adresse2">
+                                ou&nbsp;
+                                {{selectedClientFournisseur.adresse?.adresse2}}
+                            </span>
+                            {{selectedClientFournisseur.adresse?.ville}}&nbsp;
+                            {{selectedClientFournisseur.adresse?.pays}}
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-1"><i class="fas fa-envelope blue-color"></i></div>
@@ -65,11 +77,8 @@
                     name="codeArticle"
                     placeholder="Code article" 
                     [(ngModel)]="codeArticle"
-                    (input)="searchArticle()"
-                    list="listArticle"
-                    >
-                    <div id="listArticle" 
-                    class="autocomplete shadow p-3 mb-5 m-0 bg-white rounded small-text" 
+                    (input)="searchArticle()">
+                    <div class="autocomplete shadow p-3 mb-5 m-0 bg-white rounded small-text" 
                     *ngIf="codeArticle.length && articleNotYetSelected">
                         <p class="p-1" *ngFor="let article of listArticles" (click)="selectedArticle(article)">
                             {{article.codeArticle}}&nbsp;{{article.designation}}
@@ -82,7 +91,7 @@
                 </div>
                 <div class="col-md-3 mb-2">
                     <input type="text" class="form-control" 
-                    name="prixTtc"
+                    name="prixTtc" disabled
                     [(ngModel)]="searchedArticle.prixTtc" id="prixunitaire" placeholder="Prix unitaire">
                 </div>
                 <div class="col-md-1 mb-2">
@@ -92,7 +101,8 @@
         </div>
         <div class="row custom-border mb-2">
             <div class="card">
-                <div class="card-body scroll-body-max-height-130">
+                <div class="card-body scroll-body-max-height-130" 
+                *ngIf="ligneDeCommandes.length > 0">
                     <app-details-cmd *ngFor="let ligneCmd of ligneDeCommandes"
                     [ligneCommande] = "ligneCmd"
                     ></app-details-cmd>

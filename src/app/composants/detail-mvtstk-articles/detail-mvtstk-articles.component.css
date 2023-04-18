@@ -1,0 +1,15 @@
+.border-right, .custum-center, .custum-cent{
+    display: table !important;
+}
+.border-right img, .custum-center i, .custum-center h5, .custum-center button {
+    vertical-align: middle !important;
+    display: table-cell !important;
+}
+
+.fa-dropbox{
+    font-size: x-large !important;
+}
+
+.wisth-40{
+    min-width: 75% !important;
+}

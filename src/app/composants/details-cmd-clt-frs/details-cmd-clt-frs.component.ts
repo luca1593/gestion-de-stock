@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-details-cmd-clt-frs',
@@ -7,9 +7,35 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DetailsCmdCltFrsComponent implements OnInit {
 
+  @Input()
+  origin="";
+  
+  @Input()
+  commande: any = {};
+  cltFrsDto: any = {};
+
   constructor() { }
 
   ngOnInit(): void {
+    this.extractCltFrs();
+  }
+
+  extractCltFrs(): void{
+    if (this.origin === "client") {
+      this.cltFrsDto = this.commande?.client;
+    } else if(this.origin === "fournisseur"){
+      this.cltFrsDto = this.commande?.fournisseur;
+    }
+  }
+
+  supprimer(idCommande: number){
+    if (idCommande) {
+      if (this.origin === "client") {
+
+      } else if(this.origin === "fournisseur"){
+        
+      }
+    }
   }
 
 }

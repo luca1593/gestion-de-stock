@@ -20,12 +20,14 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   articleErrorMsg = "";
   codeArticle = "";
   quantite: number = 0;
-  ligneDeCommandes: Array<LigneCommandeClientDto> = [];
+  ligneDeCommandes: Array<any> = [];
   totalCommande: number = 0;
   quantiteListArticle: number = 0;
   listArticles: Array<ArticleDto> = [];
   articleNotYetSelected = true;
   errorMsg: Array<string> = [];
+  dateCmd = "";
+  codeCmd = "";
 
   constructor(
     private router: Router,
@@ -41,12 +43,25 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     });
     this.findAllCltFrs();
     this.findAllArticle();
+    this.initCodeCmd();
+  }
+
+  initCodeCmd(){
+    const date: Date = new Date();
+    const jour: string = date.getFullYear() + "" + ((date.getMonth() + 1) <10 ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1))+ "" + (date.getDate() <10 ? ("0" + date.getDate()) : date.getDate());
+    const heure: string = (date.getHours() <10 ? ("0" + date.getHours()) : date.getHours()) + "" + (date.getMinutes() <10 ? ("0" + date.getMinutes()) : date.getMinutes())  + "" + (date.getSeconds() <10 ? ("0" + date.getSeconds()) : date.getSeconds());
+    this.dateCmd = (date.getDate() <10 ? ("0" + date.getDate()) : date.getDate()) + "/" + ((date.getMonth() + 1) <10 ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1)) + "/" + date.getFullYear()
+    if(this.origin === "client"){
+      this.codeCmd = "CMDCLT" + jour + heure;
+    }else if(this.origin === "fournisseur"){
+      this.codeCmd = "CMDFRS" + jour + heure;
+    }
   }
 
   saveClick():void {
     const commande = this.preparerCommande();
     if(this.origin ==="client") {
-      this.commandeCltFrs.enregistrerCommandeClient(commande as CommandeClientDto).subscribe(
+      this.commandeCltFrs.enregistrerCommandeClient(commande as CommandeClientDto, new Date().getTime()).subscribe(
         cmd => {
           this.router.navigate(['commande-client']);
         }, error => {
@@ -54,7 +69,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         }
       );
     }else if(this.origin === "fournisseur"){
-      this.commandeCltFrs.enregistrerCommandeFournisseur(commande as CommandeFournisseurDto).subscribe(
+      this.commandeCltFrs.enregistrerCommandeFournisseur(commande as CommandeFournisseurDto, new Date().getTime()).subscribe(
         cmd => {
           this.router.navigate(['commande-fournisseur']);
         }, error => {
@@ -68,16 +83,14 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     if(this.origin === "client"){
       return  {
         client: this.selectedClientFournisseur,
-        code: this.codeArticle,
-        dateCommande: new Date().getTime(),
+        code: this.codeCmd,
         etatcommande:"EN_PREPARATIOM",
         ligneCommandeClients: this.ligneDeCommandes
       }
     }else if(this.origin === "fournisseur"){
       return  {
         fournisseur: this.selectedClientFournisseur,
-        code: this.codeArticle,
-        dateCommande: new Date().getTime(),
+        code: this.codeCmd,
         etatcommande:"EN_PREPARATIOM",
         ligneCommandeFournisseurs: this.ligneDeCommandes
       }
@@ -165,7 +178,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         totalQnt += ligne.quantite;
       }
     });
-    this.totalCommande = totalCmd;
+    this.totalCommande = Math.floor(totalCmd);
     this.quantiteListArticle = totalQnt;
     this.searchedArticle = {};
     this.codeArticle = "";

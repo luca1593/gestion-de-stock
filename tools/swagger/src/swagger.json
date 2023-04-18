@@ -10,70 +10,37 @@
       "email" : "miarinantenaina@gmail.com"
     }
   },
-  "basePath" : "http://localhost:8181/",
-  "tags" : [{
-    "name" : "authentication"
-     }, {
-    "name" : "articles"
+  "basePath" : "http://localhost:8080/",
+  "tags" : [ {
+    "name" : "v1articles"
   }, {
-    "name" : "category"
+    "name" : "v1category"
   }, {
-    "name" : "changer-mot-de-passe"
+    "name" : "v1client"
   }, {
-    "name" : "client"
+    "name" : "v1commande-client"
   }, {
-    "name" : "commande-client"
+    "name" : "v1commande-fournisseur"
   }, {
-    "name" : "commande-fournisseur"
+    "name" : "v1entreprise"
   }, {
-    "name" : "entreprise"
+    "name" : "v1fournisseur"
   }, {
-    "name" : "fournisseur"
+    "name" : "v1mvtstk"
   }, {
-    "name" : "mvtstk"
+    "name" : "v1photos"
   }, {
-    "name" : "photos"
+    "name" : "v1utilisateur"
   }, {
-    "name" : "utilisateur"
-  }, {
-    "name" : "vente"
+    "name" : "v1vente"
   } ],
   "paths" : {
-    "/gestiondestock/v1/auth/authenticate" : {
-      "post" : {
-        "tags" : [ "authentication" ],
-        "summary" : "Authetification",
-        "description" : "Cette methode permet de s'authentifier",
-        "operationId" : "save",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/AuthenticationRequest"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Le token de connexion",
-            "schema" : {
-              "$ref" : "#/definitions/AuthenticationResponse"
-            }
-          },
-          "404" : {
-            "description" : "Erreur de connextion"
-          }
-        }
-      }
-    },
-    "/gestiondestock/v1/articles/all" : {
+    "/v1/articles/all" : {
       "get" : {
-        "tags" : [ "articles" ],
+        "tags" : [ "v1articles" ],
         "summary" : "Renvoie la liste des articles",
         "description" : "Cette methode permet de rechercher toutes les articles dans la BDD",
-        "operationId" : "ArticleApi_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -88,19 +55,12 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/code/{codeArticle}" : {
+    "/v1/articles/code/{codeArticle}" : {
       "get" : {
-        "tags" : [ "articles" ],
         "summary" : "Rechercher un article",
         "description" : "Cette methode permet de rechercher un article par son code",
-        "operationId" : "ArticleApi_findByCodeArticle_GET",
+        "operationId" : "findByCodeArticle_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "codeArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet article a ete trouver dans la BDD",
@@ -114,11 +74,11 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/create" : {
+    "/v1/articles/create" : {
       "post" : {
         "summary" : "Enregistrement d'un article",
         "description" : "Cette methode permet d'enregidtre ou de modifier un article",
-        "operationId" : "ArticleController_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
@@ -134,11 +94,11 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/delete/{idArticle}" : {
+    "/v1/articles/delete/{idArticle}" : {
       "delete" : {
         "summary" : "Supprimer un article",
         "description" : "Cette methode permet de supprimer un article par son ID",
-        "operationId" : "ArticleController_delete_DELETE",
+        "operationId" : "delete_DELETE",
         "responses" : {
           "200" : {
             "description" : "L'article a ete supprimen dans la BDD"
@@ -146,10 +106,18 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/filtre/category/{idCategore}" : {
+    "/v1/articles/filtre/category/{idCategore}" : {
       "get" : {
-        "operationId" : "ArticleController_findAllByCategorie_GET",
+        "tags" : [ "v1articles" ],
+        "operationId" : "findAllByCategorie_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idCategore",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -163,18 +131,10 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/historiques/commande-client/{idArticle}" : {
+    "/v1/articles/historiques/commande-client/{idArticle}" : {
       "get" : {
-        "tags" : [ "articles" ],
-        "operationId" : "ArticleApi_findHistoriqueCommandeClient_GET",
+        "operationId" : "findHistoriqueCommandeClient_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -188,9 +148,9 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/historiques/commande-fournisseur/{idArticle}" : {
+    "/v1/articles/historiques/commande-fournisseur/{idArticle}" : {
       "get" : {
-        "operationId" : "ArticleController_findHistoriqueCommandeFournisseur_GET",
+        "operationId" : "findHistoriqueCommandeFournisseur_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -205,10 +165,18 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/historiques/vente/{idArticle}" : {
+    "/v1/articles/historiques/vente/{idArticle}" : {
       "get" : {
-        "operationId" : "ArticleController_findHistoriqueVente_GET",
+        "tags" : [ "v1articles" ],
+        "operationId" : "findHistoriqueVente_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idArticle",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -222,20 +190,12 @@
         }
       }
     },
-    "/gestiondestock/v1/articles/{idArticle}" : {
+    "/v1/articles/{idArticle}" : {
       "get" : {
-        "tags" : [ "articles" ],
         "summary" : "Rechercher un article",
         "description" : "Cette methode permet de rechercher un article par son ID",
-        "operationId" : "ArticleApi_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet article a ete trouver dans la BDD",
@@ -249,11 +209,12 @@
         }
       }
     },
-    "/gestiondestock/v1/category/all" : {
+    "/v1/category/all" : {
       "get" : {
+        "tags" : [ "v1category" ],
         "summary" : "Renvoie la liste des categories",
         "description" : "Cette methode permet de rechercher toutes les categories dans la BDD",
-        "operationId" : "CategoryController_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -268,19 +229,12 @@
         }
       }
     },
-    "/gestiondestock/v1/category/code/{codeCategory}" : {
+    "/v1/category/code/{codeCategory}" : {
       "get" : {
-        "tags" : [ "category" ],
         "summary" : "Rechercher une categorie",
         "description" : "Cette methode permet de rechercher une categorie par son code",
-        "operationId" : "CategoryApi_findByCodeCategory_GET",
+        "operationId" : "findByCodeCategory_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "codeCategory",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet categorie a ete trouver dans la BDD",
@@ -294,11 +248,11 @@
         }
       }
     },
-    "/gestiondestock/v1/category/create" : {
+    "/v1/category/create" : {
       "post" : {
         "summary" : "Enregistrement d'une categorie",
         "description" : "Cette methode permet d'enregidtre ou de modifier une categorie",
-        "operationId" : "CategoryController_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
@@ -314,11 +268,19 @@
         }
       }
     },
-    "/gestiondestock/v1/category/detele/{idCategory}" : {
+    "/v1/category/detele/{idCategory}" : {
       "delete" : {
+        "tags" : [ "v1category" ],
         "summary" : "Supprimer un article",
         "description" : "Cette methode permet de supprimer un categorie par son ID",
-        "operationId" : "CategoryController_delete_DELETE",
+        "operationId" : "delete_DELETE",
+        "parameters" : [ {
+          "name" : "idCategory",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "Le categorie a ete supprimen dans la BDD"
@@ -326,11 +288,11 @@
         }
       }
     },
-    "/gestiondestock/v1/category/{idCategory}" : {
+    "/v1/category/{idCategory}" : {
       "get" : {
         "summary" : "Rechercher une categorie",
         "description" : "Cette methode permet de rechercher une categorie par son ID",
-        "operationId" : "CategoryController_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -345,12 +307,12 @@
         }
       }
     },
-    "/gestiondestock/v1/client/all" : {
+    "/v1/client/all" : {
       "get" : {
-        "tags" : [ "client" ],
+        "tags" : [ "v1client" ],
         "summary" : "Renvoie la liste des clients",
         "description" : "Cette methode permet de rechercher toutes les clients dans la BDD",
-        "operationId" : "ClientApi_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -365,12 +327,12 @@
         }
       }
     },
-    "/gestiondestock/v1/client/detele/{idClient}" : {
+    "/v1/client/detele/{idClient}" : {
       "delete" : {
-        "tags" : [ "client" ],
+        "tags" : [ "v1client" ],
         "summary" : "Supprimer un client",
         "description" : "Cette methode permet de supprimer un client par son ID",
-        "operationId" : "ClientApi_delete_DELETE",
+        "operationId" : "delete_DELETE",
         "parameters" : [ {
           "name" : "idClient",
           "in" : "path",
@@ -385,12 +347,12 @@
         }
       }
     },
-    "/gestiondestock/v1/client/email/{emailClient}" : {
+    "/v1/client/email/{emailClient}" : {
       "get" : {
-        "tags" : [ "client" ],
+        "tags" : [ "v1client" ],
         "summary" : "Rechercher un client",
         "description" : "Cette methode permet de rechercher un client par son email",
-        "operationId" : "ClientApi_findbyEmailClient_GET",
+        "operationId" : "findbyEmailClient_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "emailClient",
@@ -411,12 +373,19 @@
         }
       }
     },
-    "/gestiondestock/v1/client/nom/{nomClient}" : {
+    "/v1/client/nom/{nomClient}" : {
       "get" : {
+        "tags" : [ "v1client" ],
         "summary" : "Rechercher un client",
         "description" : "Cette methode permet de rechercher un client par son nom",
-        "operationId" : "ClientController_findbyNomClient_GET",
+        "operationId" : "findbyNomClient_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "nomClient",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet client a ete trouver dans la BDD",
@@ -430,13 +399,22 @@
         }
       }
     },
-    "/gestiondestock/v1/client/save" : {
+    "/v1/client/save" : {
       "post" : {
+        "tags" : [ "v1client" ],
         "summary" : "Enregistrement d'un client",
         "description" : "Cette methode permet d'enregidtre ou de modifier un client",
-        "operationId" : "ClientController_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/ClientDto"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet client creer ou modifier",
@@ -450,12 +428,20 @@
         }
       }
     },
-    "/gestiondestock/v1/client/{idClient}" : {
+    "/v1/client/{idClient}" : {
       "get" : {
+        "tags" : [ "v1client" ],
         "summary" : "Rechercher un client",
         "description" : "Cette methode permet de rechercher un client par son ID",
-        "operationId" : "ClientController_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idClient",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet client a ete trouver dans la BDD",
@@ -469,12 +455,32 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/all" : {
+    "/v1/commande-client" : {
+      "post" : {
+        "summary" : "Renvoie la liste des commandes client selon le client",
+        "description" : "Cette methode permet de rechercher toutes les commandes client selon le client",
+        "operationId" : "findAllByClient_POST",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "La liste des commandes client selon le client / liste vide",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/CommandeClientDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/commande-client/all" : {
       "get" : {
-        "tags" : [ "commande-client" ],
+        "tags" : [ "v1commande-client" ],
         "summary" : "Renvoie la liste des commandes client",
         "description" : "Cette methode permet de rechercher toutes les commandes client dans la BDD",
-        "operationId" : "CommandeClientApi_findAll_GET",
+        "operationId" : "findAll_GET",
         "responses" : {
           "200" : {
             "description" : "La liste des commandes client / liste vide",
@@ -488,19 +494,12 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/code/{codeCommandeClient}" : {
+    "/v1/commande-client/code/{codeCommandeClient}" : {
       "get" : {
-        "tags" : [ "commande-client" ],
         "summary" : "Rechercher une commande client",
         "description" : "Cette methode permet de rechercher une commande client par son code",
-        "operationId" : "CommandeClientApi_findByCodeCommande_GET",
+        "operationId" : "findByCodeCommande_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "codeCommandeClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet commande client a ete trouver dans la BDD",
@@ -514,13 +513,28 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/create" : {
+    "/v1/commande-client/create/{dateCommandeClient}" : {
       "post" : {
+        "tags" : [ "v1commande-client" ],
         "summary" : "Enregistrement d'une commande client",
         "description" : "Cette methode permet d'enregidtre ou de modifier une commande client",
-        "operationId" : "CommandeClientController_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/CommandeClientDto"
+          }
+        }, {
+          "name" : "dateCommandeClient",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet commande client creer ou modifier",
@@ -534,11 +548,11 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/date/{dateCommandeClient}" : {
+    "/v1/commande-client/date/{dateCommandeClient}" : {
       "get" : {
         "summary" : "Rechercher liste des commandes client par date",
         "description" : "Cette methode permet de rechercher liste des commandes client par date",
-        "operationId" : "CommandeClientController_findByDateCommande_GET",
+        "operationId" : "findByDateCommande_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -556,9 +570,9 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/delete/article/{idCommande}/{idLigneCommande}" : {
+    "/v1/commande-client/delete/article/{idCommande}/{idLigneCommande}" : {
       "delete" : {
-        "operationId" : "CommandeClientController_deleteArticle_DELETE",
+        "operationId" : "deleteArticle_DELETE",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -573,11 +587,19 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/delete/{idCommandeClient}" : {
+    "/v1/commande-client/delete/{idCommandeClient}" : {
       "delete" : {
+        "tags" : [ "v1commande-client" ],
         "summary" : "Supprimer une commande client",
         "description" : "Cette methode permet de supprimer une commande client par son ID",
-        "operationId" : "CommandeClientController_delete_DELETE",
+        "operationId" : "delete_DELETE",
+        "parameters" : [ {
+          "name" : "idCommandeClient",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "La commande client a ete supprimen dans la BDD"
@@ -585,10 +607,28 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/list/linge-commande/{idCommande}" : {
+    "/v1/commande-client/list/ligne-commande/{idCommande}" : {
       "get" : {
-        "tags" : [ "commande-client" ],
-        "operationId" : "CommandeClientApi_findAllByCommandeClient_GET",
+        "summary" : "Renvoie la liste des lignes de commande client",
+        "description" : "Cette methode permet de rechercher la liste des lignes de commande client par l'id de la commande",
+        "operationId" : "findAllLigneCommandeClient_GET",
+        "responses" : {
+          "200" : {
+            "description" : "La liste des commandes client / liste vide",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/LigneCommandeClientDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/commande-client/list/linge-commande/{idCommande}" : {
+      "get" : {
+        "tags" : [ "v1commande-client" ],
+        "operationId" : "findAllByCommandeClient_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "idCommande",
@@ -613,10 +653,10 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}" : {
+    "/v1/commande-client/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}" : {
       "patch" : {
-        "tags" : [ "commande-client" ],
-        "operationId" : "CommandeClientApi_updateArticle_PATCH",
+        "tags" : [ "v1commande-client" ],
+        "operationId" : "updateArticle_PATCH",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "idCommande",
@@ -650,10 +690,24 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/update/client/{idCommande}/{idClient}" : {
+    "/v1/commande-client/update/client/{idCommande}/{idClient}" : {
       "patch" : {
-        "operationId" : "CommandeClientController_updateClient_PATCH",
+        "tags" : [ "v1commande-client" ],
+        "operationId" : "updateClient_PATCH",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idCommande",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "idClient",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "Le client de la commande client a bien ete modifier",
@@ -667,10 +721,10 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/update/etat/{idCommande}/{etatCommande}" : {
+    "/v1/commande-client/update/etat/{idCommande}/{etatCommande}" : {
       "patch" : {
-        "tags" : [ "commande-client" ],
-        "operationId" : "CommandeClientApi_updateEtatCommande_PATCH",
+        "tags" : [ "v1commande-client" ],
+        "operationId" : "updateEtatCommande_PATCH",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "idCommande",
@@ -698,10 +752,10 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/update/quantite/{idCommande}/{idLigneCommande}/{quantite}" : {
+    "/v1/commande-client/update/quantite/{idCommande}/{idLigneCommande}/{quantite}" : {
       "patch" : {
-        "tags" : [ "commande-client" ],
-        "operationId" : "CommandeClientApi_updateQuantiterCommande_PATCH",
+        "tags" : [ "v1commande-client" ],
+        "operationId" : "updateQuantiterCommande_PATCH",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "idCommande",
@@ -734,20 +788,12 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-client/{idCommandeClient}" : {
+    "/v1/commande-client/{idCommandeClient}" : {
       "get" : {
-        "tags" : [ "commande-client" ],
         "summary" : "Rechercher une commande client",
         "description" : "Cette methode permet de rechercher une commande client par son ID",
-        "operationId" : "CommandeClientApi_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommandeClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet commande client a ete trouver dans la BDD",
@@ -761,11 +807,41 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/all" : {
+    "/v1/commande-fournisseur" : {
+      "post" : {
+        "tags" : [ "v1commande-fournisseur" ],
+        "summary" : "Renvoie la liste des commandes fournisseur selon le fournisseur",
+        "description" : "Cette methode permet de rechercher toutes les commandes fournisseur selon le fournisseur",
+        "operationId" : "findAllByFournisseur_POST",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/FournisseurDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "La liste des commandes fournisseur selon le fournisseur / liste vide",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/CommandeFournisseurDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/commande-fournisseur/all" : {
       "get" : {
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Renvoie la liste des commandes fournisseur",
         "description" : "Cette methode permet de rechercher toutes les commandes fournisseur dans la BDD",
-        "operationId" : "CommandeFournisseurController_findAll_GET",
+        "operationId" : "findAll_GET",
         "responses" : {
           "200" : {
             "description" : "La liste des commandes fournisseur / liste vide",
@@ -779,12 +855,12 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/code/{codeCommandeFournisseur}" : {
+    "/v1/commande-fournisseur/code/{codeCommandeFournisseur}" : {
       "get" : {
-        "tags" : [ "commande-fournisseur" ],
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Rechercher une commande fournisseur",
         "description" : "Cette methode permet de rechercher une commande fournisseur par son code",
-        "operationId" : "CommandeFournisseurApi_findByCodeCommande_GET",
+        "operationId" : "findByCodeCommande_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "codeCommandeFournisseur",
@@ -805,13 +881,28 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/create" : {
+    "/v1/commande-fournisseur/create/{dateCommandeFournisseur}" : {
       "post" : {
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Enregistrement d'une commande fournisseur",
         "description" : "Cette methode permet d'enregidtre ou de modifier une commande fournisseur",
-        "operationId" : "CommandeFournisseurController_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/CommandeFournisseurDto"
+          }
+        }, {
+          "name" : "dateCommandeFournisseur",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet commande fournisseur creer ou modifier",
@@ -825,12 +916,20 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/date/{dateCommandeFournisseur}" : {
+    "/v1/commande-fournisseur/date/{dateCommandeFournisseur}" : {
       "get" : {
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Rechercher liste des commandes fournisseur par date",
         "description" : "Cette methode permet de rechercher liste des commandes fournisseur par date",
-        "operationId" : "CommandeFournisseurController_findByDateCommande_GET",
+        "operationId" : "findByDateCommande_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "dateCommandeFournisseur",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        } ],
         "responses" : {
           "200" : {
             "description" : "Aucune commande fournisseur n'a ete trouver dans la BDD",
@@ -847,11 +946,11 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}" : {
+    "/v1/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}" : {
       "delete" : {
         "summary" : "Suppression d'un articl d'une commande fournisseur",
         "description" : "Cette methode permet de supprimer un article sur 'une commande fournisseur par son id",
-        "operationId" : "CommandeFournisseurController_deleteArticle_DELETE",
+        "operationId" : "deleteArticle_DELETE",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -866,19 +965,11 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/delete/{idCommandeFournisseur}" : {
+    "/v1/commande-fournisseur/delete/{idCommandeFournisseur}" : {
       "delete" : {
-        "tags" : [ "commande-fournisseur" ],
         "summary" : "Supprimer une commande client",
         "description" : "Cette methode permet de supprimer une commande fournisseur par son ID",
-        "operationId" : "CommandeFournisseurApi_delete_DELETE",
-        "parameters" : [ {
-          "name" : "idCommandeFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
+        "operationId" : "delete_DELETE",
         "responses" : {
           "200" : {
             "description" : "La commande fournisseur a ete supprimen dans la BDD"
@@ -886,12 +977,20 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/list/ligne-commande/{idCommande}" : {
+    "/v1/commande-fournisseur/list/ligne-commande/{idCommande}" : {
       "get" : {
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Recherche de la liste des lignes de commande d'une commande fournisseur",
         "description" : "Cette methode permet de rechercher la liste des lignes de commande d'une commande fournisseur par son id",
-        "operationId" : "CommandeFournisseurController_findAllByCommandeFournisseur_GET",
+        "operationId" : "findAllByCommandeFournisseur_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idCommande",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "Liste des lignes de commande fournisseur a ete trouver avec succesr",
@@ -905,32 +1004,12 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}" : {
+    "/v1/commande-fournisseur/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}" : {
       "patch" : {
-        "tags" : [ "commande-fournisseur" ],
         "summary" : "Mise a jour de l'article d'une commande fournisseur",
         "description" : "Cette methode permet de mettre a jour l'article d'une commande fournisseur par son id",
-        "operationId" : "CommandeFournisseurApi_updateArticle_PATCH",
+        "operationId" : "updateArticle_PATCH",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "idLigneCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "newIdArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'article de la commande fournisseur a ete mise a jour",
@@ -944,11 +1023,11 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/update/etat/{idCommande}/{etatCommande}" : {
+    "/v1/commande-fournisseur/update/etat/{idCommande}/{etatCommande}" : {
       "patch" : {
         "summary" : "Mise a jour de l'etat d'une commande fournisseur",
         "description" : "Cette methode permet de mettre a jour l'etat d'une commande fournisseur par son id",
-        "operationId" : "CommandeFournisseurController_updateEtatCommande_PATCH",
+        "operationId" : "updateEtatCommande_PATCH",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -963,12 +1042,26 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/update/fournisseur/{idCommande}/{idFournisseur}" : {
+    "/v1/commande-fournisseur/update/fournisseur/{idCommande}/{idFournisseur}" : {
       "patch" : {
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Mise a jour du fournisseur d'une commande fournisseur",
         "description" : "Cette methode permet de mettre a jour le fournisseur d'une commande fournisseur par son id",
-        "operationId" : "CommandeFournisseurController_updateFournisseur_PATCH",
+        "operationId" : "updateFournisseur_PATCH",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idCommande",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "idFournisseur",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "Le fournisseur de la commande fournisseur a ete mise a jour",
@@ -982,12 +1075,31 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/update/quantite/{idCommande}/{idLigneCommande}/{quantite}" : {
+    "/v1/commande-fournisseur/update/quantite/{idCommande}/{idLigneCommande}/{quantite}" : {
       "patch" : {
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Mise a jour de la quantite d'une commande fournisseur",
         "description" : "Cette methode permet de mettre a jour la quantite d'une commande fournisseur par son id",
-        "operationId" : "CommandeFournisseurController_updateQuantiterCommande_PATCH",
+        "operationId" : "updateQuantiterCommande_PATCH",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idCommande",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "idLigneCommande",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "quantite",
+          "in" : "path",
+          "required" : true,
+          "type" : "number"
+        } ],
         "responses" : {
           "200" : {
             "description" : "La quantite de la commande fournisseur a ete mise a jour",
@@ -1001,12 +1113,12 @@
         }
       }
     },
-    "/gestiondestock/v1/commande-fournisseur/{idCommandeFournisseur}" : {
+    "/v1/commande-fournisseur/{idCommandeFournisseur}" : {
       "get" : {
-        "tags" : [ "commande-fournisseur" ],
+        "tags" : [ "v1commande-fournisseur" ],
         "summary" : "Rechercher une commande fournisseur",
         "description" : "Cette methode permet de rechercher une commande fournisseur par son ID",
-        "operationId" : "CommandeFournisseurApi_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "idCommandeFournisseur",
@@ -1028,11 +1140,12 @@
         }
       }
     },
-    "/gestiondestock/v1/entreprise/all" : {
+    "/v1/entreprise/all" : {
       "get" : {
+        "tags" : [ "v1entreprise" ],
         "summary" : "Renvoie la liste des entreprises",
         "description" : "Cette methode permet de rechercher toutes les entreprises dans la BDD",
-        "operationId" : "EntrepriseController_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1047,13 +1160,22 @@
         }
       }
     },
-    "/gestiondestock/v1/entreprise/create" : {
+    "/v1/entreprise/create" : {
       "post" : {
+        "tags" : [ "v1entreprise" ],
         "summary" : "Enregistrement d'une entreprise",
         "description" : "Cette methode permet d'enregidtre ou de modifier une entreprise",
-        "operationId" : "EntrepriseController_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/EntrepriseDto"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet client creer ou modifier",
@@ -1067,11 +1189,19 @@
         }
       }
     },
-    "/gestiondestock/v1/entreprise/delete{idEntreprise}" : {
+    "/v1/entreprise/delete{idEntreprise}" : {
       "delete" : {
+        "tags" : [ "v1entreprise" ],
         "summary" : "Supprimer un entreprise",
         "description" : "Cette methode permet de supprimer une entreprise par son ID",
-        "operationId" : "EntrepriseController_delete_DELETE",
+        "operationId" : "delete_DELETE",
+        "parameters" : [ {
+          "name" : "idEntreprise",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'entreprise a ete supprimen dans la BDD"
@@ -1079,19 +1209,12 @@
         }
       }
     },
-    "/gestiondestock/v1/entreprise/email/{emailEntreprise}" : {
+    "/v1/entreprise/email/{emailEntreprise}" : {
       "get" : {
-        "tags" : [ "entreprise" ],
         "summary" : "Rechercher un entreprise",
         "description" : "Cette methode permet de rechercher une entreprise par son email",
-        "operationId" : "EntrepriseApi_findByEmailEntreprise_GET",
+        "operationId" : "findByEmailEntreprise_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "emailEntreprise",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet entreprise a ete trouver dans la BDD",
@@ -1105,12 +1228,19 @@
         }
       }
     },
-    "/gestiondestock/v1/entreprise/nom{nomEntreprise}" : {
+    "/v1/entreprise/nom{nomEntreprise}" : {
       "get" : {
+        "tags" : [ "v1entreprise" ],
         "summary" : "Rechercher un entreprise",
         "description" : "Cette methode permet de rechercher une entreprise par son nom",
-        "operationId" : "EntrepriseController_findByNomEntreprise_GET",
+        "operationId" : "findByNomEntreprise_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "nomEntreprise",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet entreprise a ete trouver dans la BDD",
@@ -1124,12 +1254,20 @@
         }
       }
     },
-    "/gestiondestock/v1/entreprise/{idEntreprise}" : {
+    "/v1/entreprise/{idEntreprise}" : {
       "get" : {
+        "tags" : [ "v1entreprise" ],
         "summary" : "Rechercher un entreprise",
         "description" : "Cette methode permet de rechercher un entreprise par son ID",
-        "operationId" : "EntrepriseController_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idEntreprise",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet entreprise a ete trouver dans la BDD",
@@ -1143,12 +1281,11 @@
         }
       }
     },
-    "/gestiondestock/v1/fournisseur/all" : {
+    "/v1/fournisseur/all" : {
       "get" : {
-        "tags" : [ "fournisseur" ],
         "summary" : "Renvoie la liste des fournisseurs",
         "description" : "Cette methode permet de rechercher toutes les fournisseurs dans la BDD",
-        "operationId" : "FournisseurApi_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1163,22 +1300,13 @@
         }
       }
     },
-    "/gestiondestock/v1/fournisseur/create" : {
+    "/v1/fournisseur/create" : {
       "post" : {
-        "tags" : [ "fournisseur" ],
         "summary" : "Enregistrement d'un fournisseur",
         "description" : "Cette methode permet d'enregidtre ou de modifier un fournisseur",
-        "operationId" : "FournisseurApi_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/FournisseurDto"
-          }
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet fournisseur creer ou modifier",
@@ -1192,11 +1320,11 @@
         }
       }
     },
-    "/gestiondestock/v1/fournisseur/detele/{idFournisseur}" : {
+    "/v1/fournisseur/detele/{idFournisseur}" : {
       "delete" : {
         "summary" : "Supprimer un fournisseur",
         "description" : "Cette methode permet de supprimer un fournisseur par son ID",
-        "operationId" : "FournisseurController_delete_DELETE",
+        "operationId" : "delete_DELETE",
         "responses" : {
           "200" : {
             "description" : "Le fournisseur a ete supprimer dans la BDD"
@@ -1204,12 +1332,12 @@
         }
       }
     },
-    "/gestiondestock/v1/fournisseur/email/{emailFournisseur}" : {
+    "/v1/fournisseur/email/{emailFournisseur}" : {
       "get" : {
-        "tags" : [ "fournisseur" ],
+        "tags" : [ "v1fournisseur" ],
         "summary" : "Rechercher un fournisseur",
         "description" : "Cette methode permet de rechercher une fournisseur par son email",
-        "operationId" : "FournisseurApi_findByEmailFournisseur_GET",
+        "operationId" : "findByEmailFournisseur_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "emailFournisseur",
@@ -1230,12 +1358,19 @@
         }
       }
     },
-    "/gestiondestock/v1/fournisseur/nom/{nomFournisseur}" : {
+    "/v1/fournisseur/nom/{nomFournisseur}" : {
       "get" : {
+        "tags" : [ "v1fournisseur" ],
         "summary" : "Rechercher un fournisseur",
         "description" : "Cette methode permet de rechercher un fournisseur par son nom",
-        "operationId" : "FournisseurController_findByNomFournisseur_GET",
+        "operationId" : "findByNomFournisseur_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "nomFournisseur",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet fournisseur a ete trouver dans la BDD",
@@ -1249,12 +1384,12 @@
         }
       }
     },
-    "/gestiondestock/v1/fournisseur/{idFournisseur}" : {
+    "/v1/fournisseur/{idFournisseur}" : {
       "get" : {
-        "tags" : [ "fournisseur" ],
+        "tags" : [ "v1fournisseur" ],
         "summary" : "Rechercher un fournisseur",
         "description" : "Cette methode permet de rechercher un fournisseur par son ID",
-        "operationId" : "FournisseurApi_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "idFournisseur",
@@ -1276,9 +1411,9 @@
         }
       }
     },
-    "/gestiondestock/v1/home" : {
+    "/v1/home" : {
       "get" : {
-        "operationId" : "HomeController_home_GET",
+        "operationId" : "home_GET",
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1289,11 +1424,12 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/all" : {
+    "/v1/mvtstk/all" : {
       "get" : {
+        "tags" : [ "v1mvtstk" ],
         "summary" : "Renvoie la liste des mouvements de stock",
         "description" : "Cette methode permet de rechercher toutes les mouvements de stock dans la BDD",
-        "operationId" : "MvtStkController_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1308,9 +1444,9 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/correction-neg" : {
+    "/v1/mvtstk/correction-neg" : {
       "post" : {
-        "operationId" : "MvtStkController_correctionMvtStkNeg_POST",
+        "operationId" : "correctionMvtStkNeg_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
@@ -1323,10 +1459,10 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/correction-pos" : {
+    "/v1/mvtstk/correction-pos" : {
       "post" : {
-        "tags" : [ "mvtstk" ],
-        "operationId" : "MvtStkApi_correctionMvtStkPos_POST",
+        "tags" : [ "v1mvtstk" ],
+        "operationId" : "correctionMvtStkPos_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
@@ -1347,12 +1483,20 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/date/{dateMvtStk}" : {
+    "/v1/mvtstk/date/{dateMvtStk}" : {
       "get" : {
+        "tags" : [ "v1mvtstk" ],
         "summary" : "Rechercher une liste mouvements de stock",
         "description" : "Cette methode permet de rechercher une liste dd mouvements de stock par date",
-        "operationId" : "MvtStkController_findMvtStkByDateMvt_GET",
+        "operationId" : "findMvtStkByDateMvt_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "nomClient",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet mouvements de stock a ete trouver dans la BDD",
@@ -1369,12 +1513,12 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/detele/{typeMvt}" : {
+    "/v1/mvtstk/detele/{typeMvt}" : {
       "delete" : {
-        "tags" : [ "mvtstk" ],
+        "tags" : [ "v1mvtstk" ],
         "summary" : "Supprimer une commande client",
         "description" : "Cette methode permet de supprimer un mouvement de stock par son ID",
-        "operationId" : "MvtStkApi_delete_DELETE",
+        "operationId" : "delete_DELETE",
         "parameters" : [ {
           "name" : "typeMvt",
           "in" : "path",
@@ -1389,9 +1533,9 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/entre" : {
+    "/v1/mvtstk/entre" : {
       "post" : {
-        "operationId" : "MvtStkController_entreMvtStk_POST",
+        "operationId" : "entreMvtStk_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
@@ -1404,10 +1548,18 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/filter/article/{idArticle}" : {
+    "/v1/mvtstk/filter/article/{idArticle}" : {
       "get" : {
-        "operationId" : "MvtStkController_mvtStkArticle_GET",
+        "tags" : [ "v1mvtstk" ],
+        "operationId" : "mvtStkArticle_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idArticle",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1421,13 +1573,22 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/save" : {
+    "/v1/mvtstk/save" : {
       "post" : {
+        "tags" : [ "v1mvtstk" ],
         "summary" : "Enregistrement d'un mouvement de stock",
         "description" : "Cette methode permet d'enregidtre ou de modifier un mouvement de stock",
-        "operationId" : "MvtStkController_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/MvtStkDto"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet mouvement de stock fournisseur creer ou modifier",
@@ -1441,11 +1602,20 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/sortie" : {
+    "/v1/mvtstk/sortie" : {
       "post" : {
-        "operationId" : "MvtStkController_sortieMvtStk_POST",
+        "tags" : [ "v1mvtstk" ],
+        "operationId" : "sortieMvtStk_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/MvtStkDto"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1456,10 +1626,10 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/stockreel/{idArticle}" : {
+    "/v1/mvtstk/stockreel/{idArticle}" : {
       "get" : {
-        "tags" : [ "mvtstk" ],
-        "operationId" : "MvtStkApi_stockReelArticle_GET",
+        "tags" : [ "v1mvtstk" ],
+        "operationId" : "stockReelArticle_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "idArticle",
@@ -1478,19 +1648,12 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/type/{typeMvt}" : {
+    "/v1/mvtstk/type/{typeMvt}" : {
       "get" : {
-        "tags" : [ "mvtstk" ],
         "summary" : "Rechercher liste des mouvements de stock par type",
         "description" : "Cette methode permet de rechercher liste des mouvements de stock par type",
-        "operationId" : "MvtStkApi_findMvtStkByType_GET",
+        "operationId" : "findMvtStkByType_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "typeMvt",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "Aucun mouvement de stock n'a ete trouver dans la BDD",
@@ -1507,12 +1670,20 @@
         }
       }
     },
-    "/gestiondestock/v1/mvtstk/{idMvtstk}" : {
+    "/v1/mvtstk/{idMvtstk}" : {
       "get" : {
+        "tags" : [ "v1mvtstk" ],
         "summary" : "Rechercher un mouvement de stock",
         "description" : "Cette methode permet de rechercher un mouvement de stock par son ID",
-        "operationId" : "MvtStkController_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "idMvtstk",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet commande fournisseur a ete trouver dans la BDD",
@@ -1526,9 +1697,10 @@
         }
       }
     },
-    "/gestiondestock/v1/photos/{id}/{title}/{context}" : {
+    "/v1/photos/{context}/{id}/{title}" : {
       "post" : {
-        "operationId" : "PhotoController_savePhoto_POST",
+        "operationId" : "savePhoto_POST",
+        "consumes" : [ "application/json", "multipart/form-data" ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1539,12 +1711,12 @@
         }
       }
     },
-    "/gestiondestock/v1/utilisateur/all" : {
+    "/v1/utilisateur/all" : {
       "get" : {
-        "tags" : [ "utilisateur" ],
+        "tags" : [ "v1utilisateur" ],
         "summary" : "Renvoie la liste des utilisateurs",
         "description" : "Cette methode permet de rechercher toutes les utilisateurs dans la BDD",
-        "operationId" : "UtilisateurApi_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1559,23 +1731,42 @@
         }
       }
     },
-    "/gestiondestock/v1/utilisateur/detele/{idUtilisateur}" : {
-      "delete" : {
-        "summary" : "Supprimer un utilisateur",
-        "description" : "Cette methode permet de supprimer un utilisateur par son ID",
-        "operationId" : "UtilisateurController_delete_DELETE",
+    "/v1/utilisateur/changer-mot-de-passe" : {
+      "post" : {
+        "summary" : "Renvoie un profil utilisateur",
+        "description" : "Cette methode permet de changer le mot de passe de l'utilisateurs dans la BDD",
+        "operationId" : "changerMotDePasse_POST",
+        "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'utilisateur a ete supprimer dans la BDD"
+            "description" : "Mot de passe changer avec succes",
+            "schema" : {
+              "$ref" : "#/definitions/UtilisateurDto"
+            }
+          },
+          "404" : {
+            "description" : "Erreur : Le mot de passe ne peut pas etre modifier"
           }
         }
       }
     },
-    "/gestiondestock/v1/utilisateur/email/{emailUtilisateur}" : {
+    "/v1/utilisateur/detele/{idUtilisateur}" : {
+      "delete" : {
+        "summary" : "Supprimer un utilisateur",
+        "description" : "Cette methode permet de supprimer un utilisateur par son ID",
+        "operationId" : "delete_DELETE",
+        "responses" : {
+          "200" : {
+            "description" : "Utilisateur supprimer avec success"
+          }
+        }
+      }
+    },
+    "/v1/utilisateur/email/{emailUtilisateur}" : {
       "get" : {
         "summary" : "Rechercher un utilisateur",
         "description" : "Cette methode permet de rechercher une utilisateur par son email",
-        "operationId" : "UtilisateurController_findByEmailUtilisateur_GET",
+        "operationId" : "findByEmailUtilisateur_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1590,19 +1781,12 @@
         }
       }
     },
-    "/gestiondestock/v1/utilisateur/nom/{nomUtilisateur}" : {
+    "/v1/utilisateur/nom/{nomUtilisateur}" : {
       "get" : {
-        "tags" : [ "utilisateur" ],
         "summary" : "Rechercher un utilisateur",
         "description" : "Cette methode permet de rechercher un utilisateur par son nom",
-        "operationId" : "UtilisateurApi_findByNomUtilisateur_GET",
+        "operationId" : "findByNomUtilisateur_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "nomUtilisateur",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet utilisateur a ete trouver dans la BDD",
@@ -1616,12 +1800,12 @@
         }
       }
     },
-    "/gestiondestock/v1/utilisateur/save" : {
+    "/v1/utilisateur/save" : {
       "post" : {
-        "tags" : [ "utilisateur" ],
+        "tags" : [ "v1utilisateur" ],
         "summary" : "Enregistrement d'un utilisateur",
         "description" : "Cette methode permet d'enregidtre ou de modifier un utilisateur",
-        "operationId" : "UtilisateurApi_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
@@ -1645,40 +1829,11 @@
         }
       }
     },
-    "/gestiondestock/v1/utilisateur/changer-mot-de-passe" : {
-      "post" : {
-        "tags" : [ "changer-mot-de-passe" ],
-        "summary" : "Renvoie un profil utilisateur",
-        "description" : "Cette methode permet de changer le mot de passe de l'utilisateurs dans la BDD",
-        "operationId" : "UtilisateurApi_Changer_Mot_De_Passe_POST",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/ChangerMotDePasseUtilisateurDto"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Mot de passe changer avec succes",
-            "schema" : {
-              "$ref" : "#/definitions/UtilisateurDto"
-            }
-          },
-          "404" : {
-            "description" : "Erreur : Le mot de passe ne peut pas etre modifier"
-          }
-        }
-      }
-    },
-    "/gestiondestock/v1/utilisateur/{idUtilisateur}" : {
+    "/v1/utilisateur/{idUtilisateur}" : {
       "get" : {
         "summary" : "Rechercher un utilisateur",
         "description" : "Cette methode permet de rechercher un utilisateur par son ID",
-        "operationId" : "UtilisateurController_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1693,11 +1848,12 @@
         }
       }
     },
-    "/gestiondestock/v1/vente/all" : {
+    "/v1/vente/all" : {
       "get" : {
+        "tags" : [ "v1vente" ],
         "summary" : "Renvoie la liste des ventes",
         "description" : "Cette methode permet de rechercher toutes les ventes dans la BDD",
-        "operationId" : "VenteController_findAll_GET",
+        "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1712,12 +1868,19 @@
         }
       }
     },
-    "/gestiondestock/v1/vente/code/{codeVente}" : {
+    "/v1/vente/code/{codeVente}" : {
       "get" : {
+        "tags" : [ "v1vente" ],
         "summary" : "Rechercher une vente",
         "description" : "Cette methode permet de rechercher une vente par son code",
-        "operationId" : "VenteController_findByCodeVente_GET",
+        "operationId" : "findByCodeVente_GET",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "codeVente",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
         "responses" : {
           "200" : {
             "description" : "L'objet vente a ete trouver dans la BDD",
@@ -1731,12 +1894,12 @@
         }
       }
     },
-    "/gestiondestock/v1/vente/date/{dateVente}" : {
+    "/v1/vente/date/{dateVente}" : {
       "get" : {
-        "tags" : [ "vente" ],
+        "tags" : [ "v1vente" ],
         "summary" : "Rechercher liste des ventes par date",
         "description" : "Cette methode permet de rechercher liste des ventes par date",
-        "operationId" : "VenteApi_findByDateVente_GET",
+        "operationId" : "findByDateVente_GET",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "dateVente",
@@ -1761,11 +1924,11 @@
         }
       }
     },
-    "/gestiondestock/v1/vente/detele/{idVente}" : {
+    "/v1/vente/detele/{idVente}" : {
       "delete" : {
         "summary" : "Supprimer une vente",
         "description" : "Cette methode permet de supprimer un article par son ID",
-        "operationId" : "VenteController_delete_DELETE",
+        "operationId" : "delete_DELETE",
         "responses" : {
           "200" : {
             "description" : "La vente a ete supprimen dans la BDD"
@@ -1773,12 +1936,12 @@
         }
       }
     },
-    "/gestiondestock/v1/vente/save" : {
+    "/v1/vente/save" : {
       "post" : {
-        "tags" : [ "vente" ],
+        "tags" : [ "v1vente" ],
         "summary" : "Enregistrement d'une vente",
         "description" : "Cette methode permet d'enregidtre ou de modifier une vente",
-        "operationId" : "VenteApi_save_POST",
+        "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
@@ -1802,11 +1965,11 @@
         }
       }
     },
-    "/gestiondestock/v1/vente/{idVente}" : {
+    "/v1/vente/{idVente}" : {
       "get" : {
         "summary" : "Rechercher une vente",
         "description" : "Cette methode permet de rechercher une vente par son ID",
-        "operationId" : "VenteController_findById_GET",
+        "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -1823,25 +1986,6 @@
     }
   },
   "definitions" : {
-    "AuthenticationResponse": {
-      "type": "object",
-      "properties": {
-        "accessTokeen": {
-          "type": "string"
-        }
-      }
-    },
-    "AuthenticationRequest": {
-      "type": "object",
-      "properties": {
-        "login": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "AdresseDto" : {
       "type" : "object",
       "properties" : {
@@ -1889,6 +2033,17 @@
         },
         "category" : {
           "$ref" : "#/definitions/CategoryDto"
+        },
+        "creationDate" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "lastModifiedDate" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "entreprise" : {
+          "$ref" : "#/definitions/EntrepriseDto"
         }
       }
     },
@@ -1951,11 +2106,9 @@
         "numTel" : {
           "type" : "string"
         },
-        "commandeClients" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/CommandeClientDto"
-          }
+        "identreprise" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -1979,6 +2132,12 @@
         },
         "client" : {
           "$ref" : "#/definitions/ClientDto"
+        },
+        "ligneCommandeClients" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/LigneCommandeClientDto"
+          }
         },
         "identreprise" : {
           "type" : "integer",
@@ -2009,6 +2168,12 @@
         },
         "fournisseur" : {
           "$ref" : "#/definitions/FournisseurDto"
+        },
+        "ligneCommandeFournisseurs" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/LigneCommandeFournisseurDto"
+          }
         },
         "identreprise" : {
           "type" : "integer",
@@ -2083,11 +2248,9 @@
         "numTel" : {
           "type" : "string"
         },
-        "commandeFournisseurs" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/CommandeFournisseurDto"
-          }
+        "identreprise" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -2134,6 +2297,10 @@
         },
         "prixUnitaire" : {
           "type" : "number"
+        },
+        "identreprise" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -2155,6 +2322,10 @@
         },
         "prixUnitaire" : {
           "type" : "number"
+        },
+        "identreprise" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -2266,6 +2437,10 @@
           "items" : {
             "$ref" : "#/definitions/LigneVenteDto"
           }
+        },
+        "identreprise" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     }

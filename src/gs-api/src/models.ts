@@ -18,4 +18,3 @@ export { MvtStkDto } from './models/mvt-stk-dto';
 export { RoleDto } from './models/role-dto';
 export { UtilisateurDto } from './models/utilisateur-dto';
 export { VenteDto } from './models/vente-dto';
-export { SavePhotoParams } from './models/save-photo-params';

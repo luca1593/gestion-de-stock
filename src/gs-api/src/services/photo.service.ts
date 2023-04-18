@@ -6,14 +6,13 @@ import { ApiConfiguration as __Configuration } from '../api-configuration';
 import { StrictHttpResponse as __StrictHttpResponse } from '../strict-http-response';
 import { Observable as __Observable } from 'rxjs';
 import { map as __map, filter as __filter } from 'rxjs/operators';
-import { SavePhotoParams } from '../models/save-photo-params';
 
 @Injectable({
     providedIn: 'root',
 })
 class PhotoService extends __BaseService {
 
-    static readonly PhotoControllerSavePhotoPOSTPath = 'gestiondestock/v1/photos/{id}/{title}/{context}';
+    static readonly PhotoControllerSavePhotoPOSTPath = 'gestiondestock/v1/photos';
 
     constructor(
       config: __Configuration,
@@ -25,20 +24,20 @@ class PhotoService extends __BaseService {
     /**
    * @return successful operation
    */
-  SavePhotoResponse(params: SavePhotoParams): __Observable<__StrictHttpResponse<{}>> {
+  SavePhotoResponse(param: PhotoService.SavePhotoParams): __Observable<__StrictHttpResponse<{}>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
     let __formData = new FormData();
     __body = __formData;
 
-    if (params != null) {
-      __formData.append('file', params.file as string | Blob);
+    if (param.file != null) {
+      __formData.append('file', param.file);
     }
 
     let req = new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/photos/${encodeURIComponent(String(params.id))}/${encodeURIComponent(String(params.title))}/${encodeURIComponent(String(params.context))}`,
+      this.rootUrl + `gestiondestock/v1/photos/${encodeURIComponent(String(param.context))}/${encodeURIComponent(String(param.id))}/${encodeURIComponent(String(param.title))}`,
       __body,
       {
         headers: __headers,
@@ -53,10 +52,11 @@ class PhotoService extends __BaseService {
       })
     );
   }
+
   /**
    * @return successful operation
    */
-  SavePhoto(params: SavePhotoParams): __Observable<{}> {
+  SavePhoto(params: PhotoService.SavePhotoParams): __Observable<{}> {
     return this.SavePhotoResponse(params).pipe(
       __map(_r => _r.body as {})
     );
@@ -65,6 +65,17 @@ class PhotoService extends __BaseService {
 }
 
 module PhotoService {
+
+  /**
+   * Parameters for savePhoto
+   */
+  export interface SavePhotoParams {
+    title: string;
+    id: number;
+    file: Blob;
+    context: string;
+  }
+  
 }
 
 export { PhotoService  }

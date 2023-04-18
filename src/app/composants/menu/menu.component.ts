@@ -93,23 +93,49 @@ export class MenuComponent implements OnInit {
     },
     {
       id: '5',
+      titre: 'Ventes',
+      icon: 'fa-solid fa-users-between-lines',
+      url: '',
+      sousMenus: [
+        {
+          id: '51',
+          titre: 'Vente',
+          icon: 'fa-solid fa-users',
+          url: 'fournisseurs'
+        },
+        {
+          id: '52',
+          titre: 'Historique',
+          icon: 'fa-solid fa-truck',
+          url: 'commande-fournisseur'
+        }
+      ]
+    },
+    {
+      id: '6',
       titre: 'Parametrages',
       icon: 'fa-solid fa-screwdriver-wrench',
       url: '',
       sousMenus: [
         {
-          id: '51',
+          id: '61',
           titre: 'Categories',
           icon: 'fa-solid fa-gear',
           url: 'categories'
         },
         {
-          id: '52',
+          id: '62',
           titre: 'Utilisateurs',
           icon: 'fa-solid fa-users-gear',
           url: 'utilisateurs'
         }
       ]
+    },
+    {
+      id: '7',
+      titre: 'Deconnection',
+      icon: 'fa-solid fa-users-between-lines',
+      url: 'logout'
     }
   ]
 

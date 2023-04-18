@@ -13,13 +13,22 @@
         </div>
     </div>
     <div class="col m-3">
-        <app-detail-article *ngFor="let article of listArticle" 
+        <app-detail-article *ngFor="let article of listArticle | paginate : {
+            itemsPerPage: 3,
+            currentPage: page,
+            totalItems: listArticle.length }" 
         (suppressioResult)="handleSuppression($event)"
         [articleDTO]="article"></app-detail-article>
     </div>
     <div class="row m-2">
        <div class="col-md-12 text-center">
-        <app-pagination></app-pagination>
+        <pagination-controls class="small-text"
+            previousLabel="Precedent"
+            nextLabel="Suivant"
+            (autoHide)="true"
+            (responsive)="true"
+            (pageChange)="page = $event">
+        </pagination-controls>
        </div>
     </div>
 </div>

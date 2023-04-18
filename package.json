@@ -8,12 +8,11 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "start:local": "npm run gs-api && ng serve -- --proxyConfig=proxy.conf.json",
-    "gs-api": "npm run gs-api:create-dist && npm rum gs-api:download && npm run gs-api:extract && npm run gs-api:swagger-gen",
-    "gs-api:create-dist":"mkdir -p tools/swagger/dist && mkdir tools/swagger/src",
-    "gs-api:download":"cp /home/luca/eclipse-workspace/gestiondestock/target/gestiondestock-0.0.1-SNAPSHOT.jar ./tools/swagger/dist && cp /home/luca/eclipse-workspace/gestiondestock/target/swagger.json ./tools/swagger/src",
-    "gs-api:extract":"node ./tools/swagger/src/swagger.json 0.0.1-SNAPSHOT",
-    "gs-api:swagger-gen":"./node_modules/.bin/ng-swagger-gen -i ./tools/swagger/src/swagger.json -o src/gs-api/src"
-
+    "gs-api": "npm run gs-api:create-dist && npm run gs-api:download && npm run gs-api:extract && npm run gs-api:swagger-gen",
+    "gs-api:create-dist": "mkdir -p tools/swagger/dist && mkdir tools/swagger/src",
+    "gs-api:download": "cp /home/luca/eclipse-workspace/gestiondestock/target/gestiondestock.war ./tools/swagger/dist && cp /home/luca/eclipse-workspace/gestiondestock/target/swagger.json ./tools/swagger/src",
+    "gs-api:extract": "node ./tools/swagger/src/swagger.json 0.0.1-SNAPSHOT",
+    "gs-api:swagger-gen": "./node_modules/.bin/ng-swagger-gen -i ./tools/swagger/src/swagger.json -o src/gs-api/src"
   },
   "private": true,
   "dependencies": {
@@ -33,8 +32,13 @@
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "angular-font-awesome": "^3.1.2",
     "bootstrap": "^5.2.2",
+    "chart.js": "^4.2.1",
     "font-awesome": "^4.7.0",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.28",
+    "ngx-pagination": "^6.0.3",
     "rxjs": "~7.5.0",
+    "save": "^2.9.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },
@@ -43,6 +47,7 @@
     "@angular/cli": "~14.2.5",
     "@angular/compiler-cli": "^14.2.0",
     "@types/jasmine": "~4.0.0",
+    "@types/jspdf": "^2.0.0",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",

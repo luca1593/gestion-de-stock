@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ArticleDto } from 'src/gs-api/src/models';
+import { ArticleDto, LigneCommandeClientDto, LigneCommandeFournisseurDto, LigneVenteDto } from 'src/gs-api/src/models';
 import { ArticlesService as ApiArticleService } from "src/gs-api/src/services/articles.service";
 import { UserService } from '../user/user.service';
 
@@ -33,6 +33,18 @@ export class ArtcleService {
 
   delete(idArticle: number): Observable<any> {
     return this.articleService.ArticleApiDELETE(idArticle);
+  }
+
+  findHistoriqueVente(idArticle: number): Observable<Array<LigneVenteDto>>{
+    return this.articleService.ArticleApiFindHistoriqueVenteGET(idArticle);
+  }
+
+  findHistoriqueCommandeClient(idArticle: number): Observable<Array<LigneCommandeClientDto>>{
+    return this.articleService.ArticleApiFindHistoriqueCommandeClientGET(idArticle);
+  }
+
+  findHistoriqueCommandeFournisseur(idArticle: number): Observable<Array<LigneCommandeFournisseurDto>>{
+    return this.articleService.ArticleApiFindHistoriqueCommandeFournisseurGET(idArticle);
   }
 
 }

@@ -33,9 +33,13 @@ export class DetailArticleComponent implements OnInit {
       this.articleService.delete(this.articleDTO.id).subscribe( resp => {
         this.suppressioResult.emit("success");
       }, error => {
-        this.suppressioResult.emit(error.error.error);
+        this.suppressioResult.emit(error.error.message);
       });
     }
+  }
+
+  detailArticle() {
+    this.router.navigate(["detail-article", this.articleDTO.id]);
   }
 
 }
