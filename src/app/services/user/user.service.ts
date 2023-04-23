@@ -24,7 +24,7 @@ export class UserService {
 
   logout(){
     localStorage.clear();
-    this.router.navigate(['login']);
+    window.location.reload();
   }
 
   setAccessToken(authenticationResponse: AuthenticationResponse): void{

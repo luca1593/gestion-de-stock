@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Menu } from './menu';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-menu',
@@ -101,13 +102,13 @@ export class MenuComponent implements OnInit {
           id: '51',
           titre: 'Vente',
           icon: 'fa-solid fa-users',
-          url: 'fournisseurs'
+          url: 'vente'
         },
         {
           id: '52',
           titre: 'Historique',
           icon: 'fa-solid fa-truck',
-          url: 'commande-fournisseur'
+          url: 'liste-vente'
         }
       ]
     },
@@ -134,14 +135,17 @@ export class MenuComponent implements OnInit {
     {
       id: '7',
       titre: 'Deconnection',
-      icon: 'fa-solid fa-users-between-lines',
+      icon: 'fa-solid fa-right-from-bracket fa-rotate-180',
       url: 'logout'
     }
   ]
 
   private lastSelectedMenu : Menu | undefined;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private userService: UserService
+    ) { }
 
   ngOnInit(): void {
   }
@@ -153,6 +157,10 @@ export class MenuComponent implements OnInit {
     menu.active = true;
     this.router.navigate([menu.url]);
     this.lastSelectedMenu = menu;
+  }
+
+  logoutApp(){
+    this.userService.logout();
   }
 
 }

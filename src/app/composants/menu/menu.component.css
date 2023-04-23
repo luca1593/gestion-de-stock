@@ -5,3 +5,14 @@ a{
 a:hover{
     text-decoration: underline !important;
 }
+
+.singleMenu{
+    border: none !important;
+    background-color: #fff !important;
+    width: 100% !important;
+}
+
+.singleMenu:hover {
+    background-color: #0D6EFD !important;
+    color: white !important;
+}

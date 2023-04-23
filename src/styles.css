@@ -74,6 +74,10 @@ div {
     font-size: small !important;
 }
 
+.medium-text{
+    font-size: medium !important;
+}
+
 .center-y {
     margin: auto !important;
     padding-top: 3px !important;

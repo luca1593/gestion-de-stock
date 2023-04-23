@@ -29,7 +29,7 @@ export class PageLoginComponent implements OnInit {
         this.getUserByEmail();
         this.router.navigate(['']);
       }, error =>{  
-        this.errorMessage = error.error.message;
+        this.errorMessage = error.error.errors;
       }
     );
   }
