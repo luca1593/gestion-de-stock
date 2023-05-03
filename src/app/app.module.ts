@@ -45,6 +45,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { DetailArticlesMvtstkComponent } from './composants/detail-articles-mvtstk/detail-articles-mvtstk.component';
 import { DeatailClientFournisseurComponent } from './composants/deatail-client-fournisseur/deatail-client-fournisseur.component';
 import { ModifProfilComponent } from './pages/profil/modif-profil/modif-profil.component';
+import { PaveVenteComponent } from './pages/pave-vente/pave-vente.component';
+import { DashbordComponent } from './composants/dashbord/dashbord.component';
 
 registerLocaleData(localeFr, 'fr');
 
@@ -55,6 +57,11 @@ const routes: Routes = [
     path: '', component: PageDashbordComponent,
     canActivate: [ApplicationGuardService],
     children: [
+      { 
+        path: 'dashbord',
+        component: DashbordComponent,
+        canActivate: [ApplicationGuardService]
+      },
       { 
         path: 'statistiques',
         component: PageStatistiquesComponent,
@@ -167,6 +174,13 @@ const routes: Routes = [
           origin: "fournisseur"
         }
       },
+      {
+        path: 'vente', component: PaveVenteComponent,
+        canActivate: [ApplicationGuardService],
+        data: {
+          origin: "vente"
+        }
+      },
       { 
         path: 'categories', component: PageCategorieComponent,
         canActivate: [ApplicationGuardService]
@@ -233,7 +247,9 @@ const routes: Routes = [
     ChangerMotDePasseComponent,
     LaoderComponent,
     DeatailClientFournisseurComponent,
-    ModifProfilComponent
+    ModifProfilComponent,
+    PaveVenteComponent,
+    DashbordComponent
   ],
   imports: [
     BrowserModule,
