@@ -47,6 +47,7 @@ import { DeatailClientFournisseurComponent } from './composants/deatail-client-f
 import { ModifProfilComponent } from './pages/profil/modif-profil/modif-profil.component';
 import { PaveVenteComponent } from './pages/pave-vente/pave-vente.component';
 import { DashbordComponent } from './composants/dashbord/dashbord.component';
+import { CalculatorComponent } from './composants/calculator/calculator.component';
 
 registerLocaleData(localeFr, 'fr');
 
@@ -249,7 +250,8 @@ const routes: Routes = [
     DeatailClientFournisseurComponent,
     ModifProfilComponent,
     PaveVenteComponent,
-    DashbordComponent
+    DashbordComponent,
+    CalculatorComponent
   ],
   imports: [
     BrowserModule,

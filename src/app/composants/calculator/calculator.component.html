@@ -1,0 +1,18 @@
+<div class="card text-bg-secondary">
+    <div class="card-header">
+        <div class="p-3">
+            <input type="text" id="input_calc" class="form-control">
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-3 p-2" *ngFor="let item of boutonCalcs">
+                    <div class="btn btn-secondary pave_calc" id="{{item.id}}">
+                        {{item.txt}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
