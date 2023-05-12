@@ -21,15 +21,20 @@ export class PageLoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Not implemented
   }
 
   login(){
     this.userServices.login(this.authenticationRequest).subscribe(data=>{
         this.userServices.setAccessToken(data);
         this.getUserByEmail();
-        this.router.navigate(['']);
-      }, error =>{  
-        this.errorMessage = error.error.errors;
+        this.router.navigate(['dashbord']);
+      }, error =>{
+        if(error.error.errorsCode === "UTILISATEUR_NOT_FOUND"){
+          this.errorMessage = error.error.message;
+        }else{
+          this.errorMessage = error.error.errors;
+        }
       }
     );
   }

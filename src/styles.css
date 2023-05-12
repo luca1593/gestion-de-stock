@@ -16,7 +16,7 @@ body {
 }
 
 .min-height-600 {
-    min-height: 560px !important;
+    min-height: 600px !important;
 }
 
 .no-flex-wrap {
@@ -32,7 +32,7 @@ body {
 }
 
 .min-height-440 {
-    min-height: 440px !important;
+    min-height: 500px !important;
 }
 
 .max-height-440 {
