@@ -149,7 +149,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     }
     this.listArticles = this.listArticles.filter(
       art => art?.codeArticle?.startsWith(this.codeArticle)
-      || art?.designation?.toLowerCase().startsWith(this.codeArticle.toLowerCase())
+      || art?.designation?.startsWith(this.codeArticle)
     );
     this.articleNotYetSelected = true;
   }
