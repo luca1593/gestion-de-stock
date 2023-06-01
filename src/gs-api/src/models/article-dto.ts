@@ -10,6 +10,7 @@ export interface ArticleDto {
   prixTtc?: number;
   prixUnitaireht?: number;
   tauxTva?: number;
+  stock?: number;
   entreprise?: EntrepriseDto;
   creationDate?: number;
   lastModifiedDate?: number;
