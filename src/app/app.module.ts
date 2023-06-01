@@ -45,6 +45,9 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { DetailArticlesMvtstkComponent } from './composants/detail-articles-mvtstk/detail-articles-mvtstk.component';
 import { DeatailClientFournisseurComponent } from './composants/deatail-client-fournisseur/deatail-client-fournisseur.component';
 import { ModifProfilComponent } from './pages/profil/modif-profil/modif-profil.component';
+import { PaveVenteComponent } from './pages/pave-vente/pave-vente.component';
+import { DashbordComponent } from './composants/dashbord/dashbord.component';
+import { CalculatorComponent } from './composants/calculator/calculator.component';
 
 registerLocaleData(localeFr, 'fr');
 
@@ -55,42 +58,47 @@ const routes: Routes = [
     path: '', component: PageDashbordComponent,
     canActivate: [ApplicationGuardService],
     children: [
-      { 
+      {
+        path: 'dashbord',
+        component: DashbordComponent,
+        canActivate: [ApplicationGuardService]
+      },
+      {
         path: 'statistiques',
         component: PageStatistiquesComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'articles', component: PageArticleComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'nouvel-article', component: NouvelArticleComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'nouvel-article/:idArticle', component: NouvelArticleComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'detail-article/:id', component: DetailArticlesMvtstkComponent,
         canActivate: [ApplicationGuardService],
         data: {
           origin: "article"
         }
       },
-      { 
+      {
         path: 'mvtstk', component: PageMvtstkComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'detail-mvtstk/:id', component: DetailArticlesMvtstkComponent,
         canActivate: [ApplicationGuardService],
         data: {
           origin: "mvtstk"
         }
       },
-      { 
+      {
         path: 'clients', component: PageClientComponent,
         canActivate: [ApplicationGuardService]
       },
@@ -129,7 +137,14 @@ const routes: Routes = [
           origin: "client"
         }
       },
-      { 
+      {
+        path: 'nouvel-commande-client/:id', component: NouvelCmdCltFrsComponent,
+        canActivate: [ApplicationGuardService],
+        data: {
+          origin: "client"
+        }
+      },
+      {
         path: 'fournisseurs', component: PageFournisseurComponent,
         canActivate: [ApplicationGuardService]
       },
@@ -167,31 +182,45 @@ const routes: Routes = [
           origin: "fournisseur"
         }
       },
-      { 
+      {
+        path: 'nouvel-commande-fournisseur/:id', component: NouvelCmdCltFrsComponent,
+        canActivate: [ApplicationGuardService],
+        data: {
+          origin: "fournisseur"
+        }
+      },
+      {
+        path: 'vente', component: PaveVenteComponent,
+        canActivate: [ApplicationGuardService],
+        data: {
+          origin: "vente"
+        }
+      },
+      {
         path: 'categories', component: PageCategorieComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'nouvel-categorie', component: NouveauCategorieComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'nouvel-categorie/:idCategory', component: NouveauCategorieComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'utilisateurs', component: PageUtilisateurComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'nouvel-utilisateur', component: NouvelUtilisateurComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'profil', component: PageProfilComponent,
         canActivate: [ApplicationGuardService]
       },
-      { 
+      {
         path: 'changer-mot-de-passe', component: ChangerMotDePasseComponent,
         canActivate: [ApplicationGuardService]
       }
@@ -233,7 +262,10 @@ const routes: Routes = [
     ChangerMotDePasseComponent,
     LaoderComponent,
     DeatailClientFournisseurComponent,
-    ModifProfilComponent
+    ModifProfilComponent,
+    PaveVenteComponent,
+    DashbordComponent,
+    CalculatorComponent
   ],
   imports: [
     BrowserModule,

@@ -5,8 +5,7 @@
     </div>
     <div class="card-body">
       <div class="alert alert-danger small-text" *ngIf="errorMessage">
-        {{errorMessage}}&nbsp;avec
-        {{authenticationRequest.login}}
+        {{errorMessage}}
       </div>
       <div class="form-floating mb-3">
         <input type="email" class="form-control" id="mail" placeholder="name@example.com" [(ngModel)] = "authenticationRequest.login">

@@ -72,7 +72,7 @@ export class NouveauCltFrsComponent implements OnInit {
       });
     }
   }
-  
+
   cancelClick(): void {
     this.router.navigate([ this.origin + "s"]);
   }

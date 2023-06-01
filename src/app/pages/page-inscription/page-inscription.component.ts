@@ -22,6 +22,7 @@ export class PageInscriptionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Not implemented
   }
 
   inscrire(): void {

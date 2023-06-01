@@ -13,7 +13,7 @@ import { AdresseDto, ArticleDto, ClientDto, CommandeClientDto, CommandeFournisse
 export class NouvelCmdCltFrsComponent implements OnInit {
 
   origin = '';
-  selectedClientFournisseur: ClientDto = {};
+  selectedClientFournisseur: any = {};
   selectedAdressCltFrs: AdresseDto = {};
   listClientFouenisseur: Array<any> = [];
   searchedArticle: ArticleDto = {};
@@ -41,6 +41,18 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.activatedRoute.data.subscribe(data => {
       this.origin = data['origin'];
     });
+    const idCltFrs = this.activatedRoute.snapshot.params['id'];
+    if (idCltFrs) {
+      if (this.origin === "client") {
+        this.cltFrsService.findClientById(idCltFrs).subscribe(clt => {
+          this.selectedClientFournisseur = clt;
+        });
+      } else if (this.origin === "fournisseur") {
+        this.cltFrsService.findFournisseurById(idCltFrs).subscribe(frs => {
+          this.selectedClientFournisseur = frs;
+        });
+      }
+    }
     this.findAllCltFrs();
     this.findAllArticle();
     this.initCodeCmd();
@@ -96,7 +108,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
       }
     }
   }
-  
+
   cancelClick():void {
     if(this.origin === "client"){
       this.router.navigate(["commande-client"]);
@@ -136,7 +148,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
       this.findAllArticle();
     }
     this.listArticles = this.listArticles.filter(
-      art => art?.codeArticle?.startsWith(this.codeArticle) 
+      art => art?.codeArticle?.startsWith(this.codeArticle)
       || art?.designation?.startsWith(this.codeArticle)
     );
     this.articleNotYetSelected = true;

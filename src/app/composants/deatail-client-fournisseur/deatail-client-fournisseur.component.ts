@@ -126,7 +126,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
   }
 
   nouveauxCommande(): void {
-    this.router.navigate([this.origin + "s"]);
+    this.router.navigate(["nouvel-commande-" + this.origin, this.clientFrournisseurDTO.id]);
   }
 
   exportCommande(): void {

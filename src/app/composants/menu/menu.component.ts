@@ -22,7 +22,7 @@ export class MenuComponent implements OnInit {
           id: '11',
           titre: 'Vue d\'ensemble',
           icon: 'fa-solid fa-chart-pie',
-          url: ''
+          url: 'dashbord'
         },
         {
           id: '12',
