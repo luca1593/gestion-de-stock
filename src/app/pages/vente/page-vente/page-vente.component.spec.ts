@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PaveVenteComponent } from './pave-vente.component';
+import { PageVenteComponent } from './page-vente.component';
 
-describe('PaveVenteComponent', () => {
-  let component: PaveVenteComponent;
-  let fixture: ComponentFixture<PaveVenteComponent>;
+describe('PageVenteComponent', () => {
+  let component: PageVenteComponent;
+  let fixture: ComponentFixture<PageVenteComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PaveVenteComponent ]
+      declarations: [ PageVenteComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PaveVenteComponent);
+    fixture = TestBed.createComponent(PageVenteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

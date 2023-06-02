@@ -2,19 +2,14 @@ import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
-import {
-  AdresseDto,
-  ArticleDto,
-  LigneVenteDto,
-  VenteDto,
-} from 'src/gs-api/src/models';
+import { ArticleDto, LigneVenteDto, VenteDto,} from 'src/gs-api/src/models';
 
 @Component({
   selector: 'app-pave-vente',
-  templateUrl: './pave-vente.component.html',
-  styleUrls: ['./pave-vente.component.css'],
+  templateUrl: './page-vente.component.html',
+  styleUrls: ['./page-vente.component.css'],
 })
-export class PaveVenteComponent implements OnInit {
+export class PageVenteComponent implements OnInit {
   origin = '';
   searchedArticle: ArticleDto = {};
   articleErrorMsg = '';
@@ -47,28 +42,9 @@ export class PaveVenteComponent implements OnInit {
 
   initCodeVente() {
     const date: Date = new Date();
-    const jour: string =
-      date.getFullYear() +
-      '' +
-      (date.getMonth() + 1 < 10
-        ? '0' + (date.getMonth() + 1)
-        : date.getMonth() + 1) +
-      '' +
-      (date.getDate() < 10 ? '0' + date.getDate() : date.getDate());
-    const heure: string =
-      (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) +
-      '' +
-      (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) +
-      '' +
-      (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
-    this.dateVente =
-      (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) +
-      '/' +
-      (date.getMonth() + 1 < 10
-        ? '0' + (date.getMonth() + 1)
-        : date.getMonth() + 1) +
-      '/' +
-      date.getFullYear();
+    const jour: string = date.getFullYear() + '' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '' + (date.getDate() < 10 ? '0' + date.getDate() : date.getDate());
+    const heure: string = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + '' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + '' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+    this.dateVente = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '/' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '/' + date.getFullYear();
     this.codeVente = 'VNT' + jour + heure;
     this.venteDto.code = this.codeVente;
     this.venteDto.dateVente = date.getTime();
@@ -103,9 +79,7 @@ export class PaveVenteComponent implements OnInit {
     this.listArticles = this.listArticles.filter(
       (art) =>
         art?.codeArticle?.startsWith(this.codeArticle) ||
-        art?.designation
-          ?.toLowerCase()
-          .startsWith(this.codeArticle.toLowerCase())
+        art?.designation ?.toLowerCase().startsWith(this.codeArticle.toLowerCase())
     );
     this.articleNotYetSelected = true;
   }
