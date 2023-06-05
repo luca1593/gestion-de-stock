@@ -1,1 +1,120 @@
-<p>hisistorique-vente works!</p>
+<div class="col p-2 mb-3">
+  <div class="row mx-3 my-0 py-1">
+    <div class="col-md-7 p-0">
+      <h3>List des fournisseurs</h3>
+    </div>
+    <div class="col-md-5 text-end">
+      <app-bouton-action (clickEvent)="nouvelleVente()"></app-bouton-action>
+    </div>
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      <span>{{ errorMessage }}</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <table class="table table-bordered border-dark table-sm table-hover align-middle">
+      <thead class="text-bg-secondary">
+        <tr class="fs-6 fw-bold">
+          <th class="px-2">Code</th>
+          <th class="text-center">Date</th>
+          <th class="text-center">Nombre Article</th>
+          <th class="text-center">Commentaire</th>
+          <th class="text-center">Net A Payer</th>
+          <th>...</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        <tr class="fs-6" *ngFor="let vente of listVentes">
+          <td class="px-2">{{ vente.code }}</td>
+          <td class="text-center">{{ vente.dateVente | date : "dd/MM/YYYY" }}</td>
+          <td class="text-center">{{ mapNmbrArticle.get(vente.id) }}</td>
+          <td>{{ vente.commentaire }}</td>
+          <td class="text-center">{{ mapTotalTtc.get(vente.id) }}</td>
+          <td>
+            <button class="btn btn-link" data-bs-toggle="modal" (click)="setVenteSelectione(vente.id!)"
+              [attr.data-bs-target]="'#modalDetail'" >
+              <i class="fas fa-list-alt"></i>&nbsp;Details
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer text-end">
+    <pagination-controls class="small-text" previousLabel="Precedent" nextLabel="Suivant" (autoHide)="(true)"
+      (responsive)="(true)" (pageChange)="pageCmd = $event" >
+    </pagination-controls>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade max-height-400" id="modalDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content modal-70">
+            <div class="modal-header mb-0 py-0">
+                <h1 class="modal-title text-primary fs-3" id="staticBackdropLabel">Detail commande vente</h1>
+                <button type="button" class="btn-close text-bg-danger" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="row px-3 m-0">
+                <table class="table-sm small-text">
+                    <tbody>
+                        <tr>
+                            <th>Code : </th>
+                            <td>{{ vente.code }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date du commande : </th>
+                            <td>{{ vente.dateVente| date: "dd/MM/YYYY" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <hr>
+            <div class="modal-body max-height-440 shadow">
+                <table class="table table-bordered border-dark table-sm table-hover align-middle">
+                    <thead class="text-bg-primary">
+                        <tr class="fs-6 fw-bold">
+                            <th>Code article</th>
+                            <th class="text-center">Designation</th>
+                            <th class="text-center">Catégorie</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-center">Prix unitaire HT</th>
+                            <th class="text-center">Prix unitaire TTC</th>
+                            <th class="text-center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr *ngFor="let ligne of mapListLigneVente.get(idVenteSelectione)">
+                            <td class="text-center">{{ligne.article?.codeArticle}}</td>
+                            <td class="text-center">{{ligne.article?.designation}}</td>
+                            <td class="text-center">{{ligne.article?.category?.designation}}</td>
+                            <td class="text-center">{{ligne.quantite}}</td>
+                            <td class="text-center">{{ligne.article?.prixUnitaireht}}</td>
+                            <td class="text-center">{{ligne.article?.prixTtc}}</td>
+                            <td class="text-center">
+                              {{
+                                ligne.article?.prixTtc && ligne.quantite ? mapTotalArticle.get(ligne.article?.id!) : 0
+                                }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="fs-6 fw-bold">
+                            <td colspan="7">
+                                <div class="row px-3">
+                                    <div class="col-6 text-start">
+                                        Nombre article :&nbsp;{{ mapNmbrArticle.get(idVenteSelectione) }}
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        Net a payer :&nbsp;{{ mapTotalTtc.get(idVenteSelectione) }}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

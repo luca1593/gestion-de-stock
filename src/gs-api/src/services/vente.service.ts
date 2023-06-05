@@ -1,3 +1,4 @@
+import { LigneVenteDto } from './../models/ligne-vente-dto';
 /* tslint:disable */
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
@@ -262,6 +263,45 @@ class VenteService extends __BaseService {
   VenteApiFindByIdGET(idVente?: string): __Observable<VenteDto> {
     return this.VenteApiFindByIdGETResponse(idVente).pipe(
       __map(_r => _r.body as VenteDto)
+    );
+  }
+
+  /**
+   * Recherche de la liste des lignes de vente
+   *
+   * Cette methode permet de rechercher la liste des lignes de vente par son id
+   * @return Liste des lignes de vente ete trouver avec success  Array<LigneVenteDto>
+   */
+  findAllLigneVenteByVenteResponse(idVente?: number): __Observable<__StrictHttpResponse<Array<LigneVenteDto>>> {
+    let __params = this.newParams();
+    let __headers = new HttpHeaders();
+    let __body: any = null;
+    let req = new HttpRequest<any>(
+      'GET',
+      this.rootUrl + `gestiondestock/v1/vente/list/ligne-vente/${encodeURIComponent(String(idVente))}`,
+      __body,
+      {
+        headers: __headers,
+        params: __params,
+        responseType: 'json'
+      });
+
+    return this.http.request<any>(req).pipe(
+      __filter(_r => _r instanceof HttpResponse),
+      __map((_r) => {
+        return _r as __StrictHttpResponse<Array<LigneVenteDto>>;
+      })
+    );
+  }
+  /**
+   * Recherche de la liste des lignes de vente
+   *
+   * Cette methode permet de rechercher la liste des lignes de vente par son id
+   * @return Liste des lignes de vente a ete trouver avec success
+   */
+  findAllLigneVenteByVente(idVente?: number): __Observable<Array<LigneVenteDto>> {
+    return this.findAllLigneVenteByVenteResponse(idVente).pipe(
+      __map(_r => _r.body as Array<LigneVenteDto>)
     );
   }
 
