@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
   providedIn: 'root'
 })
 export class CategoryService {
-  
+
   constructor(
     private userServise: UserService,
     private categoryService: ApiCategoryService

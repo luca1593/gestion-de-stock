@@ -1,21 +1,21 @@
 <div class="accordion accordion-flush" id="accordionMenus">
     <div class="accordion-item" *ngFor="let menu of menuProperties">
-      <h3 [attr.class]="menu.sousMenus?.length ? 'accordion-header' : ''" id="menu{{menu.id}}">
-        <button 
-        [attr.class]="menu.sousMenus?.length ? 'accordion-button collapsed' : 'singleMenu collapsed medium-text mx-8'" 
-        type="button" 
+      <h3 [attr.class]="menu.sousMenus?.length ? 'accordion-header small-text' : ''" id="menu{{menu.id}}">
+        <button
+        [attr.class]="menu.sousMenus?.length ? 'accordion-button collapsed small-text text-start' : 'singleMenu collapsed small-text text-start mx-8'"
+        type="button"
         (click)="menu.url === 'logout' ? logoutApp() : ''"
-        data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + menu.id" 
+        data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + menu.id"
         aria-expanded="true" [attr.aria-controls]="'menu' + menu.id">
             <i class="{{menu.icon}}"></i>&nbsp;
             {{menu.titre}}
         </button>
       </h3>
-      <div id="collapse{{menu.id}}" *ngIf="menu.sousMenus" class="accordion-collapse collapse" 
+      <div id="collapse{{menu.id}}" *ngIf="menu.sousMenus" class="accordion-collapse collapse"
       [attr.aria-labelledby]="'menu'+menu.id" data-bs-parent="#accordionMenus">
         <div class="card">
             <ul class="list-group list-group-flush">
-                <li class="list-group-item px-4" *ngFor="let sousMenu of menu.sousMenus" 
+                <li class="list-group-item px-3" *ngFor="let sousMenu of menu.sousMenus"
                   [ngClass]="{'text-danger bg-primary color-white' : sousMenu.active, '': !sousMenu.active}">
                     <a href="javascript:void(0)" (click)="navigate(sousMenu)"
                     [ngClass]="{'color-white' : sousMenu.active, '': !sousMenu.active}"

@@ -7,7 +7,7 @@ export interface CommandeFournisseurDto {
   fournisseur?: FournisseurDto;
   code?: string;
   commandeLivree?: boolean;
-  etatcommande?: 'EN_PREPARATIOM' | 'VALIDEE' | 'LIVREE';
+  etatcommande?: 'EN_PREPARATION' | 'VALIDEE' | 'LIVREE';
   dateCommande?: number;
   ligneCommandeFournisseurs?: Array<LigneCommandeFournisseurDto>;
   identreprise?: number;

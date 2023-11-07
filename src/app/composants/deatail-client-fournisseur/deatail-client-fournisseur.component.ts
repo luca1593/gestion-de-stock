@@ -148,7 +148,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
           categorie: pdf.article?.category.designation,
           puTttc: pdf.article?.prixTtc,
           quantite: pdf.quantite,
-          total: pdf.article?.prixTtc && pdf.quantite ? pdf.article?.prixTtc * pdf.quantite : 0
+          total: pdf.article?.prixTtc && pdf.quantite ? this.parseData(pdf.article?.prixTtc * pdf.quantite) : 0
         };
         this.listDataToPdf.push(detailpdf);
       })
@@ -159,7 +159,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
     this.detailPdf();
     let values: any;
     const thead: Array<string> = [
-      "Code commane", "Date commande", "Code Article", "Designation",
+      "Code commande", "Date commande", "Code Article", "Designation",
       "Catégorie", "PU TTC", "Quantié", "Total"
     ];
     const doc = new jsPDF();
@@ -194,7 +194,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
       body: [
         [
           {
-            content: "Client : " + this.clientFrournisseurDTO.nom
+            content: this.origin.charAt(0).toUpperCase() + this.origin.slice(1) + " : " + this.clientFrournisseurDTO.nom
               + " " + this.clientFrournisseurDTO.prenom
               + "\nTel : " + this.clientFrournisseurDTO.numTel
               + "\nE-mail : " + this.clientFrournisseurDTO.email
@@ -223,6 +223,10 @@ export class DeatailClientFournisseurComponent implements OnInit {
 
     });
     return doc.save("Details commande " + this.origin + " " + formatDate(new Date(), "dd-MM-yyyy", this.locale) + "." + extention);
+  }
+
+  parseData(chiffre : number): number {
+    return parseFloat(chiffre.toFixed(2));
   }
 
 }

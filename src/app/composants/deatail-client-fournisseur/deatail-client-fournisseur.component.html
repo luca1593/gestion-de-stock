@@ -10,18 +10,18 @@
         <div class="row mx-1 small-text my-1 custom-border">
             <div class="col-6 border-right p-2">
                 <div class="row">
-                    <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                    <div class="col-md-10"><strong>Tel :</strong>&nbsp;{{clientFrournisseurDTO.numTel}}</div>
+                    <div class="col-md-1"><i class="fa-solid fa-phone blue-color"></i></div>
+                    <div class="col-md-11"><strong>Tel :</strong>&nbsp;{{clientFrournisseurDTO.numTel}}</div>
                 </div>
                 <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
+                    <div class="col-md-1"><i class="fa-solid fa-envelope blue-color"></i></div>
+                    <div class="col-md-11">
                         <strong>E-mail :</strong>&nbsp;{{clientFrournisseurDTO.email}}
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
+                    <div class="col-md-1"><i class="fas fa-home blue-color"></i></div>
+                    <div class="col-md-11">
                         <strong>Adresse :</strong>&nbsp;
                         {{clientFrournisseurDTO.adresse?.adresse1}}
                     </div>
@@ -29,22 +29,22 @@
             </div>
             <div class="col-6 border-right py-2">
                 <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
-                        <strong>Ville et pays :</strong>&nbsp;&nbsp;
+                    <div class="col-md-1"><i class="fas fa-map-marker-alt blue-color"></i></div>
+                    <div class="col-md-11">
+                        <strong>Ville :</strong>&nbsp;&nbsp;
                         {{clientFrournisseurDTO.adresse?.ville}}
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
+                    <div class="col-md-1"><i class="fas fa-map-marker-alt blue-color"></i></div>
+                    <div class="col-md-11">
                         <strong>Code postal :</strong>&nbsp;
                         {{clientFrournisseurDTO.adresse?.codePostal}}
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
+                    <div class="col-md-1"><i class="fa-solid fa-house-flag blue-color"></i></div>
+                    <div class="col-md-11">
                         <strong>Pays :</strong>&nbsp;{{clientFrournisseurDTO.adresse?.pays}}
                     </div>
                 </div>
@@ -172,9 +172,7 @@
                             <td class="text-center">{{ligne.article?.prixUnitaireht}}</td>
                             <td class="text-center">{{ligne.article?.prixTtc}}</td>
                             <td class="text-center">
-                                {{
-                                ligne.article?.prixTtc && ligne.quantite ? ligne.article?.prixTtc * ligne.quantite : 0
-                                }}
+                                {{ligne.article?.prixTtc && ligne.quantite ? parseData(ligne.article?.prixTtc * ligne.quantite) : 0}}
                             </td>
                         </tr>
                     </tbody>
