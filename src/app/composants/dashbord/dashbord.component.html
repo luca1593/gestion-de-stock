@@ -1,8 +1,8 @@
 <div class="col mb-3 mt-1">
   <div class="row mx-3 mt-2 mb-3 py-1">
-   <div class="col-6">
+   <div class="col-12">
     <div class="row">
-      <div class="col-6">
+      <div class="col-3">
         <div class="card text-white bg-primary mb-3">
           <div class="row card-header">
             <div class="col-9"><h6 class=>Article</h6></div>
@@ -11,7 +11,7 @@
           <div class="card-body">{{totalArticle}}</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-3">
         <div class="card text-white bg-success mb-3">
           <div class="row card-header">
             <div class="col-9"><h6 class=>Utilisateur</h6></div>
@@ -20,7 +20,7 @@
           <div class="card-body">{{totalUtilisateur}}</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-3">
         <div class="card text-white bg-info mb-3">
           <div class="row card-header">
             <div class="col-9"><h6 class=>Client</h6></div>
@@ -29,7 +29,7 @@
           <div class="card-body">{{totalClient}}</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-3">
         <div class="card text-white bg-danger mb-3">
           <div class="row card-header">
             <div class="col-9"><h6 class=>Fournisseur</h6></div>
@@ -39,32 +39,6 @@
         </div>
       </div>
     </div>
-   </div>
-   <div class="col-6">
-    <h6>Articles recentes</h6>
-    <div class="card mb-3" style="max-width: 540px;" *ngFor="let article of listReceteArticle">
-      <div class="row g-0">
-        <div class="col-md-4">
-          <img src="..." class="img-fluid rounded-start" alt="...">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title">{{article.codeArticle}}&nbsp;-&nbsp;{{article.designation}}</h5>
-            <span class="card-text"><small>{{article.prixTtc}}&nbsp;Ar</small></span>
-          </div>
-          <div class="card-footer">
-            <span class="card-text"><small class="text-body-secondary">{{article.creationDate}}</small></span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <hr/>
-    <h6>Utilisateurs recentes</h6>
-    <hr/>
-    <h6>Clients recentes</h6>
-    <hr/>
-    <h6>Fournisseurs recentes</h6>
-    <hr/>
    </div>
   </div>
   <div class="row mx-3 mt-2 my-0 py-1">

@@ -8,6 +8,7 @@ export interface ArticleDto {
   id?: number;
   photo?: string;
   prixTtc?: number;
+  prixFrs?:number;
   prixUnitaireht?: number;
   tauxTva?: number;
   stock?: number;
