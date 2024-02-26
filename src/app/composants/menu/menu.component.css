@@ -1,12 +1,19 @@
-a{
+a {
     font-size: small !important;
     text-decoration: none !important;
 }
-a:hover{
-    text-decoration: underline !important;
+
+a:hover {
+    text-decoration: none !important;
+    color: #fff !important;
 }
 
-.singleMenu{
+li:has(a):hover {
+    background-color: #0D6EFD !important;
+    color: #fff !important;
+}
+
+.singleMenu {
     border: none !important;
     background-color: #fff !important;
     width: 100% !important;

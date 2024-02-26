@@ -1,7 +1,8 @@
 <div class="col p-3 mb-3">
     <div class="col-md-12 mb-3">
         <button (click)="fileInput.click()" style="background: transparent !important; border: none !important;">
-            <img [src]='articleDto.photo ? articleDto.photo : imgUrl' alt="articleDto.designation" class="rounded-circle" width="150px" height="150px">
+            <img [src]='articleDto.photo ? articleDto.photo : imgUrl' alt="articleDto.designation"
+                class="rounded-circle" width="150px" height="150px">
             <input hidden type="file" #fileInput (change)="onFileInput(fileInput.files)">
         </button>
     </div>
@@ -18,31 +19,28 @@
             </div>
             <form class="row">
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="codearticle" class="form-control" 
-                    [(ngModel)]="articleDto.codeArticle"
-                    id="codearticle" placeholder="Code article">
+                    <input type="text" name="codearticle" class="form-control" [(ngModel)]="articleDto.codeArticle"
+                        id="codearticle" placeholder="Code article">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="designation" class="form-control" 
-                    [(ngModel)]="articleDto.designation"
-                    id="designation" placeholder="Designation">
+                    <input type="text" name="designation" class="form-control" [(ngModel)]="articleDto.designation"
+                        id="designation" placeholder="Designation">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text"  name="prixht"class="form-control" 
-                    [(ngModel)]="articleDto.prixUnitaireht"
-                    (input)="calculerPrixTTC()"
-                    id="prixht" placeholder="Prix unitaire HT">
+                    <input type="text" name="prixfrht" class="form-control" [(ngModel)]="articleDto.prixFrs"
+                        (input)="calculerPrixTTC()" id="prixfrht" placeholder="Prix unitaire fournisseur HT">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="tva" class="form-control" 
-                    (input)="calculerPrixTTC()"
-                    [(ngModel)]="articleDto.tauxTva"
-                    id="tva" placeholder="Taux TVA">
+                    <input type="text" name="prixht" class="form-control" [(ngModel)]="articleDto.prixUnitaireht"
+                        (input)="calculerPrixTTC()" id="prixht" placeholder="Prix unitaire HT">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="prixttc" class="form-control" 
-                    [(ngModel)]="articleDto.prixTtc"
-                    id="prixttc" placeholder="Prix unitaire TTC">
+                    <input type="text" name="tva" class="form-control" (input)="calculerPrixTTC()"
+                        [(ngModel)]="articleDto.tauxTva" id="tva" placeholder="Taux TVA">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" name="prixttc" class="form-control" [(ngModel)]="articleDto.prixTtc" id="prixttc"
+                        placeholder="Prix unitaire TTC">
                 </div>
                 <div class="col-md-6 mb-2">
                     <select class="form-control" name="categorie" id="categorie" [(ngModel)]="categoryDto.id">

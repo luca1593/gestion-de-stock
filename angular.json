@@ -50,7 +50,7 @@
               "jspdf-autotable",
               "rgbcolor",
               "raf"
-           ]
+            ]
           },
           "configurations": {
             "production": {
@@ -118,6 +118,15 @@
               "src/styles.css"
             ],
             "scripts": []
+          }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "name": "Adam Luca",
+            "email": "luca.adam23@gmail.com",
+            "branch": "master",
+            "repo": "https://github.com/luca1593/gestion-de-stock.git"
           }
         }
       }

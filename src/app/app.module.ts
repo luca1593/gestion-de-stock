@@ -65,7 +65,7 @@ const routes: Routes = [
         canActivate: [ApplicationGuardService]
       },
       {
-        path: 'statistiques',
+        path: 'graph',
         component: PageStatistiquesComponent,
         canActivate: [ApplicationGuardService]
       },
