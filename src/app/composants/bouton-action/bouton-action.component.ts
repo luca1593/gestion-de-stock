@@ -17,12 +17,30 @@ export class BoutonActionComponent implements OnInit {
   @Output()
   clickEvent = new EventEmitter();
 
-  constructor() { }
+  @Output()
+  clickExportEvent = new EventEmitter();
+
+  @Output()
+  clickImportEvent = new EventEmitter();
+
+  constructor() {
+    // Not implemented
+   }
 
   ngOnInit(): void {
+    // Not implemented
   }
 
   boutonNouveauClick (): void{
     this.clickEvent.emit();
   }
+
+  boutonImportClick(): void {
+    this.clickImportEvent.emit();
+  }
+
+  boutonExportClick(): void {
+    this.clickExportEvent.emit();
+  }
+
 }

@@ -458,10 +458,10 @@ class CommandeClientService extends __BaseService {
   }
 
   /**
-   * Recherche de la liste des lignes de commande d'une commande fournisseur
+   * Recherche de la liste des lignes de commande d'une commande client
    *
-   * Cette methode permet de rechercher la liste des lignes de commande d'une commande fournisseur par son id
-   * @return Liste des lignes de commande fournisseur a ete trouver avec success  Array<LigneCommandeClientDto>
+   * Cette methode permet de rechercher la liste des lignes de commande d'une commande client par son id
+   * @return Liste des lignes de commande client a ete trouver avec success  Array<LigneCommandeClientDto>
    */
   findAllLigneCommadeByCommandeClientResponse(idCommande?: number): __Observable<__StrictHttpResponse<Array<LigneCommandeClientDto>>> {
     let __params = this.newParams();
@@ -488,7 +488,7 @@ class CommandeClientService extends __BaseService {
    * Recherche de la liste des lignes de commande d'une commande client
    *
    * Cette methode permet de rechercher la liste des lignes de commande d'une commande client par son id
-   * @return Liste des lignes de commande client a ete trouver avec succesr
+   * @return Liste des lignes de commande client a ete trouver avec success
    */
   findAllLigneCommadeByCommandeClient(idCommande?: number): __Observable<Array<LigneCommandeClientDto>> {
     return this.findAllLigneCommadeByCommandeClientResponse(idCommande).pipe(

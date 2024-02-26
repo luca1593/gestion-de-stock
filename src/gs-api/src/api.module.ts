@@ -40,7 +40,8 @@ import { VenteService } from './services/vente.service';
     FournisseurService,
     MvtstkService,
     UtilisateurService,
-    VenteService
+    VenteService,
+    ApiService
   ],
 })
 export class ApiModule {

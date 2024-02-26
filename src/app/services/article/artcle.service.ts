@@ -8,7 +8,7 @@ import { UserService } from '../user/user.service';
   providedIn: 'root'
 })
 export class ArtcleService {
-  
+
   constructor(
     private userService: UserService,
     private articleService: ApiArticleService

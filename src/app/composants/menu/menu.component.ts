@@ -26,9 +26,9 @@ export class MenuComponent implements OnInit {
         },
         {
           id: '12',
-          titre: 'Statistiques',
+          titre: 'Graph',
           icon: 'fa-solid fa-chart-line',
-          url: 'statistiques'
+          url: 'graph'
         }
       ]
     },

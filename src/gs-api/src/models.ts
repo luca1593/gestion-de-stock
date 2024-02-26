@@ -9,6 +9,8 @@ export { ChangerMotDePasseUtilisateurDto } from './models/changer-mot-de-passe-u
 export { ClientDto } from './models/client-dto';
 export { CommandeClientDto } from './models/commande-client-dto';
 export { CommandeFournisseurDto } from './models/commande-fournisseur-dto';
+export { DashboardResponse } from './models/dashboard-response';
+export { DashboardRequest } from './models/dashboard-request';
 export { EntrepriseDto } from './models/entreprise-dto';
 export { FournisseurDto } from './models/fournisseur-dto';
 export { LigneCommandeClientDto } from './models/ligne-commande-client-dto';

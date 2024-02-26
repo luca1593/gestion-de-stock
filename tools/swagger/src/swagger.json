@@ -11,40 +11,14 @@
     }
   },
   "basePath" : "http://localhost:8080/",
-  "tags" : [ {
-    "name" : "v1articles"
-  }, {
-    "name" : "v1category"
-  }, {
-    "name" : "v1client"
-  }, {
-    "name" : "v1commande-client"
-  }, {
-    "name" : "v1commande-fournisseur"
-  }, {
-    "name" : "v1entreprise"
-  }, {
-    "name" : "v1fournisseur"
-  }, {
-    "name" : "v1mvtstk"
-  }, {
-    "name" : "v1photos"
-  }, {
-    "name" : "v1utilisateur"
-  }, {
-    "name" : "v1vente"
-  } ],
   "paths" : {
     "/v1/articles/all" : {
       "get" : {
-        "tags" : [ "v1articles" ],
-        "summary" : "Renvoie la liste des articles",
-        "description" : "Cette methode permet de rechercher toutes les articles dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des article / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -57,67 +31,47 @@
     },
     "/v1/articles/code/{codeArticle}" : {
       "get" : {
-        "summary" : "Rechercher un article",
-        "description" : "Cette methode permet de rechercher un article par son code",
         "operationId" : "findByCodeArticle_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet article a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/ArticleDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet article n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/articles/create" : {
       "post" : {
-        "summary" : "Enregistrement d'un article",
-        "description" : "Cette methode permet d'enregidtre ou de modifier un article",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet article creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/ArticleDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet article"
           }
         }
       }
     },
     "/v1/articles/delete/{idArticle}" : {
       "delete" : {
-        "summary" : "Supprimer un article",
-        "description" : "Cette methode permet de supprimer un article par son ID",
         "operationId" : "delete_DELETE",
         "responses" : {
-          "200" : {
-            "description" : "L'article a ete supprimen dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/articles/filtre/category/{idCategore}" : {
       "get" : {
-        "tags" : [ "v1articles" ],
         "operationId" : "findAllByCategorie_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCategore",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -167,16 +121,8 @@
     },
     "/v1/articles/historiques/vente/{idArticle}" : {
       "get" : {
-        "tags" : [ "v1articles" ],
         "operationId" : "findHistoriqueVente_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -192,33 +138,38 @@
     },
     "/v1/articles/{idArticle}" : {
       "get" : {
-        "summary" : "Rechercher un article",
-        "description" : "Cette methode permet de rechercher un article par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet article a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/ArticleDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet article n'a pas ete trouver dans la BDD avec l'ID fournie"
+          }
+        }
+      }
+    },
+    "/v1/auth/authenticate" : {
+      "post" : {
+        "operationId" : "authenticate_POST",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/AuthenticationResponse"
+            }
           }
         }
       }
     },
     "/v1/category/all" : {
       "get" : {
-        "tags" : [ "v1category" ],
-        "summary" : "Renvoie la liste des categories",
-        "description" : "Cette methode permet de rechercher toutes les categories dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des categories / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -231,92 +182,64 @@
     },
     "/v1/category/code/{codeCategory}" : {
       "get" : {
-        "summary" : "Rechercher une categorie",
-        "description" : "Cette methode permet de rechercher une categorie par son code",
         "operationId" : "findByCodeCategory_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet categorie a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CategoryDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet categorie n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/category/create" : {
       "post" : {
-        "summary" : "Enregistrement d'une categorie",
-        "description" : "Cette methode permet d'enregidtre ou de modifier une categorie",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet categorie creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CategoryDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet categorie"
           }
         }
       }
     },
     "/v1/category/detele/{idCategory}" : {
       "delete" : {
-        "tags" : [ "v1category" ],
-        "summary" : "Supprimer un article",
-        "description" : "Cette methode permet de supprimer un categorie par son ID",
         "operationId" : "delete_DELETE",
-        "parameters" : [ {
-          "name" : "idCategory",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
-          "200" : {
-            "description" : "Le categorie a ete supprimen dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/category/{idCategory}" : {
       "get" : {
-        "summary" : "Rechercher une categorie",
-        "description" : "Cette methode permet de rechercher une categorie par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet categorie a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CategoryDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet categorie n'a pas ete trouver dans la BDD avec l'ID fournie"
           }
         }
       }
     },
     "/v1/client/all" : {
       "get" : {
-        "tags" : [ "v1client" ],
-        "summary" : "Renvoie la liste des clients",
-        "description" : "Cette methode permet de rechercher toutes les clients dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des clients / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -329,142 +252,79 @@
     },
     "/v1/client/detele/{idClient}" : {
       "delete" : {
-        "tags" : [ "v1client" ],
-        "summary" : "Supprimer un client",
-        "description" : "Cette methode permet de supprimer un client par son ID",
         "operationId" : "delete_DELETE",
-        "parameters" : [ {
-          "name" : "idClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
-          "200" : {
-            "description" : "Le client a ete supprimen dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/client/email/{emailClient}" : {
       "get" : {
-        "tags" : [ "v1client" ],
-        "summary" : "Rechercher un client",
-        "description" : "Cette methode permet de rechercher un client par son email",
         "operationId" : "findbyEmailClient_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "emailClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet client a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/ClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet client n'a pas ete trouver dans la BDD l'email fournie"
           }
         }
       }
     },
     "/v1/client/nom/{nomClient}" : {
       "get" : {
-        "tags" : [ "v1client" ],
-        "summary" : "Rechercher un client",
-        "description" : "Cette methode permet de rechercher un client par son nom",
         "operationId" : "findbyNomClient_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "nomClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet client a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/ClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet client n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/client/save" : {
       "post" : {
-        "tags" : [ "v1client" ],
-        "summary" : "Enregistrement d'un client",
-        "description" : "Cette methode permet d'enregidtre ou de modifier un client",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/ClientDto"
-          }
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet client creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/ClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet client"
           }
         }
       }
     },
     "/v1/client/{idClient}" : {
       "get" : {
-        "tags" : [ "v1client" ],
-        "summary" : "Rechercher un client",
-        "description" : "Cette methode permet de rechercher un client par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet client a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/ClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet client n'a pas ete trouver dans la BDD avec l'ID fournie"
           }
         }
       }
     },
     "/v1/commande-client" : {
       "post" : {
-        "summary" : "Renvoie la liste des commandes client selon le client",
-        "description" : "Cette methode permet de rechercher toutes les commandes client selon le client",
         "operationId" : "findAllByClient_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des commandes client selon le client / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -477,13 +337,10 @@
     },
     "/v1/commande-client/all" : {
       "get" : {
-        "tags" : [ "v1commande-client" ],
-        "summary" : "Renvoie la liste des commandes client",
-        "description" : "Cette methode permet de rechercher toutes les commandes client dans la BDD",
         "operationId" : "findAll_GET",
         "responses" : {
           "200" : {
-            "description" : "La liste des commandes client / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -496,76 +353,46 @@
     },
     "/v1/commande-client/code/{codeCommandeClient}" : {
       "get" : {
-        "summary" : "Rechercher une commande client",
-        "description" : "Cette methode permet de rechercher une commande client par son code",
         "operationId" : "findByCodeCommande_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet commande client a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet commande client n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/commande-client/create/{dateCommandeClient}" : {
       "post" : {
-        "tags" : [ "v1commande-client" ],
-        "summary" : "Enregistrement d'une commande client",
-        "description" : "Cette methode permet d'enregidtre ou de modifier une commande client",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/CommandeClientDto"
-          }
-        }, {
-          "name" : "dateCommandeClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int64"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet commande client creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet commande client"
           }
         }
       }
     },
     "/v1/commande-client/date/{dateCommandeClient}" : {
       "get" : {
-        "summary" : "Rechercher liste des commandes client par date",
-        "description" : "Cette methode permet de rechercher liste des commandes client par date",
         "operationId" : "findByDateCommande_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "Aucune commande client n'a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/CommandeClientDto"
               }
             }
-          },
-          "404" : {
-            "description" : "Erreur aucune commande client n'a pas ete trouver dans la BDD pendant la date fournie"
           }
         }
       }
@@ -576,45 +403,30 @@
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'article de la commande client a bien ete supprimer",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'etat commande client ne peut pas etre modifier"
           }
         }
       }
     },
     "/v1/commande-client/delete/{idCommandeClient}" : {
       "delete" : {
-        "tags" : [ "v1commande-client" ],
-        "summary" : "Supprimer une commande client",
-        "description" : "Cette methode permet de supprimer une commande client par son ID",
         "operationId" : "delete_DELETE",
-        "parameters" : [ {
-          "name" : "idCommandeClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
-          "200" : {
-            "description" : "La commande client a ete supprimen dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/commande-client/list/ligne-commande/{idCommande}" : {
       "get" : {
-        "summary" : "Renvoie la liste des lignes de commande client",
-        "description" : "Cette methode permet de rechercher la liste des lignes de commande client par l'id de la commande",
         "operationId" : "findAllLigneCommandeClient_GET",
         "responses" : {
           "200" : {
-            "description" : "La liste des commandes client / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -627,205 +439,99 @@
     },
     "/v1/commande-client/list/linge-commande/{idCommande}" : {
       "get" : {
-        "tags" : [ "v1commande-client" ],
         "operationId" : "findAllByCommandeClient_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "Les lignes de commante de la commande client ont bien ete trouver",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/LigneCommandeClientDto"
               }
             }
-          },
-          "404" : {
-            "description" : "Erreur les lignes de commande client n'ont pas ete trouver"
           }
         }
       }
     },
     "/v1/commande-client/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}" : {
       "patch" : {
-        "tags" : [ "v1commande-client" ],
         "operationId" : "updateArticle_PATCH",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "idLigneCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "newIdArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'article de la commande client a bien ete modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'etat commande client ne peut pas etre modifier"
           }
         }
       }
     },
     "/v1/commande-client/update/client/{idCommande}/{idClient}" : {
       "patch" : {
-        "tags" : [ "v1commande-client" ],
         "operationId" : "updateClient_PATCH",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "idClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "Le client de la commande client a bien ete modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'etat commande client ne peut pas etre modifier"
           }
         }
       }
     },
     "/v1/commande-client/update/etat/{idCommande}/{etatCommande}" : {
       "patch" : {
-        "tags" : [ "v1commande-client" ],
         "operationId" : "updateEtatCommande_PATCH",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "etatCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "string",
-          "enum" : [ "EN_PREPARATIOM", "VALIDEE", "LIVREE" ]
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'etat de la commande client a bien ete modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'etat commande client ne peut pas etre modifier"
           }
         }
       }
     },
     "/v1/commande-client/update/quantite/{idCommande}/{idLigneCommande}/{quantite}" : {
       "patch" : {
-        "tags" : [ "v1commande-client" ],
         "operationId" : "updateQuantiterCommande_PATCH",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "idLigneCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "quantite",
-          "in" : "path",
-          "required" : true,
-          "type" : "number"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "La quantite de la commande client a bien ete modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'etat commande client ne peut pas etre modifier"
           }
         }
       }
     },
     "/v1/commande-client/{idCommandeClient}" : {
       "get" : {
-        "summary" : "Rechercher une commande client",
-        "description" : "Cette methode permet de rechercher une commande client par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet commande client a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeClientDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet commande client n'a pas ete trouver dans la BDD avec l'ID fournie"
           }
         }
       }
     },
     "/v1/commande-fournisseur" : {
       "post" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Renvoie la liste des commandes fournisseur selon le fournisseur",
-        "description" : "Cette methode permet de rechercher toutes les commandes fournisseur selon le fournisseur",
         "operationId" : "findAllByFournisseur_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/FournisseurDto"
-          }
-        } ],
         "responses" : {
           "200" : {
-            "description" : "La liste des commandes fournisseur selon le fournisseur / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -838,13 +544,10 @@
     },
     "/v1/commande-fournisseur/all" : {
       "get" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Renvoie la liste des commandes fournisseur",
-        "description" : "Cette methode permet de rechercher toutes les commandes fournisseur dans la BDD",
         "operationId" : "findAll_GET",
         "responses" : {
           "200" : {
-            "description" : "La liste des commandes fournisseur / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -857,299 +560,183 @@
     },
     "/v1/commande-fournisseur/code/{codeCommandeFournisseur}" : {
       "get" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Rechercher une commande fournisseur",
-        "description" : "Cette methode permet de rechercher une commande fournisseur par son code",
         "operationId" : "findByCodeCommande_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "codeCommandeFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet commande fournisseur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet commande fournisseur n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/commande-fournisseur/create/{dateCommandeFournisseur}" : {
       "post" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Enregistrement d'une commande fournisseur",
-        "description" : "Cette methode permet d'enregidtre ou de modifier une commande fournisseur",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/CommandeFournisseurDto"
-          }
-        }, {
-          "name" : "dateCommandeFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int64"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet commande fournisseur creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet commande fournisseur"
           }
         }
       }
     },
     "/v1/commande-fournisseur/date/{dateCommandeFournisseur}" : {
       "get" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Rechercher liste des commandes fournisseur par date",
-        "description" : "Cette methode permet de rechercher liste des commandes fournisseur par date",
         "operationId" : "findByDateCommande_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "dateCommandeFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int64"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "Aucune commande fournisseur n'a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/CommandeFournisseurDto"
               }
             }
-          },
-          "404" : {
-            "description" : "Erreur aucune commande fournisseur n'a pas ete trouver dans la BDD pendant la date fournie"
           }
         }
       }
     },
     "/v1/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}" : {
       "delete" : {
-        "summary" : "Suppression d'un articl d'une commande fournisseur",
-        "description" : "Cette methode permet de supprimer un article sur 'une commande fournisseur par son id",
         "operationId" : "deleteArticle_DELETE",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'article de la commande fournisseur a ete supprimer avec success",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur lors de la suppression de la commande fournisseur"
           }
         }
       }
     },
     "/v1/commande-fournisseur/delete/{idCommandeFournisseur}" : {
       "delete" : {
-        "summary" : "Supprimer une commande client",
-        "description" : "Cette methode permet de supprimer une commande fournisseur par son ID",
         "operationId" : "delete_DELETE",
         "responses" : {
-          "200" : {
-            "description" : "La commande fournisseur a ete supprimen dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/commande-fournisseur/list/ligne-commande/{idCommande}" : {
       "get" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Recherche de la liste des lignes de commande d'une commande fournisseur",
-        "description" : "Cette methode permet de rechercher la liste des lignes de commande d'une commande fournisseur par son id",
         "operationId" : "findAllByCommandeFournisseur_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "Liste des lignes de commande fournisseur a ete trouver avec succesr",
+            "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CommandeFournisseurDto"
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/LigneCommandeFournisseurDto"
+              }
             }
-          },
-          "404" : {
-            "description" : "Erreur lors de la recherche de la liste des lignes de commande fournisseur"
           }
         }
       }
     },
     "/v1/commande-fournisseur/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}" : {
       "patch" : {
-        "summary" : "Mise a jour de l'article d'une commande fournisseur",
-        "description" : "Cette methode permet de mettre a jour l'article d'une commande fournisseur par son id",
         "operationId" : "updateArticle_PATCH",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'article de la commande fournisseur a ete mise a jour",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur lors de la mise a jour de l'article de la commande fournisseur"
           }
         }
       }
     },
     "/v1/commande-fournisseur/update/etat/{idCommande}/{etatCommande}" : {
       "patch" : {
-        "summary" : "Mise a jour de l'etat d'une commande fournisseur",
-        "description" : "Cette methode permet de mettre a jour l'etat d'une commande fournisseur par son id",
         "operationId" : "updateEtatCommande_PATCH",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'etat de la commande fournisseur a ete mise a jour",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur lors de la mise a jour de l'etat de la commande fournisseur"
           }
         }
       }
     },
     "/v1/commande-fournisseur/update/fournisseur/{idCommande}/{idFournisseur}" : {
       "patch" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Mise a jour du fournisseur d'une commande fournisseur",
-        "description" : "Cette methode permet de mettre a jour le fournisseur d'une commande fournisseur par son id",
         "operationId" : "updateFournisseur_PATCH",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "idFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "Le fournisseur de la commande fournisseur a ete mise a jour",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur lors de la mise a jour du fournisseur de la commande fournisseur"
           }
         }
       }
     },
     "/v1/commande-fournisseur/update/quantite/{idCommande}/{idLigneCommande}/{quantite}" : {
       "patch" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Mise a jour de la quantite d'une commande fournisseur",
-        "description" : "Cette methode permet de mettre a jour la quantite d'une commande fournisseur par son id",
         "operationId" : "updateQuantiterCommande_PATCH",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "idLigneCommande",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "quantite",
-          "in" : "path",
-          "required" : true,
-          "type" : "number"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "La quantite de la commande fournisseur a ete mise a jour",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur lors de la mise a jour de la quantite de la commande fournisseur"
           }
         }
       }
     },
     "/v1/commande-fournisseur/{idCommandeFournisseur}" : {
       "get" : {
-        "tags" : [ "v1commande-fournisseur" ],
-        "summary" : "Rechercher une commande fournisseur",
-        "description" : "Cette methode permet de rechercher une commande fournisseur par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idCommandeFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet commande fournisseur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/CommandeFournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet commande fournisseur n'a pas ete trouver dans la BDD avec l'ID fournie"
+          }
+        }
+      }
+    },
+    "/v1/dashbaord/story" : {
+      "get" : {
+        "operationId" : "getDasboardData_GET",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/DashboardResponse"
+            }
           }
         }
       }
     },
     "/v1/entreprise/all" : {
       "get" : {
-        "tags" : [ "v1entreprise" ],
-        "summary" : "Renvoie la liste des entreprises",
-        "description" : "Cette methode permet de rechercher toutes les entreprises dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des clients / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -1162,134 +749,78 @@
     },
     "/v1/entreprise/create" : {
       "post" : {
-        "tags" : [ "v1entreprise" ],
-        "summary" : "Enregistrement d'une entreprise",
-        "description" : "Cette methode permet d'enregidtre ou de modifier une entreprise",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/EntrepriseDto"
-          }
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet client creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/EntrepriseDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet client"
           }
         }
       }
     },
     "/v1/entreprise/delete{idEntreprise}" : {
       "delete" : {
-        "tags" : [ "v1entreprise" ],
-        "summary" : "Supprimer un entreprise",
-        "description" : "Cette methode permet de supprimer une entreprise par son ID",
         "operationId" : "delete_DELETE",
-        "parameters" : [ {
-          "name" : "idEntreprise",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
-          "200" : {
-            "description" : "L'entreprise a ete supprimen dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/entreprise/email/{emailEntreprise}" : {
       "get" : {
-        "summary" : "Rechercher un entreprise",
-        "description" : "Cette methode permet de rechercher une entreprise par son email",
         "operationId" : "findByEmailEntreprise_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet entreprise a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/EntrepriseDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet entreprise n'a pas ete trouver dans la BDD l'email fournie"
           }
         }
       }
     },
     "/v1/entreprise/nom{nomEntreprise}" : {
       "get" : {
-        "tags" : [ "v1entreprise" ],
-        "summary" : "Rechercher un entreprise",
-        "description" : "Cette methode permet de rechercher une entreprise par son nom",
         "operationId" : "findByNomEntreprise_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "nomEntreprise",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet entreprise a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/EntrepriseDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet entreprise n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/entreprise/{idEntreprise}" : {
       "get" : {
-        "tags" : [ "v1entreprise" ],
-        "summary" : "Rechercher un entreprise",
-        "description" : "Cette methode permet de rechercher un entreprise par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idEntreprise",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet entreprise a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/EntrepriseDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet entreprise n'a pas ete trouver dans la BDD avec l'ID fournie"
           }
         }
       }
     },
     "/v1/fournisseur/all" : {
       "get" : {
-        "summary" : "Renvoie la liste des fournisseurs",
-        "description" : "Cette methode permet de rechercher toutes les fournisseurs dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des clients / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -1302,123 +833,66 @@
     },
     "/v1/fournisseur/create" : {
       "post" : {
-        "summary" : "Enregistrement d'un fournisseur",
-        "description" : "Cette methode permet d'enregidtre ou de modifier un fournisseur",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet fournisseur creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/FournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet fournisseur"
           }
         }
       }
     },
     "/v1/fournisseur/detele/{idFournisseur}" : {
       "delete" : {
-        "summary" : "Supprimer un fournisseur",
-        "description" : "Cette methode permet de supprimer un fournisseur par son ID",
         "operationId" : "delete_DELETE",
         "responses" : {
-          "200" : {
-            "description" : "Le fournisseur a ete supprimer dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/fournisseur/email/{emailFournisseur}" : {
       "get" : {
-        "tags" : [ "v1fournisseur" ],
-        "summary" : "Rechercher un fournisseur",
-        "description" : "Cette methode permet de rechercher une fournisseur par son email",
         "operationId" : "findByEmailFournisseur_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "emailFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet fournisseur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/FournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet fournisseur n'a pas ete trouver dans la BDD l'email fournie"
           }
         }
       }
     },
     "/v1/fournisseur/nom/{nomFournisseur}" : {
       "get" : {
-        "tags" : [ "v1fournisseur" ],
-        "summary" : "Rechercher un fournisseur",
-        "description" : "Cette methode permet de rechercher un fournisseur par son nom",
         "operationId" : "findByNomFournisseur_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "nomFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet fournisseur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/FournisseurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet fournisseur n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/fournisseur/{idFournisseur}" : {
       "get" : {
-        "tags" : [ "v1fournisseur" ],
-        "summary" : "Rechercher un fournisseur",
-        "description" : "Cette methode permet de rechercher un fournisseur par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idFournisseur",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "L'objet fournisseur a ete trouver dans la BDD",
-            "schema" : {
-              "$ref" : "#/definitions/FournisseurDto"
-            }
-          },
-          "404" : {
-            "description" : "Erreur l'objet fournisseur n'a pas ete trouver dans la BDD avec l'ID fournie"
-          }
-        }
-      }
-    },
-    "/v1/home" : {
-      "get" : {
-        "operationId" : "home_GET",
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "string"
+              "$ref" : "#/definitions/FournisseurDto"
             }
           }
         }
@@ -1426,14 +900,11 @@
     },
     "/v1/mvtstk/all" : {
       "get" : {
-        "tags" : [ "v1mvtstk" ],
-        "summary" : "Renvoie la liste des mouvements de stock",
-        "description" : "Cette methode permet de rechercher toutes les mouvements de stock dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des mouvements de stock / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -1461,18 +932,9 @@
     },
     "/v1/mvtstk/correction-pos" : {
       "post" : {
-        "tags" : [ "v1mvtstk" ],
         "operationId" : "correctionMvtStkPos_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/MvtStkDto"
-          }
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1485,50 +947,27 @@
     },
     "/v1/mvtstk/date/{dateMvtStk}" : {
       "get" : {
-        "tags" : [ "v1mvtstk" ],
-        "summary" : "Rechercher une liste mouvements de stock",
-        "description" : "Cette methode permet de rechercher une liste dd mouvements de stock par date",
         "operationId" : "findMvtStkByDateMvt_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "nomClient",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int64"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet mouvements de stock a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/MvtStkDto"
               }
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet mouvements de stock n'a pas ete trouver dans la BDD pendant la date fournie"
           }
         }
       }
     },
     "/v1/mvtstk/detele/{typeMvt}" : {
       "delete" : {
-        "tags" : [ "v1mvtstk" ],
-        "summary" : "Supprimer une commande client",
-        "description" : "Cette methode permet de supprimer un mouvement de stock par son ID",
         "operationId" : "delete_DELETE",
-        "parameters" : [ {
-          "name" : "typeMvt",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
-          "200" : {
-            "description" : "Le mouvement de stock a ete supprimen dans la BDD"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
@@ -1550,16 +989,8 @@
     },
     "/v1/mvtstk/filter/article/{idArticle}" : {
       "get" : {
-        "tags" : [ "v1mvtstk" ],
         "operationId" : "mvtStkArticle_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1575,47 +1006,24 @@
     },
     "/v1/mvtstk/save" : {
       "post" : {
-        "tags" : [ "v1mvtstk" ],
-        "summary" : "Enregistrement d'un mouvement de stock",
-        "description" : "Cette methode permet d'enregidtre ou de modifier un mouvement de stock",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/MvtStkDto"
-          }
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet mouvement de stock fournisseur creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/MvtStkDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet mouvement de stock"
           }
         }
       }
     },
     "/v1/mvtstk/sortie" : {
       "post" : {
-        "tags" : [ "v1mvtstk" ],
         "operationId" : "sortieMvtStk_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/MvtStkDto"
-          }
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1628,16 +1036,8 @@
     },
     "/v1/mvtstk/stockreel/{idArticle}" : {
       "get" : {
-        "tags" : [ "v1mvtstk" ],
         "operationId" : "stockReelArticle_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idArticle",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1650,49 +1050,31 @@
     },
     "/v1/mvtstk/type/{typeMvt}" : {
       "get" : {
-        "summary" : "Rechercher liste des mouvements de stock par type",
-        "description" : "Cette methode permet de rechercher liste des mouvements de stock par type",
         "operationId" : "findMvtStkByType_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "Aucun mouvement de stock n'a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/MvtStkDto"
               }
             }
-          },
-          "404" : {
-            "description" : "Erreur aucun mouvement de stock n'a pas ete trouver dans la BDD pendant la date fournie"
           }
         }
       }
     },
     "/v1/mvtstk/{idMvtstk}" : {
       "get" : {
-        "tags" : [ "v1mvtstk" ],
-        "summary" : "Rechercher un mouvement de stock",
-        "description" : "Cette methode permet de rechercher un mouvement de stock par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "idMvtstk",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet commande fournisseur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/MvtStkDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet commande fournisseur n'a pas ete trouver dans la BDD avec l'ID fournie"
           }
         }
       }
@@ -1713,14 +1095,11 @@
     },
     "/v1/utilisateur/all" : {
       "get" : {
-        "tags" : [ "v1utilisateur" ],
-        "summary" : "Renvoie la liste des utilisateurs",
-        "description" : "Cette methode permet de rechercher toutes les utilisateurs dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des clients / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -1733,131 +1112,92 @@
     },
     "/v1/utilisateur/changer-mot-de-passe" : {
       "post" : {
-        "summary" : "Renvoie un profil utilisateur",
-        "description" : "Cette methode permet de changer le mot de passe de l'utilisateurs dans la BDD",
         "operationId" : "changerMotDePasse_POST",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "Mot de passe changer avec succes",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/UtilisateurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur : Le mot de passe ne peut pas etre modifier"
           }
         }
       }
     },
     "/v1/utilisateur/detele/{idUtilisateur}" : {
       "delete" : {
-        "summary" : "Supprimer un utilisateur",
-        "description" : "Cette methode permet de supprimer un utilisateur par son ID",
         "operationId" : "delete_DELETE",
         "responses" : {
-          "200" : {
-            "description" : "Utilisateur supprimer avec success"
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
     },
     "/v1/utilisateur/email/{emailUtilisateur}" : {
       "get" : {
-        "summary" : "Rechercher un utilisateur",
-        "description" : "Cette methode permet de rechercher une utilisateur par son email",
         "operationId" : "findByEmailUtilisateur_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet utilisateur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/UtilisateurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet utilisateur n'a pas ete trouver dans la BDD l'email fournie"
           }
         }
       }
     },
     "/v1/utilisateur/nom/{nomUtilisateur}" : {
       "get" : {
-        "summary" : "Rechercher un utilisateur",
-        "description" : "Cette methode permet de rechercher un utilisateur par son nom",
         "operationId" : "findByNomUtilisateur_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet utilisateur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/UtilisateurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet utilisateur n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/utilisateur/save" : {
       "post" : {
-        "tags" : [ "v1utilisateur" ],
-        "summary" : "Enregistrement d'un utilisateur",
-        "description" : "Cette methode permet d'enregidtre ou de modifier un utilisateur",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UtilisateurDto"
-          }
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet utilisateur creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/UtilisateurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet utilisateur"
           }
         }
       }
     },
     "/v1/utilisateur/{idUtilisateur}" : {
       "get" : {
-        "summary" : "Rechercher un utilisateur",
-        "description" : "Cette methode permet de rechercher un utilisateur par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet utilisateur a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/UtilisateurDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet utilisateur n'a pas ete trouver dans la BDD avec l'ID fournie"
           }
         }
       }
     },
     "/v1/vente/all" : {
       "get" : {
-        "tags" : [ "v1vente" ],
-        "summary" : "Renvoie la liste des ventes",
-        "description" : "Cette methode permet de rechercher toutes les ventes dans la BDD",
         "operationId" : "findAll_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "La liste des ventes / liste vide",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
@@ -1870,116 +1210,87 @@
     },
     "/v1/vente/code/{codeVente}" : {
       "get" : {
-        "tags" : [ "v1vente" ],
-        "summary" : "Rechercher une vente",
-        "description" : "Cette methode permet de rechercher une vente par son code",
         "operationId" : "findByCodeVente_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "codeVente",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet vente a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/VenteDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet vente n'a pas ete trouver dans la BDD le code fournie"
           }
         }
       }
     },
     "/v1/vente/date/{dateVente}" : {
       "get" : {
-        "tags" : [ "v1vente" ],
-        "summary" : "Rechercher liste des ventes par date",
-        "description" : "Cette methode permet de rechercher liste des ventes par date",
         "operationId" : "findByDateVente_GET",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "dateVente",
-          "in" : "path",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int64"
-        } ],
         "responses" : {
           "200" : {
-            "description" : "Aucune vente n'a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/VenteDto"
               }
             }
-          },
-          "404" : {
-            "description" : "Erreur aucune vente n'a pas ete trouver dans la BDD pendant la date fournie"
           }
         }
       }
     },
     "/v1/vente/detele/{idVente}" : {
       "delete" : {
-        "summary" : "Supprimer une vente",
-        "description" : "Cette methode permet de supprimer un article par son ID",
         "operationId" : "delete_DELETE",
         "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/v1/vente/list/ligne-vente/{idVente}" : {
+      "get" : {
+        "operationId" : "findAllByVente_GET",
+        "produces" : [ "application/json" ],
+        "responses" : {
           "200" : {
-            "description" : "La vente a ete supprimen dans la BDD"
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/LigneVenteDto"
+              }
+            }
           }
         }
       }
     },
     "/v1/vente/save" : {
       "post" : {
-        "tags" : [ "v1vente" ],
-        "summary" : "Enregistrement d'une vente",
-        "description" : "Cette methode permet d'enregidtre ou de modifier une vente",
         "operationId" : "save_POST",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/VenteDto"
-          }
-        } ],
         "responses" : {
           "200" : {
-            "description" : "L'objet vente creer ou modifier",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/VenteDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur dans la creation de l'objet vente"
           }
         }
       }
     },
     "/v1/vente/{idVente}" : {
       "get" : {
-        "summary" : "Rechercher une vente",
-        "description" : "Cette methode permet de rechercher une vente par son ID",
         "operationId" : "findById_GET",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "L'objet vente a ete trouver dans la BDD",
+            "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/VenteDto"
             }
-          },
-          "404" : {
-            "description" : "Erreur l'objet vente n'a pas ete trouver dans la BDD avec l'ID fournie"
           }
         }
       }
@@ -2028,6 +1339,9 @@
         "prixTtc" : {
           "type" : "number"
         },
+        "stock" : {
+          "type" : "number"
+        },
         "photo" : {
           "type" : "string"
         },
@@ -2047,6 +1361,14 @@
         }
       }
     },
+    "AuthenticationResponse" : {
+      "type" : "object",
+      "properties" : {
+        "accessTokeen" : {
+          "type" : "string"
+        }
+      }
+    },
     "CategoryDto" : {
       "type" : "object",
       "properties" : {
@@ -2063,21 +1385,6 @@
         "identreprise" : {
           "type" : "integer",
           "format" : "int32"
-        }
-      }
-    },
-    "ChangerMotDePasseUtilisateurDto" : {
-      "type" : "object",
-      "properties" : {
-        "id" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
-        "motDePasse" : {
-          "type" : "string"
-        },
-        "confirmMotDePasse" : {
-          "type" : "string"
         }
       }
     },
@@ -2128,7 +1435,7 @@
         },
         "etatcommande" : {
           "type" : "string",
-          "enum" : [ "EN_PREPARATIOM", "VALIDEE", "LIVREE" ]
+          "enum" : [ "EN_PREPARATION", "VALIDEE", "LIVREE" ]
         },
         "client" : {
           "$ref" : "#/definitions/ClientDto"
@@ -2164,7 +1471,7 @@
         },
         "etatcommande" : {
           "type" : "string",
-          "enum" : [ "EN_PREPARATIOM", "VALIDEE", "LIVREE" ]
+          "enum" : [ "EN_PREPARATION", "VALIDEE", "LIVREE" ]
         },
         "fournisseur" : {
           "$ref" : "#/definitions/FournisseurDto"
@@ -2181,6 +1488,17 @@
         },
         "commandeLivree" : {
           "type" : "boolean"
+        }
+      }
+    },
+    "DashboardResponse" : {
+      "type" : "object",
+      "properties" : {
+        "mapDataDashboard" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "number"
+          }
         }
       }
     },

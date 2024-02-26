@@ -1,9 +1,9 @@
 <div class="col">
     <div class="row mx-3 my-0 py-1">
-        <div class="col-md-7 p-0">
+        <div class="col-md-6 p-0">
             <h3>List des articles</h3>
         </div>
-        <div class="col-md-5 text-end">
+        <div class="col-md-6 text-end">
             <app-bouton-action
                 (clickEvent)="nouveauArticle()"
             ></app-bouton-action>
@@ -16,7 +16,7 @@
         <app-detail-article *ngFor="let article of listArticle | paginate : {
             itemsPerPage: 3,
             currentPage: page,
-            totalItems: listArticle.length }" 
+            totalItems: listArticle.length }"
         (suppressioResult)="handleSuppression($event)"
         [articleDTO]="article"></app-detail-article>
     </div>

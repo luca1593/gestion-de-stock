@@ -13,3 +13,4 @@ export { MvtstkService } from './services/mvtstk.service';
 export { UtilisateurService } from './services/utilisateur.service';
 export { VenteService } from './services/vente.service';
 export { PhotoService } from './services/photo.service';
+export { DashboardService } from './services/dashboard.service';
