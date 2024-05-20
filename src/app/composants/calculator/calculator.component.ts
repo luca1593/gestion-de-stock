@@ -8,7 +8,15 @@ import { BoutonCalc } from './bouton.calc';
 })
 export class CalculatorComponent implements OnInit {
 
+  firstNumber : number = 0;
+  secondNumber : number = 0;
+  numberText : string = "0";
+  ops : string [] = ['+', '-', '*', '/'];
+  operator : string = "";
+
   public boutonCalcs: Array<BoutonCalc> = [
+    { "txt": 'AC', "id": 'ac' },
+    { "txt": 'C', "id": 'c' },
     { "txt": '7', "id": '7' },
     { "txt": '8', "id": '8' },
     { "txt": '9', "id": '9' },
@@ -30,6 +38,43 @@ export class CalculatorComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  typeNumber(num : string) : void {
+    if(num == "=") {
+      this.secondNumber = +this.numberText;
+      this.numberText ="" + this.calculateNumber(this.firstNumber, this.secondNumber, this.operator);
+      this.firstNumber = 0;
+      this.secondNumber = 0;
+    } else if (this.ops.includes(num)) {
+      if (this.firstNumber == 0) {
+        this.firstNumber = +this.numberText;
+        this.numberText = "0";
+        this.operator = num;
+      }
+    }else {
+      if (this.numberText == "0") {
+        this.numberText = num;
+      }else {
+        this.numberText = this.numberText + num;
+      }
+    }
+  }
+
+  calculateNumber(n1 :number, n2 :number, opert : string) : number | null {
+    const result : {[key : string]: (a : number, b : number) => number  } = {
+      '+' : (a, b) => a + b,
+      '-' : (a, b) => a - b,
+      '*' : (a, b) => a * b,
+      '/' : (a, b) => a / b
+    };
+
+    if(result.hasOwnProperty(opert)) {
+      return result[opert](n1, n2);
+    }else {
+      alert("Operateur non supporté : ${opert}");
+      return null;
+    }
   }
 
 }
