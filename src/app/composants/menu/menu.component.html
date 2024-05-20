@@ -10,7 +10,7 @@
       </button>
     </h3>
     <div id="collapse{{menu.id}}" *ngIf="menu.sousMenus" class="accordion-collapse collapse"
-      [attr.aria-labelledby]="'menu'+menu.id" da++ta-bs-parent="#accordionMenus">
+      [attr.aria-labelledby]="'menu'+menu.id" data-bs-parent="#accordionMenus">
       <div class="card">
         <ul class="list-group list-group-flush">
           <li class="list-group-item px-3" *ngFor="let sousMenu of menu.sousMenus"

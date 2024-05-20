@@ -1,14 +1,18 @@
 <div class="card text-bg-secondary">
     <div class="card-header">
         <div class="p-3">
-            <input type="text" id="input_calc" class="form-control">
+            <input type="text" id="input_calc" class="form-control" [(ngModel)] = "numberText" placeholder="0">
         </div>
     </div>
     <div class="card-body">
         <div class="container text-center">
             <div class="row">
                 <div class="col-3 p-2" *ngFor="let item of boutonCalcs">
-                    <div class="btn btn-secondary pave_calc" id="{{item.id}}">
+                  <div class="row" *ngIf="item.id == 'c' || item.id == 'ac'">
+                    <div class="col-6">ff</div>
+                    <div class="col-3">f</div>
+                  </div>
+                    <div class="btn btn-secondary pave_calc" (click)="typeNumber(item.txt)" id="{{item.id}}">
                         {{item.txt}}
                     </div>
                 </div>
