@@ -1,6 +1,6 @@
 <div class="row mb-1 custom-border">
     <div class="col-md-1 border-right py-2">
-        <img [attr.src]="cltFrsDto.photo ? cltFrsDto.photo : 'favicon.ico'" 
+        <img [attr.src]="cltFrsDto.photo ? cltFrsDto.photo : 'favicon.ico'"
             [alt]="cltFrsDto.nom" width="50px"
             height="50px" />
     </div>
@@ -52,6 +52,64 @@
                     <i class="fas fa-trash-alt"></i>&nbsp;
                     Supprimer
                 </button>
+            </div>
+            <div class="col-md-6 text-dander text-center small-text">
+              <button class="btn btn-link" data-bs-toggle="modal"
+              [attr.data-bs-target]="'#modalDetail' + commande.code" >
+              <i class="fas fa-list-alt"></i>&nbsp;Details
+            </button>
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade max-height-400 p-3" id="modalDetail{{commande.code}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content modal-70">
+            <div class="modal-header mb-0 p-3 px-3">
+                <h1 class="modal-title text-primary fs-3" id="staticBackdropLabel">Detail commande {{origin}}</h1>
+                <button type="button" class="btn-close text-bg-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="row px-3 m-0">
+                <table class="table-sm small-text">
+                    <tbody>
+                        <tr>
+                            <th>Code : </th>
+                            <td>{{commande.code}}</td>
+                        </tr>
+                        <tr>
+                            <th>Date du commande : </th>
+                            <td>{{ commande.dateCommande| date: "dd/MM/YYYY" }}</td>
+                        </tr>
+                        <tr>
+                          <th>Eta du commande : </th>
+                          <td>{{commande.etatcommande}}</td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+            <hr>
+            <div class="modal-body max-height-440 shadow">
+              <div class="card">
+                <div class="card-body scroll-body-max-height-130">
+                    <div *ngFor="let ligne of mapLigneComandes.get(cmd.id)">
+                        <app-details-cmd [ligneCommande]="ligne">
+                        </app-details-cmd>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6 text-start">
+                            {{ calculNombreArticleCommande(cmd.id) }} articles commander
+                        </div>
+                        <div class="col-md-6 text-end">
+                            Total commande : {{ calculTotalCommande(cmd.id) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>

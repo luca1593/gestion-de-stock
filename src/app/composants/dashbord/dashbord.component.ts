@@ -123,10 +123,9 @@ export class DashbordComponent implements OnInit {
     });
     this.afficherDraphe = true;
     const chart = new Chart(id, {
-      type: 'bar',
+      type: 'line',
       options: {
         responsive: true,
-        skipNull: true,
         plugins:{
           legend:{
             display: false
@@ -189,10 +188,6 @@ export class DashbordComponent implements OnInit {
 
   parceData(chiffre : number): number {
     return parseFloat(chiffre.toFixed(2));
-  }
-
-  exportDataToPdf(): void {
-    alert("ato");
   }
 
 }

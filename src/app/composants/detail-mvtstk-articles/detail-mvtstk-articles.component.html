@@ -1,7 +1,7 @@
 <div class="row mb-1 custom-border">
     <div class="col-md-1 border-right p-2">
-        <img [attr.src]="article.photo ? article.photo : 'favicon.ico'"
-            [alt]="article.designation" width="60px" height="60px" />
+        <img [attr.src]="article.photo ? article.photo : 'favicon.ico'" [alt]="article.designation" width="60px"
+            height="60px" />
     </div>
     <!-- Detail article -->
     <div class="col-md-4 border-right">
@@ -29,24 +29,26 @@
         <div class="custum-cent">
             <div class="custum-center pt-4">
                 <i class="fab fa-dropbox blue-color"></i>
-                <h5 class="px-3">Stock actuel&nbsp;<span [attr.class]="article.stock ? 'badge text-bg-success' : 'badge text-bg-danger'">{{article.stock ? article.stock : 0}}</span></h5>
+                <h5 class="px-3">Stock actuel&nbsp;<span
+                        [attr.class]="article.stock ? 'badge text-bg-success' : 'badge text-bg-danger'">{{article.stock
+                        ? article.stock : 0}}</span></h5>
             </div>
         </div>
     </div>
     <!-- Boutton action -->
     <div class="col-md-3 row">
-            <div class="col-7 m-0 p-0 text-primary custum-center text-center small-text">
-                <button class="btn btn-link pt-4" type="button" data-bs-toggle="modal"
-                    [attr.data-bs-target]="'#modalCorrection'+article.id">
-                    <i class="fab fa-stack-overflow"></i>&nbsp;Correction
-                </button>
-            </div>
-            <div class="col-5 m-0 p-0 text-primary custum-center text-center small-text">
-                <button class="btn btn-link pt-4" type="button" (click)="detailArticle()">
-                    <i class="fas fa-list-alt"></i>
-                    Details
-                </button>
-            </div>
+        <div class="col-7 m-0 p-0 text-primary custum-center text-center small-text">
+            <button class="btn btn-link pt-4" type="button" data-bs-toggle="modal"
+                [attr.data-bs-target]="'#modalCorrection'+article.id">
+                <i class="fab fa-stack-overflow"></i>&nbsp;Correction
+            </button>
+        </div>
+        <div class="col-5 m-0 p-0 text-primary custum-center text-center small-text">
+            <button class="btn btn-link pt-4" type="button" (click)="detailArticle()">
+                <i class="fas fa-list-alt"></i>
+                Details
+            </button>
+        </div>
     </div>
 </div>
 
@@ -76,7 +78,7 @@
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                     <i class="fas fa-ban"></i>&nbsp;Annuler
                 </button>
-                <button type="button" class="btn btn-primary">
+                <button type="button" class="btn btn-primary" (click)="modifierStock()">
                     <i class="fas fa-save"></i>&nbsp;Sauvegarder
                 </button>
             </div>
@@ -100,9 +102,7 @@
                     <div class="card-body">
                         <app-detail-mvtstk></app-detail-mvtstk>
                         <div *ngFor="let mvt of listMvtStk">
-                            <app-detail-mvtstk
-                                [mvtStk]="mvt"
-                            ></app-detail-mvtstk>
+                            <app-detail-mvtstk [mvtStk]="mvt"></app-detail-mvtstk>
                         </div>
                     </div>
                 </div>

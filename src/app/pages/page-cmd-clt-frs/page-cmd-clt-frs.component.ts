@@ -17,6 +17,7 @@ export class PageCmdCltFrsComponent implements OnInit {
   mapTotalTtc = new Map();
   errorMsg = "";
   page: number = 1;
+  lineDeCommande : any;
 
   constructor(
     private router: Router,

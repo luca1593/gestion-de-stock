@@ -127,7 +127,20 @@ export class DetailArticlesMvtstkComponent implements OnInit {
 
   createChart(id: string, data: Array<number>, label: Array<string>): void {
     const cmdCltChart = new Chart(id, {
-      type: 'pie',
+      type: 'line',
+      options: {
+        responsive: true,
+        plugins:{
+          legend:{
+            display: false
+          },
+          tooltip: {
+            animation: {
+              easing: 'easeInOutCubic'
+            }
+          }
+        }
+      },
       data: {
         labels: label,
         datasets: [{
