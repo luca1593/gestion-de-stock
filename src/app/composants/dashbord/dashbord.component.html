@@ -61,11 +61,6 @@
             <span class="btn btn-success" (click)="afficherData()" id="searchIcon"><i class="fa-solid fa-magnifying-glass"></i> Afficher</span>
           </div>
         </div>
-        <div class="col-md-3 text-end">
-          <app-bouton-action [isImporterVisible]="false" [isNouveauVisible]="false"
-            (clickExportEvent)="exportDataToPdf()"
-          ></app-bouton-action>
-        </div>
       </div>
       <div class="alert alert-danger" *ngIf="error">
         <span>{{error}}</span>

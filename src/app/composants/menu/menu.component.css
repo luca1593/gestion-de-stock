@@ -8,8 +8,12 @@ a:hover {
     color: #fff !important;
 }
 
-li:has(a):hover {
+ul:has(li), li:has(a):hover {
     background-color: #0D6EFD !important;
+    color: #fff !important;
+}
+
+li:hover>a {
     color: #fff !important;
 }
 

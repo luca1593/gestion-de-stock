@@ -14,7 +14,7 @@
       <div class="card">
         <ul class="list-group list-group-flush">
           <li class="list-group-item px-3" *ngFor="let sousMenu of menu.sousMenus"
-            [ngClass]="{'text-danger bg-primary color-white' : sousMenu.active, '': !sousMenu.active}">
+            [ngClass]="{'bg-primary color-white' : sousMenu.active, '': !sousMenu.active}">
             <a href="javascript:void(0)" (click)="navigate(sousMenu)"
               [ngClass]="{'color-white' : sousMenu.active, '': !sousMenu.active}">
               <i class="{{sousMenu.icon}}"></i>&nbsp;

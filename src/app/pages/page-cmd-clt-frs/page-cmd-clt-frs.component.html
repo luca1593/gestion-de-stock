@@ -4,7 +4,7 @@
             <h3>Commande {{origin}}</h3>
         </div>
         <div class="col-md-5 text-end">
-            <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false"></app-bouton-action>
+            <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false" [isExporterVisible]="false"></app-bouton-action>
         </div>
     </div>
     <div class="col m-3">
@@ -16,24 +16,15 @@
                 <div class="card">
                     <div class="accordion-item m-0">
                         <h3 class="accordion-header m-0" id="cmd.code">
-                            <button class="accordion-button collapsed m-0" type="button" 
-                                data-bs-toggle="collapse"
-                                [attr.data-bs-target]="'#collapse'+cmd.id" aria-expanded="true" 
-                                [attr.aria-controls]="cmd.code">
-                                <app-details-cmd-clt-frs
-                                    [commande]="cmd"
-                                    [origin]="origin"
-                                ></app-details-cmd-clt-frs>
-                            </button> 
+                            <app-details-cmd-clt-frs [commande]="cmd" [origin]="origin" [lineDeCommande] = "findAllLigneCommandeByIdCommande(cmd.id)" ></app-details-cmd-clt-frs>
                         </h3>
-                        <div id="collapse{{cmd.id}}" class="accordion-collapse collapse" 
+                        <div id="collapse{{cmd.id}}" class="accordion-collapse collapse"
                         [attr.aria-labelledby]="cmd.code"
                             [attr.data-bs-parent]="'#accordionFlushExample'+cmd.id">
                             <div class="card">
                                 <div class="card-body scroll-body-max-height-130">
                                     <div *ngFor="let ligne of mapLigneComandes.get(cmd.id)">
-                                        <app-details-cmd [ligneCommande]="ligne">
-                                        </app-details-cmd>
+                                        <app-details-cmd [ligneCommande]="ligne"></app-details-cmd>
                                     </div>
                                 </div>
                                 <div class="card-footer">

@@ -9,9 +9,12 @@ export class DetailsCmdCltFrsComponent implements OnInit {
 
   @Input()
   origin="";
-  
+
   @Input()
   commande: any = {};
+
+  @Input()
+  lineDeCommande: any;
   cltFrsDto: any = {};
 
   constructor() { }
@@ -33,9 +36,33 @@ export class DetailsCmdCltFrsComponent implements OnInit {
       if (this.origin === "client") {
 
       } else if(this.origin === "fournisseur"){
-        
+
       }
     }
+  }
+
+  calcluerTotalCommande() : number {
+    let total=0;
+    this.commande.ligneCommandeFournisseurs?.forEach((ligne: { quantite: number; }) => {
+      if(ligne.quantite) {
+        total += ligne.quantite;
+      }
+    });
+    return total;
+  }
+
+  calculerPrixTotalCommande() : number {
+    let total=0;
+    if(this.commande){
+      console.log(this.lineDeCommande);
+    }
+    console.log(this.commande.ligneCommandeFournisseurs);
+    this.commande.ligneCommandeFournisseurs?.forEach((ligne: { prixUnitaire: number; quantite: number; }) => {
+      if(ligne.prixUnitaire && ligne.quantite) {
+        total += (ligne.quantite * ligne.prixUnitaire);
+      }
+    });
+    return total;
   }
 
 }

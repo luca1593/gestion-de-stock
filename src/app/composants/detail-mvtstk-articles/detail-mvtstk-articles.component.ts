@@ -13,7 +13,10 @@ export class DetailMvtstkArticlesComponent implements OnInit {
   article: ArticleDto = {};
 
   @Input()
-  listMvtStk:Array<MvtStkDto> = [];
+  listMvtStk: Array<MvtStkDto> = [];
+
+  correcion: string = "";
+  quantite = 0;
 
   constructor(
     private router: Router
@@ -24,6 +27,18 @@ export class DetailMvtstkArticlesComponent implements OnInit {
 
   detailArticle() {
     this.router.navigate(["detail-mvtstk", this.article.id]);
+  }
+
+  modifierStock(): void {
+    if (this.article.stock) {
+      if (this.correcion == "correctionpos") {
+        this.article.stock += this.quantite;
+      } else {
+        this.article.stock -= this.quantite;
+      }
+    } else {
+      this.article.stock = this.quantite;
+    }
   }
 
 }
