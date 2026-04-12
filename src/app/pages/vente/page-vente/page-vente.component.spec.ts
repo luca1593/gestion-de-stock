@@ -12,8 +12,8 @@ describe('PageVenteComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageVenteComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageVenteComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

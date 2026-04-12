@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ModalService } from 'src/app/services/modal/modal.service';
 
 @Component({
   selector: 'app-details-cmd-clt-frs',
@@ -11,13 +13,16 @@ export class DetailsCmdCltFrsComponent implements OnInit {
   origin="";
 
   @Input()
-  commande: any = {};
+  commande: any={};
 
   @Input()
   lineDeCommande: any;
-  cltFrsDto: any = {};
+  cltFrsDto: any={};
 
-  constructor() { }
+  constructor(
+    private router: Router,
+    private modalService: ModalService
+  ) { }
 
   ngOnInit(): void {
     this.extractCltFrs();
@@ -25,10 +30,28 @@ export class DetailsCmdCltFrsComponent implements OnInit {
 
   extractCltFrs(): void{
     if (this.origin === "client") {
-      this.cltFrsDto = this.commande?.client;
+      this.cltFrsDto=this.commande?.client;
     } else if(this.origin === "fournisseur"){
-      this.cltFrsDto = this.commande?.fournisseur;
+      this.cltFrsDto=this.commande?.fournisseur;
     }
+  }
+
+  modifier(): void {
+    if (this.origin === "client") {
+      this.router.navigate(['nouvel-commande-client', this.commande.id]);
+    } else if (this.origin === "fournisseur") {
+      this.router.navigate(['nouvel-commande-fournisseur', this.commande.id]);
+    }
+  }
+
+  openDetailsModal(): void {
+    const modalId = 'modalDetail' + this.commande.code;
+    this.modalService.openModal(modalId);
+  }
+
+  closeDetailsModal(): void {
+    const modalId = 'modalDetail' + this.commande.code;
+    this.modalService.closeModal(modalId);
   }
 
   supprimer(idCommande: number){

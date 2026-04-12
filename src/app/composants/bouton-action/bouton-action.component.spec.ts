@@ -12,8 +12,8 @@ describe('BoutonActionComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BoutonActionComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(BoutonActionComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

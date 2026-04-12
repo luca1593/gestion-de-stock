@@ -12,8 +12,8 @@ describe('PageFournisseurComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageFournisseurComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageFournisseurComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

@@ -12,8 +12,8 @@ describe('DetailsCmdCltFrsComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DetailsCmdCltFrsComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(DetailsCmdCltFrsComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

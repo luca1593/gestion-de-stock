@@ -9,7 +9,7 @@ export class LaoderService {
 
   private laoderSubject= new Subject<laoderState>();
 
-  laoderState = this.laoderSubject.asObservable();
+  laoderState=this.laoderSubject.asObservable();
 
   constructor() { }
 

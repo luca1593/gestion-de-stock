@@ -12,8 +12,8 @@ describe('NouvelUtilisateurComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NouvelUtilisateurComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(NouvelUtilisateurComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

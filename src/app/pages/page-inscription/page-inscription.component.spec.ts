@@ -12,8 +12,8 @@ describe('PageInscriptionComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageInscriptionComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageInscriptionComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

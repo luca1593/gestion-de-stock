@@ -10,7 +10,7 @@ import { LaoderService } from './service/laoder.service';
 })
 export class LaoderComponent implements OnInit, OnDestroy {
 
-  show = false;
+  show=false;
 
   subscription: Subscription | undefined;
 
@@ -19,9 +19,9 @@ export class LaoderComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.subscription = this.laoderService.laoderState
+    this.subscription=this.laoderService.laoderState
     .subscribe((state: laoderState) => {
-      this.show = state.show;
+      this.show=state.show;
     });
   }
 

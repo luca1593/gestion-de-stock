@@ -1,3 +1,14 @@
+:host {
+    display: block;
+    animation: none !important;
+    transition: none !important;
+}
+
+*, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+}
+
 .border-right, .custum-center, .custum-cent{
     display: table !important;
 }
@@ -12,4 +23,37 @@
 
 .wisth-40{
     min-width: 75% !important;
+}
+
+.modal.fade.super-top {
+    z-index: 1050 !important;
+}
+
+.modal.fade.super-top.show {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+.modal-dialog {
+    margin: 1.75rem auto;
+    z-index: 1060 !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.modal.fade.super-top:not(.show) {
+    display: none !important;
+    visibility: hidden;
+}
+
+.modal.fade.super-top.show {
+    display: block !important;
+    visibility: visible;
 }

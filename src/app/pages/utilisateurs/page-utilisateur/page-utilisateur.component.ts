@@ -10,9 +10,9 @@ import { UtilisateurDto } from 'src/gs-api/src/models';
 })
 export class PageUtilisateurComponent implements OnInit {
 
-  page: number = 1;
-  listUtilisateur: Array<UtilisateurDto> = [];
-  errorMsg = "";
+  page: number=1;
+  listUtilisateur: Array<UtilisateurDto>=[];
+  errorMsg="";
 
   constructor(
     private router: Router,
@@ -29,9 +29,9 @@ export class PageUtilisateurComponent implements OnInit {
 
   findAllUtilisateur(){
     this.userService.findAll().subscribe( list => {
-      this.listUtilisateur = list;
+      this.listUtilisateur=list;
     }, error => {
-      this.errorMsg = error.error.error;
+      this.errorMsg=error.error.error;
     });
   }
 

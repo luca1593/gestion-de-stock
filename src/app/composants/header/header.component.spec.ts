@@ -12,8 +12,8 @@ describe('HeaderComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HeaderComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(HeaderComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

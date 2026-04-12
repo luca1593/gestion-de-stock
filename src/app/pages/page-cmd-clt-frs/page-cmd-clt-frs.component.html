@@ -16,7 +16,7 @@
                 <div class="card">
                     <div class="accordion-item m-0">
                         <h3 class="accordion-header m-0" id="cmd.code">
-                            <app-details-cmd-clt-frs [commande]="cmd" [origin]="origin" [lineDeCommande] = "findAllLigneCommandeByIdCommande(cmd.id)" ></app-details-cmd-clt-frs>
+                            <app-details-cmd-clt-frs [commande]="cmd" [origin]="origin" [lineDeCommande]="findAllLigneCommandeByIdCommande(cmd.id)" ></app-details-cmd-clt-frs>
                         </h3>
                         <div id="collapse{{cmd.id}}" class="accordion-collapse collapse"
                         [attr.aria-labelledby]="cmd.code"
@@ -51,7 +51,7 @@
                     nextLabel="Suivant"
                     (autoHide)="true"
                     (responsive)="true"
-                    (pageChange)="page = $event" >
+                    (pageChange)="page=$event" >
                 </pagination-controls>
             </div>
         </div>

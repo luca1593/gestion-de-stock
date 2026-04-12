@@ -12,12 +12,12 @@ import { ClientDto } from '../models/client-dto';
   providedIn: 'root',
 })
 class ClientService extends __BaseService {
-  static readonly FindAllPath = 'gestiondestock/v1/client/all';
-  static readonly DeleteDELETEPath = 'gestiondestock/v1/client/detele/{idClient}';
-  static readonly FindbyEmailClientPath = 'gestiondestock/v1/client/email/{emailClient}';
-  static readonly FindbyNomClientPath = 'gestiondestock/v1/client/nom/{nomClient}';
-  static readonly SavePOSTPath = 'gestiondestock/v1/client/save';
-  static readonly FindByIdPath = 'gestiondestock/v1/client/{idClient}';
+  static readonly FindAllPath='v1/client/all';
+  static readonly DeleteDELETEPath='v1/client/detele/{idClient}';
+  static readonly FindbyEmailClientPath='v1/client/email/{emailClient}';
+  static readonly FindbyNomClientPath='v1/client/nom/{nomClient}';
+  static readonly SavePOSTPath='v1/client/save';
+  static readonly FindByIdPath='v1/client/{idClient}';
 
   constructor(
     config: __Configuration,
@@ -33,12 +33,12 @@ class ClientService extends __BaseService {
    * @return L'objet client a ete trouver dans la BDD
    */
    FindbyNomClientResponse(nomClient?: string): __Observable<__StrictHttpResponse<ClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       '',
-      this.rootUrl + `gestiondestock/v1/client/nom/${encodeURIComponent(String(nomClient))}`,
+      this.rootUrl + `v1/client/nom/${encodeURIComponent(String(nomClient))}`,
       __body,
       {
         headers: __headers,
@@ -72,12 +72,12 @@ class ClientService extends __BaseService {
    * @return L'objet client creer ou modifier
    */
   SaveResponse(body?: ClientDto): __Observable<__StrictHttpResponse<ClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/client/save`,
+      this.rootUrl + `v1/client/save`,
       __body,
       {
         headers: __headers,
@@ -111,12 +111,12 @@ class ClientService extends __BaseService {
    * @return L'objet client a ete trouver dans la BDD
    */
   FindByIdResponse(idClient?: number): __Observable<__StrictHttpResponse<ClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/client/${encodeURIComponent(String(idClient))}`,
+      this.rootUrl + `v1/client/${encodeURIComponent(String(idClient))}`,
       __body,
       {
         headers: __headers,
@@ -150,12 +150,12 @@ class ClientService extends __BaseService {
    * @return La liste des clients / liste vide
    */
   FindAllResponse(): __Observable<__StrictHttpResponse<Array<ClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/client/all`,
+      this.rootUrl + `v1/client/all`,
       __body,
       {
         headers: __headers,
@@ -189,13 +189,13 @@ class ClientService extends __BaseService {
    * @param idClient undefined
    */
   DeleteDELETEResponse(idClient: number): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/client/detele/${encodeURIComponent(String(idClient))}`,
+      this.rootUrl + `v1/client/detele/${encodeURIComponent(String(idClient))}`,
       __body,
       {
         headers: __headers,
@@ -230,13 +230,13 @@ class ClientService extends __BaseService {
    * @return L'objet client a ete trouver dans la BDD
    */
   FindbyEmailClientResponse(emailClient: string): __Observable<__StrictHttpResponse<ClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/client/email/${encodeURIComponent(String(emailClient))}`,
+      this.rootUrl + `v1/client/email/${encodeURIComponent(String(emailClient))}`,
       __body,
       {
         headers: __headers,

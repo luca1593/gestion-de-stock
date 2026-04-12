@@ -12,8 +12,8 @@ describe('DashbordComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DashbordComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(DashbordComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

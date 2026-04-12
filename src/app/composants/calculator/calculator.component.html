@@ -1,22 +1,33 @@
-<div class="card text-bg-secondary">
-    <div class="card-header">
-        <div class="p-3">
-            <input type="text" id="input_calc" class="form-control" [(ngModel)] = "numberText" placeholder="0">
-        </div>
+<div class="calculator-container" #calculatorContainer tabindex="0">
+    <div class="calculator-display">
+        <input type="text" 
+               class="calculator-input" 
+               [value]="numberText" 
+               readonly
+               placeholder="0">
     </div>
-    <div class="card-body">
-        <div class="container text-center">
-            <div class="row">
-                <div class="col-3 p-2" *ngFor="let item of boutonCalcs">
-                  <div class="row" *ngIf="item.id == 'c' || item.id == 'ac'">
-                    <div class="col-6">ff</div>
-                    <div class="col-3">f</div>
-                  </div>
-                    <div class="btn btn-secondary pave_calc" (click)="typeNumber(item.txt)" id="{{item.id}}">
-                        {{item.txt}}
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="calculator-keypad">
+        <button class="calc-btn function" (click)="typeNumber('ac')" id="ac">AC</button>
+        <button class="calc-btn function" (click)="typeNumber('c')" id="c">C</button>
+        <button class="calc-btn operator" (click)="typeNumber('/')" id="/">÷</button>
+        <button class="calc-btn operator" (click)="typeNumber('*')" id="*">×</button>
+        
+        <button class="calc-btn number" (click)="typeNumber('7')" id="7">7</button>
+        <button class="calc-btn number" (click)="typeNumber('8')" id="8">8</button>
+        <button class="calc-btn number" (click)="typeNumber('9')" id="9">9</button>
+        <button class="calc-btn operator" (click)="typeNumber('-')" id="-">−</button>
+        
+        <button class="calc-btn number" (click)="typeNumber('4')" id="4">4</button>
+        <button class="calc-btn number" (click)="typeNumber('5')" id="5">5</button>
+        <button class="calc-btn number" (click)="typeNumber('6')" id="6">6</button>
+        <button class="calc-btn operator" (click)="typeNumber('+')" id="+">+</button>
+        
+        <button class="calc-btn number" (click)="typeNumber('1')" id="1">1</button>
+        <button class="calc-btn number" (click)="typeNumber('2')" id="2">2</button>
+        <button class="calc-btn number" (click)="typeNumber('3')" id="3">3</button>
+        <button class="calc-btn equals" (click)="typeNumber('=')" id="=">=</button>
+        
+        <button class="calc-btn number zero" (click)="typeNumber('0')" id="0">0</button>
+        <button class="calc-btn number" (click)="typeNumber('.')" id=".">.</button>
     </div>
 </div>

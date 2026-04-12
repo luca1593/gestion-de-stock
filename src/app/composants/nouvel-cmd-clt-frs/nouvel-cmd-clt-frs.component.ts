@@ -12,22 +12,22 @@ import { AdresseDto, ArticleDto, ClientDto, CommandeClientDto, CommandeFournisse
 })
 export class NouvelCmdCltFrsComponent implements OnInit {
 
-  origin = '';
-  selectedClientFournisseur: any = {};
-  selectedAdressCltFrs: AdresseDto = {};
-  listClientFouenisseur: Array<any> = [];
-  searchedArticle: ArticleDto = {};
-  articleErrorMsg = "";
-  codeArticle = "";
-  quantite: number = 0;
-  ligneDeCommandes: Array<any> = [];
-  totalCommande: number = 0;
-  quantiteListArticle: number = 0;
-  listArticles: Array<ArticleDto> = [];
-  articleNotYetSelected = true;
-  errorMsg: Array<string> = [];
-  dateCmd = "";
-  codeCmd = "";
+  origin='';
+  selectedClientFournisseur: any={};
+  selectedAdressCltFrs: AdresseDto={};
+  listClientFouenisseur: Array<any>=[];
+  searchedArticle: ArticleDto={};
+  articleErrorMsg="";
+  codeArticle="";
+  quantite: number=0;
+  ligneDeCommandes: Array<any>=[];
+  totalCommande: number=0;
+  quantiteListArticle: number=0;
+  listArticles: Array<ArticleDto>=[];
+  articleNotYetSelected=true;
+  errorMsg: Array<string>=[];
+  dateCmd="";
+  codeCmd="";
 
   constructor(
     private router: Router,
@@ -39,17 +39,17 @@ export class NouvelCmdCltFrsComponent implements OnInit {
 
   ngOnInit():void {
     this.activatedRoute.data.subscribe(data => {
-      this.origin = data['origin'];
+      this.origin=data['origin'];
     });
-    const idCltFrs = this.activatedRoute.snapshot.params['id'];
+    const idCltFrs=this.activatedRoute.snapshot.params['id'];
     if (idCltFrs) {
       if (this.origin === "client") {
         this.cltFrsService.findClientById(idCltFrs).subscribe(clt => {
-          this.selectedClientFournisseur = clt;
+          this.selectedClientFournisseur=clt;
         });
       } else if (this.origin === "fournisseur") {
         this.cltFrsService.findFournisseurById(idCltFrs).subscribe(frs => {
-          this.selectedClientFournisseur = frs;
+          this.selectedClientFournisseur=frs;
         });
       }
     }
@@ -59,25 +59,25 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   initCodeCmd(){
-    const date: Date = new Date();
-    const jour: string = date.getFullYear() + "" + ((date.getMonth() + 1) <10 ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1))+ "" + (date.getDate() <10 ? ("0" + date.getDate()) : date.getDate());
-    const heure: string = (date.getHours() <10 ? ("0" + date.getHours()) : date.getHours()) + "" + (date.getMinutes() <10 ? ("0" + date.getMinutes()) : date.getMinutes())  + "" + (date.getSeconds() <10 ? ("0" + date.getSeconds()) : date.getSeconds());
-    this.dateCmd = (date.getDate() <10 ? ("0" + date.getDate()) : date.getDate()) + "/" + ((date.getMonth() + 1) <10 ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1)) + "/" + date.getFullYear()
+    const date: Date=new Date();
+    const jour: string=date.getFullYear() + "" + ((date.getMonth() + 1) <10 ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1))+ "" + (date.getDate() <10 ? ("0" + date.getDate()) : date.getDate());
+    const heure: string=(date.getHours() <10 ? ("0" + date.getHours()) : date.getHours()) + "" + (date.getMinutes() <10 ? ("0" + date.getMinutes()) : date.getMinutes())  + "" + (date.getSeconds() <10 ? ("0" + date.getSeconds()) : date.getSeconds());
+    this.dateCmd=(date.getDate() <10 ? ("0" + date.getDate()) : date.getDate()) + "/" + ((date.getMonth() + 1) <10 ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1)) + "/" + date.getFullYear()
     if(this.origin === "client"){
-      this.codeCmd = "CMDCLT" + jour + heure;
+      this.codeCmd="CMDCLT" + jour + heure;
     }else if(this.origin === "fournisseur"){
-      this.codeCmd = "CMDFRS" + jour + heure;
+      this.codeCmd="CMDFRS" + jour + heure;
     }
   }
 
   saveClick():void {
-    const commande = this.preparerCommande();
+    const commande=this.preparerCommande();
     if(this.origin ==="client") {
       this.commandeCltFrs.enregistrerCommandeClient(commande as CommandeClientDto, new Date().getTime()).subscribe(
         cmd => {
           this.router.navigate(['commande-client']);
         }, error => {
-          this.errorMsg = error.error.errors;
+          this.errorMsg=error.error.errors;
         }
       );
     }else if(this.origin === "fournisseur"){
@@ -85,25 +85,28 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         cmd => {
           this.router.navigate(['commande-fournisseur']);
         }, error => {
-          this.errorMsg = error.error.errors;
+          this.errorMsg=error.error.errors;
         }
       );
     }
   }
 
   private preparerCommande(): any{
+    const dateTimestamp = new Date().getTime();
     if(this.origin === "client"){
       return  {
         client: this.selectedClientFournisseur,
         code: this.codeCmd,
-        etatcommande:"EN_PREPARATIOM",
+        etatcommande:"EN_PREPARATION",
+        dateCommande: dateTimestamp,
         ligneCommandeClients: this.ligneDeCommandes
       }
     }else if(this.origin === "fournisseur"){
       return  {
         fournisseur: this.selectedClientFournisseur,
         code: this.codeCmd,
-        etatcommande:"EN_PREPARATIOM",
+        etatcommande:"EN_PREPARATION",
+        dateCommande: dateTimestamp,
         ligneCommandeFournisseurs: this.ligneDeCommandes
       }
     }
@@ -121,12 +124,12 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     if(this.origin === "client"){
       this.cltFrsService.findAllClient()
         .subscribe(clients => {
-          this.listClientFouenisseur = clients;
+          this.listClientFouenisseur=clients;
         })
     }else if(this.origin === "fournisseur"){
       this.cltFrsService.findAllFournisseurs()
         .subscribe(fournisseurs => {
-         this.listClientFouenisseur = fournisseurs;
+         this.listClientFouenisseur=fournisseurs;
         })
     }
   }
@@ -135,10 +138,10 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     if(code){
       this.articleService.findArticleByCode(code)
       .subscribe(article => {
-        this.searchedArticle = article;
-        this.articleErrorMsg = "";
+        this.searchedArticle=article;
+        this.articleErrorMsg="";
       }, error => {
-        this.articleErrorMsg = error.error.error;
+        this.articleErrorMsg=error.error.error;
       });
     }
   }
@@ -147,24 +150,24 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     if(this.codeArticle.length === 0) {
       this.findAllArticle();
     }
-    this.listArticles = this.listArticles.filter(
+    this.listArticles=this.listArticles.filter(
       art => art?.codeArticle?.startsWith(this.codeArticle)
       || art?.designation?.toLowerCase().startsWith(this.codeArticle.toLowerCase())
     );
-    this.articleNotYetSelected = true;
+    this.articleNotYetSelected=true;
   }
 
   selectedArticle(article: ArticleDto): void{
-    this.searchedArticle = article;
-    this.codeArticle = article.codeArticle ? article.codeArticle : "";
-    this.articleNotYetSelected = false;
+    this.searchedArticle=article;
+    this.codeArticle=article.codeArticle ? article.codeArticle : "";
+    this.articleNotYetSelected=false;
   }
 
   addLigneCommande():void {
-    let totalCmd = 0;
-    let totalQnt = 0;
+    let totalCmd=0;
+    let totalQnt=0;
 
-    const ligneArleadyExist = this.ligneDeCommandes.find(
+    const ligneArleadyExist=this.ligneDeCommandes.find(
       ligne => ligne.article?.codeArticle === this.searchedArticle.codeArticle
     );
 
@@ -176,7 +179,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         }
       });
     }else{
-      const ligneDeCommande: LigneCommandeClientDto = {
+      const ligneDeCommande: LigneCommandeClientDto={
         article : this.searchedArticle,
         prixUnitaire: this.searchedArticle.prixTtc,
         quantite: +this.quantite
@@ -190,19 +193,19 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         totalQnt += ligne.quantite;
       }
     });
-    this.totalCommande = Math.floor(totalCmd);
-    this.quantiteListArticle = totalQnt;
-    this.searchedArticle = {};
-    this.codeArticle = "";
-    this.quantite = 0;
-    this.articleNotYetSelected = true;
+    this.totalCommande=Math.floor(totalCmd);
+    this.quantiteListArticle=totalQnt;
+    this.searchedArticle={};
+    this.codeArticle="";
+    this.quantite=0;
+    this.articleNotYetSelected=true;
     this.findAllArticle();
   }
 
   findAllArticle(){
     this.articleService.findAllArticle()
     .subscribe(articles => {
-      this.listArticles = articles;
+      this.listArticles=articles;
     });
   }
 

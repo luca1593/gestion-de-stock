@@ -12,13 +12,13 @@ import { FournisseurDto } from '../models/fournisseur-dto';
   providedIn: 'root',
 })
 class FournisseurService extends __BaseService {
-  static readonly FournisseurApiFindAllGETPath = 'gestiondestock/v1/fournisseur/all';
-  static readonly FournisseurApiSavePOSTPath = 'gestiondestock/v1/fournisseur/create';
-  static readonly FournisseurApiFindByEmailFournisseurGETPath = 'gestiondestock/v1/fournisseur/email/{emailFournisseur}';
-  static readonly FournisseurApiFindByIdGETPath = 'gestiondestock/v1/fournisseur/{idFournisseur}';
+  static readonly FournisseurApiFindAllGETPath='v1/fournisseur/all';
+  static readonly FournisseurApiSavePOSTPath='v1/fournisseur/create';
+  static readonly FournisseurApiFindByEmailFournisseurGETPath='v1/fournisseur/email/{emailFournisseur}';
+  static readonly FournisseurApiFindByIdGETPath='v1/fournisseur/{idFournisseur}';
 
-  static readonly FournisseurApiDeleteDELETEPath = 'gestiondestock/v1/fournisseur/detele/{idFournisseur}';
-  static readonly FournisseurApiFindByNomFournisseurGETPath = 'gestiondestock/v1/fournisseur/nom/{nomFournisseur}';
+  static readonly FournisseurApiDeleteDELETEPath='v1/fournisseur/detele/{idFournisseur}';
+  static readonly FournisseurApiFindByNomFournisseurGETPath='v1/fournisseur/nom/{nomFournisseur}';
 
   constructor(
     config: __Configuration,
@@ -34,12 +34,12 @@ class FournisseurService extends __BaseService {
    * @return La liste des clients / liste vide
    */
   FournisseurApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<FournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/fournisseur/all`,
+      this.rootUrl + `v1/fournisseur/all`,
       __body,
       {
         headers: __headers,
@@ -74,13 +74,13 @@ class FournisseurService extends __BaseService {
    * @return L'objet fournisseur creer ou modifier
    */
   FournisseurApiSavePOSTResponse(body?: FournisseurDto): __Observable<__StrictHttpResponse<FournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/fournisseur/create`,
+      this.rootUrl + `v1/fournisseur/create`,
       __body,
       {
         headers: __headers,
@@ -116,13 +116,13 @@ class FournisseurService extends __BaseService {
    * @return L'objet fournisseur a ete trouver dans la BDD
    */
   FournisseurApiFindByEmailFournisseurGETResponse(emailFournisseur: string): __Observable<__StrictHttpResponse<FournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/fournisseur/email/${encodeURIComponent(String(emailFournisseur))}`,
+      this.rootUrl + `v1/fournisseur/email/${encodeURIComponent(String(emailFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -158,13 +158,13 @@ class FournisseurService extends __BaseService {
    * @return L'objet fournisseur a ete trouver dans la BDD
    */
   FournisseurApiFindByIdGETResponse(idFournisseur: number): __Observable<__StrictHttpResponse<FournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/fournisseur/${encodeURIComponent(String(idFournisseur))}`,
+      this.rootUrl + `v1/fournisseur/${encodeURIComponent(String(idFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -198,12 +198,12 @@ class FournisseurService extends __BaseService {
    * Cette methode permet de supprimer un fournisseur par son ID
    */
     FournisseurApiDeleteDELETEResponse(idFournisseur?: number): __Observable<__StrictHttpResponse<null>> {
-      let __params = this.newParams();
-      let __headers = new HttpHeaders();
-      let __body: any = null;
-      let req = new HttpRequest<any>(
+      let __params=this.newParams();
+      let __headers=new HttpHeaders();
+      let __body: any=null;
+      let req=new HttpRequest<any>(
         'DELETE',
-        this.rootUrl + `gestiondestock/v1/fournisseur/detele/${encodeURIComponent(String(idFournisseur))}`,
+        this.rootUrl + `v1/fournisseur/detele/${encodeURIComponent(String(idFournisseur))}`,
         __body,
         {
           headers: __headers,
@@ -236,12 +236,12 @@ class FournisseurService extends __BaseService {
      * @return L'objet fournisseur a ete trouver dans la BDD
      */
     FournisseurApiFindByNomFournisseurGETResponse(nomFournisseur?: string): __Observable<__StrictHttpResponse<FournisseurDto>> {
-      let __params = this.newParams();
-      let __headers = new HttpHeaders();
-      let __body: any = null;
-      let req = new HttpRequest<any>(
+      let __params=this.newParams();
+      let __headers=new HttpHeaders();
+      let __body: any=null;
+      let req=new HttpRequest<any>(
         'GET',
-        this.rootUrl + `gestiondestock/v1/fournisseur/nom/${encodeURIComponent(String(nomFournisseur))}`,
+        this.rootUrl + `v1/fournisseur/nom/${encodeURIComponent(String(nomFournisseur))}`,
         __body,
         {
           headers: __headers,

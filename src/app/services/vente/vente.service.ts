@@ -19,7 +19,7 @@ export class VenteService {
    * @returns Observable<VenteDto>
    */
   enregistrerVente(venteDto: VenteDto): Observable<VenteDto> {
-    venteDto.identreprise = this.userServise.getConnectedUser().entreprise?.id;
+    venteDto.identreprise=this.userServise.getConnectedUser().entreprise?.id;
     return this.apiVenteService.VenteApiSavePOST(venteDto);
   }
 

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - gs-network
+
+  backend:
+    image: tomcat:9-jdk11
+    container_name: gs-backend
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./gestiondestock.war:/usr/local/tomcat/webapps/gestiondestock.war
+    networks:
+      - gs-network
+    environment:
+      - JAVA_OPTS=-Xmx512m -Xms256m
+
+networks:
+  gs-network:
+    driver: bridge

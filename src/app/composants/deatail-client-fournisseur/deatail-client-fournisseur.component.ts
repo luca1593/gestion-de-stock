@@ -14,19 +14,19 @@ import autoTable, { RowInput } from 'jspdf-autotable';
 })
 export class DeatailClientFournisseurComponent implements OnInit {
 
-  origin = "";
-  page = 1;
-  pageCmd = 1;
-  clientFrournisseurDTO: any = {};
-  listCmd: Array<any> = [];
-  mapLigneComandes = new Map();
-  mapCommande = new Map();
-  mapNmbrArticle = new Map();
-  mapTotalTtc = new Map();
-  idCommandeSelectione = 0;
-  errorMsg = "";
-  cmdCltFrs: CommandeClientDto = {};
-  private listDataToPdf: Array<DeatailClientFournisseurComponent.DataToPdf> = [];
+  origin="";
+  page=1;
+  pageCmd=1;
+  clientFrournisseurDTO: any={};
+  listCmd: Array<any>=[];
+  mapLigneComandes=new Map();
+  mapCommande=new Map();
+  mapNmbrArticle=new Map();
+  mapTotalTtc=new Map();
+  idCommandeSelectione=0;
+  errorMsg="";
+  cmdCltFrs: CommandeClientDto={};
+  private listDataToPdf: Array<DeatailClientFournisseurComponent.DataToPdf>=[];
 
   constructor(
     @Inject(LOCALE_ID) private locale: string,
@@ -38,18 +38,18 @@ export class DeatailClientFournisseurComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRouter.data.subscribe(data => {
-      this.origin = data['origin'];
+      this.origin=data['origin'];
     });
-    const idCltFrs = this.activatedRouter.snapshot.params['id'];
+    const idCltFrs=this.activatedRouter.snapshot.params['id'];
     if (idCltFrs) {
       if (this.origin === "client") {
         this.cltFrsService.findClientById(idCltFrs).subscribe(clt => {
-          this.clientFrournisseurDTO = clt;
+          this.clientFrournisseurDTO=clt;
           this.findAllCmdCltFrs();
         });
       } else if (this.origin === "fournisseur") {
         this.cltFrsService.findFournisseurById(idCltFrs).subscribe(frs => {
-          this.clientFrournisseurDTO = frs;
+          this.clientFrournisseurDTO=frs;
           this.findAllCmdCltFrs();
         });
       }
@@ -60,13 +60,13 @@ export class DeatailClientFournisseurComponent implements OnInit {
     if (this.origin === "client") {
       this.cmdCltFrsService.findAllByIdClient(this.clientFrournisseurDTO as ClientDto)
         .subscribe(list => {
-          this.listCmd = list;
+          this.listCmd=list;
           this.findAllLigneCommande();
         });
     } else if (this.origin === "fournisseur") {
       this.cmdCltFrsService.findAllByIdFournisseur(this.clientFrournisseurDTO as FournisseurDto)
         .subscribe(list => {
-          this.listCmd = list;
+          this.listCmd=list;
           this.findAllLigneCommande();
         });
     }
@@ -86,7 +86,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
           this.mapLigneComandes.set(idCommande, list);
           this.calculerTotalCmd(idCommande, list);
         }, error => {
-          this.errorMsg = error.error.message;
+          this.errorMsg=error.error.message;
         });
     } else if (this.origin === "fournisseur") {
       this.cmdCltFrsService.findAllLigneCommandeFournisseur(idCommande)
@@ -94,14 +94,14 @@ export class DeatailClientFournisseurComponent implements OnInit {
           this.mapLigneComandes.set(idCommande, list);
           this.calculerTotalCmd(idCommande, list);
         }, error => {
-          this.errorMsg = error.error.message;
+          this.errorMsg=error.error.message;
         });
     }
   }
 
   calculerTotalCmd(idCommande: number, list: Array<any>): void {
-    let totalTtc = 0;
-    let nmbArticle = 0;
+    let totalTtc=0;
+    let nmbArticle=0;
     list.forEach(ligne => {
       if (ligne.prixUnitaire && ligne.quantite) {
         totalTtc += ligne.prixUnitaire * ligne.quantite;
@@ -121,8 +121,8 @@ export class DeatailClientFournisseurComponent implements OnInit {
   }
 
   setCommandeSelectione(idSelectione: number): void {
-    this.idCommandeSelectione = idSelectione;
-    this.cmdCltFrs = this.mapCommande.get(idSelectione);
+    this.idCommandeSelectione=idSelectione;
+    this.cmdCltFrs=this.mapCommande.get(idSelectione);
   }
 
   nouveauxCommande(): void {
@@ -140,7 +140,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
   private detailPdf(): void {
     this.mapLigneComandes.forEach( (ligne, key )=> {
       ligne.forEach( ( pdf: any) => {
-        let detailpdf: DeatailClientFournisseurComponent.DataToPdf = {
+        let detailpdf: DeatailClientFournisseurComponent.DataToPdf={
           code: this.mapCommande.get(key).code,
           date: formatDate(this.mapCommande.get(key).dateCommande, "dd-MM-yyyy", this.locale),
           codeArticle: pdf.article?.codeArticle,
@@ -158,12 +158,12 @@ export class DeatailClientFournisseurComponent implements OnInit {
   private dataToPrintOrExport(extention: string) {
     this.detailPdf();
     let values: any;
-    const thead: Array<string> = [
+    const thead: Array<string>=[
       "Code commande", "Date commande", "Code Article", "Designation",
       "Catégorie", "PU TTC", "Quantié", "Total"
     ];
-    const doc = new jsPDF();
-    values = this.listDataToPdf.map( element => Object.values(element) );
+    const doc=new jsPDF();
+    values=this.listDataToPdf.map( element => Object.values(element) );
     autoTable(doc, {
       body: [
         [

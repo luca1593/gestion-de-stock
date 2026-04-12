@@ -3,7 +3,7 @@
         <div class="col-md-12 mb-3">
             <h2><i class="fas fa-info-circle blue-color"></i>&nbsp;Nouvel commande {{origin}}</h2>
         </div>
-        <div class="alert alert-danger" *ngIf="errorMsg.length">
+        <div class="alert alert-danger" *ngIf="errorMsg && errorMsg.length">
             <div *ngFor="let msg of errorMsg">
                 <span>{{ msg }}</span>
             </div>
@@ -104,7 +104,7 @@
                 <div class="card-body scroll-body-max-height-130" 
                 *ngIf="ligneDeCommandes.length > 0">
                     <app-details-cmd *ngFor="let ligneCmd of ligneDeCommandes"
-                    [ligneCommande] = "ligneCmd"
+                    [ligneCommande]="ligneCmd"
                     ></app-details-cmd>
                 </div>
                 <div class="card-footer">

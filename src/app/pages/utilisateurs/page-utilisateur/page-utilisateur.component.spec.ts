@@ -12,8 +12,8 @@ describe('PageUtilisateurComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageUtilisateurComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageUtilisateurComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

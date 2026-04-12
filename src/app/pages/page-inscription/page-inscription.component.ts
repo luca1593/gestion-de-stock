@@ -11,9 +11,9 @@ import { AdresseDto, AuthenticationRequest, EntrepriseDto } from 'src/gs-api/src
 })
 export class PageInscriptionComponent implements OnInit {
 
-  entrepriseDto: EntrepriseDto = {};
-  adresseDto: AdresseDto = {};
-  errorMessage: Array<string> = [];
+  entrepriseDto: EntrepriseDto={};
+  adresseDto: AdresseDto={};
+  errorMessage: Array<string>=[];
 
   constructor(
     private entrepriseService: EntrepriseService,
@@ -26,16 +26,16 @@ export class PageInscriptionComponent implements OnInit {
   }
 
   inscrire(): void {
-    this.entrepriseDto.adresse = this.adresseDto;
+    this.entrepriseDto.adresse=this.adresseDto;
     this.entrepriseService.sinscrire(this.entrepriseDto).subscribe(entrepriseDto =>{
       this.connetedEntreprise();
     }, error => {
-      this.errorMessage = error.error.errors;
+      this.errorMessage=error.error.errors;
     })
   }
 
   connetedEntreprise(): void{
-    const authenticationRequest: AuthenticationRequest = {
+    const authenticationRequest: AuthenticationRequest={
       login: this.entrepriseDto.email,
       password: "s0n3R@nd0mP@$$w0rd"
     };

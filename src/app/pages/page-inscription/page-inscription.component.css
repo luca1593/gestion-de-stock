@@ -1,4 +1,103 @@
-.my-container{
-    margin-top: 50px;
-    max-width: 800px;
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px 20px;
+}
+
+.register-card {
+    width: 100%;
+    max-width: 900px;
+    background: var(--bg-card, white);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.register-header {
+    background: linear-gradient(135deg, #4a90d9 0%, #2a5298 100%);
+    padding: 25px 30px;
+    text-align: center;
+    color: white;
+}
+
+.register-header .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 10px 0 5px;
+    color: white;
+}
+
+.register-header p {
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+}
+
+.register-card .card-body {
+    padding: 30px;
+}
+
+.register-card .form-label {
+    font-weight: 500;
+    color: var(--text-primary, #495057);
+    margin-bottom: 5px;
+}
+
+.register-card .form-control {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #ced4da);
+    transition: all 0.3s;
+    background: var(--input-bg, white);
+    color: var(--text-primary, #495057);
+}
+
+.register-card .form-control:focus {
+    border-color: #4a90d9;
+    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
+}
+
+.register-card .btn-primary {
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4a90d9 0%, #2a5298 100%);
+    border: none;
+    transition: all 0.3s;
+    color: white;
+}
+
+.register-card .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 217, 0.4);
+}
+
+.register-card h5 {
+    color: var(--text-primary, #2c3e50);
+    font-weight: 600;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: none;
+    color: #721c24;
+    border-radius: 8px;
+    padding: 12px 15px;
+}
+
+.alert-danger i {
+    margin-right: 8px;
+}
+
+body.dark-theme .register-card {
+    background: var(--bg-card);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+body.dark-theme .register-card .form-label,
+body.dark-theme .register-card h5 {
+    color: var(--text-primary);
 }

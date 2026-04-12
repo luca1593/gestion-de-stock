@@ -30,8 +30,7 @@
           <td>{{ vente.commentaire }}</td>
           <td class="text-center">{{ mapTotalTtc.get(vente.id) }}</td>
           <td>
-            <button class="btn btn-link" data-bs-toggle="modal" (click)="setVenteSelectione(vente.id!)"
-              [attr.data-bs-target]="'#modalDetail'" >
+            <button class="btn btn-link" (click)="setVenteSelectione(vente.id!)">
               <i class="fas fa-list-alt"></i>&nbsp;Details
             </button>
           </td>
@@ -41,7 +40,7 @@
   </div>
   <div class="card-footer text-end">
     <pagination-controls class="small-text" previousLabel="Precedent" nextLabel="Suivant" (autoHide)="(true)"
-      (responsive)="(true)" (pageChange)="pageCmd = $event" >
+      (responsive)="(true)" (pageChange)="pageCmd=$event" >
     </pagination-controls>
   </div>
 </div>

@@ -12,8 +12,8 @@ describe('PageDashbordComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageDashbordComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageDashbordComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

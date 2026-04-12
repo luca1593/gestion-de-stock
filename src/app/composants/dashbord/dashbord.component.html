@@ -1,145 +1,204 @@
-<div class="col mb-3 mt-1">
-  <div class="row mx-3 mt-2 mb-3 py-1">
-   <div class="col-12">
-    <div class="row">
-      <div class="col-3">
-        <div class="card text-white bg-primary mb-3">
-          <div class="row card-header">
-            <div class="col-9"><h6 class=>Article</h6></div>
-            <div class="col-1"><i class="fa-solid fa-box"></i></div>
-          </div>
-          <div class="card-body">{{totalArticle}}</div>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="card text-white bg-success mb-3">
-          <div class="row card-header">
-            <div class="col-9"><h6 class=>Utilisateur</h6></div>
-            <div class="col-1"><i class="fa-solid fa-users-viewfinder"></i></div>
-          </div>
-          <div class="card-body">{{totalUtilisateur}}</div>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="card text-white bg-info mb-3">
-          <div class="row card-header">
-            <div class="col-9"><h6 class=>Client</h6></div>
-            <div class="col-1"><i class="fa-solid fa-users"></i></div>
-          </div>
-          <div class="card-body">{{totalClient}}</div>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="card text-white bg-danger mb-3">
-          <div class="row card-header">
-            <div class="col-9"><h6 class=>Fournisseur</h6></div>
-            <div class="col-1"><i class="fa-solid fa-cart-flatbed"></i></div>
-          </div>
-          <div class="card-body">{{totalFournisseur}}</div>
-        </div>
-      </div>
-    </div>
-   </div>
-  </div>
-  <div class="row mx-3 mt-2 my-0 py-1">
+<div class="dashboard-container">
+  <div class="row mx-3 mt-3 mb-4">
     <div class="col-12">
-      <div class="row m-0">
-        <div class="col-md-4 mt-2">
-          <div class="input-group mb-3">
-            <span class="input-group-text" id="dateDebut">Du&nbsp;<i class="fa-solid fa-calendar-days"></i></span>
-            <input type="date" placeholder="date de début" id="date-debut" class="form-control" [(ngModel)]="startDate" name="startDate" id="date-debut" aria-describedby="DateDebut">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stat-card blue">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Articles</h6>
+                <h2 class="mb-0">{{totalArticle}}</h2>
+              </div>
+              <div class="stat-icon">
+                <i class="fas fa-boxes fa-2x"></i>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-md-3 mt-2">
-          <div class="input-group mb-3">
-            <span class="input-group-text" id="dateFin">Au&nbsp;<i class="fa-solid fa-calendar-days"></i></span>
-            <input type="date" placeholder="date de début" class="form-control" id="date-fin" [(ngModel)]="endDate" name="endDate" (ngModelChange)="afficherData()" aria-describedby="dateFin">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stat-card green">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Utilisateurs</h6>
+                <h2 class="mb-0">{{totalUtilisateur}}</h2>
+              </div>
+              <div class="stat-icon">
+                <i class="fas fa-users-cog fa-2x"></i>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-md-2 mt-2">
-          <div class="mx-0">
-            <span class="btn btn-success" (click)="afficherData()" id="searchIcon"><i class="fa-solid fa-magnifying-glass"></i> Afficher</span>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stat-card orange">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Clients</h6>
+                <h2 class="mb-0">{{totalClient}}</h2>
+              </div>
+              <div class="stat-icon">
+                <i class="fas fa-user-friends fa-2x"></i>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="alert alert-danger" *ngIf="error">
-        <span>{{error}}</span>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stat-card red">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Fournisseurs</h6>
+                <h2 class="mb-0">{{totalFournisseur}}</h2>
+              </div>
+              <div class="stat-icon">
+                <i class="fas fa-truck-loading fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="row px-3" *ngIf="afficherDraphe">
-    <div class="col-6">
-      <div class="row mb-4">
-        <h4>Aperçue Direct des prix</h4>
-        <div class="col-6">
-          <div class="card text-white bg-primary mb-3">
-            <h6 class="card-header">Commade client</h6>
-            <div class="card-body">
-              {{getPrixValue()[0]}} Ariary
+  
+  <div class="row mx-3 mt-2 mb-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row align-items-end">
+            <div class="col-md-4">
+              <label class="form-label"><i class="fas fa-calendar"></i> Date de début</label>
+              <input type="date" class="form-control" [(ngModel)]="startDate">
             </div>
-          </div>
-          <div class="card text-white bg-success mb-3">
-            <h6 class="card-header">Commade fournisseur</h6>
-            <div class="card-body">
-              {{getPrixValue()[1]}} Ariary
+            <div class="col-md-4">
+              <label class="form-label"><i class="fas fa-calendar"></i> Date de fin</label>
+              <input type="date" class="form-control" [(ngModel)]="endDate" (ngModelChange)="onDateChange()">
             </div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="card text-dark bg-info mb-3">
-            <h6 class="card-header">Vente</h6>
-            <div class="card-body">
-              {{getPrixValue()[2]}} Ariary
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100" (click)="onDateChange()">
+                <i class="fas fa-search"></i> Afficher
+              </button>
             </div>
-          </div>
-          <div class="card text-white bg-danger mb-3">
-            <h6 class="card-header">Total</h6>
-            <div class="card-body">
-              {{parceData(getPrixValue()[0] + getPrixValue()[1] + getPrixValue()[2])}} Ariary
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <h4>Aperçue Direct des quantités</h4>
-        <div class="col-6">
-          <div class="card text-white bg-primary mb-3">
-            <h6 class="card-header">Commade client</h6>
-            <div class="card-body">
-              {{getQuantiteValue()[0]}}
-            </div>
-          </div>
-          <div class="card text-white bg-success mb-3">
-            <h6 class="card-header">Commade fournisseur</h6>
-            <div class="card-body">
-              {{getQuantiteValue()[1]}}
-            </div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="card text-dark bg-info mb-3">
-            <h6 class="card-header">Vente</h6>
-            <div class="card-body">
-              {{getQuantiteValue()[2]}}
-            </div>
-          </div>
-          <div class="card text-white bg-danger mb-3">
-            <h6 class="card-header">Total</h6>
-            <div class="card-body">
-              {{parceData(getQuantiteValue()[0] + getQuantiteValue()[1] + getQuantiteValue()[2])}}
+            <div class="col-md-2">
+              <button class="btn btn-outline-secondary w-100" (click)="resetDates()">
+                <i class="fas fa-redo"></i> Réinitialiser
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-6">
-      <div id="prixCanva">
-        <h4>Graphe des prix</h4>
-        <canvas id="prx"></canvas>
+  </div>
+  
+  <div class="alert alert-danger mx-3" *ngIf="error">
+    <i class="fas fa-exclamation-circle"></i> {{error}}
+  </div>
+  
+  <div class="row px-3" *ngIf="afficherDraphe">
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="fas fa-dollar-sign"></i> Aperçu des prix</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6 mb-3">
+              <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Commande client</h6>
+                  <h4>{{getPrixValue()[0] | number:'1.0-0'}} Ar</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Commande fournisseur</h6>
+                  <h4>{{getPrixValue()[1] | number:'1.0-0'}} Ar</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Vente</h6>
+                  <h4>{{getPrixValue()[2] | number:'1.0-0'}} Ar</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Total</h6>
+                  <h4>{{parceData(getPrixValue()[0] + getPrixValue()[1] + getPrixValue()[2]) | number:'1.0-0'}} Ar</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="qntCanva">
-        <h4>Graphe des quantités</h4>
-        <canvas id="qnt"></canvas>
+    </div>
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Aperçu des quantités</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6 mb-3">
+              <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Commande client</h6>
+                  <h4>{{getQuantiteValue()[0] | number:'1.0-0'}}</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Commande fournisseur</h6>
+                  <h4>{{getQuantiteValue()[1] | number:'1.0-0'}}</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Vente</h6>
+                  <h4>{{getQuantiteValue()[2] | number:'1.0-0'}}</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                  <h6 class="card-title">Total</h6>
+                  <h4>{{parceData(getQuantiteValue()[0] + getQuantiteValue()[1] + getQuantiteValue()[2]) | number:'1.0-0'}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row px-3" *ngIf="afficherDraphe">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Graphique des prix</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="prx"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Graphique des quantités</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="qnt"></canvas>
+        </div>
       </div>
     </div>
   </div>

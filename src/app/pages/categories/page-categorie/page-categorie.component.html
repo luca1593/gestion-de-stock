@@ -12,35 +12,19 @@
     </div>
     <div class="col m-3 p-3">
         <div class="row custom-border mb-3 p-0" *ngFor="let category of categoryDtoList">
-            <div class="col-md-3 border-right">
+            <div class="col-md-3 border-right d-flex align-items-center">
                 <span>{{category.code}}</span>
             </div>
-            <div class="col-md-6 border-right">
+            <div class="col-md-6 border-right d-flex align-items-center">
                 <span>{{category.designation}}</span>
             </div>
-            <div class="col-md-3">
-                <div class="row">
-                    <div class="col-md-4 text-primary text-center small-text">
-                        <button class="btn btn-link" (click)="modiferCategorie(category.id)">
-                            <i class="fas fa-pencil-alt"></i>
-                            Modifier
-                        </button>
-                    </div>
-                    <div class="col-md-4 text-center small-text">
-                        <button class="btn btn-link text-danger" data-bs-toggle="modal" 
-                        (click)="selectCategory(category.id)"
-                            data-bs-target="#modalConfirmDeleteCat">
-                            <i class="fas fa-trash-alt"></i>
-                            Supprimer
-                        </button>
-                    </div>
-                    <div class="col-md-4 text-primary text-center small-text">
-                        <button class="btn btn-link">
-                            <i class="fas fa-list-alt"></i>
-                            Details
-                        </button>
-                    </div>
-                </div>
+            <div class="col-md-3 d-flex align-items-center justify-content-center">
+                <app-ligne-action
+                    [itemId]="category.id"
+                    (modifier)="modiferCategorie($event)"
+                    (supprimer)="openDeleteModal($event)"
+                    (details)="detailsCategorie()">
+                </app-ligne-action>
             </div>
         </div>
     </div>

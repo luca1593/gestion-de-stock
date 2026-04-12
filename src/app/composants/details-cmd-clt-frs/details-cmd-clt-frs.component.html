@@ -39,27 +39,13 @@
         </div>
     </div>
     <!-- Boutton action -->
-    <div class="col-md-3">
-        <div class="row">
-            <div class="col-md-6 text-primary text-center small-text">
-                <button class="btn btn-link" type="button">
-                    <i class="fas fa-pencil-alt"></i>&nbsp;
-                    Modifier
-                </button>
-            </div>
-            <div class="col-md-6 text-dander text-center small-text">
-                <button class="btn btn-link text-danger" type="button" (click)="supprimer(commande.id)">
-                    <i class="fas fa-trash-alt"></i>&nbsp;
-                    Supprimer
-                </button>
-            </div>
-            <div class="col-md-6 text-dander text-center small-text">
-              <button class="btn btn-link" data-bs-toggle="modal"
-              [attr.data-bs-target]="'#modalDetail' + commande.code" >
-              <i class="fas fa-list-alt"></i>&nbsp;Details
-            </button>
-          </div>
-        </div>
+    <div class="col-md-3 d-flex align-items-center justify-content-center">
+        <app-ligne-action
+            [itemId]="commande.id"
+            (modifier)="modifier()"
+            (supprimer)="supprimer(commande.id)"
+            (details)="openDetailsModal()">
+        </app-ligne-action>
     </div>
 </div>
 
@@ -94,7 +80,7 @@
             <div class="modal-body max-height-440 shadow">
               <div class="card">
                 <div class="card-body scroll-body-max-height-130">
-                    <div *ngFor="let ligne of mapLigneComandes.get(cmd.id)">
+                    <div *ngFor="let ligne of lineDeCommande">
                         <app-details-cmd [ligneCommande]="ligne">
                         </app-details-cmd>
                     </div>
@@ -102,10 +88,10 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-md-6 text-start">
-                            {{ calculNombreArticleCommande(cmd.id) }} articles commander
+                            {{ lineDeCommande?.length || 0 }} articles commandés
                         </div>
                         <div class="col-md-6 text-end">
-                            Total commande : {{ calculTotalCommande(cmd.id) }}
+                            Total commande : {{ calculerPrixTotalCommande() }} Ar
                         </div>
                     </div>
                 </div>

@@ -12,8 +12,8 @@ describe('DetailsCmdComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DetailsCmdComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(DetailsCmdComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

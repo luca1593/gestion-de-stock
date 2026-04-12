@@ -12,8 +12,8 @@ describe('CalculatorComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CalculatorComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(CalculatorComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

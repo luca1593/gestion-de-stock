@@ -7,7 +7,7 @@ describe('HttpInterceptorService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HttpInterceptorService);
+    service=TestBed.inject(HttpInterceptorService);
   });
 
   it('should be created', () => {

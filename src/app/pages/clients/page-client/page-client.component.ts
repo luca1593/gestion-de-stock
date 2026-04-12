@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
+import { ExportExcelService } from 'src/app/services/export.service';
 import { ClientDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -9,14 +10,15 @@ import { ClientDto } from 'src/gs-api/src/models';
   styleUrls: ['./page-client.component.css']
 })
 export class PageClientComponent implements OnInit {
-
-  listClients: Array<ClientDto> = [];
-  errorMsg: string = '';
-  page: number = 1;
+  
+  listClients: Array<ClientDto>=[];
+  errorMsg: string='';
+  page: number=1;
 
   constructor(
     private router: Router,
-    private cltfrsService: CltfrsService
+    private cltfrsService: CltfrsService,
+    private exportService: ExportExcelService
     ) { }
 
   ngOnInit(): void {
@@ -25,7 +27,7 @@ export class PageClientComponent implements OnInit {
 
   finfAllClient(): void{
     this.cltfrsService.findAllClient().subscribe(resp =>{
-      this.listClients = resp;
+      this.listClients=resp;
     })
   }
 
@@ -33,11 +35,15 @@ export class PageClientComponent implements OnInit {
     this.router.navigate(['nouveau-client']);
   }
 
+  exporterClients(): void {
+    this.exportService.exportClients();
+  }
+
   handleSuppression($event: any): void {
     if($event === "success"){
       this.finfAllClient();
     }else{
-      this.errorMsg = $event;
+      this.errorMsg=$event;
     }
   }
 

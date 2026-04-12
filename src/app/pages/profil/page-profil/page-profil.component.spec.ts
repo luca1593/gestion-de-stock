@@ -12,8 +12,8 @@ describe('PageProfilComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageProfilComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageProfilComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

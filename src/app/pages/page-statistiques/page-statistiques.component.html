@@ -1,1 +1,225 @@
-<p>page-statistiques works!</p>
+<div class="stats-container">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #4a90d9, #2a5298);">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Total Articles</span>
+                    <span class="stat-value">{{stats?.totalArticles || 0}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Total Clients</span>
+                    <span class="stat-value">{{stats?.totalClients || 0}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Fournisseurs</span>
+                    <span class="stat-value">{{stats?.totalFournisseurs || 0}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Ventes</span>
+                    <span class="stat-value">{{stats?.totalVentes || 0}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics Row -->
+    <div class="row mb-4">
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Chiffre d'Affaires</span>
+                    <i class="fas fa-dollar-sign text-success"></i>
+                </div>
+                <div class="metric-value">{{formatNumber(stats?.chiffreAffaires || 0)}} €</div>
+                <div class="metric-subtitle">Total des ventes</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Valeur du Stock</span>
+                    <i class="fas fa-warehouse text-primary"></i>
+                </div>
+                <div class="metric-value">{{formatNumber(stats?.valeurStock || 0)}} €</div>
+                <div class="metric-subtitle">Valeur totale</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="metric-card" [class.alert-metric]="(stats?.articlesStockBas ?? 0) > 0">
+                <div class="metric-header">
+                    <span class="metric-title">Stock Bas</span>
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                </div>
+                <div class="metric-value">{{stats?.articlesStockBas || 0}}</div>
+                <div class="metric-subtitle">Articles en rupture</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs Row -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #00c9ff, #92fe9d);">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{rotationStock}}</span>
+                    <span class="kpi-label">Rotation Stocks</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #f857a6, #ff5858);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{tauxService}}%</span>
+                    <span class="kpi-label">Taux de Service</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card" [class.kpi-warning]="tauxRupture > 10">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{tauxRupture}}%</span>
+                    <span class="kpi-label">Taux Rupture</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{couvertureStock}}j</span>
+                    <span class="kpi-label">Couverture Stock</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h5>Chiffre d'Affaires par Mois</h5>
+                    <div class="chart-actions">
+                        <select class="chart-select" (change)="onPeriodeChange($event)">
+                            <option value="6">6 derniers mois</option>
+                            <option value="12" selected>12 derniers mois</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-body">
+                    <div class="chart-bars">
+                        <div class="chart-bar" *ngFor="let item of chiffreAffairesData; let i = index">
+                            <div class="bar-container">
+                                <div class="bar" [style.height.%]="getBarHeight(item.totalVentes)" [title]="item.periode + ': ' + formatNumber(item.totalVentes) + ' €'"></div>
+                            </div>
+                            <span class="bar-label">{{getMonthLabel(item.periode)}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h5>Répartition</h5>
+                </div>
+                <div class="chart-body">
+                    <div class="simple-stats">
+                        <div class="simple-stat-item">
+                            <span class="simple-stat-label">Commandes Clients</span>
+                            <span class="simple-stat-value">{{stats?.totalCommandesClient || 0}}</span>
+                        </div>
+                        <div class="simple-stat-item">
+                            <span class="simple-stat-label">Commandes Fournisseurs</span>
+                            <span class="simple-stat-value">{{stats?.totalCommandesFournisseur || 0}}</span>
+                        </div>
+                        <div class="simple-stat-item">
+                            <span class="simple-stat-label">En Attente</span>
+                            <span class="simple-stat-value text-warning">{{stats?.commandesEnAttente || 0}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Articles -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card">
+                <div class="table-header">
+                    <h5><i class="fas fa-trophy me-2"></i>Articles les Plus Vendus</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Code Article</th>
+                                <th>Désignation</th>
+                                <th>Catégorie</th>
+                                <th>Stock</th>
+                                <th>Prix Unit.</th>
+                                <th>Nb Ventes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let article of topArticles; let i = index">
+                                <td>{{i + 1}}</td>
+                                <td><code>{{article.codeArticle}}</code></td>
+                                <td>{{article.designation}}</td>
+                                <td><span class="badge bg-primary">{{article.category || 'N/A'}}</span></td>
+                                <td>
+                                    <span [class.text-danger]="(article.stock ?? 0) < 10" [class.text-warning]="(article.stock ?? 0) >= 10 && (article.stock ?? 0) < 20">
+                                        {{article.stock}}
+                                    </span>
+                                </td>
+                                <td>{{formatNumber(article.prixUnitaire)}} €</td>
+                                <td><span class="badge bg-success">{{article.nbVentes}}</span></td>
+                            </tr>
+                            <tr *ngIf="topArticles.length === 0">
+                                <td colspan="7" class="text-center text-muted">Aucune donnée disponible</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

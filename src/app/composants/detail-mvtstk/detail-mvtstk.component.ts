@@ -9,7 +9,7 @@ import { MvtStkDto } from 'src/gs-api/src/models';
 export class DetailMvtstkComponent implements OnInit {
 
   @Input()
-  mvtStk: MvtStkDto = {};
+  mvtStk: MvtStkDto={};
 
   constructor() { }
 

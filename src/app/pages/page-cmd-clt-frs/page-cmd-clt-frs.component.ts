@@ -10,13 +10,13 @@ import { CommandeClientDto, LigneCommandeClientDto } from 'src/gs-api/src/models
 })
 export class PageCmdCltFrsComponent implements OnInit {
 
-  origin = '';
-  listCommandes: Array<any> = [];
-  mapLigneComandes = new Map();
-  mapNmbrArticle = new Map();
-  mapTotalTtc = new Map();
-  errorMsg = "";
-  page: number = 1;
+  origin='';
+  listCommandes: Array<any>=[];
+  mapLigneComandes=new Map();
+  mapNmbrArticle=new Map();
+  mapTotalTtc=new Map();
+  errorMsg="";
+  page: number=1;
   lineDeCommande : any;
 
   constructor(
@@ -27,7 +27,7 @@ export class PageCmdCltFrsComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(data => {
-      this.origin = data['origin'];
+      this.origin=data['origin'];
     });
     this.finAllCommandeCltFrs();
   }
@@ -44,18 +44,18 @@ export class PageCmdCltFrsComponent implements OnInit {
     if(this.origin === "client"){
       this.commandeCltFrsService.findAllCommandeClient()
       .subscribe( commandes => {
-        this.listCommandes = commandes;
+        this.listCommandes=commandes;
         this.findAllLigneCommande();
       }, error => {
-        this.errorMsg = error.error.error;
+        this.errorMsg=error.error.error;
       });
     }else if(this.origin === "fournisseur"){
       this.commandeCltFrsService.findAllCommandeFournisseur()
       .subscribe( commandes => {
-        this.listCommandes = commandes;
+        this.listCommandes=commandes;
         this.findAllLigneCommande();
       }, error => {
-        this.errorMsg = error.error.error;
+        this.errorMsg=error.error.error;
       });
     }
   }
@@ -73,7 +73,7 @@ export class PageCmdCltFrsComponent implements OnInit {
         this.mapLigneComandes.set(idCommande, list);
         this.calculerTotalCmd(idCommande, list);
       }, error => {
-        this.errorMsg = error.error.error;
+        this.errorMsg=error.error.error;
       });
     }else if(this.origin === "fournisseur"){
       this.commandeCltFrsService.findAllLigneCommandeFournisseur(idCommande)
@@ -81,14 +81,14 @@ export class PageCmdCltFrsComponent implements OnInit {
         this.mapLigneComandes.set(idCommande, list);
         this.calculerTotalCmd(idCommande, list);
       }, error => {
-        this.errorMsg = error.error.error;
+        this.errorMsg=error.error.error;
       });
     }
   }
 
   calculerTotalCmd(idCommande: number, list: Array<any>): void{
-    let totalTtc = 0;
-    let nmbArticle = 0;
+    let totalTtc=0;
+    let nmbArticle=0;
     list.forEach(ligne => {
       if(ligne.prixUnitaire && ligne.quantite){
         totalTtc += ligne.prixUnitaire * ligne.quantite;

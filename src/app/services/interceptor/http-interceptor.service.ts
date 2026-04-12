@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { LaoderService } from 'src/app/composants/laoder/service/laoder.service';
 import { AuthenticationResponse } from 'src/gs-api/src/models';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,22 +11,25 @@ import { AuthenticationResponse } from 'src/gs-api/src/models';
 export class HttpInterceptorService implements HttpInterceptor{
 
   constructor(
-    private laoderService: LaoderService
+    private laoderService: LaoderService,
+    private notificationService: NotificationService
   ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.laoderService.show();
-    let authenticationResponse: AuthenticationResponse = {};
-    if(localStorage.getItem("accessToken")){
-      authenticationResponse = JSON.parse(
-        localStorage.getItem("accessToken") as string
-      );
-      const authReq = req.clone({
-        headers: new HttpHeaders({
-          Authorization: 'Bearer ' + authenticationResponse.accessTokeen
-        })
-      });
-      return this.handelRequest(authReq, next);
+    let authenticationResponse: AuthenticationResponse={};
+    
+    const tokenStr=localStorage.getItem("accessToken");
+    if(tokenStr){
+      authenticationResponse=JSON.parse(tokenStr);
+      if(authenticationResponse.accessToken){
+        const authReq=req.clone({
+          headers: new HttpHeaders({
+            Authorization: 'Bearer ' + authenticationResponse.accessToken
+          })
+        });
+        return this.handelRequest(authReq, next);
+      }
     }
     return this.handelRequest(req, next);
   }

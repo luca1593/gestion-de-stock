@@ -15,16 +15,16 @@ import { LigneCommandeFournisseurDto } from '../models/ligne-commande-fournisseu
   providedIn: 'root',
 })
 class ArticlesService extends __BaseService {
-  static readonly ArticleApiSavePOSTPath = 'gestiondestock/v1/articles/create';
-  static readonly ArticleApiFindAllGETPath = 'gestiondestock/v1/articles/all';
-  static readonly ArticleApiFindByCodeArticleGETPath = 'gestiondestock/v1/articles/code/{codeArticle}';
-  static readonly ArticleApiFindHistoriqueCommandeClientGETPath = 'gestiondestock/v1/articles/historiques/commande-client/{idArticle}';
-  static readonly ArticleApiFindByIdGETPath = 'gestiondestock/v1/articles/{idArticle}';
+  static readonly ArticleApiSavePOSTPath='v1/articles/create';
+  static readonly ArticleApiFindAllGETPath='v1/articles/all';
+  static readonly ArticleApiFindByCodeArticleGETPath='v1/articles/code/{codeArticle}';
+  static readonly ArticleApiFindHistoriqueCommandeClientGETPath='v1/articles/historiques/commande-client/{idArticle}';
+  static readonly ArticleApiFindByIdGETPath='v1/articles/{idArticle}';
 
-  static readonly ArticleApiDELETEPath = 'gestiondestock/v1/articles/delete/{idArticle}';
-  static readonly ArticleApiFindAllByCategorieGETPath = 'gestiondestock/v1/articles/filtre/category/{idCategore}';
-  static readonly ArticleApiFindHistoriqueCommandeFournisseurGETPath = 'gestiondestock/v1/articles/historiques/commande-fournisseur/{idArticle}';
-  static readonly ArticleApiFindHistoriqueVenteGETPath = 'gestiondestock/v1/articles/historiques/vente/{idArticle}';
+  static readonly ArticleApiDELETEPath='v1/articles/delete/{idArticle}';
+  static readonly ArticleApiFindAllByCategorieGETPath='v1/articles/filtre/category/{idCategore}';
+  static readonly ArticleApiFindHistoriqueCommandeFournisseurGETPath='v1/articles/historiques/commande-fournisseur/{idArticle}';
+  static readonly ArticleApiFindHistoriqueVenteGETPath='v1/articles/historiques/vente/{idArticle}';
 
   constructor(
     config: __Configuration,
@@ -40,12 +40,12 @@ class ArticlesService extends __BaseService {
    * @return L'objet article creer ou modifier
    */
    ArticleApiSavePOSTResponse(body?: ArticleDto): __Observable<__StrictHttpResponse<ArticleDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/articles/create`,
+      this.rootUrl + `v1/articles/create`,
       __body,
       {
         headers: __headers,
@@ -79,12 +79,12 @@ class ArticlesService extends __BaseService {
    * @return La liste des article / liste vide
    */
   ArticleApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<ArticleDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/articles/all`,
+      this.rootUrl + `v1/articles/all`,
       __body,
       {
         headers: __headers,
@@ -119,13 +119,13 @@ class ArticlesService extends __BaseService {
    * @return L'objet article a ete trouver dans la BDD
    */
   ArticleApiFindByCodeArticleGETResponse(codeArticle: string): __Observable<__StrictHttpResponse<ArticleDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/articles/code/${encodeURIComponent(String(codeArticle))}`,
+      this.rootUrl + `v1/articles/code/${encodeURIComponent(String(codeArticle))}`,
       __body,
       {
         headers: __headers,
@@ -158,13 +158,13 @@ class ArticlesService extends __BaseService {
    * @return successful operation
    */
   ArticleApiFindHistoriqueCommandeClientGETResponse(idArticle: number): __Observable<__StrictHttpResponse<Array<LigneCommandeClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/articles/historiques/commande-client/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `v1/articles/historiques/commande-client/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -197,13 +197,13 @@ class ArticlesService extends __BaseService {
    * @return L'objet article a ete trouver dans la BDD
    */
   ArticleApiFindByIdGETResponse(idArticle: number): __Observable<__StrictHttpResponse<ArticleDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/articles/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `v1/articles/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -237,12 +237,12 @@ class ArticlesService extends __BaseService {
    * Cette methode permet de supprimer un article par son ID
    */
    ArticleApiDELETEResponse(idArticle: number): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/articles/delete/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `v1/articles/delete/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -272,12 +272,12 @@ class ArticlesService extends __BaseService {
    * @return successful operation
    */
   ArticleApiFindAllByCategorieGETResponse(idCategory?: string): __Observable<__StrictHttpResponse<Array<ArticleDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/articles/filtre/category/${encodeURIComponent(String(idCategory))}`,
+      this.rootUrl + `v1/articles/filtre/category/${encodeURIComponent(String(idCategory))}`,
       __body,
       {
         headers: __headers,
@@ -305,12 +305,12 @@ class ArticlesService extends __BaseService {
    * @return successful operation
    */
   ArticleApiFindHistoriqueCommandeFournisseurGETResponse(idArticle?: number): __Observable<__StrictHttpResponse<Array<LigneCommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/articles/historiques/commande-fournisseur/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `v1/articles/historiques/commande-fournisseur/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -338,12 +338,12 @@ class ArticlesService extends __BaseService {
    * @return successful operation
    */
   ArticleApiFindHistoriqueVenteGETResponse(idArticle?: number): __Observable<__StrictHttpResponse<Array<LigneVenteDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/articles/historiques/vente/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `v1/articles/historiques/vente/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,

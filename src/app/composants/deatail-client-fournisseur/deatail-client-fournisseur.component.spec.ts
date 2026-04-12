@@ -12,8 +12,8 @@ describe('DeatailClientFournisseurComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DeatailClientFournisseurComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(DeatailClientFournisseurComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

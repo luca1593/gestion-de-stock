@@ -1,3 +1,14 @@
+:host {
+    display: block;
+    animation: none !important;
+    transition: none !important;
+}
+
+*, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+}
+
 .accordion-button::after{
     display: none;
 }

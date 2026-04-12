@@ -1,4 +1,4 @@
 /* tslint:disable */
 export interface AuthenticationResponse {
-  accessTokeen?: string;
+  accessToken?: string;
 }

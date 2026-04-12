@@ -11,9 +11,10 @@ import { AuthenticationRequest } from 'src/gs-api/src/models';
 })
 export class PageLoginComponent implements OnInit {
 
-  authenticationRequest: AuthenticationRequest = {};
+  authenticationRequest: AuthenticationRequest={};
 
-  errorMessage = "";
+  errorMessage="";
+  loading=false;
 
   constructor(
     private userServices: UserService,
@@ -21,26 +22,42 @@ export class PageLoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Not implemented
+    if (this.userServices.isUserLogedAndAccessTokenValid()) {
+      this.router.navigate(['dashbord']);
+    }
   }
 
-  login(){
-    this.userServices.login(this.authenticationRequest).subscribe(data=>{
+  login(): void {
+    if (!this.authenticationRequest.login || !this.authenticationRequest.password) {
+      this.errorMessage="Veuillez entrer votre email et mot de passe";
+      return;
+    }
+    
+    this.loading=true;
+    this.errorMessage="";
+    
+    this.userServices.login(this.authenticationRequest).subscribe({
+      next: (data) => {
         this.userServices.setAccessToken(data);
         this.getUserByEmail();
         this.router.navigate(['dashbord']);
-      }, error =>{
-        if(error.error.errorsCode === "UTILISATEUR_NOT_FOUND"){
-          this.errorMessage = error.error.message;
-        }else{
-          this.errorMessage = error.error.errors;
+        this.loading=false;
+      },
+      error: (error) => {
+        this.loading=false;
+        if (error.error?.errorsCode === "UTILISATEUR_NOT_FOUND") {
+          this.errorMessage=error.error?.message || "Utilisateur non trouvé";
+        } else if (error.error?.errorsCode === "INVALID_PASSWORD") {
+          this.errorMessage="Mot de passe incorrect";
+        } else {
+          this.errorMessage=error.error?.errors || "Une erreur est survenue lors de la connexion";
         }
       }
-    );
+    });
   }
 
-  getUserByEmail(): void{
-    this.userServices.getUserByEmail(this.authenticationRequest.login).subscribe(user =>{
+  getUserByEmail(): void {
+    this.userServices.getUserByEmail(this.authenticationRequest.login).subscribe(user => {
       this.userServices.setConnectedUser(user);
     });
   }

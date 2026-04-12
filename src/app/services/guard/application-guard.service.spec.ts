@@ -7,7 +7,7 @@ describe('ApplicationGuardService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ApplicationGuardService);
+    service=TestBed.inject(ApplicationGuardService);
   });
 
   it('should be created', () => {

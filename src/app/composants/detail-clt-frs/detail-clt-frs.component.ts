@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
+import { ModalService } from 'src/app/services/modal/modal.service';
 
 @Component({
   selector: 'app-detail-clt-frs',
@@ -10,17 +11,18 @@ import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 export class DetailCltFrsComponent implements OnInit {
 
   @Input()
-  origin: string = '';
+  origin: string='';
 
   @Input()
   clientFournisseur: any;
 
   @Output()
-  suppressioResult = new EventEmitter();
+  suppressioResult=new EventEmitter();
 
   constructor(
     private router: Router,
-    private cltFrsService: CltfrsService
+    private cltFrsService: CltfrsService,
+    private modalService: ModalService
   ) { }
 
   ngOnInit(): void {
@@ -34,20 +36,40 @@ export class DetailCltFrsComponent implements OnInit {
     }
   }
 
+  openDeleteModal(): void {
+    const modalId = 'modalConfirmDelete' + this.clientFournisseur.id;
+    this.modalService.openModal(modalId);
+  }
+
   supprimerClltFrs(): void {
     if (this.origin === "client") {
-      this.cltFrsService.deleteClient(this.clientFournisseur.id).subscribe(res => {
-        this.suppressioResult.emit("success");
-      }, error => {
-        this.suppressioResult.emit(error.error.message);
+      this.cltFrsService.deleteClient(this.clientFournisseur.id).subscribe({
+        next: () => {
+          this.suppressioResult.emit("success");
+          this.closeDeleteModal();
+        },
+        error: (err) => {
+          this.suppressioResult.emit(err.error?.message);
+          this.closeDeleteModal();
+        }
       });
     } else if (this.origin === "fournisseur") {
-      this.cltFrsService.deleteFournisseur(this.clientFournisseur.id).subscribe(res => {
-        this.suppressioResult.emit("success");
-      }, error => {
-        this.suppressioResult.emit(error.error.message);
+      this.cltFrsService.deleteFournisseur(this.clientFournisseur.id).subscribe({
+        next: () => {
+          this.suppressioResult.emit("success");
+          this.closeDeleteModal();
+        },
+        error: (err) => {
+          this.suppressioResult.emit(err.error?.message);
+          this.closeDeleteModal();
+        }
       });
     }
+  }
+
+  closeDeleteModal(): void {
+    const modalId = 'modalConfirmDelete' + this.clientFournisseur.id;
+    this.modalService.closeModal(modalId);
   }
 
   detailCltFrs(){

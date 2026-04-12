@@ -12,8 +12,8 @@ describe('PageMvtstkComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageMvtstkComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageMvtstkComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

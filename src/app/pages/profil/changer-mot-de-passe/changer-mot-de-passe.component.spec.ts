@@ -12,8 +12,8 @@ describe('ChangerMotDePasseComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ChangerMotDePasseComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(ChangerMotDePasseComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

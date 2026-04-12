@@ -14,11 +14,11 @@ Chart.register(...registerables);
 })
 export class DetailArticlesMvtstkComponent implements OnInit {
 
-  articleDto: ArticleDto = {};
-  creationDate: string = "";
-  lastmodificationDate: string = "";
-  startDate: Date = new Date();
-  endDate: Date = new Date();
+  articleDto: ArticleDto={};
+  creationDate: string="";
+  lastmodificationDate: string="";
+  startDate: Date=new Date();
+  endDate: Date=new Date();
 
   constructor(
     @Inject(LOCALE_ID) private locale: string,
@@ -27,10 +27,10 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const idArticle = this.activatedRouter.snapshot.params['id'];
+    const idArticle=this.activatedRouter.snapshot.params['id'];
     if (idArticle) {
       this.articleService.findArticleById(idArticle).subscribe(article => {
-        this.articleDto = article;
+        this.articleDto=article;
         this.initialiseDate(article);
       });
       this.findHistorique(idArticle);
@@ -39,8 +39,8 @@ export class DetailArticlesMvtstkComponent implements OnInit {
 
   initialiseDate(article: ArticleDto){
     if (article.creationDate && article.lastModifiedDate) {
-      this.creationDate = formatDate(article.creationDate, "dd/MM/YYY", this.locale);
-      this.lastmodificationDate = formatDate(article.lastModifiedDate, "dd/MM/YYY", this.locale);
+      this.creationDate=formatDate(article.creationDate, "dd/MM/YYY", this.locale);
+      this.lastmodificationDate=formatDate(article.lastModifiedDate, "dd/MM/YYY", this.locale);
     }
   }
 
@@ -60,14 +60,14 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   }
 
   findAllCmdClt(list: Array<LigneCommandeClientDto>) {
-    let mapQnt = new Map();
-    let labels: Array<string> = [];
-    let listQntClt: Array<number> = [];
+    let mapQnt=new Map();
+    let labels: Array<string>=[];
+    let listQntClt: Array<number>=[];
     list.forEach(ligne => {
       if (ligne.commandeClient && ligne.commandeClient.dateCommande && ligne.quantite) {
-        let label = formatDate(ligne.commandeClient.dateCommande, "dd/MM/YYY", this.locale);
+        let label=formatDate(ligne.commandeClient.dateCommande, "dd/MM/YYY", this.locale);
         if (mapQnt && mapQnt.get(label)) {
-          let qnt = mapQnt.get(label) + ligne.quantite;
+          let qnt=mapQnt.get(label) + ligne.quantite;
           mapQnt.set(label, qnt);
         }else{
           mapQnt.set(label, ligne.quantite);
@@ -82,14 +82,14 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   }
 
   findAllCmdFrs(list: Array<LigneCommandeFournisseurDto>) {
-    let mapQnt = new Map();
-    let labels: Array<string> = [];
-    let listQntFrs: Array<number> = [];
+    let mapQnt=new Map();
+    let labels: Array<string>=[];
+    let listQntFrs: Array<number>=[];
     list.forEach(ligne => {
       if (ligne.commandefournisseur && ligne.commandefournisseur.dateCommande && ligne.quantite) {
-        let label = formatDate(ligne.commandefournisseur.dateCommande, "dd/MM/YYY", this.locale);
+        let label=formatDate(ligne.commandefournisseur.dateCommande, "dd/MM/YYY", this.locale);
         if (mapQnt && mapQnt.get(label)) {
-          let qnt = mapQnt.get(label) + ligne.quantite;
+          let qnt=mapQnt.get(label) + ligne.quantite;
           mapQnt.set(label, qnt);
         }else{
           mapQnt.set(label, ligne.quantite);
@@ -104,14 +104,14 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   }
 
   findAllVente(list: Array<LigneVenteDto>) {
-    let mapQnt = new Map();
-    let labels: Array<string> = [];
-    let listQntVente: Array<number> = [];
+    let mapQnt=new Map();
+    let labels: Array<string>=[];
+    let listQntVente: Array<number>=[];
     list.forEach(ligne => {
       if (ligne.vente && ligne.vente.dateVente && ligne.quantite) {
-        let label = formatDate(ligne.vente.dateVente, "dd/MM/YYY", this.locale);
+        let label=formatDate(ligne.vente.dateVente, "dd/MM/YYY", this.locale);
         if (mapQnt && mapQnt.get(label)) {
-          let qnt = mapQnt.get(label) + ligne.quantite;
+          let qnt=mapQnt.get(label) + ligne.quantite;
           mapQnt.set(label, qnt);
         }else{
           mapQnt.set(label, ligne.quantite);
@@ -126,7 +126,7 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   }
 
   createChart(id: string, data: Array<number>, label: Array<string>): void {
-    const cmdCltChart = new Chart(id, {
+    const cmdCltChart=new Chart(id, {
       type: 'line',
       options: {
         responsive: true,

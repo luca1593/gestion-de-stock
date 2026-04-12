@@ -12,8 +12,8 @@ describe('PageCmdCltFrsComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageCmdCltFrsComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageCmdCltFrsComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

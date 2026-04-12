@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
+import { ModalService } from 'src/app/services/modal/modal.service';
 import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -10,33 +11,45 @@ import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
 })
 export class HisistoriqueVenteComponent implements OnInit {
 
-  listVentes: Array<VenteDto> = [];
-  mapListLigneVente: Map<number, Array<LigneVenteDto>> = new Map();
-  errorMessage: string = "";
-  pageCmd = 1;
-  idVenteSelectione = 0;
-  mapNmbrArticle = new Map();
-  mapTotalArticle: Map<number, number> = new Map();
-  mapTotalTtc = new Map();
+  listVentes: Array<VenteDto>=[];
+  mapListLigneVente: Map<number, Array<LigneVenteDto>>=new Map();
+  errorMessage: string="";
+  pageCmd=1;
+  idVenteSelectione=0;
+  mapNmbrArticle=new Map();
+  mapTotalArticle: Map<number, number>=new Map();
+  mapTotalTtc=new Map();
   mapVente= new Map();
-  vente: VenteDto = {};
+  vente: VenteDto={};
 
   constructor(
     private venteService: VenteService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) { }
 
   ngOnInit(): void {
     this.venteService.findAllVente().subscribe( list => {
-      this.listVentes = list;
+      this.listVentes=list;
       this.findAllLigneVente();
     }, error => {
-      this.errorMessage = error.error.message;
+      this.errorMessage=error.error.message;
     });
   }
 
   nouvelleVente(): void{
     this.router.navigate(["vente"]);
+  }
+
+  setVenteSelectione(idSelectione: number): void {
+    this.idVenteSelectione=idSelectione;
+    this.vente=this.mapVente.get(idSelectione);
+    this.calculerTotalArticle(this.idVenteSelectione);
+    this.modalService.openModal('modalDetail');
+  }
+
+  closeDetailsModal(): void {
+    this.modalService.closeModal('modalDetail');
   }
 
   findAllLigneVente(): void{
@@ -51,19 +64,13 @@ export class HisistoriqueVenteComponent implements OnInit {
       this.mapListLigneVente.set(idVente, list);
       this.calculerTotalVnte(idVente, list);
     }, error => {
-      this.errorMessage = error.error.message;
+      this.errorMessage=error.error.message;
     });
   }
 
-  setVenteSelectione(idSelectione: number): void {
-    this.idVenteSelectione = idSelectione;
-    this.vente = this.mapVente.get(idSelectione);
-    this.calculerTotalArticle(this.idVenteSelectione);
-  }
-
   calculerTotalVnte(idVente: number, list: Array<any>): void {
-    let totalTtc = 0;
-    let nmbArticle = 0;
+    let totalTtc=0;
+    let nmbArticle=0;
     list.forEach(ligne => {
       if (ligne.prixUnitaire && ligne.quantite) {
         totalTtc += ligne.prixUnitaire * ligne.quantite;
@@ -85,7 +92,7 @@ export class HisistoriqueVenteComponent implements OnInit {
   calculerTotalArticle(idVente: number): void{
     this.mapListLigneVente.get(idVente)?.forEach(ligne => {
       if (ligne.article?.id) {
-        let total = ligne.article.prixTtc! * ligne.quantite!;
+        let total=ligne.article.prixTtc! * ligne.quantite!;
         this.mapTotalArticle.set(ligne.article?.id, Math.floor(total));
       }
     })

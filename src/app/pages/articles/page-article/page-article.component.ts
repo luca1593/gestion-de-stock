@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
+import { ExportExcelService } from 'src/app/services/export.service';
 import { ArticleDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -10,14 +11,15 @@ import { ArticleDto } from 'src/gs-api/src/models';
 })
 export class PageArticleComponent implements OnInit {
 
-  listArticle: Array<ArticleDto> = [];
+  listArticle: Array<ArticleDto>=[];
 
-  errorMsg: string = "";
-  page: number = 1;
+  errorMsg: string="";
+  page: number=1;
 
   constructor(
     private router: Router,
-    private articleService: ArtcleService
+    private articleService: ArtcleService,
+    private exportService: ExportExcelService
   ) { }
 
   ngOnInit(): void {
@@ -26,7 +28,7 @@ export class PageArticleComponent implements OnInit {
 
   findAllArticle(): void{
     this.articleService.findAllArticle().subscribe(resp => {
-      this.listArticle = resp;
+      this.listArticle=resp;
     });
   }
 
@@ -34,11 +36,19 @@ export class PageArticleComponent implements OnInit {
     this.router.navigate(["nouvel-article"]);
   }
 
+  exporterArticles(): void {
+    this.exportService.exportArticles();
+  }
+
+  exporterStock(): void {
+    this.exportService.exportStock();
+  }
+
   handleSuppression($event: any): void {
     if($event === "success"){
       this.findAllArticle();
     }else{
-      this.errorMsg = $event;
+      this.errorMsg=$event;
     }
   }
 

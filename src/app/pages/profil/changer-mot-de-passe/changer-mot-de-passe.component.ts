@@ -10,8 +10,8 @@ import { ChangerMotDePasseUtilisateurDto } from 'src/gs-api/src/models/changer-m
 })
 export class ChangerMotDePasseComponent implements OnInit {
 
-  changerMotdePasse: ChangerMotDePasseUtilisateurDto = {};
-  ancienMdp = "";
+  changerMotdePasse: ChangerMotDePasseUtilisateurDto={};
+  ancienMdp="";
 
   constructor(
     private router: Router,
@@ -20,13 +20,13 @@ export class ChangerMotDePasseComponent implements OnInit {
 
   ngOnInit(): void {
     if(localStorage.getItem("origin") && localStorage.getItem("origin") === "inscription"){
-      this.ancienMdp = "s0n3R@nd0mP@$$w0rd";
+      this.ancienMdp="s0n3R@nd0mP@$$w0rd";
       localStorage.removeItem("origin");
     }
   }
 
   saveClick(): void {
-    this.changerMotdePasse.id  = this.userService.getConnectedUser().id;
+    this.changerMotdePasse.id =this.userService.getConnectedUser().id;
     this.userService.changerMotDePasse(this.changerMotdePasse).subscribe(data=>{
       this.router.navigate(['profil']);
     });

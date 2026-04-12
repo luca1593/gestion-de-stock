@@ -8,20 +8,20 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class BoutonActionComponent implements OnInit {
 
   @Input()
-  isNouveauVisible = true;
+  isNouveauVisible=true;
   @Input()
-  isImporterVisible = true;
+  isImporterVisible=true;
   @Input()
-  isExporterVisible = true;
+  isExporterVisible=true;
 
   @Output()
-  clickEvent = new EventEmitter();
+  clickEvent=new EventEmitter();
 
   @Output()
-  clickExportEvent = new EventEmitter();
+  clickExportEvent=new EventEmitter();
 
   @Output()
-  clickImportEvent = new EventEmitter();
+  clickImportEvent=new EventEmitter();
 
   constructor() {
     // Not implemented

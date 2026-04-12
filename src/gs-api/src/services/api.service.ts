@@ -23,55 +23,55 @@ import { VenteDto } from '../models/vente-dto';
   providedIn: 'root',
 })
 class ApiService extends __BaseService {
-  static readonly ArticleControllerSavePOSTPath = '/gestiondestock/v1/articles/create';
-  static readonly ArticleControllerDeleteDELETEPath = '/gestiondestock/v1/articles/delete/{idArticle}';
-  static readonly ArticleControllerFindAllByCategorieGETPath = '/gestiondestock/v1/articles/filtre/category/{idCategore}';
-  static readonly ArticleControllerFindHistoriqueCommandeFournisseurGETPath = '/gestiondestock/v1/articles/historiques/commande-fournisseur/{idArticle}';
-  static readonly ArticleControllerFindHistoriqueVenteGETPath = '/gestiondestock/v1/articles/historiques/vente/{idArticle}';
-  static readonly CategoryControllerFindAllGETPath = '/gestiondestock/v1/category/all';
-  static readonly CategoryControllerSavePOSTPath = '/gestiondestock/v1/category/create';
-  static readonly CategoryControllerDeleteDELETEPath = '/gestiondestock/v1/category/detele/{idCategory}';
-  static readonly CategoryControllerFindByIdGETPath = '/gestiondestock/v1/category/{idCategory}';
-  static readonly ClientControllerFindbyNomClientGETPath = '/gestiondestock/v1/client/nom/{nomClient}';
-  static readonly ClientControllerSavePOSTPath = '/gestiondestock/v1/client/save';
-  static readonly ClientControllerFindByIdGETPath = '/gestiondestock/v1/client/{idClient}';
-  static readonly CommandeClientControllerSavePOSTPath = '/gestiondestock/v1/commande-client/create';
-  static readonly CommandeClientControllerFindByDateCommandeGETPath = '/gestiondestock/v1/commande-client/date/{dateCommandeClient}';
-  static readonly CommandeClientControllerDeleteArticleDELETEPath = '/gestiondestock/v1/commande-client/delete/article/{idCommande}/{idLigneCommande}';
-  static readonly CommandeClientControllerDeleteDELETEPath = '/gestiondestock/v1/commande-client/delete/{idCommandeClient}';
-  static readonly CommandeClientControllerUpdateClientPATCHPath = '/gestiondestock/v1/commande-client/update/client/{idCommande}/{idClient}';
-  static readonly CommandeFournisseurControllerFindAllGETPath = '/gestiondestock/v1/commande-fournisseur/all';
-  static readonly CommandeFournisseurControllerSavePOSTPath = '/gestiondestock/v1/commande-fournisseur/create';
-  static readonly CommandeFournisseurControllerFindByDateCommandeGETPath = '/gestiondestock/v1/commande-fournisseur/date/{dateCommandeFournisseur}';
-  static readonly CommandeFournisseurControllerDeleteArticleDELETEPath = '/gestiondestock/v1/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}';
-  static readonly CommandeFournisseurControllerFindAllByCommandeFournisseurGETPath = '/gestiondestock/v1/commande-fournisseur/list/ligne-commande/{idCommande}';
-  static readonly CommandeFournisseurControllerUpdateEtatCommandePATCHPath = '/gestiondestock/v1/commande-fournisseur/update/etat/{idCommande}/{etatCommande}';
-  static readonly CommandeFournisseurControllerUpdateFournisseurPATCHPath = '/gestiondestock/v1/commande-fournisseur/update/fournisseur/{idCommande}/{idFournisseur}';
-  static readonly CommandeFournisseurControllerUpdateQuantiterCommandePATCHPath = '/gestiondestock/v1/commande-fournisseur/update/quantite/{idCommande}/{idLigneCommande}/{quantite}';
-  static readonly EntrepriseControllerFindAllGETPath = '/gestiondestock/v1/entreprise/all';
-  static readonly EntrepriseControllerSavePOSTPath = '/gestiondestock/v1/entreprise/create';
-  static readonly EntrepriseControllerDeleteDELETEPath = '/gestiondestock/v1/entreprise/delete{idEntreprise}';
-  static readonly EntrepriseControllerFindByNomEntrepriseGETPath = '/gestiondestock/v1/entreprise/nom{nomEntreprise}';
-  static readonly EntrepriseControllerFindByIdGETPath = '/gestiondestock/v1/entreprise/{idEntreprise}';
-  static readonly FournisseurControllerDeleteDELETEPath = '/gestiondestock/v1/fournisseur/detele/{idFournisseur}';
-  static readonly FournisseurControllerFindByNomFournisseurGETPath = '/gestiondestock/v1/fournisseur/nom/{nomFournisseur}';
-  static readonly HomeControllerHomeGETPath = '/gestiondestock/v1/home';
-  static readonly MvtStkControllerFindAllGETPath = '/gestiondestock/v1/mvtstk/all';
-  static readonly MvtStkControllerCorrectionMvtStkNegPOSTPath = '/gestiondestock/v1/mvtstk/correction-neg';
-  static readonly MvtStkControllerFindMvtStkByDateMvtGETPath = '/gestiondestock/v1/mvtstk/date/{dateMvtStk}';
-  static readonly MvtStkControllerEntreMvtStkPOSTPath = '/gestiondestock/v1/mvtstk/entre';
-  static readonly MvtStkControllerMvtStkArticleGETPath = '/gestiondestock/v1/mvtstk/filter/article/{idArticle}';
-  static readonly MvtStkControllerSavePOSTPath = '/gestiondestock/v1/mvtstk/save';
-  static readonly MvtStkControllerSortieMvtStkPOSTPath = '/gestiondestock/v1/mvtstk/sortie';
-  static readonly MvtStkControllerFindByIdGETPath = '/gestiondestock/v1/mvtstk/{idMvtstk}';
-  static readonly PhotoControllerSavePhotoPOSTPath = '/gestiondestock/v1/photos/{context}/{id}';
-  static readonly UtilisateurControllerDeleteDELETEPath = '/gestiondestock/v1/utilisateur/detele/{idUtilisateur}';
-  static readonly UtilisateurControllerFindByEmailUtilisateurGETPath = '/gestiondestock/v1/utilisateur/email/{emailUtilisateur}';
-  static readonly UtilisateurControllerFindByIdGETPath = '/gestiondestock/v1/utilisateur/{idUtilisateur}';
-  static readonly VenteControllerFindAllGETPath = '/gestiondestock/v1/vente/all';
-  static readonly VenteControllerFindByCodeVenteGETPath = '/gestiondestock/v1/vente/code/{codeVente}';
-  static readonly VenteControllerDeleteDELETEPath = '/gestiondestock/v1/vente/detele/{idVente}';
-  static readonly VenteControllerFindByIdGETPath = '/gestiondestock/v1/vente/{idVente}';
+  static readonly ArticleControllerSavePOSTPath='/v1/articles/create';
+  static readonly ArticleControllerDeleteDELETEPath='/v1/articles/delete/{idArticle}';
+  static readonly ArticleControllerFindAllByCategorieGETPath='/v1/articles/filtre/category/{idCategore}';
+  static readonly ArticleControllerFindHistoriqueCommandeFournisseurGETPath='/v1/articles/historiques/commande-fournisseur/{idArticle}';
+  static readonly ArticleControllerFindHistoriqueVenteGETPath='/v1/articles/historiques/vente/{idArticle}';
+  static readonly CategoryControllerFindAllGETPath='/category/all';
+  static readonly CategoryControllerSavePOSTPath='/category/create';
+  static readonly CategoryControllerDeleteDELETEPath='/category/detele/{idCategory}';
+  static readonly CategoryControllerFindByIdGETPath='/category/{idCategory}';
+  static readonly ClientControllerFindbyNomClientGETPath='/v1/client/nom/{nomClient}';
+  static readonly ClientControllerSavePOSTPath='/v1/client/save';
+  static readonly ClientControllerFindByIdGETPath='/v1/client/{idClient}';
+  static readonly CommandeClientControllerSavePOSTPath='/commande-client/create';
+  static readonly CommandeClientControllerFindByDateCommandeGETPath='/commande-client/date/{dateCommandeClient}';
+  static readonly CommandeClientControllerDeleteArticleDELETEPath='/commande-client/delete/article/{idCommande}/{idLigneCommande}';
+  static readonly CommandeClientControllerDeleteDELETEPath='/commande-client/delete/{idCommandeClient}';
+  static readonly CommandeClientControllerUpdateClientPATCHPath='/commande-client/update/v1/client/{idCommande}/{idClient}';
+  static readonly CommandeFournisseurControllerFindAllGETPath='/commande-fournisseur/all';
+  static readonly CommandeFournisseurControllerSavePOSTPath='/commande-fournisseur/create';
+  static readonly CommandeFournisseurControllerFindByDateCommandeGETPath='/commande-fournisseur/date/{dateCommandeFournisseur}';
+  static readonly CommandeFournisseurControllerDeleteArticleDELETEPath='/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}';
+  static readonly CommandeFournisseurControllerFindAllByCommandeFournisseurGETPath='/commande-fournisseur/list/ligne-commande/{idCommande}';
+  static readonly CommandeFournisseurControllerUpdateEtatCommandePATCHPath='/commande-fournisseur/update/etat/{idCommande}/{etatCommande}';
+  static readonly CommandeFournisseurControllerUpdateFournisseurPATCHPath='/commande-fournisseur/update/v1/fournisseur/{idCommande}/{idFournisseur}';
+  static readonly CommandeFournisseurControllerUpdateQuantiterCommandePATCHPath='/commande-fournisseur/update/quantite/{idCommande}/{idLigneCommande}/{quantite}';
+  static readonly EntrepriseControllerFindAllGETPath='/v1/entreprise/all';
+  static readonly EntrepriseControllerSavePOSTPath='/v1/entreprise/create';
+  static readonly EntrepriseControllerDeleteDELETEPath='/v1/entreprise/delete{idEntreprise}';
+  static readonly EntrepriseControllerFindByNomEntrepriseGETPath='/v1/entreprise/nom{nomEntreprise}';
+  static readonly EntrepriseControllerFindByIdGETPath='/v1/entreprise/{idEntreprise}';
+  static readonly FournisseurControllerDeleteDELETEPath='/v1/fournisseur/detele/{idFournisseur}';
+  static readonly FournisseurControllerFindByNomFournisseurGETPath='/v1/fournisseur/nom/{nomFournisseur}';
+  static readonly HomeControllerHomeGETPath='/home';
+  static readonly MvtStkControllerFindAllGETPath='/v1/mvtstk/all';
+  static readonly MvtStkControllerCorrectionMvtStkNegPOSTPath='/v1/mvtstk/correction-neg';
+  static readonly MvtStkControllerFindMvtStkByDateMvtGETPath='/v1/mvtstk/date/{dateMvtStk}';
+  static readonly MvtStkControllerEntreMvtStkPOSTPath='/v1/mvtstk/entre';
+  static readonly MvtStkControllerMvtStkArticleGETPath='/v1/mvtstk/filter/article/{idArticle}';
+  static readonly MvtStkControllerSavePOSTPath='/v1/mvtstk/save';
+  static readonly MvtStkControllerSortieMvtStkPOSTPath='/v1/mvtstk/sortie';
+  static readonly MvtStkControllerFindByIdGETPath='/v1/mvtstk/{idMvtstk}';
+  static readonly PhotoControllerSavePhotoPOSTPath='/photos/{context}/{id}';
+  static readonly UtilisateurControllerDeleteDELETEPath='/v1/utilisateur/detele/{idUtilisateur}';
+  static readonly UtilisateurControllerFindByEmailUtilisateurGETPath='/v1/utilisateur/email/{emailUtilisateur}';
+  static readonly UtilisateurControllerFindByIdGETPath='/v1/utilisateur/{idUtilisateur}';
+  static readonly VenteControllerFindAllGETPath='/vente/all';
+  static readonly VenteControllerFindByCodeVenteGETPath='/vente/code/{codeVente}';
+  static readonly VenteControllerDeleteDELETEPath='/vente/detele/{idVente}';
+  static readonly VenteControllerFindByIdGETPath='/vente/{idVente}';
 
   constructor(
     config: __Configuration,
@@ -87,12 +87,12 @@ class ApiService extends __BaseService {
    * @return L'objet article creer ou modifier
    */
   ArticleControllerSavePOSTResponse(): __Observable<__StrictHttpResponse<ArticleDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/articles/create`,
+      this.rootUrl + `/v1/articles/create`,
       __body,
       {
         headers: __headers,
@@ -125,12 +125,12 @@ class ApiService extends __BaseService {
    * Cette methode permet de supprimer un article par son ID
    */
   ArticleControllerDeleteDELETEResponse(idArticle?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/articles/delete/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `/v1/articles/delete/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -160,12 +160,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   ArticleControllerFindAllByCategorieGETResponse(idCategory?: string): __Observable<__StrictHttpResponse<Array<ArticleDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/articles/filtre/category/${encodeURIComponent(String(idCategory))}`,
+      this.rootUrl + `/v1/articles/filtre/category/${encodeURIComponent(String(idCategory))}`,
       __body,
       {
         headers: __headers,
@@ -193,12 +193,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   ArticleControllerFindHistoriqueCommandeFournisseurGETResponse(idArticle?: string): __Observable<__StrictHttpResponse<Array<LigneCommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/articles/historiques/commande-fournisseur/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `/v1/articles/historiques/commande-fournisseur/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -226,12 +226,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   ArticleControllerFindHistoriqueVenteGETResponse(idArticle?: string): __Observable<__StrictHttpResponse<Array<LigneVenteDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/articles/historiques/vente/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `/v1/articles/historiques/vente/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -262,12 +262,12 @@ class ApiService extends __BaseService {
    * @return La liste des categories / liste vide
    */
   CategoryControllerFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<CategoryDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/category/all`,
+      this.rootUrl + `/category/all`,
       __body,
       {
         headers: __headers,
@@ -301,12 +301,12 @@ class ApiService extends __BaseService {
    * @return L'objet categorie creer ou modifier
    */
   CategoryControllerSavePOSTResponse(): __Observable<__StrictHttpResponse<CategoryDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/category/create`,
+      this.rootUrl + `/category/create`,
       __body,
       {
         headers: __headers,
@@ -339,12 +339,12 @@ class ApiService extends __BaseService {
    * Cette methode permet de supprimer un categorie par son ID
    */
   CategoryControllerDeleteDELETEResponse(idCategory?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/category/detele/${encodeURIComponent(String(idCategory))}`,
+      this.rootUrl + `/category/detele/${encodeURIComponent(String(idCategory))}`,
       __body,
       {
         headers: __headers,
@@ -377,12 +377,12 @@ class ApiService extends __BaseService {
    * @return L'objet categorie a ete trouver dans la BDD
    */
   CategoryControllerFindByIdGETResponse(idCategory?: string): __Observable<__StrictHttpResponse<CategoryDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/category/${encodeURIComponent(String(idCategory))}`,
+      this.rootUrl + `/category/${encodeURIComponent(String(idCategory))}`,
       __body,
       {
         headers: __headers,
@@ -416,12 +416,12 @@ class ApiService extends __BaseService {
    * @return L'objet client a ete trouver dans la BDD
    */
   ClientControllerFindbyNomClientGETResponse(nomClient?: string): __Observable<__StrictHttpResponse<ClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/client/nom/${encodeURIComponent(String(nomClient))}`,
+      this.rootUrl + `/v1/client/nom/${encodeURIComponent(String(nomClient))}`,
       __body,
       {
         headers: __headers,
@@ -455,12 +455,12 @@ class ApiService extends __BaseService {
    * @return L'objet client creer ou modifier
    */
   ClientControllerSavePOSTResponse(): __Observable<__StrictHttpResponse<ClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/client/save`,
+      this.rootUrl + `/v1/client/save`,
       __body,
       {
         headers: __headers,
@@ -494,12 +494,12 @@ class ApiService extends __BaseService {
    * @return L'objet client a ete trouver dans la BDD
    */
   ClientControllerFindByIdGETResponse(idClient?: string): __Observable<__StrictHttpResponse<ClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/client/${encodeURIComponent(String(idClient))}`,
+      this.rootUrl + `/v1/client/${encodeURIComponent(String(idClient))}`,
       __body,
       {
         headers: __headers,
@@ -533,12 +533,12 @@ class ApiService extends __BaseService {
    * @return L'objet commande client creer ou modifier
    */
   CommandeClientControllerSavePOSTResponse(): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/commande-client/create`,
+      this.rootUrl + `/commande-client/create`,
       __body,
       {
         headers: __headers,
@@ -572,12 +572,12 @@ class ApiService extends __BaseService {
    * @return Aucune commande client n'a ete trouver dans la BDD
    */
   CommandeClientControllerFindByDateCommandeGETResponse(dateCommandeClient?: string): __Observable<__StrictHttpResponse<Array<CommandeClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/commande-client/date/${encodeURIComponent(String(dateCommandeClient))}`,
+      this.rootUrl + `/commande-client/date/${encodeURIComponent(String(dateCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -608,12 +608,12 @@ class ApiService extends __BaseService {
    * @return L'article de la commande client a bien ete supprimer
    */
   CommandeClientControllerDeleteArticleDELETEResponse(idCommande?: string, idLigneCommande?: string): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/commande-client/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
+      this.rootUrl + `/commande-client/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
       __body,
       {
         headers: __headers,
@@ -643,12 +643,12 @@ class ApiService extends __BaseService {
    * Cette methode permet de supprimer une commande client par son ID
    */
   CommandeClientControllerDeleteDELETEResponse(idCommandeClient?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/commande-client/delete/${encodeURIComponent(String(idCommandeClient))}`,
+      this.rootUrl + `/commande-client/delete/${encodeURIComponent(String(idCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -678,12 +678,12 @@ class ApiService extends __BaseService {
    * @return Le client de la commande client a bien ete modifier
    */
   CommandeClientControllerUpdateClientPATCHResponse(idCommande?: string, idClient?: string): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/gestiondestock/v1/commande-client/update/client/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idClient))}`,
+      this.rootUrl + `/commande-client/update/v1/client/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idClient))}`,
       __body,
       {
         headers: __headers,
@@ -714,12 +714,12 @@ class ApiService extends __BaseService {
    * @return La liste des commandes fournisseur / liste vide
    */
   CommandeFournisseurControllerFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<CommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/all`,
+      this.rootUrl + `/commande-fournisseur/all`,
       __body,
       {
         headers: __headers,
@@ -753,12 +753,12 @@ class ApiService extends __BaseService {
    * @return L'objet commande fournisseur creer ou modifier
    */
   CommandeFournisseurControllerSavePOSTResponse(): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/create`,
+      this.rootUrl + `/commande-fournisseur/create`,
       __body,
       {
         headers: __headers,
@@ -792,12 +792,12 @@ class ApiService extends __BaseService {
    * @return Aucune commande fournisseur n'a ete trouver dans la BDD
    */
   CommandeFournisseurControllerFindByDateCommandeGETResponse(dateCommandeFournisseur?: string): __Observable<__StrictHttpResponse<Array<CommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/date/${encodeURIComponent(String(dateCommandeFournisseur))}`,
+      this.rootUrl + `/commande-fournisseur/date/${encodeURIComponent(String(dateCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -831,12 +831,12 @@ class ApiService extends __BaseService {
    * @return L'article de la commande fournisseur a ete supprimer avec success
    */
   CommandeFournisseurControllerDeleteArticleDELETEResponse(idCommande?: string, idLigneCommande?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
+      this.rootUrl + `/commande-fournisseur/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
       __body,
       {
         headers: __headers,
@@ -870,12 +870,12 @@ class ApiService extends __BaseService {
    * @return Liste des lignes de commande fournisseur a ete trouver avec succesr
    */
   CommandeFournisseurControllerFindAllByCommandeFournisseurGETResponse(idCommande?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/list/ligne-commande/${encodeURIComponent(String(idCommande))}`,
+      this.rootUrl + `/commande-fournisseur/list/ligne-commande/${encodeURIComponent(String(idCommande))}`,
       __body,
       {
         headers: __headers,
@@ -909,12 +909,12 @@ class ApiService extends __BaseService {
    * @return L'etat de la commande fournisseur a ete mise a jour
    */
   CommandeFournisseurControllerUpdateEtatCommandePATCHResponse(idCommande?: string, etatCommande?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/update/etat/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(etatCommande))}`,
+      this.rootUrl + `/commande-fournisseur/update/etat/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(etatCommande))}`,
       __body,
       {
         headers: __headers,
@@ -948,12 +948,12 @@ class ApiService extends __BaseService {
    * @return Le fournisseur de la commande fournisseur a ete mise a jour
    */
   CommandeFournisseurControllerUpdateFournisseurPATCHResponse(idCommande?: string, idFournisseur?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/update/fournisseur/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idFournisseur))}`,
+      this.rootUrl + `/commande-fournisseur/update/v1/fournisseur/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -987,12 +987,12 @@ class ApiService extends __BaseService {
    * @return La quantite de la commande fournisseur a ete mise a jour
    */
   CommandeFournisseurControllerUpdateQuantiterCommandePATCHResponse(idCommande?: string, idLigneCommande?: string, quantite?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/gestiondestock/v1/commande-fournisseur/update/quantite/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}/${encodeURIComponent(String(quantite))}`,
+      this.rootUrl + `/commande-fournisseur/update/quantite/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}/${encodeURIComponent(String(quantite))}`,
       __body,
       {
         headers: __headers,
@@ -1026,12 +1026,12 @@ class ApiService extends __BaseService {
    * @return La liste des clients / liste vide
    */
   EntrepriseControllerFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<EntrepriseDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/entreprise/all`,
+      this.rootUrl + `/v1/entreprise/all`,
       __body,
       {
         headers: __headers,
@@ -1065,12 +1065,12 @@ class ApiService extends __BaseService {
    * @return L'objet client creer ou modifier
    */
   EntrepriseControllerSavePOSTResponse(): __Observable<__StrictHttpResponse<EntrepriseDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/entreprise/create`,
+      this.rootUrl + `/v1/entreprise/create`,
       __body,
       {
         headers: __headers,
@@ -1103,12 +1103,12 @@ class ApiService extends __BaseService {
    * Cette methode permet de supprimer une entreprise par son ID
    */
   EntrepriseControllerDeleteDELETEResponse(idEntreprise?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/entreprise/delete${encodeURIComponent(String(idEntreprise))}`,
+      this.rootUrl + `/v1/entreprise/delete${encodeURIComponent(String(idEntreprise))}`,
       __body,
       {
         headers: __headers,
@@ -1141,12 +1141,12 @@ class ApiService extends __BaseService {
    * @return L'objet entreprise a ete trouver dans la BDD
    */
   EntrepriseControllerFindByNomEntrepriseGETResponse(nomEntreprise?: string): __Observable<__StrictHttpResponse<EntrepriseDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/entreprise/nom${encodeURIComponent(String(nomEntreprise))}`,
+      this.rootUrl + `/v1/entreprise/nom${encodeURIComponent(String(nomEntreprise))}`,
       __body,
       {
         headers: __headers,
@@ -1180,12 +1180,12 @@ class ApiService extends __BaseService {
    * @return L'objet entreprise a ete trouver dans la BDD
    */
   EntrepriseControllerFindByIdGETResponse(idEntreprise?: string): __Observable<__StrictHttpResponse<EntrepriseDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/entreprise/${encodeURIComponent(String(idEntreprise))}`,
+      this.rootUrl + `/v1/entreprise/${encodeURIComponent(String(idEntreprise))}`,
       __body,
       {
         headers: __headers,
@@ -1218,12 +1218,12 @@ class ApiService extends __BaseService {
    * Cette methode permet de supprimer un fournisseur par son ID
    */
   FournisseurControllerDeleteDELETEResponse(idFournisseur?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/fournisseur/detele/${encodeURIComponent(String(idFournisseur))}`,
+      this.rootUrl + `/v1/fournisseur/detele/${encodeURIComponent(String(idFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -1256,12 +1256,12 @@ class ApiService extends __BaseService {
    * @return L'objet fournisseur a ete trouver dans la BDD
    */
   FournisseurControllerFindByNomFournisseurGETResponse(nomFournisseur?: string): __Observable<__StrictHttpResponse<FournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/fournisseur/nom/${encodeURIComponent(String(nomFournisseur))}`,
+      this.rootUrl + `/v1/fournisseur/nom/${encodeURIComponent(String(nomFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -1292,12 +1292,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   HomeControllerHomeGETResponse(): __Observable<__StrictHttpResponse<string>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/home`,
+      this.rootUrl + `/home`,
       __body,
       {
         headers: __headers,
@@ -1328,12 +1328,12 @@ class ApiService extends __BaseService {
    * @return La liste des mouvements de stock / liste vide
    */
   MvtStkControllerFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<MvtStkDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/all`,
+      this.rootUrl + `/v1/mvtstk/all`,
       __body,
       {
         headers: __headers,
@@ -1364,12 +1364,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   MvtStkControllerCorrectionMvtStkNegPOSTResponse(): __Observable<__StrictHttpResponse<MvtStkDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/correction-neg`,
+      this.rootUrl + `/v1/mvtstk/correction-neg`,
       __body,
       {
         headers: __headers,
@@ -1400,12 +1400,12 @@ class ApiService extends __BaseService {
    * @return L'objet mouvements de stock a ete trouver dans la BDD
    */
   MvtStkControllerFindMvtStkByDateMvtGETResponse(dateMvtStk?: string): __Observable<__StrictHttpResponse<Array<MvtStkDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/date/${encodeURIComponent(String(dateMvtStk))}`,
+      this.rootUrl + `/v1/mvtstk/date/${encodeURIComponent(String(dateMvtStk))}`,
       __body,
       {
         headers: __headers,
@@ -1436,12 +1436,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   MvtStkControllerEntreMvtStkPOSTResponse(): __Observable<__StrictHttpResponse<MvtStkDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/entre`,
+      this.rootUrl + `/v1/mvtstk/entre`,
       __body,
       {
         headers: __headers,
@@ -1469,12 +1469,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   MvtStkControllerMvtStkArticleGETResponse(idArticle?: string): __Observable<__StrictHttpResponse<Array<MvtStkDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/filter/article/${encodeURIComponent(String(idArticle))}`,
+      this.rootUrl + `/v1/mvtstk/filter/article/${encodeURIComponent(String(idArticle))}`,
       __body,
       {
         headers: __headers,
@@ -1505,12 +1505,12 @@ class ApiService extends __BaseService {
    * @return L'objet mouvement de stock fournisseur creer ou modifier
    */
   MvtStkControllerSavePOSTResponse(): __Observable<__StrictHttpResponse<MvtStkDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/save`,
+      this.rootUrl + `/v1/mvtstk/save`,
       __body,
       {
         headers: __headers,
@@ -1541,12 +1541,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   MvtStkControllerSortieMvtStkPOSTResponse(): __Observable<__StrictHttpResponse<MvtStkDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/sortie`,
+      this.rootUrl + `/v1/mvtstk/sortie`,
       __body,
       {
         headers: __headers,
@@ -1577,12 +1577,12 @@ class ApiService extends __BaseService {
    * @return L'objet commande fournisseur a ete trouver dans la BDD
    */
   MvtStkControllerFindByIdGETResponse(idMvtstk?: string): __Observable<__StrictHttpResponse<MvtStkDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/mvtstk/${encodeURIComponent(String(idMvtstk))}`,
+      this.rootUrl + `/v1/mvtstk/${encodeURIComponent(String(idMvtstk))}`,
       __body,
       {
         headers: __headers,
@@ -1613,12 +1613,12 @@ class ApiService extends __BaseService {
    * @return successful operation
    */
   PhotoControllerSavePhotoPOSTResponse(id?: string,title?: string,context?: string): __Observable<__StrictHttpResponse<{}>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/gestiondestock/v1/photos/${encodeURIComponent(String(id))}/${encodeURIComponent(String(title))}/${encodeURIComponent(String(context))}`,
+      this.rootUrl + `/photos/${encodeURIComponent(String(id))}/${encodeURIComponent(String(title))}/${encodeURIComponent(String(context))}`,
       __body,
       {
         headers: __headers,
@@ -1648,12 +1648,12 @@ class ApiService extends __BaseService {
    * Cette methode permet de supprimer un utilisateur par son ID
    */
   UtilisateurControllerDeleteDELETEResponse(idUtilisateur?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/utilisateur/detele/${encodeURIComponent(String(idUtilisateur))}`,
+      this.rootUrl + `/v1/utilisateur/detele/${encodeURIComponent(String(idUtilisateur))}`,
       __body,
       {
         headers: __headers,
@@ -1686,12 +1686,12 @@ class ApiService extends __BaseService {
    * @return L'objet utilisateur a ete trouver dans la BDD
    */
   UtilisateurControllerFindByEmailUtilisateurGETResponse(emailUtilisateur?: string): __Observable<__StrictHttpResponse<UtilisateurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/utilisateur/email/${encodeURIComponent(String(emailUtilisateur))}`,
+      this.rootUrl + `/v1/utilisateur/email/${encodeURIComponent(String(emailUtilisateur))}`,
       __body,
       {
         headers: __headers,
@@ -1725,12 +1725,12 @@ class ApiService extends __BaseService {
    * @return L'objet utilisateur a ete trouver dans la BDD
    */
   UtilisateurControllerFindByIdGETResponse(idUtilisateur?: string): __Observable<__StrictHttpResponse<UtilisateurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/utilisateur/${encodeURIComponent(String(idUtilisateur))}`,
+      this.rootUrl + `/v1/utilisateur/${encodeURIComponent(String(idUtilisateur))}`,
       __body,
       {
         headers: __headers,
@@ -1764,12 +1764,12 @@ class ApiService extends __BaseService {
    * @return La liste des ventes / liste vide
    */
   VenteControllerFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<VenteDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/vente/all`,
+      this.rootUrl + `/vente/all`,
       __body,
       {
         headers: __headers,
@@ -1803,12 +1803,12 @@ class ApiService extends __BaseService {
    * @return L'objet vente a ete trouver dans la BDD
    */
   VenteControllerFindByCodeVenteGETResponse(codeVente?: string): __Observable<__StrictHttpResponse<VenteDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/vente/code/${encodeURIComponent(String(codeVente))}`,
+      this.rootUrl + `/vente/code/${encodeURIComponent(String(codeVente))}`,
       __body,
       {
         headers: __headers,
@@ -1841,12 +1841,12 @@ class ApiService extends __BaseService {
    * Cette methode permet de supprimer un article par son ID
    */
   VenteControllerDeleteDELETEResponse(idVente?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/gestiondestock/v1/vente/detele/${encodeURIComponent(String(idVente))}`,
+      this.rootUrl + `/vente/detele/${encodeURIComponent(String(idVente))}`,
       __body,
       {
         headers: __headers,
@@ -1879,12 +1879,12 @@ class ApiService extends __BaseService {
    * @return L'objet vente a ete trouver dans la BDD
    */
   VenteControllerFindByIdGETResponse(idVente?: string): __Observable<__StrictHttpResponse<VenteDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/vente/${encodeURIComponent(String(idVente))}`,
+      this.rootUrl + `/vente/${encodeURIComponent(String(idVente))}`,
       __body,
       {
         headers: __headers,

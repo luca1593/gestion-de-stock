@@ -13,13 +13,13 @@ import { ChangerMotDePasseUtilisateurDto } from '../models';
   providedIn: 'root',
 })
 class UtilisateurService extends __BaseService {
-  static readonly UtilisateurApiFindAllGETPath = 'gestiondestock/v1/utilisateur/all';
-  static readonly UtilisateurApiFindByNomUtilisateurGETPath = 'gestiondestock/v1/utilisateur/nom/{nomUtilisateur}';
-  static readonly UtilisateurApiSavePOSTPath = 'gestiondestock/v1/utilisateur/save';
+  static readonly UtilisateurApiFindAllGETPath='v1/utilisateur/all';
+  static readonly UtilisateurApiFindByNomUtilisateurGETPath='v1/utilisateur/nom/{nomUtilisateur}';
+  static readonly UtilisateurApiSavePOSTPath='v1/utilisateur/save';
 
-  static readonly UtilisateurApiDELETEPath = 'gestiondestock/v1/utilisateur/detele/{idUtilisateur}';
-  static readonly UtilisateurApiFindByEmailUtilisateurGETPath = 'gestiondestock/v1/utilisateur/email/{emailUtilisateur}';
-  static readonly UtilisateurApiFindByIdGETPath = 'gestiondestock/v1/utilisateur/{idUtilisateur}';
+  static readonly UtilisateurApiDELETEPath='v1/utilisateur/detele/{idUtilisateur}';
+  static readonly UtilisateurApiFindByEmailUtilisateurGETPath='v1/utilisateur/email/{emailUtilisateur}';
+  static readonly UtilisateurApiFindByIdGETPath='v1/utilisateur/{idUtilisateur}';
 
   constructor(
     config: __Configuration,
@@ -35,12 +35,12 @@ class UtilisateurService extends __BaseService {
    * @return La liste des clients / liste vide
    */
   UtilisateurApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<UtilisateurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/utilisateur/all`,
+      this.rootUrl + `v1/utilisateur/all`,
       __body,
       {
         headers: __headers,
@@ -75,13 +75,13 @@ class UtilisateurService extends __BaseService {
    * @return L'objet utilisateur a ete trouver dans la BDD
    */
   UtilisateurApiFindByNomUtilisateurGETResponse(nomUtilisateur: string): __Observable<__StrictHttpResponse<UtilisateurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/utilisateur/nom/${encodeURIComponent(String(nomUtilisateur))}`,
+      this.rootUrl + `v1/utilisateur/nom/${encodeURIComponent(String(nomUtilisateur))}`,
       __body,
       {
         headers: __headers,
@@ -117,13 +117,13 @@ class UtilisateurService extends __BaseService {
    * @return L'objet utilisateur creer ou modifier
    */
   UtilisateurApiSavePOSTResponse(body?: UtilisateurDto): __Observable<__StrictHttpResponse<UtilisateurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/utilisateur/save`,
+      this.rootUrl + `v1/utilisateur/save`,
       __body,
       {
         headers: __headers,
@@ -159,13 +159,13 @@ class UtilisateurService extends __BaseService {
    * @return Mot de passe changer avec succes
    */
    changerMotDePassePOSTResponse(body?: ChangerMotDePasseUtilisateurDto): __Observable<__StrictHttpResponse<UtilisateurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/utilisateur/changer-mot-de-passe`,
+      this.rootUrl + `v1/utilisateur/changer-mot-de-passe`,
       __body,
       {
         headers: __headers,
@@ -199,12 +199,12 @@ class UtilisateurService extends __BaseService {
    * Cette methode permet de supprimer un utilisateur par son ID
    */
    UtilisateurApiDELETEResponse(idUtilisateur?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/utilisateur/detele/${encodeURIComponent(String(idUtilisateur))}`,
+      this.rootUrl + `v1/utilisateur/detele/${encodeURIComponent(String(idUtilisateur))}`,
       __body,
       {
         headers: __headers,
@@ -237,12 +237,12 @@ class UtilisateurService extends __BaseService {
    * @return L'objet utilisateur a ete trouver dans la BDD
    */
   UtilisateurApiFindByEmailUtilisateurGETResponse(emailUtilisateur?: string): __Observable<__StrictHttpResponse<UtilisateurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/utilisateur/email/${encodeURIComponent(String(emailUtilisateur))}`,
+      this.rootUrl + `v1/utilisateur/email/${encodeURIComponent(String(emailUtilisateur))}`,
       __body,
       {
         headers: __headers,
@@ -276,12 +276,12 @@ class UtilisateurService extends __BaseService {
    * @return L'objet utilisateur a ete trouver dans la BDD
    */
   UtilisateurApiFindByIdGETResponse(idUtilisateur?: string): __Observable<__StrictHttpResponse<UtilisateurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/utilisateur/${encodeURIComponent(String(idUtilisateur))}`,
+      this.rootUrl + `v1/utilisateur/${encodeURIComponent(String(idUtilisateur))}`,
       __body,
       {
         headers: __headers,

@@ -16,12 +16,12 @@ export class CltfrsService {
   ) { }
 
   enregistreClient(clientDTO: ClientDto): Observable<ClientDto>{
-    clientDTO.identreprise = this.userService.getConnectedUser().entreprise?.id;
+    clientDTO.identreprise=this.userService.getConnectedUser().entreprise?.id;
     return this.clientService.SavePOST(clientDTO);
   }
 
   enregistreFournisseur(fournisseurDto: FournisseurDto): Observable<FournisseurDto>{
-    fournisseurDto.identreprise = this.userService.getConnectedUser().entreprise?.id;
+    fournisseurDto.identreprise=this.userService.getConnectedUser().entreprise?.id;
     return this.fournisseurService.FournisseurApiSavePOST(fournisseurDto);
   }
 

@@ -1,12 +1,10 @@
-import { formatDate } from '@angular/common';
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 import { DashboardService } from 'src/app/services/dashboard/dashboard.service';
 import { VenteService } from 'src/app/services/vente/vente.service';
-import { ArticleDto, DashboardRequest } from 'src/gs-api/src/models';
+import { ArticleDto, DashboardStatsDto } from 'src/gs-api/src/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 
@@ -18,20 +16,21 @@ Chart.register(...registerables);
   styleUrls: ['./dashbord.component.css'],
 })
 export class DashbordComponent implements OnInit {
-  labels: Array<string> = ['Commande client', 'Commande fournisseur', 'Vente'];
-  listdataQnt: Array<number> = [];
-  listDataprix: Array<number> = [];
+  labels: string[] = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+  listdataQnt: number[] = [];
+  listDataprix: number[] = [];
   mapQnte: Map<string, number> = new Map();
   mapPrix: Map<string, number> = new Map();
   error = '';
   startDate: any;
   endDate: any;
-  afficherDraphe: boolean = false;
-  totalArticle : number = 0;
-  totalUtilisateur : number = 0;
-  totalFournisseur : number = 0;;
-  totalClient: number = 0;
-  listReceteArticle: Array<ArticleDto> = [];
+  afficherDraphe = false;
+  totalArticle = 0;
+  totalUtilisateur = 0;
+  totalFournisseur = 0;
+  totalClient = 0;
+  listReceteArticle: ArticleDto[] = [];
+  stats: DashboardStatsDto = {};
 
   constructor(
     private cmdFrsService: CmdCltFrsService,
@@ -40,65 +39,60 @@ export class DashbordComponent implements OnInit {
     private articleService: ArtcleService,
     private cltFrsService: CltfrsService,
     private userService: UserService,
-
-    private router: Router,
-    @Inject(LOCALE_ID) private locale: string,
   ) {}
 
   ngOnInit() {
-    this.afficherData();
+    this.loadStats();
     this.getTotalNumberOfData();
     this.getRecentArticle();
     this.error = "";
-  }
-
-  afficherData(): void {
-    this.afficherDraphe = false;
+    
     let sDate = new Date();
-    sDate.setDate(sDate.getDate() -1);
-    let dashboardRequest: DashboardRequest = {
-      startDate: formatDate(this.startDate ? this.startDate : sDate, "dd/MM/YYY", this.locale),
-      endDate: formatDate(this.endDate ? this.endDate : Date.now(), "dd/MM/YYY", this.locale)
-    };
-    this.dashboardService.getDashboardData(dashboardRequest).subscribe(data => {
-      if(data.mapDataDashboard){
-        data.mapDataDashboard = this.sortObjectKeys(data.mapDataDashboard);
-        if (data.mapDataDashboard) {
-          for(const key in data.mapDataDashboard){
-            if(key.startsWith("prix")){
-              this.mapPrix.set(key, parseFloat(data.mapDataDashboard[key].toFixed(2)));
-            }else {
-              this.mapQnte.set(key, parseFloat(data.mapDataDashboard[key].toFixed(2)));
-            }
-          }
-        }
-      }
-    }, error => {
-      this.afficherDraphe = false;
-      this.error = error.error.message;
-    });
-
-    setTimeout(() => {
-      if (this.mapPrix.size && this.mapQnte.size) {
-        this.afficherDraphe = true;
-        this.createChart("prx", this.mapPrix, this.labels, ' Ariary');
-        this.createChart("qnt", this.mapQnte, this.labels, ' Quantités');
-        this.error = "";
-      }else{
-        this.afficherDraphe = false;
-        this.error = "Aucune donnée n'a été trouvé pendant ce période";
-      }
-    }, 1000);
+    sDate.setDate(sDate.getDate() - 30);
+    this.startDate = sDate.toISOString().split('T')[0];
+    this.endDate = new Date().toISOString().split('T')[0];
   }
 
-  getTotalNumberOfData(){
+  loadStats(): void {
+    this.dashboardService.getStats().subscribe({
+      next: (data) => {
+        this.stats = data;
+        this.updateCharts();
+      },
+      error: (err) => {
+        this.error = err.error?.message || 'Erreur lors du chargement des statistiques';
+      }
+    });
+  }
+
+  onDateChange(): void {
+    this.loadStats();
+  }
+
+  updateCharts(): void {
+    if (this.stats) {
+      this.mapQnte.set('Articles', this.stats.totalArticles || 0);
+      this.mapQnte.set('Clients', this.stats.totalClients || 0);
+      this.mapQnte.set('Fournisseurs', this.stats.totalFournisseurs || 0);
+      this.mapQnte.set('Commandes Client', this.stats.totalCommandesClient || 0);
+      this.mapQnte.set('Commandes Fournisseur', this.stats.totalCommandesFournisseur || 0);
+      this.mapQnte.set('Ventes', this.stats.totalVentes || 0);
+      
+      this.mapPrix.set('Chiffre d\'affaires', this.stats.chiffreAffaires || 0);
+      this.mapPrix.set('Valeur Stock', this.stats.valeurStock || 0);
+      
+      this.afficherDraphe = true;
+    }
+  }
+
+  getTotalNumberOfData() {
     this.articleService.findAllArticle().subscribe(data => {
       this.totalArticle = data.length;
     });
     this.cltFrsService.findAllClient().subscribe(data => {
       this.totalClient = data.length;
     });
-    this.cltFrsService.findAllFournisseurs().subscribe(data =>{
+    this.cltFrsService.findAllFournisseurs().subscribe(data => {
       this.totalFournisseur = data.length;
     });
     this.userService.findAll().subscribe(data => {
@@ -115,19 +109,25 @@ export class DashbordComponent implements OnInit {
     return sortedObject;
   }
 
-  createChart(id: string, mapData: Map<string, number>, labels: Array<string>, label: string): void {
-    this.afficherDraphe = false
-    let data: Array<number> = [];
+  createChart(id: string, mapData: Map<string, number>, labels: string[], label: string): void {
+    this.afficherDraphe = false;
+    let data: number[] = [];
     mapData.forEach((v, k) => {
       data.push(v);
     });
+    
+    const existingChart = Chart.getChart(id);
+    if (existingChart) {
+      existingChart.destroy();
+    }
+    
     this.afficherDraphe = true;
-    const chart = new Chart(id, {
-      type: 'line',
+    new Chart(id, {
+      type: 'bar',
       options: {
         responsive: true,
-        plugins:{
-          legend:{
+        plugins: {
+          legend: {
             display: false
           },
           tooltip: {
@@ -138,19 +138,25 @@ export class DashbordComponent implements OnInit {
         }
       },
       data: {
-        labels: labels,
+        labels: Array.from(mapData.keys()),
         datasets: [{
           label: label,
           data: data,
           backgroundColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)'
+            'rgba(74, 144, 217, 0.8)',
+            'rgba(40, 167, 69, 0.8)',
+            'rgba(255, 193, 7, 0.8)',
+            'rgba(220, 53, 69, 0.8)',
+            'rgba(111, 66, 193, 0.8)',
+            'rgba(23, 162, 184, 0.8)'
           ],
           borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)'
+            'rgba(74, 144, 217, 1)',
+            'rgba(40, 167, 69, 1)',
+            'rgba(255, 193, 7, 1)',
+            'rgba(220, 53, 69, 1)',
+            'rgba(111, 66, 193, 1)',
+            'rgba(23, 162, 184, 1)'
           ],
           borderWidth: 1
         }]
@@ -159,22 +165,12 @@ export class DashbordComponent implements OnInit {
   }
 
   getRecentArticle() {
-
     this.articleService.findAllArticle().subscribe(data => {
-      data.forEach( d => {
-        this.listReceteArticle.push(d);
-      });
-      this.listReceteArticle.sort((a1, a2) => {
-        if (a1.creationDate && a2.creationDate) {
-          return a1.creationDate - a2.creationDate;
-        } else if (a1.creationDate) {
-          return -1;
-        } else if (a2.creationDate) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+      this.listReceteArticle = data.sort((a, b) => {
+        const dateA = a.creationDate ? new Date(a.creationDate).getTime() : 0;
+        const dateB = b.creationDate ? new Date(b.creationDate).getTime() : 0;
+        return dateB - dateA;
+      }).slice(0, 10);
     });
   }
 
@@ -186,8 +182,13 @@ export class DashbordComponent implements OnInit {
     return Array.from(this.mapQnte.values());
   }
 
-  parceData(chiffre : number): number {
+  parceData(chiffre: number): number {
     return parseFloat(chiffre.toFixed(2));
   }
 
+  resetDates(): void {
+    this.startDate = null;
+    this.endDate = null;
+    this.loadStats();
+  }
 }

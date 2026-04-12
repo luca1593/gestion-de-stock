@@ -13,7 +13,7 @@ import { AuthenticationRequest } from '../models/authentication-request';
   providedIn: 'root',
 })
 class AuthenticationService extends __BaseService {
-  static readonly savePath = 'gestiondestock/v1/auth/authenticate';
+  static readonly savePath='v1/auth/authenticate';
 
   constructor(
     config: __Configuration,
@@ -30,13 +30,13 @@ class AuthenticationService extends __BaseService {
    * @return Le token de connexion
    */
    authenticationResponse(body: AuthenticationRequest): __Observable<__StrictHttpResponse<AuthenticationResponse>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/auth/authenticate`,
+      this.rootUrl + `v1/auth/authenticate`,
       __body,
       {
         headers: __headers,

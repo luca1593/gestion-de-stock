@@ -12,8 +12,8 @@ describe('DetailArticleComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DetailArticleComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(DetailArticleComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

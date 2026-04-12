@@ -1,4 +1,123 @@
-.my-container{
-    margin-top: 200px;
-    max-width: 500px;
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--bg-card, white);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.login-header {
+    background: linear-gradient(135deg, #4a90d9 0%, #2a5298 100%);
+    padding: 30px;
+    text-align: center;
+    color: white;
+}
+
+.logo-container {
+    margin-bottom: 15px;
+}
+
+.logo-container i {
+    color: white;
+}
+
+.login-header .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.login-header p {
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+}
+
+.login-card .card-body {
+    padding: 30px;
+}
+
+.login-card .form-label {
+    font-weight: 500;
+    color: var(--text-primary, #495057);
+    margin-bottom: 5px;
+}
+
+.login-card .form-control {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #ced4da);
+    transition: all 0.3s;
+    background: var(--input-bg, white);
+    color: var(--text-primary, #495057);
+}
+
+.login-card .form-control:focus {
+    border-color: #4a90d9;
+    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
+}
+
+.login-card .btn-primary {
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4a90d9 0%, #2a5298 100%);
+    border: none;
+    transition: all 0.3s;
+    color: white;
+}
+
+.login-card .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 217, 0.4);
+}
+
+.login-card .btn-link {
+    color: #4a90d9;
+    font-weight: 500;
+}
+
+.login-card hr {
+    margin: 20px 0;
+    border-color: var(--border-color, #e9ecef);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: none;
+    color: #721c24;
+    border-radius: 8px;
+    padding: 12px 15px;
+}
+
+.alert-danger i {
+    margin-right: 8px;
+}
+
+.text-muted {
+    color: rgba(255,255,255,0.8) !important;
+}
+
+body.dark-theme .login-card {
+    background: var(--bg-card);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+body.dark-theme .login-card .form-label {
+    color: var(--text-primary);
+}
+
+body.dark-theme .login-card hr {
+    border-color: var(--border-color);
 }

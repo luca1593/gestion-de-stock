@@ -37,28 +37,13 @@
         </div>
     </div>
     <!-- Boutton action -->
-    <div class="col-md-3">
-        <div class="row">
-            <div class="col-md-4 text-primary text-center small-text">
-                <button class="btn btn-link" (click)="modifierArticle()">
-                    <i class="fas fa-pencil-alt"></i>
-                    Modifier
-                </button>
-            </div>
-            <div class="col-md-4 text-danger text-center small-text">
-                <button class="btn btn-link text-danger" data-bs-toggle="modal"
-                    [attr.data-bs-target]="'#modalConfirmDelete' + articleDTO.id">
-                    <i class="fas fa-trash-alt"></i>
-                    Supprimer
-                </button>
-            </div>
-            <div class="col-md-4 text-primary text-center small-text">
-                <button class="btn btn-link" (click)="detailArticle()">
-                    <i class="fas fa-list-alt"></i>
-                    Details
-                </button>
-            </div>
-        </div>
+    <div class="col-md-3 d-flex align-items-center justify-content-center">
+        <app-ligne-action
+            [itemId]="articleDTO.id"
+            (modifier)="modifierArticle()"
+            (supprimer)="openDeleteModal()"
+            (details)="detailArticle()">
+        </app-ligne-action>
     </div>
     <!-- Modal suppression article-->
     <div class="modal fade" id="modalConfirmDelete{{articleDTO.id}}" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -70,7 +55,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Etes vous sur de supprimer cet article ?
+                    Êtes-vous sûr de supprimer cet article ?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

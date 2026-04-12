@@ -12,8 +12,8 @@ describe('ModifProfilComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ModifProfilComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(ModifProfilComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

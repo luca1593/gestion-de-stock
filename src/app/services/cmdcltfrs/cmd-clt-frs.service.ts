@@ -16,13 +16,13 @@ export class CmdCltFrsService {
   ) { }
 
   enregistrerCommandeClient(commandeClientDTO: CommandeClientDto, date: number): Observable<CommandeClientDto> {
-    commandeClientDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
+    commandeClientDTO.identreprise=this.userServise.getConnectedUser().entreprise?.id;
     return this.commandeClientService.CommandeClientApiSavePOST(commandeClientDTO, date);
     
   }
 
   enregistrerCommandeFournisseur(commandeFournisseurDTO: CommandeFournisseurDto, date: number):Observable<CommandeFournisseurDto> {
-    commandeFournisseurDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
+    commandeFournisseurDTO.identreprise=this.userServise.getConnectedUser().entreprise?.id;
     return this.commandeFournisseurService.save(commandeFournisseurDTO, date);
   }
 

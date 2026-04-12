@@ -45,26 +45,12 @@
         </div>
     </div>
     <!-- Boutton action -->
-    <div class="col-md-3">
-        <div class="row">
-            <div class="col-md-4 text-primary text-center small-text">
-                <button class="btn btn-link">
-                    <i class="fas fa-pencil-alt"></i>
-                    Modifier
-                </button>
-            </div>
-            <div class="col-md-4 text-danger text-center small-text">
-                <button class="btn btn-link text-danger">
-                    <i class="fas fa-trash-alt"></i>
-                    Supprimer
-                </button>
-            </div>
-            <div class="col-md-4 text-danger text-center small-text">
-                <button class="btn btn-link">
-                    <i class="fas fa-list-alt"></i>
-                    Details
-                </button>
-            </div>
-        </div>
+    <div class="col-md-3 d-flex align-items-center justify-content-center">
+        <app-ligne-action
+            [itemId]="utilisateur.id"
+            (modifier)="modifier()"
+            (supprimer)="openDeleteModal()"
+            (details)="details()">
+        </app-ligne-action>
     </div>
 </div>

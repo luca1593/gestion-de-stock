@@ -1,6 +1,6 @@
 {
    "/gestiondestock":{
-    "target": "http://localhost:8181",
+    "target": "http://localhost:8085",
     "secure": false,
     "pathRewrite":{
         "^/gestiondestock":""

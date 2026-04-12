@@ -14,19 +14,19 @@ import { ClientDto } from '../models';
   providedIn: 'root',
 })
 class CommandeClientService extends __BaseService {
-  static readonly CommandeClientApiFindAllGETPath = 'gestiondestock/v1/commande-client/all';
-  static readonly CommandeClientApiFindByCodeCommandeGETPath = 'gestiondestock/v1/commande-client/code/{codeCommandeClient}';
-  static readonly CommandeClientApiFindAllByCommandeClientGETPath = 'gestiondestock/v1/commande-client/list/linge-commande/{idCommande}';
-  static readonly CommandeClientApiUpdateArticlePATCHPath = 'gestiondestock/v1/commande-client/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}';
-  static readonly CommandeClientApiUpdateEtatCommandePATCHPath = 'gestiondestock/v1/commande-client/update/etat/{idCommande}/{etatCommande}';
-  static readonly CommandeClientApiUpdateQuantiterCommandePATCHPath = 'gestiondestock/v1/commande-client/update/quantite/{idCommande}/{idLigneCommande}/{quantite}';
-  static readonly CommandeClientApiFindByIdGETPath = 'gestiondestock/v1/commande-client/{idCommandeClient}';
+  static readonly CommandeClientApiFindAllGETPath='v1/commande-client/all';
+  static readonly CommandeClientApiFindByCodeCommandeGETPath='v1/commande-client/code/{codeCommandeClient}';
+  static readonly CommandeClientApiFindAllByCommandeClientGETPath='v1/commande-client/list/linge-commande/{idCommande}';
+  static readonly CommandeClientApiUpdateArticlePATCHPath='v1/commande-client/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}';
+  static readonly CommandeClientApiUpdateEtatCommandePATCHPath='v1/commande-client/update/etat/{idCommande}/{etatCommande}';
+  static readonly CommandeClientApiUpdateQuantiterCommandePATCHPath='v1/commande-client/update/quantite/{idCommande}/{idLigneCommande}/{quantite}';
+  static readonly CommandeClientApiFindByIdGETPath='v1/commande-client/{idCommandeClient}';
 
-  static readonly CommandeClientApiSavePOSTPath = 'gestiondestock/v1/commande-client/create';
-  static readonly CommandeClientApiFindByDateCommandeGETPath = 'gestiondestock/v1/commande-client/date/{dateCommandeClient}';
-  static readonly CommandeClientApiDeleteArticleDELETEPath = 'gestiondestock/v1/commande-client/delete/article/{idCommande}/{idLigneCommande}';
-  static readonly CommandeClientApiDeleteDELETEPath = 'gestiondestock/v1/commande-client/delete/{idCommandeClient}';
-  static readonly CommandeClientApiUpdateClientPATCHPath = 'gestiondestock/v1/commande-client/update/client/{idCommande}/{idClient}';
+  static readonly CommandeClientApiSavePOSTPath='v1/commande-client/create';
+  static readonly CommandeClientApiFindByDateCommandeGETPath='v1/commande-client/date/{dateCommandeClient}';
+  static readonly CommandeClientApiDeleteArticleDELETEPath='v1/commande-client/delete/article/{idCommande}/{idLigneCommande}';
+  static readonly CommandeClientApiDeleteDELETEPath='v1/commande-client/delete/{idCommandeClient}';
+  static readonly CommandeClientApiUpdateClientPATCHPath='v1/commande-client/update/v1/client/{idCommande}/{idClient}';
 
   constructor(
     config: __Configuration,
@@ -42,12 +42,12 @@ class CommandeClientService extends __BaseService {
    * @return La liste des commandes client / liste vide
    */
   CommandeClientApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<CommandeClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-client/all`,
+      this.rootUrl + `v1/commande-client/all`,
       __body,
       {
         headers: __headers,
@@ -82,13 +82,13 @@ class CommandeClientService extends __BaseService {
    * @return L'objet commande client a ete trouver dans la BDD
    */
   CommandeClientApiFindByCodeCommandeGETResponse(codeCommandeClient: string): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-client/code/${encodeURIComponent(String(codeCommandeClient))}`,
+      this.rootUrl + `v1/commande-client/code/${encodeURIComponent(String(codeCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -121,13 +121,13 @@ class CommandeClientService extends __BaseService {
    * @return Les lignes de commante de la commande client ont bien ete trouver
    */
   CommandeClientApiFindAllByCommandeClientGETResponse(idCommande: number): __Observable<__StrictHttpResponse<Array<LigneCommandeClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-client/list/linge-commande/${encodeURIComponent(String(idCommande))}`,
+      this.rootUrl + `v1/commande-client/list/linge-commande/${encodeURIComponent(String(idCommande))}`,
       __body,
       {
         headers: __headers,
@@ -164,15 +164,15 @@ class CommandeClientService extends __BaseService {
    * @return L'article de la commande client a bien ete modifier
    */
   CommandeClientApiUpdateArticlePATCHResponse(params: CommandeClientService.CommandeClientApiUpdateArticlePATCHParams): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
 
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-client/update/article/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.idLigneCommande))}/${encodeURIComponent(String(params.newIdArticle))}`,
+      this.rootUrl + `v1/commande-client/update/article/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.idLigneCommande))}/${encodeURIComponent(String(params.newIdArticle))}`,
       __body,
       {
         headers: __headers,
@@ -214,14 +214,14 @@ class CommandeClientService extends __BaseService {
    * @return L'etat de la commande client a bien ete modifier
    */
   CommandeClientApiUpdateEtatCommandePATCHResponse(params: CommandeClientService.CommandeClientApiUpdateEtatCommandePATCHParams): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-client/update/etat/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.etatCommande))}`,
+      this.rootUrl + `v1/commande-client/update/etat/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.etatCommande))}`,
       __body,
       {
         headers: __headers,
@@ -263,15 +263,15 @@ class CommandeClientService extends __BaseService {
    * @return La quantite de la commande client a bien ete modifier
    */
   CommandeClientApiUpdateQuantiterCommandePATCHResponse(params: CommandeClientService.CommandeClientApiUpdateQuantiterCommandePATCHParams): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
 
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-client/update/quantite/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.idLigneCommande))}/${encodeURIComponent(String(params.quantite))}`,
+      this.rootUrl + `v1/commande-client/update/quantite/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.idLigneCommande))}/${encodeURIComponent(String(params.quantite))}`,
       __body,
       {
         headers: __headers,
@@ -311,13 +311,13 @@ class CommandeClientService extends __BaseService {
    * @return L'objet commande client a ete trouver dans la BDD
    */
   CommandeClientApiFindByIdGETResponse(idCommandeClient: number): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-client/${encodeURIComponent(String(idCommandeClient))}`,
+      this.rootUrl + `v1/commande-client/${encodeURIComponent(String(idCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -352,12 +352,12 @@ class CommandeClientService extends __BaseService {
    * @return L'objet commande client creer ou modifier
    */
    CommandeClientApiSavePOSTResponse(body: CommandeClientDto, dateCommandeClient: number): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/commande-client/create/${encodeURIComponent(String(dateCommandeClient))}`,
+      this.rootUrl + `v1/commande-client/create/${encodeURIComponent(String(dateCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -391,12 +391,12 @@ class CommandeClientService extends __BaseService {
    * @return Aucune commande client n'a ete trouver dans la BDD
    */
   CommandeClientApiFindByDateCommandeGETResponse(dateCommandeClient?: string): __Observable<__StrictHttpResponse<Array<CommandeClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-client/date/${encodeURIComponent(String(dateCommandeClient))}`,
+      this.rootUrl + `v1/commande-client/date/${encodeURIComponent(String(dateCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -428,12 +428,12 @@ class CommandeClientService extends __BaseService {
    * @return L'article de la commande client a bien ete supprimer
    */
   CommandeClientApiDeleteArticleDELETEResponse(idCommande?: string, idLigneCommande?: string): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/commande-client/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
+      this.rootUrl + `v1/commande-client/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
       __body,
       {
         headers: __headers,
@@ -464,12 +464,12 @@ class CommandeClientService extends __BaseService {
    * @return Liste des lignes de commande client a ete trouver avec success  Array<LigneCommandeClientDto>
    */
   findAllLigneCommadeByCommandeClientResponse(idCommande?: number): __Observable<__StrictHttpResponse<Array<LigneCommandeClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-client/list/ligne-commande/${encodeURIComponent(String(idCommande))}`,
+      this.rootUrl + `v1/commande-client/list/ligne-commande/${encodeURIComponent(String(idCommande))}`,
       __body,
       {
         headers: __headers,
@@ -503,12 +503,12 @@ class CommandeClientService extends __BaseService {
    * @return Aucune commande client n'a ete trouver dans la BDD
    */
   findAllByClientResponse(clientDto?: ClientDto): __Observable<__StrictHttpResponse<Array<CommandeClientDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = clientDto;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=clientDto;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/commande-client`,
+      this.rootUrl + `v1/commande-client`,
       __body,
       {
         headers: __headers,
@@ -542,12 +542,12 @@ class CommandeClientService extends __BaseService {
    * Cette methode permet de supprimer une commande client par son ID
    */
   CommandeClientApiDeleteDELETEResponse(idCommandeClient?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/commande-client/delete/${encodeURIComponent(String(idCommandeClient))}`,
+      this.rootUrl + `v1/commande-client/delete/${encodeURIComponent(String(idCommandeClient))}`,
       __body,
       {
         headers: __headers,
@@ -577,12 +577,12 @@ class CommandeClientService extends __BaseService {
    * @return Le client de la commande client a bien ete modifier
    */
   CommandeClientApiUpdateClientPATCHResponse(idCommande?: string, idClient?: string): __Observable<__StrictHttpResponse<CommandeClientDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-client/update/client/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idClient))}`,
+      this.rootUrl + `v1/commande-client/update/v1/client/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idClient))}`,
       __body,
       {
         headers: __headers,

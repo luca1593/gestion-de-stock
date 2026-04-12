@@ -10,9 +10,9 @@ import { FournisseurDto } from 'src/gs-api/src/models';
 })
 export class PageFournisseurComponent implements OnInit {
 
-  listFournisseur:Array<FournisseurDto> = [];
-  errorMsg: string = '';
-  page: number = 1;
+  listFournisseur:Array<FournisseurDto>=[];
+  errorMsg: string='';
+  page: number=1;
 
   constructor(
     private router: Router,
@@ -25,7 +25,7 @@ export class PageFournisseurComponent implements OnInit {
 
   finfAllFournisseur(): void{
     this.cltfrsService.findAllFournisseurs().subscribe(resp =>{
-      this.listFournisseur = resp;
+      this.listFournisseur=resp;
     })
   }
 
@@ -37,7 +37,7 @@ export class PageFournisseurComponent implements OnInit {
     if($event === "success"){
       this.finfAllFournisseur();
     }else{
-      this.errorMsg = $event;
+      this.errorMsg=$event;
     }
   }
 

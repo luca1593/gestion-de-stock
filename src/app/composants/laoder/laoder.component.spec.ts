@@ -12,8 +12,8 @@ describe('LaoderComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(LaoderComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(LaoderComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

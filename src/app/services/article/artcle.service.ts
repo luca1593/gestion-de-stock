@@ -15,7 +15,7 @@ export class ArtcleService {
   ) { }
 
   enregistrerArticle(articleDTO: ArticleDto): Observable<ArticleDto>{
-    articleDTO.entreprise = this.userService.getConnectedUser().entreprise;
+    articleDTO.entreprise=this.userService.getConnectedUser().entreprise;
     return this.articleService.ArticleApiSavePOST(articleDTO);
   }
 

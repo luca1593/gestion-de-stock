@@ -1,16 +1,13 @@
-import { from } from 'rxjs';
-
 export { AuthenticationResponse } from './models/authentication-response';
 export { AuthenticationRequest } from './models/authentication-request';
 export { AdresseDto } from './models/adresse-dto';
 export { ArticleDto } from './models/article-dto';
+export { AlertStockDto } from './models/alert-stock-dto';
 export { CategoryDto } from './models/category-dto';
 export { ChangerMotDePasseUtilisateurDto } from './models/changer-mot-de-passe-utilisateur-dto';
 export { ClientDto } from './models/client-dto';
 export { CommandeClientDto } from './models/commande-client-dto';
 export { CommandeFournisseurDto } from './models/commande-fournisseur-dto';
-export { DashboardResponse } from './models/dashboard-response';
-export { DashboardRequest } from './models/dashboard-request';
 export { EntrepriseDto } from './models/entreprise-dto';
 export { FournisseurDto } from './models/fournisseur-dto';
 export { LigneCommandeClientDto } from './models/ligne-commande-client-dto';
@@ -20,3 +17,5 @@ export { MvtStkDto } from './models/mvt-stk-dto';
 export { RoleDto } from './models/role-dto';
 export { UtilisateurDto } from './models/utilisateur-dto';
 export { VenteDto } from './models/vente-dto';
+export { AvoirDto } from './models/avoir-dto';
+export { DashboardStatsDto, VenteStatsDto, ArticleStatsDto } from './services/dashboard.service';

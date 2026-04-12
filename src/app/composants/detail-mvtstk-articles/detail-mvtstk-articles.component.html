@@ -1,7 +1,7 @@
 <div class="row mb-1 custom-border">
     <div class="col-md-1 border-right p-2">
-        <img [attr.src]="article.photo ? article.photo : 'favicon.ico'" [alt]="article.designation" width="60px"
-            height="60px" />
+        <img [attr.src]="article.photo ? article.photo : 'favicon.ico'"
+            [alt]="article.designation" width="60px" height="60px" />
     </div>
     <!-- Detail article -->
     <div class="col-md-4 border-right">
@@ -29,62 +29,78 @@
         <div class="custum-cent">
             <div class="custum-center pt-4">
                 <i class="fab fa-dropbox blue-color"></i>
-                <h5 class="px-3">Stock actuel&nbsp;<span
-                        [attr.class]="article.stock ? 'badge text-bg-success' : 'badge text-bg-danger'">{{article.stock
-                        ? article.stock : 0}}</span></h5>
+                <h5 class="px-3">Stock actuel&nbsp;<span [attr.class]="article.stock ? 'badge text-bg-success' : 'badge text-bg-danger'">{{article.stock ? article.stock : 0}}</span></h5>
             </div>
         </div>
     </div>
     <!-- Boutton action -->
     <div class="col-md-3 row">
-        <div class="col-7 m-0 p-0 text-primary custum-center text-center small-text">
-            <button class="btn btn-link pt-4" type="button" data-bs-toggle="modal"
-                [attr.data-bs-target]="'#modalCorrection'+article.id">
-                <i class="fab fa-stack-overflow"></i>&nbsp;Correction
-            </button>
-        </div>
-        <div class="col-5 m-0 p-0 text-primary custum-center text-center small-text">
-            <button class="btn btn-link pt-4" type="button" (click)="detailArticle()">
-                <i class="fas fa-list-alt"></i>
-                Details
-            </button>
+            <div class="col-7 m-0 p-0 text-primary custum-center text-center small-text">
+                <button class="btn btn-link pt-4" type="button" (click)="toggleCorrection()">
+                    <i class="fab fa-stack-overflow"></i>&nbsp;Correction
+                </button>
+            </div>
+            <div class="col-5 m-0 p-0 text-primary custum-center text-center small-text">
+                <button class="btn btn-link pt-4" type="button" (click)="detailArticle()">
+                    <i class="fas fa-list-alt"></i>
+                    Details
+                </button>
+            </div>
+    </div>
+</div>
+
+<!-- Accordion correction de stock -->
+<div class="row mb-4" *ngIf="isCorrectionOpen">
+    <div class="col-12">
+        <div class="card border-primary shadow-sm" style="background: var(--bg-card); border-color: var(--primary-color);">
+            <div class="card-header py-2" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white;">
+                <h6 class="mb-0"><i class="fas fa-tools me-2"></i>Correction de stock</h6>
+            </div>
+            <div class="card-body" style="background: var(--bg-body);">
+                <form>
+                    <div class="row align-items-end">
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <label class="form-label small fw-bold" style="color: var(--text-primary);">Quantité</label>
+                                <input type="number" class="form-control" [(ngModel)]="correctionQuantite" name="quantite" min="1" placeholder="Qté" style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <label class="form-label small fw-bold" style="color: var(--text-primary);">Type</label>
+                                <select class="form-select" [(ngModel)]="correctionType" name="correctionType" style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
+                                    <option value="correctionpos">Positive (+)</option>
+                                    <option value="correctionneg">Négative (-)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <label class="form-label small fw-bold" style="color: var(--text-primary);">Nouveau stock</label>
+                                <div class="form-control-plaintext text-center py-2 rounded" 
+                                    [ngClass]="{'bg-success text-white': correctionType === 'correctionpos', 'bg-danger text-white': correctionType === 'correctionneg' && correctionQuantite > 0 && (article.stock || 0) - correctionQuantite >= 0, 'bg-warning text-dark': correctionType === 'correctionneg' && correctionQuantite > 0 && (article.stock || 0) - correctionQuantite < 0}">
+                                    <i class="fas fa-equals me-2"></i>
+                                    <span class="fw-bold fs-5">
+                                        {{ correctionQuantite > 0 ? (correctionType === 'correctionpos' ? (article.stock || 0) + correctionQuantite : (article.stock || 0) - correctionQuantite) : (article.stock || 0) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="toggleCorrection()" style="border-color: var(--border-color); color: var(--text-primary);">
+                            <i class="fas fa-times-circle me-1"></i> Annuler
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm ms-2" (click)="sauvegarderCorrection()" [disabled]="!correctionQuantite || correctionQuantite <= 0">
+                            <i class="fas fa-save me-1"></i> Sauvegarder
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modal correction de stock -->
-<div class="modal fade super-top" id="modalCorrection{{article.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Correction de stock</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="quantite" placeholder="Quantiter">
-                    </div>
-                    <div class="mb-3">
-                        <select class="form-control" name="" id="">
-                            <option value="correctionpos">Correction positive</option>
-                            <option value="correctionneg">Correction negative</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                    <i class="fas fa-ban"></i>&nbsp;Annuler
-                </button>
-                <button type="button" class="btn btn-primary" (click)="modifierStock()">
-                    <i class="fas fa-save"></i>&nbsp;Sauvegarder
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Modal detail mouvement -->
 <div class="modal fade super-top" id="modalDetail{{article.id}}" tabindex="-1" aria-labelledby="modalDetail"
@@ -102,7 +118,9 @@
                     <div class="card-body">
                         <app-detail-mvtstk></app-detail-mvtstk>
                         <div *ngFor="let mvt of listMvtStk">
-                            <app-detail-mvtstk [mvtStk]="mvt"></app-detail-mvtstk>
+                            <app-detail-mvtstk
+                                [mvtStk]="mvt"
+                            ></app-detail-mvtstk>
                         </div>
                     </div>
                 </div>

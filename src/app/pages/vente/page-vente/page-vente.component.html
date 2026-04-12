@@ -1,23 +1,23 @@
 <div class="col p-2 mb-3">
   <div class="row">
-    <div class="col-9 px-5">
-      <div class="col-md-12 mb-3">
-        <h2>
-          <i class="fas fa-info-circle blue-color"></i>&nbsp;Nouvel {{ origin }}
-        </h2>
+    <div class="col-8 col-lg-9 px-3">
+      <div class="col-md-12 mb-2">
+        <h4>
+          <i class="fas fa-shopping-cart blue-color"></i>&nbsp;Nouvel {{ origin }}
+        </h4>
       </div>
-      <div class="alert alert-danger" *ngIf="errorMsg.length">
+      <div class="alert alert-danger" *ngIf="errorMsg && errorMsg.length">
         <div *ngFor="let msg of errorMsg">
           <span>{{ msg }}</span>
         </div>
       </div>
-      <div class="col-md-12 m-3">
-        <div class="row custom-border p-3 mb-2">
-          <form class="row">
+      <div class="m-2">
+        <div class="row custom-border p-2 mb-2">
+          <form class="row g-2">
             <div class="col-md-4 mb-2">
-              <input type="text" class="form-control" name="codeArticle" placeholder="Code article"
+              <input type="text" class="form-control form-control-sm" name="codeArticle" placeholder="Code article"
                 [(ngModel)]="codeArticle" (input)="searchArticle()"/>
-              <div class="autocomplete shadow p-3 mb-5 m-0 bg-white rounded small-text"
+              <div class="autocomplete shadow p-2 mb-5 m-0 bg-white rounded small-text"
                 *ngIf="codeArticle.length && articleNotYetSelected">
                 <p class="p-1" *ngFor="let article of listArticles"
                   (click)="selectedArticle(article)">
@@ -25,20 +25,20 @@
                 </p>
               </div>
             </div>
-            <div class="col-md-4 mb-2">
-              <input type="number" class="form-control" name="quantite" [(ngModel)]="quantite" placeholder="Quantite"/>
+            <div class="col-md-2 mb-2">
+              <input type="number" class="form-control form-control-sm" name="quantite" [(ngModel)]="quantite" placeholder="Qté"/>
             </div>
             <div class="col-md-3 mb-2">
-              <input type="text" class="form-control" name="prixTtc" disabled
-                [(ngModel)]="searchedArticle.prixTtc" id="prixunitaire" placeholder="Prix unitaire"/>
+              <input type="text" class="form-control form-control-sm" name="prixTtc" disabled
+                [(ngModel)]="searchedArticle.prixTtc" id="prixunitaire" placeholder="Prix"/>
             </div>
-            <div class="col-md-1 mb-2">
-              <button type="button" class="btn btn-success"
+            <div class="col-md-2 mb-2">
+              <button type="button" class="btn btn-success btn-sm w-100"
                 (click)="addLigneCommande()"><i class="fas fa-plus"></i>
               </button>
             </div>
             <div class="col-md-12 mb-2">
-              <input type="text" class="form-control" name="commentaire" placeholder="Commentaire"
+              <input type="text" class="form-control form-control-sm" name="commentaire" placeholder="Commentaire"
                 [(ngModel)]="venteDto.commentaire"/>
             </div>
           </form>
@@ -53,10 +53,10 @@
             <div class="card-footer">
               <div class="row">
                 <div class="col-md-6 text-start">
-                  {{ quantiteListArticle }}&nbsp;articles commander
+                  {{ quantiteListArticle }}&nbsp;articles
                 </div>
                 <div class="col-md-6 text-end">
-                  Total commande : {{ totalVente }}
+                  Total : {{ totalVente }}
                 </div>
               </div>
             </div>
@@ -64,16 +64,16 @@
         </div>
 
         <div class="col-md-12 text-end">
-          <button class="btn btn-danger mx-1" (click)="cancelClick()">
+          <button class="btn btn-danger mx-1 btn-sm" (click)="cancelClick()">
             <i class="fas fa-ban"></i>&nbsp;Annuler
           </button>
-          <button class="btn btn-success mx-1" (click)="saveClick()">
+          <button class="btn btn-success mx-1 btn-sm" (click)="saveClick()">
             <i class="fas fa-save"></i>&nbsp;Sauvegarder
           </button>
         </div>
       </div>
     </div>
-    <div class="col-3 p-3">
+    <div class="col-4 col-lg-3 p-2">
       <app-calculator></app-calculator>
     </div>
   </div>

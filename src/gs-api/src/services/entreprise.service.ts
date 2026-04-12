@@ -11,12 +11,12 @@ import { EntrepriseDto } from '../models/entreprise-dto';
   providedIn: 'root',
 })
 class EntrepriseService extends __BaseService {
-  static readonly EntrepriseApiFindAllGETPath = 'gestiondestock/v1/entreprise/all';
-  static readonly EntrepriseApiFindByEmailEntrepriseGETPath = 'gestiondestock/v1/entreprise/email/{emailEntreprise}';
-  static readonly EntrepriseApiSavePOSTPath = 'gestiondestock/v1/entreprise/create';
-  static readonly EntrepriseApiDeleteDELETEPath = 'gestiondestock/v1/entreprise/delete{idEntreprise}';
-  static readonly EntrepriseApiFindByNomEntrepriseGETPath = 'gestiondestock/v1/entreprise/nom{nomEntreprise}';
-  static readonly EntrepriseApiFindByIdGETPath = 'gestiondestock/v1/entreprise/{idEntreprise}';
+  static readonly EntrepriseApiFindAllGETPath='v1/entreprise/all';
+  static readonly EntrepriseApiFindByEmailEntrepriseGETPath='v1/entreprise/email/{emailEntreprise}';
+  static readonly EntrepriseApiSavePOSTPath='v1/entreprise/create';
+  static readonly EntrepriseApiDeleteDELETEPath='v1/entreprise/delete{idEntreprise}';
+  static readonly EntrepriseApiFindByNomEntrepriseGETPath='v1/entreprise/nom{nomEntreprise}';
+  static readonly EntrepriseApiFindByIdGETPath='v1/entreprise/{idEntreprise}';
 
   constructor(
     config: __Configuration,
@@ -32,12 +32,12 @@ class EntrepriseService extends __BaseService {
    * @return La liste des clients / liste vide
    */
    EntrepriseApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<EntrepriseDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/entreprise/all`,
+      this.rootUrl + `v1/entreprise/all`,
       __body,
       {
         headers: __headers,
@@ -72,13 +72,13 @@ class EntrepriseService extends __BaseService {
    * @return L'objet entreprise a ete trouver dans la BDD
    */
   EntrepriseApiFindByEmailEntrepriseGETResponse(emailEntreprise: string): __Observable<__StrictHttpResponse<EntrepriseDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/entreprise/email/${encodeURIComponent(String(emailEntreprise))}`,
+      this.rootUrl + `v1/entreprise/email/${encodeURIComponent(String(emailEntreprise))}`,
       __body,
       {
         headers: __headers,
@@ -113,13 +113,13 @@ class EntrepriseService extends __BaseService {
    * @return L'objet client creer ou modifier
    */
   EntrepriseApiSavePOSTResponse(body?: EntrepriseDto): __Observable<__StrictHttpResponse<EntrepriseDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/entreprise/create`,
+      this.rootUrl + `v1/entreprise/create`,
       __body,
       {
         headers: __headers,
@@ -152,12 +152,12 @@ class EntrepriseService extends __BaseService {
    * Cette methode permet de supprimer une entreprise par son ID
    */
    EntrepriseApiDeleteDELETEResponse(idEntreprise: number): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/entreprise/delete${encodeURIComponent(String(idEntreprise))}`,
+      this.rootUrl + `v1/entreprise/delete${encodeURIComponent(String(idEntreprise))}`,
       __body,
       {
         headers: __headers,
@@ -191,12 +191,12 @@ class EntrepriseService extends __BaseService {
    * @return L'objet entreprise a ete trouver dans la BDD
    */
    EntrepriseApiFindByNomEntrepriseGETResponse(nomEntreprise?: string): __Observable<__StrictHttpResponse<EntrepriseDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/entreprise/nom${encodeURIComponent(String(nomEntreprise))}`,
+      this.rootUrl + `v1/entreprise/nom${encodeURIComponent(String(nomEntreprise))}`,
       __body,
       {
         headers: __headers,
@@ -230,12 +230,12 @@ class EntrepriseService extends __BaseService {
    * @return L'objet entreprise a ete trouver dans la BDD
    */
   EntrepriseApiFindByIdGETResponse(idEntreprise?: string): __Observable<__StrictHttpResponse<EntrepriseDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/gestiondestock/v1/entreprise/${encodeURIComponent(String(idEntreprise))}`,
+      this.rootUrl + `v1/entreprise/${encodeURIComponent(String(idEntreprise))}`,
       __body,
       {
         headers: __headers,

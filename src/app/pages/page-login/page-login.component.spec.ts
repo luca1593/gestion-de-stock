@@ -12,8 +12,8 @@ describe('PageLoginComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageLoginComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageLoginComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

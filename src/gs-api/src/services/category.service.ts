@@ -12,12 +12,12 @@ import { CategoryDto } from '../models/category-dto';
   providedIn: 'root',
 })
 class CategoryService extends __BaseService {
-  static readonly CategoryApiFindByCodeCategoryGETPath = 'gestiondestock/v1/category/code/{codeCategory}';
+  static readonly CategoryApiFindByCodeCategoryGETPath='v1/category/code/{codeCategory}';
 
-  static readonly CategoryApiFindAllGETPath = 'gestiondestock/v1/category/all';
-  static readonly CategoryApiSavePOSTPath = 'gestiondestock/v1/category/create';
-  static readonly CategoryApiDeleteDELETEPath = 'gestiondestock/v1/category/detele/{idCategory}';
-  static readonly CategoryApiFindByIdGETPath = 'gestiondestock/v1/category/{idCategory}';
+  static readonly CategoryApiFindAllGETPath='v1/category/all';
+  static readonly CategoryApiSavePOSTPath='v1/category/create';
+  static readonly CategoryApiDeleteDELETEPath='v1/category/detele/{idCategory}';
+  static readonly CategoryApiFindByIdGETPath='v1/category/{idCategory}';
 
   constructor(
     config: __Configuration,
@@ -34,13 +34,13 @@ class CategoryService extends __BaseService {
    * @return L'objet categorie a ete trouver dans la BDD
    */
   CategoryApiFindByCodeCategoryGETResponse(codeCategory: string): __Observable<__StrictHttpResponse<CategoryDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/category/code/${encodeURIComponent(String(codeCategory))}`,
+      this.rootUrl + `v1/category/code/${encodeURIComponent(String(codeCategory))}`,
       __body,
       {
         headers: __headers,
@@ -75,12 +75,12 @@ class CategoryService extends __BaseService {
    * @return La liste des categories / liste vide
    */
    CategoryApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<CategoryDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/category/all`,
+      this.rootUrl + `v1/category/all`,
       __body,
       {
         headers: __headers,
@@ -114,12 +114,12 @@ class CategoryService extends __BaseService {
    * @return L'objet categorie creer ou modifier
    */
   CategoryApiSavePOSTResponse(body?: CategoryDto): __Observable<__StrictHttpResponse<CategoryDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/category/create`,
+      this.rootUrl + `v1/category/create`,
       __body,
       {
         headers: __headers,
@@ -152,12 +152,12 @@ class CategoryService extends __BaseService {
    * Cette methode permet de supprimer un categorie par son ID
    */
   CategoryApiDeleteDELETEResponse(idCategory: number): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/category/detele/${encodeURIComponent(String(idCategory))}`,
+      this.rootUrl + `v1/category/detele/${encodeURIComponent(String(idCategory))}`,
       __body,
       {
         headers: __headers,
@@ -190,12 +190,12 @@ class CategoryService extends __BaseService {
    * @return L'objet categorie a ete trouver dans la BDD
    */
   CategoryApiFindByIdGETResponse(idCategory?: number): __Observable<__StrictHttpResponse<CategoryDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/category/${encodeURIComponent(String(idCategory))}`,
+      this.rootUrl + `v1/category/${encodeURIComponent(String(idCategory))}`,
       __body,
       {
         headers: __headers,

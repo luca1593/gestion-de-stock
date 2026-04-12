@@ -13,19 +13,19 @@ import { LigneCommandeFournisseurDto } from '../models';
   providedIn: 'root',
 })
 class CommandeFournisseurService extends __BaseService {
-  static readonly CommandeFournisseurApiFindByCodeCommandeGETPath = 'gestiondestock/v1/commande-fournisseur/code/{codeCommandeFournisseur}';
-  static readonly CommandeFournisseurApiDELETEPath = 'gestiondestock/v1/commande-fournisseur/delete/{idCommandeFournisseur}';
-  static readonly CommandeFournisseurApiUpdateArticlePATCHPath = 'gestiondestock/v1/commande-fournisseur/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}';
-  static readonly CommandeFournisseurApiFindByIdGETPath = 'gestiondestock/v1/commande-fournisseur/{idCommandeFournisseur}';
+  static readonly CommandeFournisseurApiFindByCodeCommandeGETPath='v1/commande-fournisseur/code/{codeCommandeFournisseur}';
+  static readonly CommandeFournisseurApiDELETEPath='v1/commande-fournisseur/delete/{idCommandeFournisseur}';
+  static readonly CommandeFournisseurApiUpdateArticlePATCHPath='v1/commande-fournisseur/update/article/{idCommande}/{idLigneCommande}/{newIdArticle}';
+  static readonly CommandeFournisseurApiFindByIdGETPath='v1/commande-fournisseur/{idCommandeFournisseur}';
 
-  static readonly CommandeFournisseurApiFindAllGETPath = 'gestiondestock/v1/commande-fournisseur/all';
-  static readonly CommandeFournisseurApiSavePOSTPath = 'gestiondestock/v1/commande-fournisseur/create';
-  static readonly CommandeFournisseurApiFindByDateCommandeGETPath = 'gestiondestock/v1/commande-fournisseur/date/{dateCommandeFournisseur}';
-  static readonly CommandeFournisseurApiDeleteArticleDELETEPath = 'gestiondestock/v1/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}';
-  static readonly CommandeFournisseurApiFindAllByCommandeFournisseurGETPath = 'gestiondestock/v1/commande-fournisseur/list/ligne-commande/{idCommande}';
-  static readonly CommandeFournisseurApiUpdateEtatCommandePATCHPath = 'gestiondestock/v1/commande-fournisseur/update/etat/{idCommande}/{etatCommande}';
-  static readonly CommandeFournisseurApiUpdateFournisseurPATCHPath = 'gestiondestock/v1/commande-fournisseur/update/fournisseur/{idCommande}/{idFournisseur}';
-  static readonly CommandeFournisseurApiUpdateQuantiterCommandePATCHPath = 'gestiondestock/v1/commande-fournisseur/update/quantite/{idCommande}/{idLigneCommande}/{quantite}';
+  static readonly CommandeFournisseurApiFindAllGETPath='v1/commande-fournisseur/all';
+  static readonly CommandeFournisseurApiSavePOSTPath='v1/commande-fournisseur/create';
+  static readonly CommandeFournisseurApiFindByDateCommandeGETPath='v1/commande-fournisseur/date/{dateCommandeFournisseur}';
+  static readonly CommandeFournisseurApiDeleteArticleDELETEPath='v1/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}';
+  static readonly CommandeFournisseurApiFindAllByCommandeFournisseurGETPath='v1/commande-fournisseur/list/ligne-commande/{idCommande}';
+  static readonly CommandeFournisseurApiUpdateEtatCommandePATCHPath='v1/commande-fournisseur/update/etat/{idCommande}/{etatCommande}';
+  static readonly CommandeFournisseurApiUpdateFournisseurPATCHPath='v1/commande-fournisseur/update/v1/fournisseur/{idCommande}/{idFournisseur}';
+  static readonly CommandeFournisseurApiUpdateQuantiterCommandePATCHPath='v1/commande-fournisseur/update/quantite/{idCommande}/{idLigneCommande}/{quantite}';
 
   constructor(
     config: __Configuration,
@@ -42,13 +42,13 @@ class CommandeFournisseurService extends __BaseService {
    * @return L'objet commande fournisseur a ete trouver dans la BDD
    */
   CommandeFournisseurApiFindByCodeCommandeGETResponse(codeCommandeFournisseur: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/code/${encodeURIComponent(String(codeCommandeFournisseur))}`,
+      this.rootUrl + `v1/commande-fournisseur/code/${encodeURIComponent(String(codeCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -83,13 +83,13 @@ class CommandeFournisseurService extends __BaseService {
    * @param idCommandeFournisseur undefined
    */
   CommandeFournisseurApiDELETEResponse(idCommandeFournisseur: number): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/delete/${encodeURIComponent(String(idCommandeFournisseur))}`,
+      this.rootUrl + `v1/commande-fournisseur/delete/${encodeURIComponent(String(idCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -131,15 +131,15 @@ class CommandeFournisseurService extends __BaseService {
    * @return L'article de la commande fournisseur a ete mise a jour
    */
   CommandeFournisseurApiUpdateArticlePATCHResponse(params: CommandeFournisseurService.CommandeFournisseurApiUpdateArticlePATCHParams): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
 
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/update/article/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.idLigneCommande))}/${encodeURIComponent(String(params.newIdArticle))}`,
+      this.rootUrl + `v1/commande-fournisseur/update/article/${encodeURIComponent(String(params.idCommande))}/${encodeURIComponent(String(params.idLigneCommande))}/${encodeURIComponent(String(params.newIdArticle))}`,
       __body,
       {
         headers: __headers,
@@ -182,13 +182,13 @@ class CommandeFournisseurService extends __BaseService {
    * @return L'objet commande fournisseur a ete trouver dans la BDD
    */
   CommandeFournisseurApiFindByIdGETResponse(idCommandeFournisseur: number): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/${encodeURIComponent(String(idCommandeFournisseur))}`,
+      this.rootUrl + `v1/commande-fournisseur/${encodeURIComponent(String(idCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -223,12 +223,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return La liste des commandes fournisseur / liste vide
    */
    CommandeFournisseurApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<CommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/all`,
+      this.rootUrl + `v1/commande-fournisseur/all`,
       __body,
       {
         headers: __headers,
@@ -262,12 +262,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return L'objet commande fournisseur creer ou modifier
    */
   saveResponse(body: CommandeFournisseurDto, dateCommandeFournisseur?: number): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/create/${encodeURIComponent(String(dateCommandeFournisseur))}`,
+      this.rootUrl + `v1/commande-fournisseur/create/${encodeURIComponent(String(dateCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -301,12 +301,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return Aucune commande fournisseur n'a ete trouver dans la BDD
    */
   CommandeFournisseurApiFindByDateCommandeGETResponse(dateCommandeFournisseur?: string): __Observable<__StrictHttpResponse<Array<CommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/date/${encodeURIComponent(String(dateCommandeFournisseur))}`,
+      this.rootUrl + `v1/commande-fournisseur/date/${encodeURIComponent(String(dateCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -340,12 +340,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return Aucune commande fournisseur n'a ete trouver dans la BDD
    */
    findAllByFournisseuResponse(commandeFournisseurDto?: CommandeFournisseurDto): __Observable<__StrictHttpResponse<Array<CommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = commandeFournisseurDto;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=commandeFournisseurDto;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur`,
+      this.rootUrl + `v1/commande-fournisseur`,
       __body,
       {
         headers: __headers,
@@ -379,12 +379,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return L'article de la commande fournisseur a ete supprimer avec success
    */
   CommandeFournisseurApiDeleteArticleDELETEResponse(idCommande?: string, idLigneCommande?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
+      this.rootUrl + `v1/commande-fournisseur/delete/article/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}`,
       __body,
       {
         headers: __headers,
@@ -418,12 +418,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return Liste des lignes de commande fournisseur a ete trouver avec succesr
    */
   findAllLigneCommadeByCommandeFournisseurResponse(idCommande?: number): __Observable<__StrictHttpResponse<Array<LigneCommandeFournisseurDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/list/ligne-commande/${encodeURIComponent(String(idCommande))}`,
+      this.rootUrl + `v1/commande-fournisseur/list/ligne-commande/${encodeURIComponent(String(idCommande))}`,
       __body,
       {
         headers: __headers,
@@ -457,12 +457,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return L'etat de la commande fournisseur a ete mise a jour
    */
   CommandeFournisseurApiUpdateEtatCommandePATCHResponse(idCommande?: string, etatCommande?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/update/etat/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(etatCommande))}`,
+      this.rootUrl + `v1/commande-fournisseur/update/etat/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(etatCommande))}`,
       __body,
       {
         headers: __headers,
@@ -496,12 +496,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return Le fournisseur de la commande fournisseur a ete mise a jour
    */
   CommandeFournisseurApiUpdateFournisseurPATCHResponse(idCommande?: string, idFournisseur?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/update/fournisseur/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idFournisseur))}`,
+      this.rootUrl + `v1/commande-fournisseur/update/v1/fournisseur/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idFournisseur))}`,
       __body,
       {
         headers: __headers,
@@ -535,12 +535,12 @@ class CommandeFournisseurService extends __BaseService {
    * @return La quantite de la commande fournisseur a ete mise a jour
    */
   CommandeFournisseurApiUpdateQuantiterCommandePATCHResponse(idCommande?: string, idLigneCommande?: string, quantite?: string): __Observable<__StrictHttpResponse<CommandeFournisseurDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `gestiondestock/v1/commande-fournisseur/update/quantite/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}/${encodeURIComponent(String(quantite))}`,
+      this.rootUrl + `v1/commande-fournisseur/update/quantite/${encodeURIComponent(String(idCommande))}/${encodeURIComponent(String(idLigneCommande))}/${encodeURIComponent(String(quantite))}`,
       __body,
       {
         headers: __headers,

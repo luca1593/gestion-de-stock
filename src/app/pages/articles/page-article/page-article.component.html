@@ -4,7 +4,12 @@
             <h3>List des articles</h3>
         </div>
         <div class="col-md-6 text-end">
-            <app-bouton-action (clickEvent)="nouveauArticle()"  [isImporterVisible]="false" [isExporterVisible]="false"></app-bouton-action>
+            <app-bouton-action 
+                (clickEvent)="nouveauArticle()" 
+                (clickExportEvent)="exporterArticles()"
+                [isImporterVisible]="false" 
+                [isExporterVisible]="true">
+            </app-bouton-action>
         </div>
         <div class="alert alert-danger" *ngIf="errorMsg">
             <span>{{ errorMsg }}</span>
@@ -25,7 +30,7 @@
             nextLabel="Suivant"
             (autoHide)="true"
             (responsive)="true"
-            (pageChange)="page = $event">
+            (pageChange)="page=$event">
         </pagination-controls>
        </div>
     </div>

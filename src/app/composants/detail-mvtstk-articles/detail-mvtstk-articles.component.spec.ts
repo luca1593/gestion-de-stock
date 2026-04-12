@@ -12,8 +12,8 @@ describe('DetailMvtstkArticlesComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DetailMvtstkArticlesComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(DetailMvtstkArticlesComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

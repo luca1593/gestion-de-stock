@@ -12,8 +12,8 @@ describe('HisistoriqueVenteComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HisistoriqueVenteComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(HisistoriqueVenteComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

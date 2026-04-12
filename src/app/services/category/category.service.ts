@@ -15,7 +15,7 @@ export class CategoryService {
   ) { }
 
   enregistrer(categoryDto: CategoryDto): Observable<CategoryDto>{
-    categoryDto.identreprise = this.userServise.getConnectedUser().entreprise?.id;
+    categoryDto.identreprise=this.userServise.getConnectedUser().entreprise?.id;
     return this.categoryService.CategoryApiSavePOST(categoryDto);
   }
 

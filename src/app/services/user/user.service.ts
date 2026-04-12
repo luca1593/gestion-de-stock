@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { AuthenticationRequest, AuthenticationResponse, ChangerMotDePasseUtilisateurDto, UtilisateurDto } from 'src/gs-api/src/models';
 import { AuthenticationService, UtilisateurService } from 'src/gs-api/src/services';
 
@@ -9,8 +9,10 @@ import { AuthenticationService, UtilisateurService } from 'src/gs-api/src/servic
 })
 export class UserService {
 
-  accessToken: string = "accessToken";
-  connectedUser: string = "connectedUser";
+  accessToken: string="accessToken";
+  connectedUser: string="connectedUser";
+  private connectedUserSubject = new BehaviorSubject<UtilisateurDto | null>(null);
+  connectedUser$ = this.connectedUserSubject.asObservable();
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -33,15 +35,22 @@ export class UserService {
 
   setConnectedUser(utilisateur: UtilisateurDto): void{
     localStorage.setItem(this.connectedUser, JSON.stringify(utilisateur));
+    this.connectedUserSubject.next(utilisateur);
   }
 
   getConnectedUser(): UtilisateurDto{
     if(localStorage.getItem(this.connectedUser)){
-      return JSON.parse(
+      const user = JSON.parse(
         localStorage.getItem(this.connectedUser) as string
       );
+      this.connectedUserSubject.next(user);
+      return user;
     }
     return {};
+  }
+
+  getConnectedUserObservable(): Observable<UtilisateurDto | null> {
+    return this.connectedUser$;
   }
 
   isUserLogedAndAccessTokenValid(): boolean{
@@ -61,6 +70,10 @@ export class UserService {
 
   changerMotDePasse(changerMotDePasse: ChangerMotDePasseUtilisateurDto): Observable<ChangerMotDePasseUtilisateurDto>{
     return this.utilisateurService.changerMotDePassePOST(changerMotDePasse);
+  }
+
+  updateUtilisateur(utilisateur: UtilisateurDto): Observable<UtilisateurDto>{
+    return this.utilisateurService.UtilisateurApiSavePOST(utilisateur);
   }
 
   findAll(): Observable<UtilisateurDto[]>{

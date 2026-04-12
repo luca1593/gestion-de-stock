@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { Menu } from './menu';
 import { UserService } from 'src/app/services/user/user.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu',
@@ -9,45 +10,44 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
-[x: string]: any;
 
-  public menuProperties : Array<Menu> = [
+  public menuProperties : Array<Menu>=[
     {
       id: '1',
-      icon: 'fa-solid fa-gauge',
+      icon: 'fas fa-tachometer-alt',
       titre: 'Tableau de bord',
       url: '',
       sousMenus: [
         {
           id: '11',
           titre: 'Vue d\'ensemble',
-          icon: 'fa-solid fa-chart-pie',
+          icon: 'fas fa-chart-pie',
           url: 'dashbord'
         },
         {
           id: '12',
-          titre: 'Graph',
-          icon: 'fa-solid fa-chart-line',
-          url: 'graph'
+          titre: 'Statistiques',
+          icon: 'fas fa-chart-line',
+          url: 'statistiques'
         }
       ]
     },
     {
       id: '2',
       titre: 'Articles',
-      icon: 'fa-solid fa-boxes-stacked',
+      icon: 'fas fa-boxes',
       url: '',
       sousMenus: [
         {
           id: '21',
           titre: 'Articles',
-          icon: 'fa-solid fa-cubes-stacked',
+          icon: 'fas fa-cube',
           url: 'articles'
         },
         {
           id: '22',
           titre: 'Mouvement de stock',
-          icon: 'fa-solid fa-dolly',
+          icon: 'fas fa-dolly',
           url: 'mvtstk'
         }
       ]
@@ -55,19 +55,19 @@ export class MenuComponent implements OnInit {
     {
       id: '3',
       titre: 'Clients',
-      icon: 'fa-solid fa-users-line',
+      icon: 'fas fa-user-friends',
       url: '',
       sousMenus: [
         {
           id: '31',
           titre: 'Clients',
-          icon: 'fa-solid fa-users',
+          icon: 'fas fa-users',
           url: 'clients'
         },
         {
           id: '32',
           titre: 'Commande clients',
-          icon: 'fa-solid fa-basket-shopping',
+          icon: 'fas fa-shopping-basket',
           url: 'commande-client'
         }
       ]
@@ -75,19 +75,19 @@ export class MenuComponent implements OnInit {
     {
       id: '4',
       titre: 'Fournisseurs',
-      icon: 'fa-solid fa-users-between-lines',
+      icon: 'fas fa-truck-loading',
       url: '',
       sousMenus: [
         {
           id: '41',
           titre: 'Fournisseurs',
-          icon: 'fa-solid fa-users',
+          icon: 'fas fa-truck',
           url: 'fournisseurs'
         },
         {
           id: '42',
           titre: 'Commande fournisseur',
-          icon: 'fa-solid fa-truck',
+          icon: 'fas fa-clipboard-list',
           url: 'commande-fournisseur'
         }
       ]
@@ -95,47 +95,47 @@ export class MenuComponent implements OnInit {
     {
       id: '5',
       titre: 'Ventes',
-      icon: 'fa-solid fa-users-between-lines',
+      icon: 'fas fa-cash-register',
       url: '',
       sousMenus: [
         {
           id: '51',
-          titre: 'Vente',
-          icon: 'fa-solid fa-users',
+          titre: 'Nouvelle vente',
+          icon: 'fas fa-dollar-sign',
           url: 'vente'
         },
         {
           id: '52',
-          titre: 'Historique',
-          icon: 'fa-solid fa-truck',
+          titre: 'Historique des ventes',
+          icon: 'fas fa-history',
           url: 'liste-vente'
         }
       ]
     },
     {
       id: '6',
-      titre: 'Parametrages',
-      icon: 'fa-solid fa-screwdriver-wrench',
+      titre: 'Paramètres',
+      icon: 'fas fa-cogs',
       url: '',
       sousMenus: [
         {
           id: '61',
-          titre: 'Categories',
-          icon: 'fa-solid fa-gear',
+          titre: 'Catégories',
+          icon: 'fas fa-tags',
           url: 'categories'
         },
         {
           id: '62',
           titre: 'Utilisateurs',
-          icon: 'fa-solid fa-users-gear',
+          icon: 'fas fa-user-cog',
           url: 'utilisateurs'
         }
       ]
     },
     {
       id: '7',
-      titre: 'Deconnection',
-      icon: 'fa-solid fa-right-from-bracket fa-rotate-180',
+      titre: 'Déconnexion',
+      icon: 'fas fa-sign-out-alt',
       url: 'logout'
     }
   ]
@@ -148,15 +148,44 @@ export class MenuComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
+    this.setActiveMenuFromRoute(this.router.url);
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.setActiveMenuFromRoute(event.url);
+    });
+  }
+
+  private setActiveMenuFromRoute(url: string): void {
+    const currentUrl = url || '';
+    this.menuProperties.forEach(menu => {
+      menu.active = false;
+      if (menu.sousMenus && menu.sousMenus.length > 0) {
+        menu.sousMenus.forEach(sousMenu => {
+          sousMenu.active = false;
+          if (sousMenu.url && currentUrl.includes(sousMenu.url)) {
+            sousMenu.active = true;
+            menu.active = true;
+          }
+        });
+      } else if (menu.url && currentUrl.includes(menu.url)) {
+        menu.active = true;
+      }
+    });
+  }
+
+  toggleMenu(menu: Menu): void {
+    this.menuProperties.forEach(m => {
+      m.active = false;
+      if (m.sousMenus) {
+        m.sousMenus.forEach(sm => sm.active = false);
+      }
+    });
+    menu.active = true;
   }
 
   navigate(menu: Menu){
-    if(this.lastSelectedMenu){
-      this.lastSelectedMenu.active = false;
-    }
-    menu.active = true;
     this.router.navigate([menu.url]);
-    this.lastSelectedMenu = menu;
   }
 
   logoutApp(){

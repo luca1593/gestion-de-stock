@@ -1,19 +1,103 @@
-<div class="row">
-    <div class="col-md-8 center-y">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" id="floatingInputGroup1" placeholder="Recherche">
-            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+<div class="header-wrapper">
+    <!-- Session Expiration Warning -->
+    <div class="session-warning alert alert-warning d-flex align-items-center justify-content-between m-0 py-2" *ngIf="showSessionWarning" role="alert">
+        <div>
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span>{{sessionWarningMessage}}</span>
         </div>
+        <button type="button" class="btn btn-sm btn-outline-dark" (click)="dismissSessionWarning()">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
-    <div class="col-md-4">
-        <div class="row">
-            <div class="col-md-9 text-end">
-                <span>Bonjour {{connectedUser.nom}}</span>
+    <div class="header-content">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="search-container flex-grow-1 me-4" style="max-width: 400px;">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" 
+                           placeholder="Rechercher..." 
+                           class="search-input"
+                           [(ngModel)]="searchQuery"
+                           (input)="onSearchInput()"
+                           (focus)="onSearchFocus()"
+                           (blur)="onSearchBlur()">
+                    <kbd class="search-kbd">⌘K</kbd>
+                </div>
+                <div class="search-results-dropdown" *ngIf="showSearchResults">
+                    <div class="search-result-item" 
+                         *ngFor="let result of searchResults"
+                         (mousedown)="selectResult(result)">
+                        <i [class]="getResultIcon(result.type)"></i>
+                        <div class="result-info">
+                            <span class="result-label">{{result.label}}</span>
+                            <span class="result-description">{{result.description}}</span>
+                        </div>
+                        <span class="result-type">{{result.type}}</span>
+                    </div>
+                    <div class="search-no-results" *ngIf="searchResults.length === 0 && searchQuery.length >= 2">
+                        Aucun résultat trouvé
+                    </div>
+                </div>
             </div>
-            <div class="col-md-3">
-                <a href="javascript:void(0)" [routerLink]="['/profil']">
-                    <img src="favicon.ico" class="rounded-circle mx-auto d-block" alt="image">
-                </a>
+            <div class="header-actions d-flex align-items-center">
+                <!-- Toggle Sidebar (mobile) -->
+                <button class="btn-icon d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- Theme Toggle -->
+                <button class="btn-icon theme-toggle" (click)="toggleTheme()" [title]="currentTheme === 'light' ? 'Mode sombre' : 'Mode clair'">
+                    <i class="fas" [class.fa-moon]="currentTheme === 'light'" [class.fa-sun]="currentTheme === 'dark'"></i>
+                </button>
+                
+                    <!-- Notifications -->
+                    <div class="notification-wrapper">
+                        <button class="btn-icon" (click)="toggleNotifications()">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge" *ngIf="unreadCount > 0">{{unreadCount}}</span>
+                        </button>
+                        <div class="notification-dropdown" *ngIf="showNotifications">
+                            <div class="notification-header">
+                                <h6>Notifications</h6>
+                                <button class="btn-link" (click)="markAllAsRead()">Tout marquer comme lu</button>
+                            </div>
+                            <div class="notification-list" *ngIf="notifications.length > 0; else noNotifications">
+                                <div class="notification-item" 
+                                     *ngFor="let notification of notifications"
+                                     [class.unread]="!notification.read"
+                                     (click)="markAsRead(notification)"
+                                     [attr.role]="notification.link ? 'button' : null"
+                                     [attr.tabindex]="notification.link ? '0' : null">
+                                    <i [class]="getNotificationIcon(notification.type)" [class]="getNotificationClass(notification.type)"></i>
+                                    <div class="notification-text">
+                                        <p class="notification-title">{{notification.title}}</p>
+                                        <p class="notification-message">{{notification.message}}</p>
+                                        <span class="notification-time">{{getTimeAgo(notification.timestamp)}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <ng-template #noNotifications>
+                                <div class="notification-empty">
+                                    <i class="fas fa-bell-slash"></i>
+                                    <p>Aucune notification</p>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                    
+                    <!-- User Menu -->
+                <div class="user-menu">
+                    <div class="user-info" [routerLink]="['/profil']">
+                        <div class="user-avatar">
+                            <span>{{getUserInitials()}}</span>
+                        </div>
+                        <div class="user-details d-none d-md-block">
+                            <span class="user-greeting">Bienvenue</span>
+                            <span class="user-name ms-1">{{connectedUser.nom}}</span>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </div>

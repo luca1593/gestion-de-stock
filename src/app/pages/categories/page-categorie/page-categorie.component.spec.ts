@@ -12,8 +12,8 @@ describe('PageCategorieComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageCategorieComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(PageCategorieComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

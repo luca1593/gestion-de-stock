@@ -12,8 +12,8 @@ describe('MenuComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MenuComponent);
-    component = fixture.componentInstance;
+    fixture=TestBed.createComponent(MenuComponent);
+    component=fixture.componentInstance;
     fixture.detectChanges();
   });
 

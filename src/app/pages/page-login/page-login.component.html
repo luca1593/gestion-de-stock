@@ -1,25 +1,38 @@
-<div class="container my-container">
-  <div class="card">
-    <div class="card-header text-center">
-      <h1 class="card-title">Authentification</h1>
+<div class="login-container">
+  <div class="login-card">
+      <div class="login-header">
+        <div class="logo-container">
+          <img src="assets/images/logo-menu.svg" alt="Logo" width="64" height="64">
+        </div>
+        <h1 class="card-title">Gestion de Stock</h1>
+      <p class="text-muted">Connectez-vous à votre compte</p>
     </div>
     <div class="card-body">
       <div class="alert alert-danger small-text" *ngIf="errorMessage">
-        {{errorMessage}}
+        <i class="fas fa-exclamation-circle"></i> {{errorMessage}}
       </div>
-      <div class="form-floating mb-3">
-        <input type="email" class="form-control" id="mail" placeholder="name@example.com" [(ngModel)] = "authenticationRequest.login">
-        <label for="mail"><i class="fa-solid fa-user"></i>&nbsp;Adresse e-mail</label>
+      <div class="form-group mb-3">
+        <label for="mail" class="form-label"><i class="fas fa-envelope"></i> Adresse e-mail</label>
+        <input type="email" class="form-control" id="mail" placeholder="nom@exemple.com" [(ngModel)]="authenticationRequest.login">
       </div>
-      <div class="form-floating mb-3">
-        <input type="password" class="form-control" id="motdepasse" placeholder="mot de passe" [(ngModel)] = "authenticationRequest.password">
-        <label for="motdepasse"><i class="fa-solid fa-key"></i>&nbsp;Mot de passe</label>
+      <div class="form-group mb-3">
+        <label for="motdepasse" class="form-label"><i class="fas fa-lock"></i> Mot de passe</label>
+        <input type="password" class="form-control" id="motdepasse" placeholder="••••••••" [(ngModel)]="authenticationRequest.password">
       </div>
-      <div class="d-flex justify-content-between mp-3">
-        <a [routerLink]="['/inscription']" class="btn btn-link">S'inscrire</a>
-        <button type="button" class="btn btn-primary" (click)="login()">
-          <i class='fa-solid fa-check' ></i>&nbsp;Se connecter</button>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="remember">
+          <label class="form-check-label small-text" for="remember">Se souvenir de moi</label>
+        </div>
+        <a href="javascript:void(0)" class="btn btn-link small-text">Mot de passe oublié?</a>
       </div>
+      <button type="button" class="btn btn-primary w-100" (click)="login()">
+        <i class='fas fa-sign-in-alt'></i>&nbsp;Se connecter
+      </button>
+      <hr>
+      <p class="text-center mb-0">
+        Pas encore de compte? <a [routerLink]="['/inscription']" class="btn btn-link">S'inscrire</a>
+      </p>
     </div>
   </div>
 </div>

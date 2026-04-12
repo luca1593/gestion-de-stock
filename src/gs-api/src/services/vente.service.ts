@@ -13,13 +13,13 @@ import { VenteDto } from '../models/vente-dto';
   providedIn: 'root',
 })
 class VenteService extends __BaseService {
-  static readonly VenteApiFindByDateVenteGETPath = 'gestiondestock/v1/vente/date/{dateVente}';
-  static readonly VenteApiSavePOSTPath = 'gestiondestock/v1/vente/save';
+  static readonly VenteApiFindByDateVenteGETPath='v1/vente/date/{dateVente}';
+  static readonly VenteApiSavePOSTPath='v1/vente/save';
 
-  static readonly VenteApiFindAllGETPath = 'gestiondestock/v1/vente/all';
-  static readonly VenteApiFindByCodeVenteGETPath = 'gestiondestock/v1/vente/code/{codeVente}';
-  static readonly VenteApiDeleteDELETEPath = 'gestiondestock/v1/vente/detele/{idVente}';
-  static readonly VenteApiFindByIdGETPath = 'gestiondestock/v1/vente/{idVente}';
+  static readonly VenteApiFindAllGETPath='v1/vente/all';
+  static readonly VenteApiFindByCodeVenteGETPath='v1/vente/code/{codeVente}';
+  static readonly VenteApiDeleteDELETEPath='v1/vente/detele/{idVente}';
+  static readonly VenteApiFindByIdGETPath='v1/vente/{idVente}';
 
   constructor(
     config: __Configuration,
@@ -36,13 +36,13 @@ class VenteService extends __BaseService {
    * @return Aucune vente n'a ete trouver dans la BDD
    */
   VenteApiFindByDateVenteGETResponse(dateVente: number): __Observable<__StrictHttpResponse<Array<VenteDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
 
-    let req = new HttpRequest<any>(
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/vente/date/${encodeURIComponent(String(dateVente))}`,
+      this.rootUrl + `v1/vente/date/${encodeURIComponent(String(dateVente))}`,
       __body,
       {
         headers: __headers,
@@ -78,13 +78,13 @@ class VenteService extends __BaseService {
    * @return L'objet vente creer ou modifier
    */
   VenteApiSavePOSTResponse(body?: VenteDto): __Observable<__StrictHttpResponse<VenteDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    __body = body;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    __body=body;
+    let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `gestiondestock/v1/vente/save`,
+      this.rootUrl + `v1/vente/save`,
       __body,
       {
         headers: __headers,
@@ -119,12 +119,12 @@ class VenteService extends __BaseService {
    * @return La liste des ventes / liste vide
    */
    VenteApiFindAllGETResponse(): __Observable<__StrictHttpResponse<Array<VenteDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/vente/all`,
+      this.rootUrl + `v1/vente/all`,
       __body,
       {
         headers: __headers,
@@ -158,12 +158,12 @@ class VenteService extends __BaseService {
    * @return L'objet vente a ete trouver dans la BDD
    */
   VenteApiFindByCodeVenteGETResponse(codeVente?: string): __Observable<__StrictHttpResponse<VenteDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/vente/code/${encodeURIComponent(String(codeVente))}`,
+      this.rootUrl + `v1/vente/code/${encodeURIComponent(String(codeVente))}`,
       __body,
       {
         headers: __headers,
@@ -196,12 +196,12 @@ class VenteService extends __BaseService {
    * Cette methode permet de supprimer un article par son ID
    */
   VenteApiDeleteDELETEResponse(idVente?: string): __Observable<__StrictHttpResponse<null>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `gestiondestock/v1/vente/detele/${encodeURIComponent(String(idVente))}`,
+      this.rootUrl + `v1/vente/detele/${encodeURIComponent(String(idVente))}`,
       __body,
       {
         headers: __headers,
@@ -234,12 +234,12 @@ class VenteService extends __BaseService {
    * @return L'objet vente a ete trouver dans la BDD
    */
   VenteApiFindByIdGETResponse(idVente?: string): __Observable<__StrictHttpResponse<VenteDto>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/vente/${encodeURIComponent(String(idVente))}`,
+      this.rootUrl + `v1/vente/${encodeURIComponent(String(idVente))}`,
       __body,
       {
         headers: __headers,
@@ -273,12 +273,12 @@ class VenteService extends __BaseService {
    * @return Liste des lignes de vente ete trouver avec success  Array<LigneVenteDto>
    */
   findAllLigneVenteByVenteResponse(idVente?: number): __Observable<__StrictHttpResponse<Array<LigneVenteDto>>> {
-    let __params = this.newParams();
-    let __headers = new HttpHeaders();
-    let __body: any = null;
-    let req = new HttpRequest<any>(
+    let __params=this.newParams();
+    let __headers=new HttpHeaders();
+    let __body: any=null;
+    let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `gestiondestock/v1/vente/list/ligne-vente/${encodeURIComponent(String(idVente))}`,
+      this.rootUrl + `v1/vente/list/ligne-vente/${encodeURIComponent(String(idVente))}`,
       __body,
       {
         headers: __headers,

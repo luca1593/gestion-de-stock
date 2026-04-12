@@ -9,7 +9,7 @@ import { LigneCommandeClientDto } from 'src/gs-api/src/models';
 export class DetailsCmdComponent implements OnInit {
 
   @Input()
-  ligneCommande: LigneCommandeClientDto = {}
+  ligneCommande: LigneCommandeClientDto={}
 
   constructor() { }
 

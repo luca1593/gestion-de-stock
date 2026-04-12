@@ -1,61 +1,98 @@
 <div class="row m-3">
-    <div class="card col-md-5 custom-border">
-        <div class="card-body text-center">
-            <div class="col mb-3">
-                <img src="favicon.ico" class="rounded-circle mx-auto d-block" alt="image" width="150" height="150">
-            </div>
-            <div class="col mb-4">
-                <h2>Nom prenom</h2>
-                <small class="form-text text-muted">Adresse, Ville, cp-12345</small>
-            </div>
-            <div class="d-flex align-content-between text-center">
-                <button type="button" class="btn btn-primary small-text mx-1" (click)="modifierProfil()">
-                    <i class='fas fa-pencil-alt'></i>&nbsp;
-                    Modifier le profil
-                </button>
-                <button type="button" class="btn btn-warning small-text mx-1" (click)="changerMotdePasse()">
-                    <i class='fas fa-lock'></i>&nbsp;
-                    Changer mot de passe
-                </button>
+    <div class="col-md-6 col-lg-5 mb-3 mb-md-0">
+        <div class="card custom-border h-100">
+            <div class="card-body text-center d-flex flex-column justify-content-center">
+                <div class="mb-3 position-relative">
+                    <div class="user-avatar-large mx-auto d-flex align-items-center justify-content-center" 
+                         [style.backgroundImage]="utilisateurDto.photo ? 'url(' + utilisateurDto.photo + ')' : ''"
+                         [style.backgroundSize]="utilisateurDto.photo ? 'cover' : ''"
+                         [style.backgroundPosition]="utilisateurDto.photo ? 'center' : ''"
+                         [class.drag-over]="isDragOver"
+                         (dragover)="onDragOver($event)"
+                         (dragleave)="onDragLeave($event)"
+                         (drop)="onDrop($event)">
+                        <span *ngIf="!utilisateurDto.photo">{{ getUserInitials() }}</span>
+                    </div>
+                    <label *ngIf="editable" class="avatar-edit-btn">
+                        <i class="fas fa-camera"></i>
+                        <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+                    </label>
+                </div>
+                <div class="mb-4">
+                    <h5>{{ utilisateurDto.nom }} {{ utilisateurDto.prenom }}</h5>
+                    <small class="form-text text-muted">{{ getAdresse() }}</small>
+                </div>
+                <div class="d-flex justify-content-center flex-wrap">
+                    <button type="button" class="btn btn-primary btn-sm m-1" (click)="modifierProfil()">
+                        <i class='fas fa-pencil-alt'></i>&nbsp;Modifier
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm m-1" (click)="changerMotdePasse()">
+                        <i class='fas fa-lock'></i>&nbsp;Mot de passe
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="card col-md-6 custom-border mx-1 pt-3">
-        <table class="table small-text" id="tableRef" name="tableRef">
+    <div class="col-md-6 col-lg-6 custom-border pt-2">
+        <div class="alert alert-danger" *ngIf="errorMsg">
+            <span>{{ errorMsg }}</span>
+        </div>
+<table class="table table-hover" id="tableRef">
             <tbody>
                 <tr>
-                    <th scope="row">Nom complet</th>
-                    <td [attr.contenteditable]="editable ? 'true': 'false'" >
-                        Nom prenom
+                    <th scope="row">Nom</th>
+                    <td>
+                        <input *ngIf="editable" type="text" class="form-control form-control-sm" [(ngModel)]="utilisateurDto.nom">
+                        <span *ngIf="!editable">{{ utilisateurDto.nom }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Prénom</th>
+                    <td>
+                        <input *ngIf="editable" type="text" class="form-control form-control-sm" [(ngModel)]="utilisateurDto.prenom">
+                        <span *ngIf="!editable">{{ utilisateurDto.prenom }}</span>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">E-mail</th>
-                    <td>exemple@exemple.com</td>
-                </tr>
-                <tr>
-                    <th scope="row">Telephone</th>
-                    <td [attr.contenteditable]="editable ? 'true': 'false'">033 67 518 24</td>
+                    <td>
+                        <span>{{ utilisateurDto.email }}</span>
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row">Adresse</th>
-                    <td [attr.contenteditable]="editable ? 'true': 'false'">Adresse, ville, cp-12345</td>
+                    <td>
+                        <input *ngIf="editable" type="text" class="form-control form-control-sm" [(ngModel)]="utilisateurDto.adresse!.adresse1">
+                        <span *ngIf="!editable">{{ utilisateurDto.adresse?.adresse1 }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Ville</th>
+                    <td>
+                        <input *ngIf="editable" type="text" class="form-control form-control-sm" [(ngModel)]="utilisateurDto.adresse!.ville">
+                        <span *ngIf="!editable">{{ utilisateurDto.adresse?.ville }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Code postal</th>
+                    <td>
+                        <input *ngIf="editable" type="text" class="form-control form-control-sm" [(ngModel)]="utilisateurDto.adresse!.codePostal">
+                        <span *ngIf="!editable">{{ utilisateurDto.adresse?.codePostal }}</span>
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row">Entreprise</th>
-                    <td>Nom Entreprise</td>
+                    <td>{{ utilisateurDto.entreprise?.nom }}</td>
                 </tr>
             </tbody>
         </table>
-        <div class="row" *ngIf="editable">
-            <div class="col-6 text-end">
-                <button class="btn btn-danger" (click)="cancelClick()">Annuler</button>
-            </div>
-            <div class="col-6">
-                <button class="btn btn-success">
-                    Enregistrer
-                </button>
-            </div>
+        <div class="mt-3 mb-2 d-flex justify-content-end" *ngIf="editable">
+            <button class="btn btn-outline-secondary btn-sm me-2" (click)="cancelClick()">
+                <i class="fas fa-times"></i>&nbsp;Annuler
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="saveProfil()">
+                <i class="fas fa-check"></i>&nbsp;Enregistrer
+            </button>
         </div>
     </div>
 </div>

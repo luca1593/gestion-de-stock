@@ -1,66 +1,74 @@
-<div class="container my-container">
-    <div class="card">
-        <div class="card-header text-center">
-            <h1 class="card-title">Inscription</h1>
-        </div>
-        <div class="card-body">
-            <div class="alert alert-danger" *ngIf="errorMessage.length > 0">
-                <div *ngFor="let msg of errorMessage">
-                    <span>{{msg}}</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="nom" placeholder="Votre nom" [(ngModel)] = "entrepriseDto.nom">
-                        <label for="nom"><i class="fa-solid fa-user"></i>&nbsp;Votre nom</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="codefiscal" placeholder="Votre code fiscal" [(ngModel)] = "entrepriseDto.codeFiscal">
-                        <label for="codefiscal"><i class="fa-brands fa-cc-discover"></i>&nbsp;Votre code fiscal</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="mail" placeholder="name@example.com" [(ngModel)] = "entrepriseDto.email">
-                        <label for="mail"><i class="fa-solid fa-envelope"></i>&nbsp;Adresse e-mail</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <textarea class="form-control" id="description" placeholder="Description" [(ngModel)]="entrepriseDto.description"></textarea>
-                        <label for="description"><i class="fa-solid fa-info-circle"></i>&nbsp;Description</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="numTel" placeholder="Telephone" [(ngModel)] = "entrepriseDto.numTel">
-                        <label for="numTel"><i class="fas fa-phone"></i>&nbsp;Telephone</label>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="adresse1" placeholder="adresse 1" [(ngModel)] = "adresseDto.adresse1">
-                        <label for="adresse1"><i class="fa-solid fa-address-card"></i>&nbsp;Adresse 1</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="adresse2" placeholder="adresse 2" [(ngModel)] = "adresseDto.adresse2">
-                        <label for="adresse2"><i class="fa-solid fa-address-card"></i>&nbsp;Adresse 2</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="ville" placeholder="ville" [(ngModel)] = "adresseDto.ville">
-                        <label for="ville"><i class="fa-solid fa-user"></i>&nbsp;Ville</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="codepostal" placeholder="Code postal" [(ngModel)] = "adresseDto.codePostal">
-                        <label for="codepostal"><i class="fa-solid fa-user"></i>&nbsp;Code postal</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="pays" placeholder="pays" [(ngModel)] = "adresseDto.pays">
-                        <label for="pays"><i class="fa-solid fa-user"></i>&nbsp;Pays</label>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex justify-content-between mp-3">
-                <a [routerLink]="['/login']" class="btn btn-link">Se connecter</a>
-                <button type="button" class="btn btn-primary" (click)="inscrire()" >
-                    <i class='fa-solid fa-check'></i>&nbsp;S'inscrire
-                </button>
-            </div>
-        </div>
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <div class="logo-container">
+        <i class="fas fa-boxes fa-2x"></i>
+      </div>
+      <h1 class="card-title">Créer un compte</h1>
+      <p class="text-muted">Commencez à gérer votre stock</p>
     </div>
+    <div class="card-body">
+      <div class="alert alert-danger" *ngif="errorMessage.length > 0">
+        <div *ngfor="let msg of errorMessage">
+          <i class="fas fa-exclamation-circle"></i> {{msg}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label for="nom" class="form-label"><i class="fas fa-user"></i> Nom de l'entreprise</label>
+            <input type="text" class="form-control" id="nom" placeholder="Votre nom" [(ngModel)]="entrepriseDto.nom">
+          </div>
+          <div class="form-group mb-3">
+            <label for="codefiscal" class="form-label"><i class="fas fa-file-invoice"></i> Code fiscal</label>
+            <input type="text" class="form-control" id="codefiscal" placeholder="Votre code fiscal" [(ngModel)]="entrepriseDto.codeFiscal">
+          </div>
+          <div class="form-group mb-3">
+            <label for="mail" class="form-label"><i class="fas fa-envelope"></i> Adresse e-mail</label>
+            <input type="email" class="form-control" id="mail" placeholder="nom@exemple.com" [(ngModel)]="entrepriseDto.email">
+          </div>
+          <div class="form-group mb-3">
+            <label for="description" class="form-label"><i class="fas fa-info-circle"></i> Description</label>
+            <textarea class="form-control" id="description" rows="2" placeholder="Description de votre entreprise" [(ngModel)]="entrepriseDto.description"></textarea>
+          </div>
+          <div class="form-group mb-3">
+            <label for="numTel" class="form-label"><i class="fas fa-phone"></i> Téléphone</label>
+            <input type="text" class="form-control" id="numTel" placeholder="+261 32 12 345 67" [(ngModel)]="entrepriseDto.numTel">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5 class="mb-3"><i class="fas fa-map-marker-alt"></i> Adresse</h5>
+          <div class="form-group mb-3">
+            <label for="adresse1" class="form-label">Adresse principale</label>
+            <input type="text" class="form-control" id="adresse1" placeholder="Adresse principale" [(ngModel)]="adresseDto.adresse1">
+          </div>
+          <div class="form-group mb-3">
+            <label for="adresse2" class="form-label">Adresse secondaire</label>
+            <input type="text" class="form-control" id="adresse2" placeholder="Adresse secondaire (optionnel)" [(ngModel)]="adresseDto.adresse2">
+          </div>
+          <div class="form-group mb-3">
+            <label for="ville" class="form-label"><i class="fas fa-city"></i> Ville</label>
+            <input type="text" class="form-control" id="ville" placeholder="Ville" [(ngModel)]="adresseDto.ville">
+          </div>
+          <div class="form-group mb-3">
+            <label for="codepostal" class="form-label"><i class="fas fa-mail-bulk"></i> Code postal</label>
+            <input type="text" class="form-control" id="codepostal" placeholder="Code postal" [(ngModel)]="adresseDto.codePostal">
+          </div>
+          <div class="form-group mb-3">
+            <label for="pays" class="form-label"><i class="fas fa-globe"></i> Pays</label>
+            <input type="text" class="form-control" id="pays" placeholder="Pays" [(ngModel)]="adresseDto.pays">
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="d-flex justify-content-between align-items-center">
+        <a [routerLink]="['/login']" class="btn btn-link">
+          <i class="fas fa-arrow-left"></i> Retour à la connexion
+        </a>
+        <button type="button" class="btn btn-primary" (click)="inscrire()">
+          <i class='fas fa-user-plus'></i>&nbsp;S'inscrire
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

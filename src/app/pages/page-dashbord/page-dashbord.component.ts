@@ -8,7 +8,7 @@ import { timer } from 'rxjs';
 })
 export class PageDashbordComponent implements OnInit {
 
-  dateDuJour: Date = new Date();
+  dateDuJour: Date=new Date();
   
   constructor() { }
 
@@ -17,9 +17,9 @@ export class PageDashbordComponent implements OnInit {
   }
 
   observableTimer(){
-    const source = timer(this.dateDuJour, 1000)
+    const source=timer(this.dateDuJour, 1000)
     .subscribe( v => {
-      this.dateDuJour = new Date();
+      this.dateDuJour=new Date();
     })
   }
 

@@ -24,7 +24,7 @@ class ParameterCodec implements HttpParameterCodec {
     return decodeURIComponent(value);
   }
 }
-const PARAMETER_CODEC = new ParameterCodec();
+const PARAMETER_CODEC=new ParameterCodec();
 
 /**
  * Base class for API services
@@ -36,7 +36,7 @@ export class BaseService {
   ) {
   }
 
-  private _rootUrl: string = environment.apiUrl;
+  private _rootUrl: string=environment.apiUrl;
 
   /**
    * Returns the root url for API operations. If not set directly in this
@@ -50,7 +50,7 @@ export class BaseService {
    * Sets the root URL for API operations in this service.
    */
   set rootUrl(rootUrl: string) {
-    this._rootUrl = rootUrl;
+    this._rootUrl=rootUrl;
   }
 
   /**
