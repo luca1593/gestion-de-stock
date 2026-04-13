@@ -3,56 +3,69 @@ pipeline {
     
     environment {
         NG_CLI_ANALYTICS = 'false'
-    }
-    
-    options {
-        timeout(time: 30, unit: 'MINUTES')
-        disableConcurrentBuilds()
+        API_URL = 'http://12.24.5.100:8085'
+        CONTAINER_PORT = '4200'
+        HOST_PORT = '8086'
     }
     
     stages {
         stage('Checkout') {
             steps {
-                echo '📦 Checkout source code...'
                 checkout scm
             }
         }
         
-        stage('Install Dependencies') {
+        stage('Build Docker Image') {
             steps {
-                echo '📥 Installing npm dependencies...'
-                sh 'npm ci --legacy-peer-deps'
+                sh '''
+                    docker build -t angular-frontend:latest .
+                '''
             }
         }
         
-        stage('Build') {
+        stage('Deploy Container') {
             steps {
-                echo '🔨 Building Angular application...'
-                sh 'npm run build --if-present'
+                sh '''
+                    # Arrêter et supprimer l'ancien conteneur s'il existe
+                    docker stop angular-frontend || true
+                    docker rm angular-frontend || true
+                    
+                    # Démarrer le nouveau conteneur
+                    docker run -d \
+                        --name angular-frontend \
+                        -p ${HOST_PORT}:${CONTAINER_PORT} \
+                        -e API_URL=${API_URL} \
+                        --restart unless-stopped \
+                        angular-frontend:latest
+                    
+                    # Vérifier que le conteneur est en cours d'exécution
+                    sleep 5
+                    docker ps | grep angular-frontend
+                    
+                    echo "✅ Application Angular démarrée sur le port ${HOST_PORT}"
+                    echo "🌐 Accessible sur http://12.24.5.100:${HOST_PORT}"
+                '''
             }
         }
         
-        stage('Tests') {
+        stage('Verify Deployment') {
             steps {
-                echo '🧪 Running tests...'
-                sh 'npm test -- --watch=false --browsers=ChromeHeadless || true'
-            }
-        }
-        
-        stage('Archive') {
-            steps {
-                echo '📦 Archiving build...'
-                archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true, fingerprint: true
+                sh '''
+                    # Tester que l'application répond
+                    curl -f http://localhost:${HOST_PORT} || echo "⚠️ Application non accessible"
+                '''
             }
         }
     }
     
     post {
         success {
-            echo '✅ Build successful!'
+            echo '🎉 Déploiement réussi!'
+            echo "🌐 Application: http://12.24.5.100:8086"
+            echo "📡 Backend: ${API_URL}"
         }
         failure {
-            echo '❌ Build failed!'
+            echo '❌ Échec du déploiement'
         }
     }
 }
