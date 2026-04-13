@@ -15,7 +15,6 @@ coverage
 *.spec.ts
 *.spec.js
 karma.conf.js
-tsconfig*.json
 tslint.json
 README.md
 HISTORIQUE.md
