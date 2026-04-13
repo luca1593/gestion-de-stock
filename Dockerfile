@@ -5,6 +5,11 @@ WORKDIR /app
 
 # Copier les fichiers de dépendances
 COPY package*.json ./
+COPY angular.json ./
+COPY tsconfig.json ./
+COPY tsconfig.app.json ./
+COPY tsconfig.spec.json ./
+
 RUN npm ci --legacy-peer-deps
 
 # Copier le code source
