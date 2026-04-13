@@ -19,7 +19,10 @@ pipeline {
         
         stage('Deploy') {
             steps {
-                sh 'docker-compose up -d --build'
+                sh '''
+                docker compose -f docker-compose.yml down --remove-orphans || true
+                docker compose -f docker-compose.yml up -d --build --force-recreate
+                '''
             }
         }
     }
