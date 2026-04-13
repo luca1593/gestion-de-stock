@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    
+    environment {
+        NG_CLI_ANALYTICS = 'false'
+    }
+    
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds()
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm ci'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+        
+        stage('Tests') {
+            steps {
+                sh 'npm test -- --watch=false --browsers=ChromeHeadless'
+            }
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { timer } from 'rxjs';
+import { ThemeService } from 'src/app/services/theme/theme.service';
 
 @Component({
   selector: 'app-page-dashbord',
@@ -9,10 +10,13 @@ import { timer } from 'rxjs';
 export class PageDashbordComponent implements OnInit {
 
   dateDuJour: Date=new Date();
+  public isDarkMode = false;
   
-  constructor() { }
+  constructor(private themeService: ThemeService) { }
 
   ngOnInit(): void {
+    this.isDarkMode = this.themeService.isDarkMode();
+    this.themeService.darkModeChange$.subscribe(isDark => this.isDarkMode = isDark);
     this.observableTimer();
   }
 

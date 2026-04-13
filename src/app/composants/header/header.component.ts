@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showNotifications=false;
   currentTheme: Theme='light';
   private destroy$ = new Subject<void>();
+  userLoading = true;
 
   notifications: Notification[] = [];
   unreadCount = 0;
@@ -43,11 +44,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.connectedUser = this.userService.getConnectedUser();
+    this.userLoading = !(this.connectedUser && this.connectedUser.id);
+    
     this.userService.connectedUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
-      if (user) {
+      if (user && user.id) {
         this.connectedUser = user;
+        this.userLoading = false;
       }
     });
+    this.currentTheme = this.themeService.getTheme();
     this.themeService.theme$.pipe(takeUntil(this.destroy$)).subscribe(theme => {
       this.currentTheme = theme;
     });

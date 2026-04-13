@@ -89,11 +89,19 @@
                 <div class="user-menu">
                     <div class="user-info" [routerLink]="['/profil']">
                         <div class="user-avatar">
-                            <span>{{getUserInitials()}}</span>
+                            <span *ngIf="!userLoading">{{getUserInitials()}}</span>
+                            <span *ngIf="userLoading" class="avatar-loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </span>
                         </div>
                         <div class="user-details d-none d-md-block">
-                            <span class="user-greeting">Bienvenue</span>
-                            <span class="user-name ms-1">{{connectedUser.nom}}</span>
+                            <ng-container *ngIf="!userLoading; else loadingUser">
+                                <span class="user-greeting">Bienvenue</span>
+                                <span class="user-name ms-1">{{connectedUser.nom}}</span>
+                            </ng-container>
+                            <ng-template #loadingUser>
+                                <span class="user-name ms-1">Chargement...</span>
+                            </ng-template>
                         </div>
                         
                     </div>

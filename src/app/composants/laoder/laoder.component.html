@@ -1,5 +1,13 @@
-<div [class.hidden]="!show">
-    <div class="laoder-overlay">
-        <div *ngIf="show" class="laoder"></div>
+<div *ngIf="loading$ | async" class="loading-overlay">
+    <div class="loading-container">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+        <div class="loading-content">
+            <p class="loading-message">{{ loadingMessage$ | async }}</p>
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="progress$ | async"></div>
+            </div>
+        </div>
     </div>
 </div>

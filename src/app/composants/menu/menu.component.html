@@ -1,4 +1,8 @@
 <div class="sidebar-menu">
+  <div class="logo-container">
+    <img *ngIf="isDarkMode" src="assets/images/logo-menu-dark.svg" alt="Logo" width="200" height="80">
+    <img *ngIf="!isDarkMode" src="assets/images/logo-menu-light.svg" alt="Logo" width="200" height="80">
+  </div>
   <nav class="menu-nav">
     <ng-container *ngFor="let menu of menuProperties">
       <!-- Menu without submenus (single menu) -->

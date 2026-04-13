@@ -42,6 +42,7 @@ import { NouvelUtilisateurComponent } from './pages/utilisateurs/nouvel-utilisat
 import { PageProfilComponent } from './pages/profil/page-profil/page-profil.component';
 import { ChangerMotDePasseComponent } from './pages/profil/changer-mot-de-passe/changer-mot-de-passe.component';
 import { HttpInterceptorService } from './services/interceptor/http-interceptor.service';
+import { LoadingInterceptor } from './services/interceptor/loading-interceptor.service';
 import { LaoderComponent } from './composants/laoder/laoder.component';
 import { DetailArticlesMvtstkComponent } from './composants/detail-articles-mvtstk/detail-articles-mvtstk.component';
 import { DeatailClientFournisseurComponent } from './composants/deatail-client-fournisseur/deatail-client-fournisseur.component';
@@ -106,6 +107,10 @@ registerLocaleData(localeFr, 'fr');
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpInterceptorService,
+    multi: true
+  }, {
+    provide: HTTP_INTERCEPTORS,
+    useClass: LoadingInterceptor,
     multi: true
   }],
   bootstrap: [AppComponent]

@@ -45,7 +45,7 @@ export class AuthService implements OnDestroy {
   }
 
   private isTokenPresent(): boolean {
-    const tokenStr = localStorage.getItem('accessToken');
+    const tokenStr = sessionStorage.getItem('gs_access_token');
     if (!tokenStr) return false;
     
     try {
@@ -57,7 +57,7 @@ export class AuthService implements OnDestroy {
   }
 
   private getTokenExpiration(): number | null {
-    const tokenStr = localStorage.getItem('accessToken');
+    const tokenStr = sessionStorage.getItem('gs_access_token');
     if (!tokenStr) return null;
     
     try {

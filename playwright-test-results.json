@@ -1,0 +1,129 @@
+{
+  "summary": {
+    "total": 20,
+    "passed": 0,
+    "failed": 20
+  },
+  "tests": [
+    {
+      "test": 1,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 2,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 3,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 4,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 5,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 6,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 7,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 8,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 9,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 10,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 11,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 12,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 13,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 14,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 15,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 16,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 17,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 18,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 19,
+      "user": "entreprise1@test.com",
+      "login": false,
+      "success": false
+    },
+    {
+      "test": 20,
+      "user": "entreprise2@test.com",
+      "login": false,
+      "success": false
+    }
+  ]
+}

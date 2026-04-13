@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
+import { ThemeService } from 'src/app/services/theme/theme.service';
 import { AuthenticationRequest } from 'src/gs-api/src/models';
 
 
@@ -9,22 +11,32 @@ import { AuthenticationRequest } from 'src/gs-api/src/models';
   templateUrl: './page-login.component.html',
   styleUrls: ['./page-login.component.css']
 })
-export class PageLoginComponent implements OnInit {
+export class PageLoginComponent implements OnInit, OnDestroy {
 
   authenticationRequest: AuthenticationRequest={};
 
   errorMessage="";
   loading=false;
+  public isDarkMode = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private userServices: UserService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService
   ) { }
 
   ngOnInit(): void {
+    this.isDarkMode = this.themeService.isDarkMode();
+    this.themeService.darkModeChange$.pipe(takeUntil(this.destroy$)).subscribe(isDark => this.isDarkMode = isDark);
     if (this.userServices.isUserLogedAndAccessTokenValid()) {
       this.router.navigate(['dashbord']);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   login(): void {
@@ -36,12 +48,10 @@ export class PageLoginComponent implements OnInit {
     this.loading=true;
     this.errorMessage="";
     
-    this.userServices.login(this.authenticationRequest).subscribe({
+    this.userServices.login(this.authenticationRequest).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.userServices.setAccessToken(data);
-        this.getUserByEmail();
-        this.router.navigate(['dashbord']);
-        this.loading=false;
+        this.getUserByEmailAndNavigate();
       },
       error: (error) => {
         this.loading=false;
@@ -56,9 +66,21 @@ export class PageLoginComponent implements OnInit {
     });
   }
 
-  getUserByEmail(): void {
-    this.userServices.getUserByEmail(this.authenticationRequest.login).subscribe(user => {
-      this.userServices.setConnectedUser(user);
+  getUserByEmailAndNavigate(): void {
+    this.userServices.getUserByEmail(this.authenticationRequest.login).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (user) => {
+        this.userServices.setConnectedUser(user);
+        this.loading = false;
+        setTimeout(() => {
+          this.router.navigate(['dashbord']);
+        }, 100);
+      },
+      error: () => {
+        this.loading = false;
+        setTimeout(() => {
+          this.router.navigate(['dashbord']);
+        }, 100);
+      }
     });
   }
 

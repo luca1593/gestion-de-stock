@@ -5,24 +5,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - API_URL=http://12.24.5.100:8085  # Pendant le build
+    container_name: gs-frontend
     ports:
-      - "4200:80"
-    depends_on:
-      - backend
-    networks:
-      - gs-network
-
-  backend:
-    image: tomcat:9-jdk11
-    container_name: gs-backend
-    ports:
-      - "8085:8080"
-    volumes:
-      - ./gestiondestock.war:/usr/local/tomcat/webapps/gestiondestock.war
-    networks:
-      - gs-network
+      - "4200:8086"
     environment:
-      - JAVA_OPTS=-Xmx512m -Xms256m
+      - API_URL=http://12.24.5.100:8085  # À l'exécution
+      - BACKEND_HOST=12.24.5.100
+      - BACKEND_PORT=8085
+    restart: unless-stopped
+    networks:
+      - gs-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Pour accéder à l'hôte depuis le conteneur
 
 networks:
   gs-network:

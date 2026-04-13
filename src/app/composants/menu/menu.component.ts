@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Menu } from './menu';
 import { UserService } from 'src/app/services/user/user.service';
+import { ThemeService } from 'src/app/services/theme/theme.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -10,6 +11,7 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
+  public isDarkMode = false;
 
   public menuProperties : Array<Menu>=[
     {
@@ -144,10 +146,13 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private themeService: ThemeService
     ) { }
 
   ngOnInit(): void {
+    this.isDarkMode = this.themeService.isDarkMode();
+    this.themeService.darkModeChange$.subscribe(isDark => this.isDarkMode = isDark);
     this.setActiveMenuFromRoute(this.router.url);
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)

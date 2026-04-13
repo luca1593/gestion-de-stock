@@ -29,8 +29,7 @@
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.js",
-              "node_modules/@fortawesome/fontawesome-free/js/all.js",
-              "src/script.js"
+              "node_modules/@fortawesome/fontawesome-free/js/all.js"
             ],
             "allowedCommonJsDependencies": [
               "core-js/modules/es.array.index-of.js",

@@ -9,6 +9,7 @@ export type Theme='light' | 'dark';
 export class ThemeService {
   private currentTheme=new BehaviorSubject<Theme>(this.getStoredTheme());
   theme$=this.currentTheme.asObservable();
+  darkModeChange$=new BehaviorSubject<boolean>(this.isDarkMode());
 
   constructor() {
     this.applyTheme(this.currentTheme.value);
@@ -38,6 +39,7 @@ export class ThemeService {
   setTheme(theme: Theme): void {
     localStorage.setItem('app-theme', theme);
     this.currentTheme.next(theme);
+    this.darkModeChange$.next(theme === 'dark');
     this.applyTheme(theme);
   }
 
@@ -47,5 +49,13 @@ export class ThemeService {
 
   isDarkMode(): boolean {
     return this.currentTheme.value === 'dark';
+  }
+
+  getTheme(): Theme {
+    return this.currentTheme.value;
+  }
+
+  getDarkModeValue(): boolean {
+    return this.isDarkMode();
   }
 }

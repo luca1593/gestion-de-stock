@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { laoderState } from './laoder.model';
-import { LaoderService } from './service/laoder.service';
+import { Observable } from 'rxjs';
+import { LoadingService } from 'src/app/services/loading/loading.service';
 
 @Component({
   selector: 'app-laoder',
@@ -10,23 +9,20 @@ import { LaoderService } from './service/laoder.service';
 })
 export class LaoderComponent implements OnInit, OnDestroy {
 
-  show=false;
-
-  subscription: Subscription | undefined;
+  loading$: Observable<boolean>;
+  loadingMessage$: Observable<string>;
+  progress$: Observable<number>;
 
   constructor(
-    private laoderService: LaoderService
-  ) { }
-
-  ngOnInit(): void {
-    this.subscription=this.laoderService.laoderState
-    .subscribe((state: laoderState) => {
-      this.show=state.show;
-    });
+    private loadingService: LoadingService
+  ) {
+    this.loading$ = this.loadingService.loading$;
+    this.loadingMessage$ = this.loadingService.loadingMessage$;
+    this.progress$ = this.loadingService.progress$;
   }
 
-  ngOnDestroy(): void{
-    this.subscription?.unsubscribe();
-  }
+  ngOnInit(): void {}
+
+  ngOnDestroy(): void {}
 
 }

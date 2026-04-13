@@ -7,7 +7,7 @@ import { AuthenticationService, UtilisateurService } from 'src/gs-api/src/servic
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class SessionService {
   private readonly TOKEN_KEY = 'gs_access_token';
   private readonly USER_KEY = 'gs_user';
   
@@ -23,10 +23,11 @@ export class UserService {
     private router: Router,
     private ngZone: NgZone
   ) {
-    this.initSession();
+    this.restoreSession();
+    this.setupVisibilityHandler();
   }
 
-  private initSession(): void {
+  private restoreSession(): void {
     try {
       const storedToken = sessionStorage.getItem(this.TOKEN_KEY);
       const storedUser = sessionStorage.getItem(this.USER_KEY);
@@ -75,6 +76,22 @@ export class UserService {
     }
   }
 
+  private setupVisibilityHandler(): void {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.validateSession();
+      }
+    });
+  }
+
+  private validateSession(): void {
+    const token = sessionStorage.getItem(this.TOKEN_KEY);
+    if (!token) {
+      this.clearSession();
+      this.router.navigate(['/login']);
+    }
+  }
+
   login(authRequest: AuthenticationRequest): Observable<AuthenticationResponse> {
     return this.authenticationService.authenticate(authRequest);
   }
@@ -82,6 +99,7 @@ export class UserService {
   onLoginSuccess(response: AuthenticationResponse, user: UtilisateurDto): void {
     sessionStorage.setItem(this.TOKEN_KEY, JSON.stringify(response));
     sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    
     this.connectedUserSubject.next(user);
     this.isAuthenticatedSubject.next(true);
   }
@@ -98,73 +116,8 @@ export class UserService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  setAccessToken(authenticationResponse: AuthenticationResponse): void {
-    sessionStorage.setItem(this.TOKEN_KEY, JSON.stringify(authenticationResponse));
-  }
-
-  setConnectedUser(utilisateur: UtilisateurDto): void {
-    sessionStorage.setItem(this.USER_KEY, JSON.stringify(utilisateur));
-    this.connectedUserSubject.next(utilisateur);
-  }
-
-  getConnectedUser(): UtilisateurDto{
-    const user = this.connectedUserSubject.value;
-    if (user) return user;
-    
-    const stored = sessionStorage.getItem(this.USER_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        this.connectedUserSubject.next(parsed);
-        return parsed;
-      } catch {
-        return {} as UtilisateurDto;
-      }
-    }
-    return {} as UtilisateurDto;
-  }
-
-  getConnectedUserObservable(): Observable<UtilisateurDto | null> {
-    return this.connectedUser$;
-  }
-
-  isUserLogedAndAccessTokenValid(): boolean{
-    const tokenStr = sessionStorage.getItem(this.TOKEN_KEY);
-    if (!tokenStr) {
-      this.router.navigate(['login']);
-      return false;
-    }
-    
-    try {
-      const data = JSON.parse(tokenStr);
-      if (data.accessToken && this.isTokenValid(data)) {
-        return true;
-      }
-    } catch {
-      // invalid
-    }
-    
-    this.router.navigate(['login']);
-    return false;
-  }
-
-  getUserByEmail(email?: string): Observable<UtilisateurDto> {
-    if(email !== undefined){
-      return this.utilisateurService.UtilisateurApiFindByEmailUtilisateurGET(email);
-    }
-    return of();
-  }
-
-  changerMotDePasse(changerMotDePasse: ChangerMotDePasseUtilisateurDto): Observable<ChangerMotDePasseUtilisateurDto>{
-    return this.utilisateurService.changerMotDePassePOST(changerMotDePasse);
-  }
-
-  updateUtilisateur(utilisateur: UtilisateurDto): Observable<UtilisateurDto>{
-    return this.utilisateurService.UtilisateurApiSavePOST(utilisateur);
-  }
-
-  findAll(): Observable<UtilisateurDto[]>{
-    return this.utilisateurService.UtilisateurApiFindAllGET();
+  isLoggedIn(): boolean {
+    return this.isAuthenticatedSubject.value;
   }
 
   getToken(): string | null {
@@ -179,7 +132,25 @@ export class UserService {
     }
   }
 
-  isAuthenticated(): Observable<boolean> {
-    return this.isAuthenticated$;
+  getConnectedUser(): UtilisateurDto {
+    const user = this.connectedUserSubject.value;
+    return user || {} as UtilisateurDto;
+  }
+
+  getConnectedUserObservable(): Observable<UtilisateurDto | null> {
+    return this.connectedUser$;
+  }
+
+  getUserByEmail(email: string): Observable<UtilisateurDto> {
+    return this.utilisateurService.UtilisateurApiFindByEmailUtilisateurGET(email);
+  }
+
+  updateConnectedUser(user: UtilisateurDto): void {
+    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this.connectedUserSubject.next(user);
+  }
+
+  changerMotDePasse(changerMotDePasse: ChangerMotDePasseUtilisateurDto): Observable<ChangerMotDePasseUtilisateurDto> {
+    return this.utilisateurService.changerMotDePassePOST(changerMotDePasse);
   }
 }
