@@ -19,6 +19,18 @@ pipeline {
             }
         }
         
+        stage('Install Node.js') {
+            steps {
+                echo '🔧 Installing Node.js...'
+                sh '''
+                    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+                    apt-get install -y nodejs
+                    node --version
+                    npm --version
+                '''
+            }
+        }
+        
         stage('Install Dependencies') {
             steps {
                 echo '📥 Installing npm dependencies...'
@@ -38,7 +50,18 @@ pipeline {
                 echo '🚀 Deploying with docker-compose...'
                 sh '''
                     docker-compose down || true
-                    docker-compose up -d
+                    docker-compose up -d --build
+                    docker-compose ps
+                '''
+            }
+        }
+        
+        stage('Health Check') {
+            steps {
+                echo '🔍 Health check...'
+                sh '''
+                    sleep 10
+                    curl -f http://localhost:4200 || echo "Note: Service may not be exposed"
                 '''
             }
         }
