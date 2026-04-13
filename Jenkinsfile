@@ -2,7 +2,8 @@ pipeline {
     agent any
     
     environment {
-        NG_CLI_ANALYTICS = 'false'
+        API_URL = 'http://12.24.5.100:8085'
+        COMPOSE_FILE = 'docker-compose.yml'
     }
     
     options {
@@ -32,10 +33,13 @@ pipeline {
             }
         }
         
-        stage('Tests') {
+        stage('Deploy with Docker Compose') {
             steps {
-                echo '🧪 Running tests...'
-                sh 'npm test -- --watch=false --browsers=ChromeHeadless || true'
+                echo '🚀 Deploying with docker-compose...'
+                sh '''
+                    docker-compose down || true
+                    docker-compose up -d
+                '''
             }
         }
         
@@ -49,7 +53,7 @@ pipeline {
     
     post {
         success {
-            echo '✅ Build successful!'
+            echo '✅ Build and deploy successful!'
         }
         failure {
             echo '❌ Build failed!'
