@@ -188,6 +188,82 @@ Les services API utilisent `base-service.ts` qui récupère l'URL depuis `enviro
 
 ---
 
+## Session du 13 Avril 2026 (suite)
+
+### 11. Correction affichage liste utilisateurs (13 Avril 2026)
+
+**Problème**: La liste des utilisateurs ne s'affichait pas même avec les données reçues du backend.
+
+**Cause**: Le composant `PageUtilisateurComponent` utilise `ChangeDetectionStrategy.OnPush` mais n'appelait pas `cdr.markForCheck()` lors de la mise à jour des données.
+
+**Solution**: Ajout de `ChangeDetectorRef` et appels de `markForCheck()`:
+```typescript
+constructor(..., private cdr: ChangeDetectorRef) {}
+// Dans findAllUtilisateur():
+this.cdr.markForCheck();
+```
+
+**Résultat**: ✅ Les utilisateurs s'affichent correctement (4 utilisateurs affichés)
+
+### 12. Jenkinsfile - Pipeline CI/CD (13 Avril 2026)
+
+**Modifications successives du Jenkinsfile**:
+
+1. **Version initiale**: Pipeline complet avec Docker agent
+   - Erreur: `docker login failed` (authentification Docker)
+
+2. **Simplification**: `agent any` au lieu de Docker
+   - Erreur: `npm: commande introuvable`
+
+3. **Ajout Node.js**: Installation de Node.js 18 dans le pipeline
+   - Solution: `curl -fsSL https://deb.nodesource.com/setup_18.x | bash -`
+
+4. **Simplification finale**: 3 stages (Checkout, Build, Deploy)
+   - Stage Build: `npm install && npm run build`
+   - Stage Deploy: `docker compose up -d --build`
+
+5. **Amélioration Docker Compose**:
+   - `--remove-orphans`: Nettoie les containers orphelins
+   - `--force-recreate`: Recrée les containers
+
+### 13. Docker - Configuration (13 Avril 2026)
+
+**Ajout des fichiers de configuration Angular dans le Dockerfile**:
+```dockerfile
+COPY angular.json ./
+COPY tsconfig.json ./
+COPY tsconfig.app.json ./
+COPY tsconfig.spec.json ./
+```
+
+### 14. Gestion des branches Git (13 Avril 2026)
+
+**Opérations effectuées**:
+- Suppression de la branche `master` (local et remote)
+- Création de la branche `prod` depuis `develop`
+- Synchronisation des branches `develop` et `prod`
+
+**Branches actuelles**:
+| Branche | Description |
+|---------|-------------|
+| develop | Branche de développement |
+| prod | Branche de production ( Jenkinsfile + Dockerfile) |
+
+### 15. Résumé final - Tests de session (13 Avril 2026)
+
+**Tests Playwright - 20 itérations**:
+
+| Utilisateur | Login | Token | User | Pages OK |
+|------------|-------|-------|------|---------|
+| entreprise1@test.com | ✅ | ✅ | ✅ (DEV Tech) | 8/8 ✅ |
+| entreprise2@test.com | ✅ | ✅ | ✅ (entreprise 2) | 8/8 ✅ |
+
+**Résultat**: 100% des tests réussis!
+
+**Problème résolu**: Le frontend communique correctement avec le backend distant (http://12.24.5.100:8085)
+
+---
+
 ## Session du 09 Avril 2026 (précédente)
 
 ### Résumé
