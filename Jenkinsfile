@@ -2,10 +2,8 @@ pipeline {
     agent any
     
     environment {
-        NG_CLI_ANALYTICS = 'false'
         API_URL = 'http://12.24.5.100:8085'
-        CONTAINER_PORT = '4200'
-        HOST_PORT = '8086'
+        COMPOSE_FILE = 'docker-compose.yml'
     }
     
     stages {
@@ -15,44 +13,29 @@ pipeline {
             }
         }
         
-        stage('Build Docker Image') {
+        stage('Deploy with Docker Compose') {
             steps {
+                echo '🚀 Deploying with docker-compose...'
                 sh '''
-                    docker build -t angular-frontend:latest .
+                    # Arrêter les services existants
+                    docker docker-compose down || true
+                    
+                    # Build et démarrage
+                    docker docker-compose up -d --build
+                    
+                    # Vérifier le statut
+                    docker docker-compose ps
                 '''
             }
         }
         
-        stage('Deploy Container') {
+        stage('Health Check') {
             steps {
+                echo '🔍 Health check...'
                 sh '''
-                    # Arrêter et supprimer l'ancien conteneur s'il existe
-                    docker stop angular-frontend || true
-                    docker rm angular-frontend || true
-                    
-                    # Démarrer le nouveau conteneur
-                    docker run -d \
-                        --name angular-frontend \
-                        -p ${HOST_PORT}:${CONTAINER_PORT} \
-                        -e API_URL=${API_URL} \
-                        --restart unless-stopped \
-                        angular-frontend:latest
-                    
-                    # Vérifier que le conteneur est en cours d'exécution
-                    sleep 5
-                    docker ps | grep angular-frontend
-                    
-                    echo "✅ Application Angular démarrée sur le port ${HOST_PORT}"
-                    echo "🌐 Accessible sur http://12.24.5.100:${HOST_PORT}"
-                '''
-            }
-        }
-        
-        stage('Verify Deployment') {
-            steps {
-                sh '''
-                    # Tester que l'application répond
-                    curl -f http://localhost:${HOST_PORT} || echo "⚠️ Application non accessible"
+                    sleep 10
+                    curl -f http://localhost || exit 1
+                    echo "✅ Application is healthy"
                 '''
             }
         }
@@ -60,12 +43,12 @@ pipeline {
     
     post {
         success {
-            echo '🎉 Déploiement réussi!'
-            echo "🌐 Application: http://12.24.5.100:8086"
-            echo "📡 Backend: ${API_URL}"
+            echo '✅ Deployment successful!'
+            sh 'docker docker-compose logs --tail=20'
         }
         failure {
-            echo '❌ Échec du déploiement'
+            echo '❌ Deployment failed!'
+            sh 'docker docker-compose logs || true'
         }
     }
 }
