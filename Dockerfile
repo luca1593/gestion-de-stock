@@ -3,24 +3,19 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copier les fichiers de dépendances
+# Copier tous les fichiers de configuration
 COPY package*.json ./
-COPY angular.json ./
-COPY tsconfig.json ./
-COPY tsconfig.app.json ./
-COPY tsconfig.spec.json ./
-
-RUN npm ci --legacy-peer-deps
-
-# Copier le code source
 COPY . .
+
+# Installer les dépendances
+RUN npm ci --legacy-peer-deps
 
 # Build l'application
 ARG API_URL=http://12.24.5.100:8085
 ENV API_URL=$API_URL
 RUN npm run build -- --configuration=production
 
-# Étape 2: Serveur de développement (ou production)
+# Étape 2: Serveur de production
 FROM node:18-alpine
 
 WORKDIR /app
@@ -31,8 +26,8 @@ RUN npm install -g http-server
 # Copier les fichiers buildés depuis l'étape builder
 COPY --from=builder /app/dist/gestion-de-stock /app/dist
 
-# Exposer le port 4200 (port interne Docker)
+# Exposer le port 4200
 EXPOSE 4200
 
-# Démarrer le serveur sur le port 4200
+# Démarrer le serveur
 CMD ["http-server", "dist", "-p", "4200", "--host", "0.0.0.0", "--cors"]
