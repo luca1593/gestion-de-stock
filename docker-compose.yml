@@ -5,15 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - API_URL=http://12.24.5.100:8085
     container_name: gs-frontend
     ports:
       - "8086:80"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    environment:
-      - API_URL=http://12.24.5.100:8085
     restart: unless-stopped
 
 networks:
