@@ -6,17 +6,17 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - API_URL=http://12.24.5.100:8085  # Pendant le build
+        - API_URL=http://localhost:8080/ # Nom du conteneur backend
     container_name: gs-frontend
     ports:
       - "8086:80"
     environment:
-      - API_URL=http://12.24.5.100:8085  # À l'exécution
-      - BACKEND_HOST=12.24.5.100
-      - BACKEND_PORT=8085
+      - API_URL=http://localhost:8080/
+      - BACKEND_HOST=localhost
+      - BACKEND_PORT=8080
     restart: unless-stopped
     networks:
-      - gs-network
+      - gs-network  # Utiliser le réseau EXISTANT du backend
     extra_hosts:
       - "host.docker.internal:host-gateway"  # Pour accéder à l'hôte depuis le conteneur
     healthcheck:
@@ -25,6 +25,8 @@ services:
       timeout: 10s
       retries: 3
 
+# Utiliser le réseau existant (ne pas en créer un nouveau)
 networks:
   gs-network:
-    driver: bridge
+    external: true
+    name: gestiondestock_app-network  # Nom exact du réseau de votre backend
