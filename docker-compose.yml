@@ -9,7 +9,7 @@ services:
         - API_URL=http://12.24.5.100:8085  # Pendant le build
     container_name: gs-frontend
     ports:
-      - "4200:8086"
+      - "8086:80"
     environment:
       - API_URL=http://12.24.5.100:8085  # À l'exécution
       - BACKEND_HOST=12.24.5.100
@@ -19,6 +19,11 @@ services:
       - gs-network
     extra_hosts:
       - "host.docker.internal:host-gateway"  # Pour accéder à l'hôte depuis le conteneur
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   gs-network:
