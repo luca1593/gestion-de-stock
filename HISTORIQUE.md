@@ -264,6 +264,70 @@ COPY tsconfig.spec.json ./
 
 ---
 
+## Session du 14 Avril 2026
+
+### 16. Résolution des erreurs Docker Build (14 Avril 2026)
+
+**Erreurs successives et corrections**:
+
+#### Erreur 1: tsconfig.json not found
+```
+failed to calculate checksum: "/tsconfig.app.json": not found
+```
+**Cause**: `.dockerignore` ignorait les fichiers tsconfig*.json
+
+**Solution**: Retiré tsconfig*.json du `.dockerignore`
+
+#### Erreur 2: ENOENT tsconfig.app.json
+```
+Error: ENOENT: no such file or directory, lstat '/app/tsconfig.app.json'
+```
+**Cause**: `COPY . .` copiait tous les fichiers SAUF tsconfig (à cause du .dockerignore mal configuré)
+
+**Solution**: Copie explicite des fichiers de config avant npm ci:
+```dockerfile
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY tsconfig.app.json ./
+COPY tsconfig.spec.json ./
+COPY angular.json ./
+RUN npm ci --legacy-peer-deps
+COPY src ./src
+```
+
+#### Erreur 3: Build Kubernetes/Dockerfield final
+**Solution finale**: Structure optimale du Dockerfile:
+- Copie fichiers config en premier (pour cache Docker)
+- Installation dépendances
+- Copie code source
+- Build production
+
+### 17. Fichiers de configuration mis à jour (14 Avril 2026)
+
+| Fichier | Modifications |
+|---------|---------------|
+| Dockerfile | Optimisation pour le build production |
+| Jenkinsfile | Pipeline CI/CD complet (Checkout, Build, Deploy) |
+| docker-compose.yml | Configuration du service frontend |
+
+### 18. Branches Git (14 Avril 2026)
+
+| Branche | Status | Dernier commit |
+|---------|--------|----------------|
+| develop | ✅ À jour | cffe5b2 - Mise a jour de la configuration Docker et Jenkins |
+| prod | ✅ Synchronisé | 52528db - Sync prod: Docker and Jenkins update |
+
+### 19. Résultat du build Jenkins (14 Avril 2026)
+
+**Étapes du pipeline**:
+1. ✅ Checkout - Récupération du code source
+2. ✅ Build - npm install + npm run build (3.05 MB)
+3. ✅ Deploy - docker compose up -d --build --force-recreate
+
+**Statut**: Build réussi! Application déployée.
+
+---
+
 ## Session du 09 Avril 2026 (précédente)
 
 ### Résumé
