@@ -15,7 +15,6 @@ RUN npm ci --legacy-peer-deps
 
 # Copier le code source
 COPY src ./src
-COPY environments ./environments
 
 # Build l'application avec la variable API_URL
 ARG API_URL
