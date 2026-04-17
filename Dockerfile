@@ -36,7 +36,7 @@ server {
 
     # Proxy vers le backend
     location /v1/ {
-        proxy_pass http://gestiondestock-backend:8080/v1/;
+        proxy_pass http://12.24.5.100:8085/v1/;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
