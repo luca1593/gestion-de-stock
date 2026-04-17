@@ -14,9 +14,14 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
 
   page: number=1;
   listUtilisateur: Array<UtilisateurDto>=[];
+  listUtilisateurFiltre: Array<UtilisateurDto>=[];
   errorMsg="";
   loading = false;
   private destroy$ = new Subject<void>();
+
+  searchNom: string = '';
+  searchEmail: string = '';
+  searchEntreprise: string = '';
 
   constructor(
     private router: Router,
@@ -43,6 +48,7 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
     this.userService.findAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (list) => {
         this.listUtilisateur = list;
+        this.listUtilisateurFiltre = list;
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -52,6 +58,26 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  filtrer(): void {
+    this.listUtilisateurFiltre = this.listUtilisateur.filter(user => {
+      const matchNom = !this.searchNom || (user.nom?.toLowerCase().includes(this.searchNom.toLowerCase())) || (user.prenom?.toLowerCase().includes(this.searchNom.toLowerCase()));
+      const matchEmail = !this.searchEmail || (user.email?.toLowerCase().includes(this.searchEmail.toLowerCase()));
+      const matchEntreprise = !this.searchEntreprise || (user.entreprise?.nom?.toLowerCase().includes(this.searchEntreprise.toLowerCase()));
+      return matchNom && matchEmail && matchEntreprise;
+    });
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  reinitialiserFiltres(): void {
+    this.searchNom = '';
+    this.searchEmail = '';
+    this.searchEntreprise = '';
+    this.listUtilisateurFiltre = this.listUtilisateur;
+    this.page = 1;
+    this.cdr.markForCheck();
   }
 
 }

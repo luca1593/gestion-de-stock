@@ -51,6 +51,8 @@ import { DashbordComponent } from './composants/dashbord/dashbord.component';
 import { CalculatorComponent } from './composants/calculator/calculator.component';
 import { HisistoriqueVenteComponent } from './pages/vente/hisistorique-vente/hisistorique-vente.component';
 import { PageVenteComponent } from './pages/vente/page-vente/page-vente.component';
+import { PageHaveurComponent } from './pages/avoirs/page-avoir/page-avoir.component';
+import { NouvelAvoirComponent } from './pages/avoirs/nouvel-avoir/nouvel-avoir.component';
 
 registerLocaleData(localeFr, 'fr');
 
@@ -94,7 +96,9 @@ registerLocaleData(localeFr, 'fr');
     DashbordComponent,
     CalculatorComponent,
     HisistoriqueVenteComponent,
-    StatistiquesComponent
+    StatistiquesComponent,
+    PageHaveurComponent,
+    NouvelAvoirComponent
   ],
   imports: [
     BrowserModule,

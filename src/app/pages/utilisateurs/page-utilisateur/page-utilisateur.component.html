@@ -9,10 +9,32 @@
             ></app-bouton-action>
         </div>
     </div>
-    <div class="col m-3" *ngFor="let user of listUtilisateur | paginate : {
+    
+    <div class="card mx-3 mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Rechercher par nom" [(ngModel)]="searchNom" (input)="filtrer()">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Rechercher par email" [(ngModel)]="searchEmail" (input)="filtrer()">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Rechercher par entreprise" [(ngModel)]="searchEntreprise" (input)="filtrer()">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100" (click)="reinitialiserFiltres()">
+                        <i class="fas fa-redo"></i> Réinitialiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col m-3" *ngFor="let user of listUtilisateurFiltre | paginate : {
         itemsPerPage: 4,
         currentPage: page,
-        totalItems: listUtilisateur.length }">
+        totalItems: listUtilisateurFiltre.length }">
         <app-detail-utilisateur
         [utilisateur]="user"
         ></app-detail-utilisateur>

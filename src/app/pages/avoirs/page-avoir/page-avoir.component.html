@@ -1,0 +1,73 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0"><i class="fas fa-receipt"></i> Gestion des avoirs</h4>
+          <button class="btn btn-light" (click)="nouvelAvoir()">
+            <i class="fas fa-plus"></i> Nouvel avoir
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" *ngIf="error">
+            <i class="fas fa-exclamation-circle"></i> {{error}}
+          </div>
+          
+          <div class="text-center py-4" *ngIf="isLoading">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          
+          <div class="table-responsive" *ngIf="!isLoading">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Code</th>
+                  <th>Date</th>
+                  <th>Client</th>
+                  <th>Montant</th>
+                  <th>Raison</th>
+                  <th>État</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="listAvoirs.length === 0">
+                  <td colspan="7" class="text-center text-muted">
+                    Aucun avoir trouvé
+                  </td>
+                </tr>
+                <tr *ngFor="let avoir of listAvoirs">
+                  <td>{{avoir.code || 'N/A'}}</td>
+                  <td>{{avoir.dateAvoir | date:'dd/MM/yyyy'}}</td>
+                  <td>{{avoir.client?.nom || 'N/A'}}</td>
+                  <td>{{avoir.montant | number:'1.0-0'}} Ar</td>
+                  <td>{{avoir.raison || '-'}}</td>
+                  <td>
+                    <span class="badge" [ngClass]="{
+                      'bg-warning': avoir.etat === 'EN_ATTENTE',
+                      'bg-success': avoir.etat === 'VALIDE',
+                      'bg-danger': avoir.etat === 'ANNULE'
+                    }">{{avoir.etat || 'N/A'}}</span>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-info me-1" title="Voir détails">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-secondary me-1" title="Exporter PDF" (click)="exportPdf(avoir.id!)">
+                      <i class="fas fa-file-pdf"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" title="Supprimer" (click)="deleteAvoir(avoir.id!)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0"><i class="fas fa-receipt"></i> Nouvel avoir</h4>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" *ngIf="errorMsg">
+            <i class="fas fa-exclamation-circle"></i> {{errorMsg}}
+          </div>
+          <div class="alert alert-success" *ngIf="successMsg">
+            <i class="fas fa-check-circle"></i> {{successMsg}}
+          </div>
+          
+          <form>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Client *</label>
+                <select class="form-select" (change)="onClientChange($event)" required>
+                  <option value="">Sélectionner un client</option>
+                  <option *ngFor="let client of listClients" [value]="client.id">
+                    {{client.nom}} {{client.prenom || ''}}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Vente associée</label>
+                <select class="form-select" (change)="onVenteChange($event)">
+                  <option value="">Sélectionner une vente (optionnel)</option>
+                  <option *ngFor="let vente of listVentes" [value]="vente.id">
+                    Vente #{{vente.id}} - {{vente.dateVente | date:'dd/MM/yyyy'}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Date de l'avoir *</label>
+                <input type="date" class="form-control" [(ngModel)]="avoirDto.dateAvoir" name="dateAvoir" required>
+              </div>
+              
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Montant (Ar) *</label>
+                <input type="number" class="form-control" [(ngModel)]="avoirDto.montant" name="montant" min="0" required>
+              </div>
+              
+              <div class="col-md-4 mb-3">
+                <label class="form-label">État *</label>
+                <select class="form-select" [(ngModel)]="avoirDto.etat" name="etat" required>
+                  <option value="EN_ATTENTE">En attente</option>
+                  <option value="VALIDE">Validé</option>
+                  <option value="ANNULE">Annulé</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label">Raison de l'avoir *</label>
+                <textarea class="form-control" [(ngModel)]="avoirDto.raison" name="raison" rows="3" 
+                          placeholder="Motif du retour/remise..." required></textarea>
+              </div>
+            </div>
+            
+            <div class="row mt-4">
+              <div class="col-12 text-end">
+                <button type="button" class="btn btn-secondary me-2" (click)="cancel()">
+                  <i class="fas fa-times"></i> Annuler
+                </button>
+                <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isLoading">
+                  <i class="fas fa-save"></i> {{isLoading ? 'Enregistrement...' : 'Enregistrer'}}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

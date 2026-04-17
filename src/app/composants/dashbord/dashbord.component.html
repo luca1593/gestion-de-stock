@@ -1,6 +1,40 @@
 <div class="dashboard-container">
   <div class="row mx-3 mt-3 mb-4">
     <div class="col-12">
+      <div class="alert alert-danger" *ngIf="alertesStock.length > 0">
+        <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Alertes de stock</h5>
+        <div class="table-responsive mt-3">
+          <table class="table table-sm table-hover">
+            <thead>
+              <tr>
+                <th>Article</th>
+                <th>Niveau</th>
+                <th>Stock actuel</th>
+                <th>Seuil minimum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alerte of alertesStock">
+                <td>{{alerte.designation || 'N/A'}}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'bg-danger': alerte.niveauAlerte === 'CRITIQUE',
+                    'bg-warning': alerte.niveauAlerte === 'BAS',
+                    'bg-info': alerte.niveauAlerte === 'MOYEN'
+                  }">{{alerte.niveauAlerte}}</span>
+                </td>
+                <td>{{alerte.stockActuel}}</td>
+                <td>{{alerte.seuilMinimum}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mx-3 mt-3 mb-4">
+    <div class="col-12">
       <div class="row">
         <div class="col-md-3 col-sm-6 mb-3">
           <div class="stat-card blue">
@@ -198,6 +232,29 @@
         </div>
         <div class="card-body">
           <canvas id="qnt"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row px-3" *ngIf="afficherDraphe">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="fas fa-chart-line"></i> Chiffre d'affaires par mois</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="caChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0"><i class="fas fa-boxes"></i> Top articles vendus</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="topArticlesChart"></canvas>
         </div>
       </div>
     </div>

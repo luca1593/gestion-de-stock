@@ -4,9 +4,10 @@ import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 import { DashboardService } from 'src/app/services/dashboard/dashboard.service';
 import { VenteService } from 'src/app/services/vente/vente.service';
-import { ArticleDto, DashboardStatsDto } from 'src/gs-api/src/models';
+import { ArticleDto, DashboardStatsDto, AlertStockDto } from 'src/gs-api/src/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
+import { AlertStockService } from 'src/app/services/alert-stock/alert-stock.service';
 
 Chart.register(...registerables);
 
@@ -31,6 +32,7 @@ export class DashbordComponent implements OnInit {
   totalClient = 0;
   listReceteArticle: ArticleDto[] = [];
   stats: DashboardStatsDto = {};
+  alertesStock: AlertStockDto[] = [];
 
   constructor(
     private cmdFrsService: CmdCltFrsService,
@@ -39,18 +41,31 @@ export class DashbordComponent implements OnInit {
     private articleService: ArtcleService,
     private cltFrsService: CltfrsService,
     private userService: UserService,
+    private alertStockService: AlertStockService
   ) {}
 
   ngOnInit() {
     this.loadStats();
     this.getTotalNumberOfData();
     this.getRecentArticle();
+    this.loadAlertesStock();
     this.error = "";
     
     let sDate = new Date();
     sDate.setDate(sDate.getDate() - 30);
-    this.startDate = sDate.toISOString().split('T')[0];
-    this.endDate = new Date().toISOString().split('T')[0];
+    this.startDate = this.formatDateForBackend(sDate);
+    this.endDate = this.formatDateForBackend(new Date());
+  }
+
+  loadAlertesStock(): void {
+    this.alertStockService.getAlertesActives().subscribe({
+      next: (data) => {
+        this.alertesStock = data;
+      },
+      error: () => {
+        this.alertesStock = [];
+      }
+    });
   }
 
   loadStats(): void {
@@ -82,7 +97,87 @@ export class DashbordComponent implements OnInit {
       this.mapPrix.set('Valeur Stock', this.stats.valeurStock || 0);
       
       this.afficherDraphe = true;
+      this.updateAdvancedCharts();
     }
+  }
+
+  updateAdvancedCharts(): void {
+    this.dashboardService.getChiffreAffairesMois().subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          this.createLineChart('caChart', data);
+        }
+      }
+    });
+
+    this.dashboardService.getTopArticles(5).subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          this.createPieChart('topArticlesChart', data);
+        }
+      }
+    });
+  }
+
+  createLineChart(id: string, data: any[]): void {
+    const existingChart = Chart.getChart(id);
+    if (existingChart) existingChart.destroy();
+
+    const labels = data.map(d => d.mois || 'N/A');
+    const values = data.map(d => d.montant || 0);
+
+    new Chart(id, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Chiffre d\'affaires',
+          data: values,
+          borderColor: 'rgba(40, 167, 69, 1)',
+          backgroundColor: 'rgba(40, 167, 69, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true }
+        }
+      }
+    });
+  }
+
+  createPieChart(id: string, data: any[]): void {
+    const existingChart = Chart.getChart(id);
+    if (existingChart) existingChart.destroy();
+
+    const labels = data.map(d => d.article?.codeArticle || 'N/A');
+    const values = data.map(d => d.quantite || 0);
+    const colors = [
+      'rgba(74, 144, 217, 0.8)',
+      'rgba(40, 167, 69, 0.8)',
+      'rgba(255, 193, 7, 0.8)',
+      'rgba(220, 53, 69, 0.8)',
+      'rgba(111, 66, 193, 0.8)'
+    ];
+
+    new Chart(id, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: colors
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    });
   }
 
   getTotalNumberOfData() {
@@ -190,5 +285,16 @@ export class DashbordComponent implements OnInit {
     this.startDate = null;
     this.endDate = null;
     this.loadStats();
+  }
+
+  formatDateForBackend(date: Date | string): string {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const seconds = String(d.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${d.getFullYear()} ${hours}:${minutes}:${seconds}`;
   }
 }

@@ -12,9 +12,13 @@ import { ArticleDto } from 'src/gs-api/src/models';
 export class PageArticleComponent implements OnInit {
 
   listArticle: Array<ArticleDto>=[];
-
+  listArticleFiltre: Array<ArticleDto>=[];
   errorMsg: string="";
   page: number=1;
+
+  searchCode: string = '';
+  searchLibelle: string = '';
+  searchCategory: string = '';
 
   constructor(
     private router: Router,
@@ -28,8 +32,27 @@ export class PageArticleComponent implements OnInit {
 
   findAllArticle(): void{
     this.articleService.findAllArticle().subscribe(resp => {
-      this.listArticle=resp;
+      this.listArticle = resp;
+      this.listArticleFiltre = resp;
     });
+  }
+
+  filtrer(): void {
+    this.listArticleFiltre = this.listArticle.filter(article => {
+      const matchCode = !this.searchCode || (article.codeArticle?.toLowerCase().includes(this.searchCode.toLowerCase()));
+      const matchLibelle = !this.searchLibelle || (article.designation?.toLowerCase().includes(this.searchLibelle.toLowerCase()));
+      const matchCategory = !this.searchCategory || (article.category?.id?.toString() === this.searchCategory);
+      return matchCode && matchLibelle && matchCategory;
+    });
+    this.page = 1;
+  }
+
+  reinitialiserFiltres(): void {
+    this.searchCode = '';
+    this.searchLibelle = '';
+    this.searchCategory = '';
+    this.listArticleFiltre = this.listArticle;
+    this.page = 1;
   }
 
   nouveauArticle(): void {
