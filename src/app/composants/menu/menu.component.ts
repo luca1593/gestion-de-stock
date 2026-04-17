@@ -111,6 +111,12 @@ export class MenuComponent implements OnInit {
           titre: 'Historique des ventes',
           icon: 'fas fa-history',
           url: 'liste-vente'
+        },
+        {
+          id: '53',
+          titre: 'Avoirs',
+          icon: 'fas fa-receipt',
+          url: 'avoirs'
         }
       ]
     },

@@ -15,11 +15,33 @@
             <span>{{ errorMsg }}</span>
         </div>
     </div>
+    
+    <div class="card mx-3 mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Rechercher par code" [(ngModel)]="searchCode" (input)="filtrer()">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Rechercher par libellé" [(ngModel)]="searchLibelle" (input)="filtrer()">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Rechercher par catégorie" [(ngModel)]="searchCategory" (input)="filtrer()">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100" (click)="reinitialiserFiltres()">
+                        <i class="fas fa-redo"></i> Réinitialiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="col m-3">
-        <app-detail-article *ngFor="let article of listArticle | paginate : {
+        <app-detail-article *ngFor="let article of listArticleFiltre | paginate : {
             itemsPerPage: 3,
             currentPage: page,
-            totalItems: listArticle.length }"
+            totalItems: listArticleFiltre.length }"
         (suppressioResult)="handleSuppression($event)"
         [articleDTO]="article"></app-detail-article>
     </div>

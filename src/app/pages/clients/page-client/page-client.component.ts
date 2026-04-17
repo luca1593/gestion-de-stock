@@ -12,8 +12,13 @@ import { ClientDto } from 'src/gs-api/src/models';
 export class PageClientComponent implements OnInit {
   
   listClients: Array<ClientDto>=[];
+  listClientsFiltre: Array<ClientDto>=[];
   errorMsg: string='';
   page: number=1;
+
+  searchNom: string = '';
+  searchEmail: string = '';
+  searchTelephone: string = '';
 
   constructor(
     private router: Router,
@@ -27,8 +32,27 @@ export class PageClientComponent implements OnInit {
 
   finfAllClient(): void{
     this.cltfrsService.findAllClient().subscribe(resp =>{
-      this.listClients=resp;
+      this.listClients = resp;
+      this.listClientsFiltre = resp;
     })
+  }
+
+  filtrer(): void {
+    this.listClientsFiltre = this.listClients.filter(client => {
+      const matchNom = !this.searchNom || (client.nom?.toLowerCase().includes(this.searchNom.toLowerCase()));
+      const matchEmail = !this.searchEmail || (client.email?.toLowerCase().includes(this.searchEmail.toLowerCase()));
+      const matchTelephone = !this.searchTelephone || (client.numTel?.includes(this.searchTelephone));
+      return matchNom && matchEmail && matchTelephone;
+    });
+    this.page = 1;
+  }
+
+  reinitialiserFiltres(): void {
+    this.searchNom = '';
+    this.searchEmail = '';
+    this.searchTelephone = '';
+    this.listClientsFiltre = this.listClients;
+    this.page = 1;
   }
 
   nouveauClient():void{

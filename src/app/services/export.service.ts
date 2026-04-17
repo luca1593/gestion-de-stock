@@ -44,6 +44,12 @@ export class ExportExcelService {
     });
   }
 
+  exportPdfAvoir(id: number): void {
+    this.exportApiService.ExportApiPdfAvoirGET(id).subscribe(blob => {
+      this.downloadBlob(blob, 'avoir_' + id + '_' + this.getDateString() + '.pdf');
+    });
+  }
+
   private downloadBlob(blob: Blob, filename: string): void {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');

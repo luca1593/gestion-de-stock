@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService, InventoryStatsDto, RotationStockDto, AnalyseStockDto } from 'src/gs-api/src/services/dashboard.service';
 
 @Component({
   selector: 'app-statistiques',
@@ -7,57 +6,16 @@ import { DashboardService, InventoryStatsDto, RotationStockDto, AnalyseStockDto 
   styleUrls: ['./statistiques.component.css']
 })
 export class StatistiquesComponent implements OnInit {
-
-  inventoryStats: InventoryStatsDto | null = null;
-  analyseStock: AnalyseStockDto | null = null;
-  rotationStockData: RotationStockDto[] = [];
   
-  loading: boolean = true;
-  error: string = '';
+  loading: boolean = false;
+  error: string = 'Statistiques avancées non disponibles sur le serveur';
 
-  constructor(
-    private dashboardService: DashboardService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.loadInventoryStats();
-    this.loadAnalyseStock();
-    this.loadRotationStock();
-  }
-
-  loadInventoryStats(): void {
-    this.dashboardService.getInventoryStats().subscribe({
-      next: (data) => {
-        this.inventoryStats = data;
-      },
-      error: (err) => {
-        console.error('Erreur chargement stats inventaire', err);
-      }
-    });
-  }
-
-  loadAnalyseStock(): void {
-    this.dashboardService.getAnalyseStock().subscribe({
-      next: (data) => {
-        this.analyseStock = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erreur chargement analyse stock', err);
-        this.loading = false;
-      }
-    });
-  }
-
-  loadRotationStock(): void {
-    this.dashboardService.getRotationStock().subscribe({
-      next: (data) => {
-        this.rotationStockData = data || [];
-      },
-      error: (err) => {
-        console.error('Erreur chargement rotation stock', err);
-      }
-    });
+    // Les endpoints /v1/dashboard/inventory/stats, /v1/dashboard/analyse-stock, 
+    // et /v1/dashboard/rotation-stock retournent 404
+    // Ces fonctionnalités seront disponibles ultérieurement
   }
 
   formatNumber(value: number | undefined): string {

@@ -17,7 +17,6 @@ class AvoirsService extends __BaseService {
   static readonly AvoirsApiFindAllGETPath = 'v1/avoirs/all';
   static readonly AvoirsApiFindByIdGETPath = 'v1/avoirs/{id}';
   static readonly AvoirsApiFindByVenteGETPath = 'v1/avoirs/vente/{venteId}';
-  static readonly AvoirsApiFindByEtatGETPath = 'v1/avoirs/etat/{etat}';
   static readonly AvoirsApiFindByClientGETPath = 'v1/avoirs/client/{clientId}';
   static readonly AvoirsApiFindByDateRangeGETPath = 'v1/avoirs/date-range';
   static readonly AvoirsApiDELETEPath = 'v1/avoirs/delete/{id}';
@@ -51,11 +50,11 @@ class AvoirsService extends __BaseService {
       params: __params,
       responseType: 'json',
     });
-    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>>));
+    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>));
   }
 
   AvoirsApiFindAllGET(): __Observable<Array<AvoirDto>> {
-    return this.AvoirsApiFindAllGETResponse().pipe(__map((_r) => _r.body as Array<AvoirDto>>));
+    return this.AvoirsApiFindAllGETResponse().pipe(__map((_r) => _r.body as Array<AvoirDto>));
   }
 
   AvoirsApiFindByIdGETResponse(id: number): __Observable<__StrictHttpResponse<AvoirDto>> {
@@ -83,11 +82,11 @@ class AvoirsService extends __BaseService {
       params: __params,
       responseType: 'json',
     });
-    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>>));
+    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>));
   }
 
   AvoirsApiFindByVenteGET(venteId: number): __Observable<Array<AvoirDto>> {
-    return this.AvoirsApiFindByVenteGETResponse(venteId).pipe(__map((_r) => _r.body as Array<AvoirDto>>));
+    return this.AvoirsApiFindByVenteGETResponse(venteId).pipe(__map((_r) => _r.body as Array<AvoirDto>));
   }
 
   AvoirsApiFindByClientGETResponse(clientId: number): __Observable<__StrictHttpResponse<Array<AvoirDto>>> {
@@ -99,11 +98,11 @@ class AvoirsService extends __BaseService {
       params: __params,
       responseType: 'json',
     });
-    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>>));
+    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>));
   }
 
   AvoirsApiFindByClientGET(clientId: number): __Observable<Array<AvoirDto>> {
-    return this.AvoirsApiFindByClientGETResponse(clientId).pipe(__map((_r) => _r.body as Array<AvoirDto>>));
+    return this.AvoirsApiFindByClientGETResponse(clientId).pipe(__map((_r) => _r.body as Array<AvoirDto>));
   }
 
   AvoirsApiFindByDateRangeGETResponse(startDate?: string, endDate?: string): __Observable<__StrictHttpResponse<Array<AvoirDto>>> {
@@ -117,11 +116,11 @@ class AvoirsService extends __BaseService {
       params: __params,
       responseType: 'json',
     });
-    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>>));
+    return this.http.request<any>(req).pipe(__filter((_r) => _r instanceof HttpResponse), __map((_r) => _r as __StrictHttpResponse<Array<AvoirDto>>));
   }
 
   AvoirsApiFindByDateRangeGET(startDate?: string, endDate?: string): __Observable<Array<AvoirDto>> {
-    return this.AvoirsApiFindByDateRangeGETResponse(startDate, endDate).pipe(__map((_r) => _r.body as Array<AvoirDto>>));
+    return this.AvoirsApiFindByDateRangeGETResponse(startDate, endDate).pipe(__map((_r) => _r.body as Array<AvoirDto>));
   }
 
   AvoirsApiDELETEResponse(id: number): __Observable<__StrictHttpResponse<null>> {

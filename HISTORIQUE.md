@@ -328,6 +328,111 @@ COPY src ./src
 
 ---
 
+## Session du 16 Avril 2026
+
+### 20. État actuel du projet
+
+**Branche**: `develop` (propre, à jour avec origin)
+
+**Derniers commits**:
+| Commit | Description |
+|--------|-------------|
+| 44423c8 | Correction environment.prod.ts: URL backend explicite |
+| afa834a | Correction: passage par nginx proxy pour le login |
+| 7e9bd1f | Correction Docker: ajout du proxy nginx vers backend |
+| 270679d | Correction Docker: resolution probleme login |
+
+### 21. Fonctionnalités actives
+
+- Connexion au backend distant (http://12.24.5.100:8085)
+- Changement de thème (sombre/clair) avec persistance
+- Design responsive avec Bootstrap + variables CSS
+- Authentification JWT
+- Dashboard avec statistiques et graphiques Chart.js
+- Notifications métier (stock faible, commandes en attente)
+- Export Excel (articles, clients, stock, ventes)
+- Export PDF des avoirs
+- Calculatrice avec support clavier complet
+- Alerte expiration token en bannière
+- CI/CD Jenkins avec Docker Compose
+- Deployment automatique sur serveur
+
+### 22. Nouvelles fonctionnalités ajoutées (16 Avril 2026)
+
+#### Alertes de stock dans le dashboard
+- Affichage des alertes de stock (CRITIQUE, BAS, MOYEN)
+- Service `AlertStockService` ajouté
+- Tableau affichant: article, niveau, stock actuel, seuil minimum
+- Badges coloriés selon le niveau d'alerte
+
+#### Page des avoirs
+- Nouvelle page accessible via menu Ventes > Avoirs
+- Liste des avoirs avec: code, date, client, montant, raison, état
+- Boutons: détails, export PDF, suppression
+- Service `HaveurService` créé
+- Filtres par état possibles
+
+#### Export PDF des avoirs
+- Intégration avec l'API `ExportApiPdfAvoirGET`
+- Bouton d'export PDF dans la page des avoirs
+
+#### Amélioration des graphiques du dashboard
+- Graphique linéaire du chiffre d'affaires par mois
+- Graphique en anneau (doughnut) des top articles vendus
+- Utilisation de l'API existante `getChiffreAffairesMois()` et `getTopArticles()`
+
+#### Filtres avancés dans les listes
+- **Articles**: filtres par code, libellé, catégorie
+- **Clients**: filtres par nom, email, téléphone
+- **Utilisateurs**: filtres par nom, email, entreprise
+- Bouton réinitialiser pour chaque groupe de filtres
+- Pagination automatique avec les résultats filtrés
+
+#### Statistiques de ventes par période
+- Page statistiques déjà fonctionnelle avec:
+  - KPIs: rotation stock, taux de service, taux rupture, couverture stock
+  - Graphique CA par mois avec sélection de période (6/12 mois)
+  - Top articles les plus vendus
+
+#### Gestion des utilisateurs
+- Filtres de recherche implémentés
+- Page existante pour création de nouveaux utilisateurs
+- Utilisation de l'entreprise de l'utilisateur connecté
+
+### 23. Fichiers créés
+
+| Fichier | Description |
+|---------|-------------|
+| `src/app/services/alert-stock/alert-stock.service.ts` | Service alertes stock |
+| `src/app/services/avoir/avoir.service.ts` | Service avoirs (HaveurService) |
+| `src/app/pages/avoirs/page-avoir/page-avoir.component.ts` | Page liste avoirs |
+| `src/app/pages/avoirs/page-avoir/page-avoir.component.html` | Template page avoirs |
+| `src/app/pages/avoirs/page-avoir/page-avoir.component.css` | Styles page avoirs |
+
+### 24. Fichiers modifiés
+
+| Fichier | Modifications |
+|---------|---------------|
+| `src/app/composants/dashbord/dashbord.component.ts` | Ajout alertes stock, nouveaux graphiques |
+| `src/app/composants/dashbord/dashbord.component.html` | Section alertes, graphiques CA et top articles |
+| `src/app/composants/menu/menu.component.ts` | Ajout menu "Avoirs" |
+| `src/app/app-routing.module.ts` | Route /avoirs |
+| `src/app/app.module.ts` | Déclaration PageHaveurComponent |
+| `src/app/services/export.service.ts` | Ajout exportPdfAvoir |
+| `src/app/pages/articles/page-article/page-article.component.*` | Filtres avancés |
+| `src/app/pages/clients/page-client/page-client.component.*` | Filtres avancés |
+| `src/app/pages/utilisateurs/page-utilisateur/page-*.component.*` | Filtres avancés |
+| `src/gs-api/src/services/avoirs.service.ts` | Correction syntaxe |
+
+### 25. Résultat du build
+
+```
+Build at: 2026-04-16T17:46:25.136Z - Hash: 16682605ebc083c7 - Time: 113118ms
+Initial Total: 3.06 MB (769.05 kB transfer)
+```
+
+---
+
 ## Session du 09 Avril 2026 (précédente)
 
 ### Résumé

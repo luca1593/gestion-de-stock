@@ -24,6 +24,8 @@ import { ChangerMotDePasseComponent } from './pages/profil/changer-mot-de-passe/
 import { ModifProfilComponent } from './pages/profil/modif-profil/modif-profil.component';
 import { PageVenteComponent } from './pages/vente/page-vente/page-vente.component';
 import { HisistoriqueVenteComponent } from './pages/vente/hisistorique-vente/hisistorique-vente.component';
+import { PageHaveurComponent } from './pages/avoirs/page-avoir/page-avoir.component';
+import { NouvelAvoirComponent } from './pages/avoirs/nouvel-avoir/nouvel-avoir.component';
 import { ApplicationGuardService } from './services/guard/application-guard.service';
 
 const routes: Routes=[
@@ -57,6 +59,9 @@ const routes: Routes=[
       { path: 'nouvel-commande-fournisseur/:id', component: NouvelCmdCltFrsComponent, canActivate: [ApplicationGuardService], data: { origin: 'fournisseur' } },
       { path: 'vente', component: PageVenteComponent, canActivate: [ApplicationGuardService], data: { origin: 'vente' } },
       { path: 'liste-vente', component: HisistoriqueVenteComponent, canActivate: [ApplicationGuardService], data: { origin: 'vente' } },
+      { path: 'avoirs', component: PageHaveurComponent, canActivate: [ApplicationGuardService] },
+      { path: 'nouvel-avoir', component: NouvelAvoirComponent, canActivate: [ApplicationGuardService] },
+      { path: 'nouvel-avoir/:id', component: NouvelAvoirComponent, canActivate: [ApplicationGuardService] },
       { path: 'categories', component: PageCategorieComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-categorie', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-categorie/:idCategory', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService] },
