@@ -20,25 +20,6 @@ pipeline {
             }
         }
         
-        stage('Backend Connectivity') {
-            steps {
-                echo '🔗 Checking backend connectivity...'
-                sh '''
-                    BACKEND_URL="http://172.23.0.2:8080/swagger-ui/index.html"
-                    for i in 1 2 3 4 5; do
-                        if curl -f -s --connect-timeout 5 "${BACKEND_URL}" > /dev/null 2>&1; then
-                            echo "✅ Backend is accessible at ${BACKEND_URL}"
-                            exit 0
-                        fi
-                        echo "Attempt $i/5 - Backend not ready, waiting..."
-                        sleep 5
-                    done
-                    echo "❌ Backend not accessible at ${BACKEND_URL}"
-                    exit 1
-                '''
-            }
-        }
-        
         stage('Build and Deploy') {
             steps {
                 echo '🏗️ Building and deploying...'
