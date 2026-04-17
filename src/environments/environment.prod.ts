@@ -1,4 +1,4 @@
 export const environment={
   production: true,
-  apiUrl: 'http://12.24.5.100:8085'
+  apiUrl: 'http://gestiondestock-backend:8080'
 };
