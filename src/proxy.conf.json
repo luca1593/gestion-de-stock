@@ -3,7 +3,7 @@
      "target": "http://gestiondestock-backend:8080",
      "secure": false,
      "pathRewrite":{
-         "^/gestiondestock":"/gestiondestock"
+         "^/gestiondestock":""
      }
     }
 }
