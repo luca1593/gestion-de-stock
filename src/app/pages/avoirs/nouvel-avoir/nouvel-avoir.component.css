@@ -1,1 +1,3 @@
-/* Styles pour le composant nouvel avoir */
+body.dark-theme .bg-primary {
+  background: linear-gradient(135deg, #3a4a7d 0%, #2d3d6d 100%) !important;
+}
