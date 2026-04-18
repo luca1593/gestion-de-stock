@@ -26,6 +26,7 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/angular.json ./
 COPY --from=builder /app/tsconfig.json ./
 COPY --from=builder /app/tsconfig.app.json ./
+COPY --from=builder /app/tsconfig.spec.json ./
 COPY --from=builder /app/src ./src
 
 EXPOSE 4200
