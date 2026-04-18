@@ -1,9 +1,9 @@
 {
    "/gestiondestock":{
-    "target": "http://12.24.5.100:8085",
-    "secure": false,
-    "pathRewrite":{
-        "^/gestiondestock":""
+     "target": "http://gestiondestock-backend:8080",
+     "secure": false,
+     "pathRewrite":{
+         "^/gestiondestock":"/gestiondestock"
+     }
     }
-   }
 }
