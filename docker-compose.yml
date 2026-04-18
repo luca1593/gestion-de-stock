@@ -14,7 +14,7 @@ services:
       dockerfile: Dockerfile
     container_name: gs-frontend
     ports:
-      - "8086:80"
+      - "8086:4200"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
