@@ -1,3 +1,37 @@
+# Historique des modifications - 22 Avril 2026
+
+## Résumé du travail effectué
+
+### Modification / Suppression / État des commandes (22 Avril 2026)
+
+1. **Modification de commande**
+   - `page-cmd-clt-frs.component.html` - Ajout boutons modifier/supprimer dans la liste
+   - `page-cmd-clt-frs.component.ts` - Méthodes modifierCommande() et supprimerCommande()
+   - `cmd-clt-frs.service.ts` - Méthodes supprimerCommandeClient() et supprimerCommandeFournisseur()
+   - Navigation vers le formulaire de modification avec pré-chargement des données
+
+2. **Suppression de commande**
+   - Confirmation avant suppression
+   - Appel aux APIs DELETE (CommandeClientApiDeleteDELETE, CommandeFournisseurApiDELETE)
+   - Rafraîchissement automatique de la liste après suppression
+
+3. **Changement d'état**
+   - Fonctionnalité existante via LigneActionComponent
+   - États: EN_PREPARATION, VALIDEE, LIVREE, ANNULEE
+   - Badge avec couleurs selon l'état
+
+4. **Améliorations UI/UX**
+   - Boutons sur une seule ligne (col-1)
+   - Format date réduit (dd/MM/yy)
+   - Thème sombre appliqué entièrement
+   - Design moderne avec Bootstrap sombre
+
+5. **DetailsCmdCltFrsComponent**
+   - Injection de CmdCltFrsService
+   - Suppression fonctionnelle depuis le modal détaillé
+
+---
+
 # Historique des modifications - 21 Avril 2026
 
 ## Résumé du travail effectué

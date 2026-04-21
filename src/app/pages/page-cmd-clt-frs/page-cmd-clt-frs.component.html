@@ -1,59 +1,121 @@
-<div class="col">
-    <div class="row mx-3 my-0 py-1">
-        <div class="col-md-7 p-0">
-            <h3>Commande {{origin}}</h3>
-        </div>
-        <div class="col-md-5 text-end">
-            <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false" [isExporterVisible]="false"></app-bouton-action>
-        </div>
-    </div>
-    <div class="col m-3">
-        <div *ngFor="let cmd of listCommandes | paginate : {
-            itemsPerPage: 3,
-            currentPage: page,
-            totalItems: listCommandes.length }">
-            <div class="accordion accordion-flush" id="accordionFlushExample{{cmd.id}}">
-                <div class="card">
-                    <div class="accordion-item m-0">
-                        <h3 class="accordion-header m-0" id="cmd.code">
-                            <app-details-cmd-clt-frs [commande]="cmd" [origin]="origin" [lineDeCommande]="findAllLigneCommandeByIdCommande(cmd.id)" ></app-details-cmd-clt-frs>
-                        </h3>
-                        <div id="collapse{{cmd.id}}" class="accordion-collapse collapse"
-                        [attr.aria-labelledby]="cmd.code"
-                            [attr.data-bs-parent]="'#accordionFlushExample'+cmd.id">
-                            <div class="card">
-                                <div class="card-body scroll-body-max-height-130">
-                                    <div *ngFor="let ligne of mapLigneComandes.get(cmd.id)">
-                                        <app-details-cmd [ligneCommande]="ligne"></app-details-cmd>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="row">
-                                        <div class="col-md-6 text-start">
-                                            {{ calculNombreArticleCommande(cmd.id) }} articles commander
-                                        </div>
-                                        <div class="col-md-6 text-end">
-                                            Total commande : {{ calculTotalCommande(cmd.id) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="commande-wrapper">
+  <div class="commande-header">
+    <h3>Commandes {{origin}}</h3>
+    <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false" [isExporterVisible]="false"></app-bouton-action>
+  </div>
 
-        <div class="row m-2">
-            <div class="col-md-12 text-center">
-                <pagination-controls class="small-text"
-                    previousLabel="Precedent"
-                    nextLabel="Suivant"
-                    (autoHide)="true"
-                    (responsive)="true"
-                    (pageChange)="page=$event" >
-                </pagination-controls>
-            </div>
+  <div class="card filter-card">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Code commande</label>
+          <input type="text" class="form-control" placeholder="Rechercher par code" [(ngModel)]="searchCode" (input)="filtrer()">
         </div>
+        <div class="col-md-4">
+          <label class="form-label">Client / Fournisseur</label>
+          <input type="text" class="form-control" placeholder="Rechercher par client" [(ngModel)]="searchClient" (input)="filtrer()">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">État</label>
+          <select class="form-select" [(ngModel)]="searchEtat" (change)="filtrer()">
+            <option value="">Tous les états</option>
+            <option value="EN_PREPARATION">En préparation</option>
+            <option value="VALIDEE">Validée</option>
+            <option value="LIVREE">Livrée</option>
+            <option value="ANNULEE">Annulée</option>
+          </select>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="card list-card">
+    <div class="card-body p-0">
+      <div *ngFor="let cmd of listCommandesFilter | paginate : {
+          itemsPerPage: pageSize,
+          currentPage: page,
+          totalItems: totalItems }"
+          class="commande-item" [class.active]="shouldExpandCommande(cmd.id)">
+<div class="row align-items-center py-2" (click)="toggleCommande(cmd.id)">
+          <div class="col-2">
+            <span class="badge bg-secondary">{{ cmd.code }}</span>
+          </div>
+          <div class="col-4 text-truncate">
+            <strong class="text-white">{{ getClientName(cmd) }}</strong>
+          </div>
+          <div class="col-2 text-center">
+            <small class="text-muted">{{ cmd.dateCommande | date:'dd/MM/yy' }}</small>
+          </div>
+          <div class="col-2 text-center">
+            <span class="badge" [ngClass]="getBadgeClass(cmd.etatCommande)">{{ getEtatLabel(cmd.etatCommande) }}</span>
+          </div>
+          <div class="col-1 text-end pe-1">
+            <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.0-0':'fr' }}€</strong>
+          </div>
+          <div class="col-1 d-flex align-items-center justify-content-end gap-1 action-buttons">
+            <button class="btn btn-sm btn-outline-primary px-1" (click)="modifierCommande(cmd.id)" title="Modifier">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger px-1" (click)="supprimerCommande(cmd.id)" title="Supprimer">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary px-1" (click)="toggleCommande(cmd.id)" [attr.aria-expanded]="shouldExpandCommande(cmd.id)">
+              <i class="fas" [ngClass]="shouldExpandCommande(cmd.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="shouldExpandCommande(cmd.id)" class="commande-details">
+          <div class="commande-details-header">
+            <div class="detail-info">
+              <span><strong>{{ getClientName(cmd) }}</strong></span>
+              <span>{{ calculNombreArticleCommande(cmd.id) }} article(s)</span>
+            </div>
+            <div class="detail-info">
+              <span>Total: <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.2-2':'fr' }} €</strong></span>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Article</th>
+                  <th class="text-end">Quantité</th>
+                  <th class="text-end">Prix Unit.</th>
+                  <th class="text-end">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ligne of mapLigneComandes.get(cmd.id)">
+                  <td>
+                    <div class="article-cell">
+                      <span class="article-code">{{ ligne.article?.code }}</span>
+                      <span class="article-libelle">{{ ligne.article?.libelle }}</span>
+                    </div>
+                  </td>
+                  <td class="text-end">{{ ligne.quantite }}</td>
+                  <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
+                  <td class="text-end fw-medium">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="listCommandes.length === 0" class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>Aucune commande trouvée</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination-wrapper">
+    <pagination-controls 
+      previousLabel="Précédent"
+      nextLabel="Suivant"
+      (autoHide)="true"
+      (responsive)="true"
+      (pageChange)="onPageChange($event)">
+    </pagination-controls>
+  </div>
 </div>
