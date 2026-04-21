@@ -62,13 +62,26 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadChiffreAffairesMois(): void {
+    console.log('Loading chiffre affaires...');
     this.dashboardService.getChiffreAffairesMois().subscribe({
       next: (data) => {
-        this.chiffreAffairesData = data || [];
-        this.maxVente = Math.max(...this.chiffreAffairesData.map(d => d.totalVentes || 0), 1);
+        console.log('CA mois API response:', JSON.stringify(data));
+        if (data && Array.isArray(data)) {
+          this.chiffreAffairesData = data;
+          this.maxVente = data.length > 0 
+            ? Math.max(...data.map(d => d.chiffreAffaires || d.totalVentes || 0), 1) 
+            : 1;
+        } else {
+          console.log('CA data empty or invalid:', data);
+          this.chiffreAffairesData = [];
+          this.maxVente = 1;
+        }
       },
       error: (err) => {
         console.error('Erreur chargement CA', err);
+        console.log('CA error response:', err);
+        this.chiffreAffairesData = [];
+        this.maxVente = 1;
       }
     });
   }
@@ -95,19 +108,25 @@ export class PageStatistiquesComponent implements OnInit {
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
-  getBarHeight(value: number | undefined): number {
+  getBarHeight(item: any): number {
+    const value = item?.chiffreAffaires || item?.totalVentes || 0;
     if (!value || this.maxVente === 0) return 5;
     return (value / this.maxVente) * 100;
   }
 
-  getMonthLabel(periode: string | undefined): string {
+  getMonthLabel(item: any): string {
+    const periode = item?.periode;
     if (!periode) return '';
-    const parts = periode.split('-');
+    
+    // Format from backend: "10/04/2026 11:34:05" or "2026-04"
+    const parts = periode.split(/[\/\s]/);
     if (parts.length >= 2) {
       const month = parseInt(parts[1]);
       const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
-      return months[month - 1] || periode;
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      }
     }
-    return periode;
+    return periode.substring(0, 7);
   }
 }

@@ -1,1 +1,12 @@
-/* Styles pour la page des avoirs */
+.table-light {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+}
+
+body.dark-theme .table-light {
+  background: linear-gradient(135deg, #3a4a7d 0%, #2d3d6d 100%);
+}
+
+body.dark-theme .bg-primary {
+  background: linear-gradient(135deg, #3a4a7d 0%, #2d3d6d 100%) !important;
+}

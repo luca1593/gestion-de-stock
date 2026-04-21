@@ -12,12 +12,19 @@ export class PageCmdCltFrsComponent implements OnInit {
 
   origin='';
   listCommandes: Array<any>=[];
+  listCommandesFilter: Array<any>=[];
   mapLigneComandes=new Map();
   mapNmbrArticle=new Map();
   mapTotalTtc=new Map();
   errorMsg="";
   page: number=1;
+  pageSize = 5;
+  totalItems = 0;
   lineDeCommande : any;
+  selectedCommandeId: number | null = null;
+  searchCode = '';
+  searchClient = '';
+  searchEtat = '';
 
   constructor(
     private router: Router,
@@ -29,7 +36,16 @@ export class PageCmdCltFrsComponent implements OnInit {
     this.activatedRoute.data.subscribe(data => {
       this.origin=data['origin'];
     });
+    this.activatedRoute.params.subscribe(params => {
+      if (params['id']) {
+        this.selectedCommandeId = +params['id'];
+      }
+    });
     this.finAllCommandeCltFrs();
+  }
+
+  shouldExpandCommande(cmdId: number): boolean {
+    return this.selectedCommandeId === cmdId;
   }
 
   nouveauCommande(): void{
@@ -45,6 +61,8 @@ export class PageCmdCltFrsComponent implements OnInit {
       this.commandeCltFrsService.findAllCommandeClient()
       .subscribe( commandes => {
         this.listCommandes=commandes;
+        this.listCommandesFilter=commandes;
+        this.totalItems=commandes.length;
         this.findAllLigneCommande();
       }, error => {
         this.errorMsg=error.error.error;
@@ -53,10 +71,95 @@ export class PageCmdCltFrsComponent implements OnInit {
       this.commandeCltFrsService.findAllCommandeFournisseur()
       .subscribe( commandes => {
         this.listCommandes=commandes;
+        this.listCommandesFilter=commandes;
+        this.totalItems=commandes.length;
         this.findAllLigneCommande();
       }, error => {
         this.errorMsg=error.error.error;
       });
+    }
+  }
+
+  filtrer(): void {
+    this.listCommandesFilter = this.listCommandes.filter(cmd => {
+      const matchCode = !this.searchCode || cmd.code?.toLowerCase().includes(this.searchCode.toLowerCase());
+      const matchClient = !this.searchClient || this.getClientName(cmd)?.toLowerCase().includes(this.searchClient.toLowerCase());
+      const matchEtat = !this.searchEtat || cmd.etatCommande === this.searchEtat;
+      return matchCode && matchClient && matchEtat;
+    });
+    this.totalItems = this.listCommandesFilter.length;
+    this.page = 1;
+  }
+
+   toggleCommande(cmdId: number): void {
+     if (this.selectedCommandeId === cmdId) {
+       this.selectedCommandeId = null;
+     } else {
+       this.selectedCommandeId = cmdId;
+     }
+   }
+
+   modifierCommande(id: number): void {
+     if(this.origin === "client"){
+       this.router.navigate(["nouvel-commande-client/" + id]);
+     }else if(this.origin === "fournisseur"){
+       this.router.navigate(["nouvel-commande-fournisseur/" + id]);
+     }
+   }
+
+   supprimerCommande(id: number): void {
+     if (confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
+       if(this.origin === "client"){
+         this.commandeCltFrsService.supprimerCommandeClient(id).subscribe({
+           next: () => {
+             this.finAllCommandeCltFrs();
+           },
+           error: (err: any) => {
+             this.errorMsg = err.error?.error || "Erreur lors de la suppression";
+           }
+         });
+       } else if(this.origin === "fournisseur"){
+         this.commandeCltFrsService.supprimerCommandeFournisseur(id).subscribe({
+           next: () => {
+             this.finAllCommandeCltFrs();
+           },
+           error: (err: any) => {
+             this.errorMsg = err.error?.error || "Erreur lors de la suppression";
+           }
+         });
+       }
+     }
+   }
+
+  onPageChange(event: number): void {
+    this.page = event;
+  }
+
+  getClientName(cmd: any): string {
+    if (this.origin === 'client') {
+      return cmd.client ? `${cmd.client.nom} ${cmd.client.prenom || ''}` : '-';
+    } else {
+      return cmd.fournisseur ? cmd.fournisseur.nom : '-';
+    }
+  }
+
+  getBadgeClass(etat: string): string {
+    switch (etat) {
+      case 'EN_PREPARATION': return 'bg-warning text-dark';
+      case 'VALIDEE': return 'bg-success';
+      case 'LIVREE': return 'bg-primary';
+      case 'ANNULEE': return 'bg-danger';
+      default: return 'bg-secondary';
+    }
+  }
+
+  getEtatLabel(etat: string): string {
+    switch (etat) {
+      case 'EN_PREPARATION': return 'En préparation';
+      case 'VALIDEE': return 'Validée';
+      case 'LIVREE': return 'Livrée';
+      case 'ANNULEE': return 'Annulée';
+      default: return etat;
     }
   }
 
@@ -105,6 +208,34 @@ export class PageCmdCltFrsComponent implements OnInit {
 
   calculNombreArticleCommande(idCommande: number): number{
     return this.mapNmbrArticle.get(idCommande);
+  }
+
+  onEtatChange(event: {id: number, etat: string}): void {
+    if (this.origin === "client") {
+      this.commandeCltFrsService.updateEtatCommandeClient(event.id, event.etat)
+      .subscribe({
+        next: (updated) => {
+          const cmd = this.listCommandes.find(c => c.id === event.id);
+          if (cmd) cmd.etatcommande = event.etat;
+          this.finAllCommandeCltFrs();
+        },
+        error: (err) => {
+          this.errorMsg = err.error?.error || "Erreur lors de la mise à jour de l'état";
+        }
+      });
+    } else if (this.origin === "fournisseur") {
+      this.commandeCltFrsService.updateEtatCommandeFournisseur(event.id, event.etat)
+      .subscribe({
+        next: (updated) => {
+          const cmd = this.listCommandes.find(c => c.id === event.id);
+          if (cmd) cmd.etatcommande = event.etat;
+          this.finAllCommandeCltFrs();
+        },
+        error: (err) => {
+          this.errorMsg = err.error?.error || "Erreur lors de la mise à jour de l'état";
+        }
+      });
+    }
   }
 
 }

@@ -1,36 +1,54 @@
-<div class="sidebar-menu">
+<div class="sidebar-menu" [class.collapsed]="collapsed">
   <div class="logo-container">
     <img *ngIf="isDarkMode" src="assets/images/logo-menu-dark.svg" alt="Logo" width="200" height="80">
     <img *ngIf="!isDarkMode" src="assets/images/logo-menu-light.svg" alt="Logo" width="200" height="80">
   </div>
   <nav class="menu-nav">
     <ng-container *ngFor="let menu of menuProperties">
-      <!-- Menu without submenus (single menu) -->
+      <!-- Menu without submenus (single menu) - always visible -->
       <div *ngIf="!menu.sousMenus?.length" 
            class="menu-item single" 
            [class.active]="menu.active"
+           [class.collapsed]="collapsed"
+           [title]="collapsed ? menu.titre : ''"
            (click)="menu.url === 'logout' ? logoutApp() : navigate(menu)">
         <i class="{{menu.icon}}"></i>
-        <span>{{menu.titre}}</span>
+        <span class="menu-text">{{menu.titre}}</span>
       </div>
       
-      <!-- Menu with submenus (accordion) -->
-      <div *ngIf="menu.sousMenus?.length" class="menu-group">
+      <!-- Menu with submenus - hidden in collapsed, show submenus directly -->
+      <div *ngIf="menu.sousMenus?.length" class="menu-group collapsed-mode">
+        <!-- Parent menu item - hidden in collapsed mode -->
         <div class="menu-item parent" 
+             *ngIf="!collapsed"
              [class.active]="menu.active"
+             [title]="collapsed ? menu.titre : ''"
              (click)="toggleMenu(menu)">
           <i class="{{menu.icon}}"></i>
-          <span>{{menu.titre}}</span>
+          <span class="menu-text">{{menu.titre}}</span>
           <i class="fas fa-chevron-down arrow" [class.rotate]="menu.active"></i>
         </div>
         
-        <div class="submenu" *ngIf="menu.active">
+        <!-- Sous-menu visible en mode normal -->
+        <div class="submenu" *ngIf="menu.active && !collapsed">
           <div *ngFor="let sousMenu of menu.sousMenus" 
                class="submenu-item"
                [class.active]="sousMenu.active"
                (click)="navigate(sousMenu)">
             <i class="{{sousMenu.icon}}"></i>
             <span>{{sousMenu.titre}}</span>
+          </div>
+        </div>
+        
+        <!-- Sous-menu toujours visible en mode collapsed (sans cliquer sur parent) -->
+        <div class="submenu-collapsed" *ngIf="collapsed">
+          <div *ngFor="let sousMenu of menu.sousMenus" 
+               class="submenu-item"
+               [class.active]="sousMenu.active"
+               [title]="sousMenu.titre"
+               (click)="navigate(sousMenu)">
+            <i class="{{sousMenu.icon}}"></i>
+            <span class="menu-text">{{sousMenu.titre}}</span>
           </div>
         </div>
       </div>

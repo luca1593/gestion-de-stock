@@ -68,29 +68,29 @@ export class NotificationService {
       map(cmds => cmds.filter((c: CommandeClientDto) => c.etatcommande === 'EN_PREPARATION')),
       catchError(() => [])
     ).subscribe(commandes => {
-      if (commandes.length > 0) {
-        const existing = this.notifications.find(n => n.title.includes('Commandes client'));
-        if (!existing) {
-          this.addNotification('info', 'Commandes client', `${commandes.length} en attente`, '/commandes/clt');
+      commandes.forEach((cmd: CommandeClientDto) => {
+        const existing = this.notifications.find(n => n.link?.includes(`/commande-client/${cmd.id}`));
+        if (!existing && cmd.id) {
+          this.addNotification('info', 'Commande client', `Cmd ${cmd.code} en attente`, `/commande-client/${cmd.id}`);
         }
-      }
+      });
     });
 
     this.commandeService.findAllCommandeFournisseur().pipe(
       map(cmds => cmds.filter((c: CommandeFournisseurDto) => c.etatcommande === 'EN_PREPARATION')),
       catchError(() => [])
     ).subscribe(commandes => {
-if (commandes.length > 0) {
-        const existing = this.notifications.find(n => n.title.includes('Commandes fournisseur'));
-        if (!existing) {
+      commandes.forEach((cmd: CommandeFournisseurDto) => {
+        const existing = this.notifications.find(n => n.link?.includes(`/commande-fournisseur/${cmd.id}`));
+        if (!existing && cmd.id) {
           this.addNotification(
             'info',
-            'Commandes fournisseur',
-            `${commandes.length} en attente`,
-            '/commandes/frs'
+            'Commande fournisseur',
+            `Cmd ${cmd.code} en attente`,
+            `/commande-fournisseur/${cmd.id}`
           );
         }
-      }
+      });
     });
   }
 

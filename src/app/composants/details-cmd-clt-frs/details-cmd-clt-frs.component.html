@@ -42,9 +42,11 @@
     <div class="col-md-3 d-flex align-items-center justify-content-center">
         <app-ligne-action
             [itemId]="commande.id"
+            [etatcourant]="commande.etatcommande"
             (modifier)="modifier()"
             (supprimer)="supprimer(commande.id)"
-            (details)="openDetailsModal()">
+            (details)="openDetailsModal()"
+            (changeEtat)="onEtatChange($event)">
         </app-ligne-action>
     </div>
 </div>

@@ -62,4 +62,44 @@ export class CmdCltFrsService {
     return of();
   }
 
+  updateEtatCommandeClient(idCommande: number, etat: string): Observable<CommandeClientDto> {
+    return this.commandeClientService.CommandeClientApiUpdateEtatCommandePATCH({
+      idCommande: idCommande,
+      etatCommande: etat as any
+    });
+  }
+
+  updateEtatCommandeFournisseur(idCommande: number, etat: string): Observable<CommandeFournisseurDto> {
+    return this.commandeFournisseurService.CommandeFournisseurApiUpdateEtatCommandePATCH(
+      String(idCommande),
+      etat
+    );
+  }
+
+  findCommandeClientById(id: number): Observable<CommandeClientDto> {
+    return this.commandeClientService.CommandeClientApiFindByIdGET(id);
+  }
+
+  findCommandeFournisseurById(id: number): Observable<CommandeFournisseurDto> {
+    return this.commandeFournisseurService.CommandeFournisseurApiFindByIdGET(id);
+  }
+
+   updateCommandeClient(commandeClientDTO: CommandeClientDto, date: number): Observable<CommandeClientDto> {
+     commandeClientDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
+     return this.commandeClientService.CommandeClientApiSavePOST(commandeClientDTO, date);
+   }
+
+   updateCommandeFournisseur(commandeFournisseurDTO: CommandeFournisseurDto, date: number): Observable<CommandeFournisseurDto> {
+     commandeFournisseurDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
+     return this.commandeFournisseurService.save(commandeFournisseurDTO, date);
+   }
+
+   supprimerCommandeClient(id: number): Observable<null> {
+     return this.commandeClientService.CommandeClientApiDeleteDELETE(String(id));
+   }
+
+   supprimerCommandeFournisseur(id: number): Observable<null> {
+     return this.commandeFournisseurService.CommandeFournisseurApiDELETE(id);
+   }
+
 }

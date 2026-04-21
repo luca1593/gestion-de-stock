@@ -1,14 +1,226 @@
 <div class="stats-container">
-    <div class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>
-        <strong>Statistiques avancées:</strong> Les données d'inventaire, d'analyse de stock et de rotation ne sont pas disponibles sur le serveur actuel. Ces fonctionnalités seront accessibles ultérieurement.
+    <div class="stats-header">
+        <div>
+            <h4><i class="fas fa-chart-bar me-2"></i>Tableau de Bord Statistique</h4>
+            <p class="text-muted mb-0">Analyse complète de votre activité et performance</p>
+        </div>
+        <div class="text-end">
+            <small class="text-muted d-block">Dernière mise à jour</small>
+            <span class="last-update">{{getLastUpdateFormatted()}}</span>
+        </div>
     </div>
-    
+
+    <!-- KPI Cards Row -->
     <div class="row mb-4">
-        <div class="col-12 text-center py-5">
-            <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
-            <h5 class="text-muted">Statistiques en cours de développement</h5>
-            <p class="text-muted">Les graphiques et analyses avancées seront bientôt disponibles.</p>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #4a90d9, #2a5298);">
+                    <i class="fas fa-euro-sign"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{formatCurrency(stats?.chiffreAffaires)}}</span>
+                    <span class="kpi-label">Chiffre d'Affaires Total</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{stats?.totalArticles || 0}}</span>
+                    <span class="kpi-label">Articles Réf.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{analyseStock?.articlesRupture || 0}}</span>
+                    <span class="kpi-label">Articles en Rupture</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">{{stats?.totalClients || 0}}</span>
+                    <span class="kpi-label">Clients Actifs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h5><i class="fas fa-chart-line me-2"></i>Évolution du Chiffre d'Affaires</h5>
+                    <div class="chart-actions">
+                        <select class="chart-select" [value]="periodeSelected" (change)="onPeriodeChange($event)">
+                            <option [value]="6">6 derniers mois</option>
+                            <option [value]="12">12 derniers mois</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-body" style="height: 300px;">
+                    <canvas #caChart></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h5><i class="fas fa-chart-pie me-2"></i>Ventes par Catégorie</h5>
+                </div>
+                <div class="chart-body" style="height: 300px;">
+                    <canvas #categorieChart></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Analysis Row -->
+    <div class="row mb-4">
+        <div class="col-lg-5 mb-4">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h5><i class="fas fa-warehouse me-2"></i>Analyse du Stock</h5>
+                </div>
+                <div class="chart-body" style="height: 280px;">
+                    <canvas #stockChart></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7 mb-4">
+            <div class="stat-card-grid">
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Valeur Totale du Stock</span>
+                    <span class="stat-grid-value">{{formatCurrency(analyseStock?.valeurTotaleStock)}}</span>
+                </div>
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Valeur Moyenne par Article</span>
+                    <span class="stat-grid-value">{{formatCurrency(analyseStock?.valeurMoyenneArticle)}}</span>
+                </div>
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Stock Moyen</span>
+                    <span class="stat-grid-value">{{analyseStock?.stockMoyen || 0}}</span>
+                </div>
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Rotation Moyenne</span>
+                    <span class="stat-grid-value">{{analyseStock?.rotationMoyenne?.toFixed(1) || '0'}}</span>
+                </div>
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Flux Entrant</span>
+                    <span class="stat-grid-value text-success">{{formatNumber(inventoryStats?.quantiteFluxEntrant)}} <small>uv</small></span>
+                </div>
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Flux Sortant</span>
+                    <span class="stat-grid-value text-danger">{{formatNumber(inventoryStats?.quantiteFluxSortant)}} <small>uv</small></span>
+                </div>
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Flux Net</span>
+                    <span class="stat-grid-value" [class.text-success]="(inventoryStats?.quantiteFluxNet || 0) > 0" [class.text-danger]="(inventoryStats?.quantiteFluxNet || 0) < 0">{{formatNumber(inventoryStats?.quantiteFluxNet)}} <small>uv</small></span>
+                </div>
+                <div class="stat-grid-item">
+                    <span class="stat-grid-label">Positions Sous Sécurité</span>
+                    <span class="stat-grid-value text-warning">{{inventoryStats?.positionsSousSecurite || 0}} <small>({{inventoryStats?.positionsSousSecuritePourcentage?.toFixed(1)}}%)</small></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Articles & Rotation Stock -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="table-card">
+                <div class="table-header">
+                    <h5><i class="fas fa-trophy me-2"></i>Top 10 - Articles les Plus Vendus</h5>
+                </div>
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Code</th>
+                                <th>Désignation</th>
+                                <th>Catégorie</th>
+                                <th class="text-end">Stock</th>
+                                <th class="text-end">Prix</th>
+                                <th class="text-end">Ventes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let article of topArticles; let i = index; trackBy: trackByIndex">
+                                <td>{{i + 1}}</td>
+                                <td><code class="small">{{article.codeArticle}}</code></td>
+                                <td>{{article.designation}}</td>
+                                <td><span class="badge bg-primary bg-sm">{{article.category || '-'}}</span></td>
+                                <td class="text-end">
+                                    <span [class]="getStockStatusClass(article.stock)">
+                                        {{article.stock}}
+                                    </span>
+                                </td>
+                                <td class="text-end">{{formatCurrency(article.prixUnitaire)}}</td>
+                                <td class="text-end"><span class="badge bg-success">{{article.nbVentes}}</span></td>
+                            </tr>
+                            <tr *ngIf="topArticles.length === 0">
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                    Aucune données disponible
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="table-card">
+                <div class="table-header">
+                    <h5><i class="fas fa-sync-alt me-2"></i>Rotation du Stock</h5>
+                </div>
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Désignation</th>
+                                <th class="text-end">Valeur Stock</th>
+                                <th class="text-end">Taux</th>
+                                <th class="text-end">Couverture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of rotationStock; trackBy: trackByIndex">
+                                <td><code class="small">{{item.codeArticle}}</code></td>
+                                <td>{{item.designation}}</td>
+                                <td class="text-end">{{formatCurrency(item.valeurStock)}}</td>
+                                <td class="text-end">
+                                    <span [class]="getRotationClass(item.tauxRotation)">
+                                        {{item.tauxRotation?.toFixed(1)}}x
+                                    </span>
+                                </td>
+                                <td class="text-end">{{item.joursCouverture || 0}}j</td>
+                            </tr>
+                            <tr *ngIf="rotationStock.length === 0">
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                    Aucune données disponible
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

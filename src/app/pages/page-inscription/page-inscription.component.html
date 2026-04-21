@@ -8,8 +8,8 @@
       <p class="text-muted">Commencez à gérer votre stock</p>
     </div>
     <div class="card-body">
-      <div class="alert alert-danger" *ngif="errorMessage.length > 0">
-        <div *ngfor="let msg of errorMessage">
+      <div class="alert alert-danger" *ngIf="errorMessage.length > 0">
+        <div *ngFor="let msg of errorMessage">
           <i class="fas fa-exclamation-circle"></i> {{msg}}
         </div>
       </div>

@@ -1,12 +1,17 @@
 <div class="dashbord-container">
     <div class="app-layout">
+        <!-- Bouton toggle menu flottant -->
+        <button class="menu-toggle" (click)="toggleMenu()" [class.collapsed]="menuCollapsed" title="Basculer le menu">
+            <i class="fas" [class.fa-bars]="!menuCollapsed" [class.fa-chevron-left]="menuCollapsed"></i>
+        </button>
+        
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <app-menu></app-menu>
+        <aside class="sidebar" [class.collapsed]="menuCollapsed">
+            <app-menu [collapsed]="menuCollapsed"></app-menu>
         </aside>
         
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content" [class.menu-collapsed]="menuCollapsed">
             <!-- Header -->
             <header class="app-header">
                 <app-header></app-header>
@@ -22,7 +27,7 @@
             <footer class="app-footer">
                 <div class="footer-content">
                     <span class="copyright">
-                        <i class="fas fa-copyright"></i> 2024 Gestion de Stock
+                        <i class="fas fa-copyright"></i> 2026 Gestion de Stock
                     </span>
                     <span class="date-time">
                         <i class="fas fa-calendar-alt"></i>

@@ -13,6 +13,7 @@ import { AdresseDto, ArticleDto, ClientDto, CommandeClientDto, CommandeFournisse
 export class NouvelCmdCltFrsComponent implements OnInit {
 
   origin='';
+  isModification: boolean = false;
   selectedClientFournisseur: any={};
   selectedAdressCltFrs: AdresseDto={};
   listClientFouenisseur: Array<any>=[];
@@ -28,6 +29,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   errorMsg: Array<string>=[];
   dateCmd="";
   codeCmd="";
+  etatCommande: string = 'EN_PREPARATION';
 
   constructor(
     private router: Router,
@@ -41,8 +43,13 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.activatedRoute.data.subscribe(data => {
       this.origin=data['origin'];
     });
+    const idCmd = this.activatedRoute.snapshot.params['idCmd'];
+    if (idCmd) {
+      this.isModification = true;
+      this.loadCommande(idCmd);
+    }
     const idCltFrs=this.activatedRoute.snapshot.params['id'];
-    if (idCltFrs) {
+    if (idCltFrs && !idCmd) {
       if (this.origin === "client") {
         this.cltFrsService.findClientById(idCltFrs).subscribe(clt => {
           this.selectedClientFournisseur=clt;
@@ -56,6 +63,57 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.findAllCltFrs();
     this.findAllArticle();
     this.initCodeCmd();
+  }
+
+  loadCommande(idCmd: number): void {
+    if (this.origin === 'client') {
+      this.commandeCltFrs.findCommandeClientById(idCmd).subscribe(cmd => {
+        this.codeCmd = cmd.code || '';
+        this.etatCommande = cmd.etatcommande || 'EN_PREPARATION';
+        this.selectedClientFournisseur = cmd.client || {};
+        this.ligneDeCommandes = cmd.ligneCommandeClients || [];
+        this.calculateTotal();
+        if (cmd.dateCommande) {
+          const date = new Date(cmd.dateCommande);
+          this.dateCmd = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '/' +
+            ((date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + '/' +
+            date.getFullYear();
+        }
+        this.findAllArticle();
+      });
+    } else if (this.origin === 'fournisseur') {
+      this.commandeCltFrs.findCommandeFournisseurById(idCmd).subscribe(cmd => {
+        this.codeCmd = cmd.code || '';
+        this.etatCommande = cmd.etatcommande || 'EN_PREPARATION';
+        this.selectedClientFournisseur = cmd.fournisseur || {};
+        this.ligneDeCommandes = cmd.ligneCommandeFournisseurs || [];
+        this.calculateTotal();
+        if (cmd.dateCommande) {
+          const date = new Date(cmd.dateCommande);
+          this.dateCmd = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '/' +
+            ((date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + '/' +
+            date.getFullYear();
+        }
+        this.findAllArticle();
+      });
+    }
+  }
+
+  calculateTotal(): void {
+    let total = 0;
+    let qnt = 0;
+    this.ligneDeCommandes.forEach(ligne => {
+      if (ligne.prixUnitaire && ligne.quantite) {
+        total += ligne.prixUnitaire * ligne.quantite;
+        qnt += ligne.quantite;
+      }
+    });
+    this.totalCommande = Math.floor(total);
+    this.quantiteListArticle = qnt;
+  }
+
+  onEtatChange(newEtat: string): void {
+    this.etatCommande = newEtat;
   }
 
   initCodeCmd(){
@@ -72,41 +130,60 @@ export class NouvelCmdCltFrsComponent implements OnInit {
 
   saveClick():void {
     const commande=this.preparerCommande();
-    if(this.origin ==="client") {
-      this.commandeCltFrs.enregistrerCommandeClient(commande as CommandeClientDto, new Date().getTime()).subscribe(
-        cmd => {
-          this.router.navigate(['commande-client']);
-        }, error => {
-          this.errorMsg=error.error.errors;
-        }
-      );
-    }else if(this.origin === "fournisseur"){
-      this.commandeCltFrs.enregistrerCommandeFournisseur(commande as CommandeFournisseurDto, new Date().getTime()).subscribe(
-        cmd => {
-          this.router.navigate(['commande-fournisseur']);
-        }, error => {
-          this.errorMsg=error.error.errors;
-        }
-      );
+    const dateTimestamp = new Date().getTime();
+    
+    if (this.isModification) {
+      if(this.origin === "client") {
+        this.commandeCltFrs.updateCommandeClient(commande as CommandeClientDto, dateTimestamp).subscribe(
+          cmd => {
+            this.router.navigate(['commande-client']);
+          }, error => {
+            this.errorMsg=error.error.errors;
+          }
+        );
+      } else if(this.origin === "fournisseur") {
+        this.commandeCltFrs.updateCommandeFournisseur(commande as CommandeFournisseurDto, dateTimestamp).subscribe(
+          cmd => {
+            this.router.navigate(['commande-fournisseur']);
+          }, error => {
+            this.errorMsg=error.error.errors;
+          }
+        );
+      }
+    } else {
+      if(this.origin === "client") {
+        this.commandeCltFrs.enregistrerCommandeClient(commande as CommandeClientDto, dateTimestamp).subscribe(
+          cmd => {
+            this.router.navigate(['commande-client']);
+          }, error => {
+            this.errorMsg=error.error.errors;
+          }
+        );
+      } else if(this.origin === "fournisseur") {
+        this.commandeCltFrs.enregistrerCommandeFournisseur(commande as CommandeFournisseurDto, dateTimestamp).subscribe(
+          cmd => {
+            this.router.navigate(['commande-fournisseur']);
+          }, error => {
+            this.errorMsg=error.error.errors;
+          }
+        );
+      }
     }
   }
 
   private preparerCommande(): any{
-    const dateTimestamp = new Date().getTime();
     if(this.origin === "client"){
       return  {
         client: this.selectedClientFournisseur,
         code: this.codeCmd,
-        etatcommande:"EN_PREPARATION",
-        dateCommande: dateTimestamp,
+        etatcommande: this.etatCommande,
         ligneCommandeClients: this.ligneDeCommandes
       }
-    }else if(this.origin === "fournisseur"){
+    } else if(this.origin === "fournisseur"){
       return  {
         fournisseur: this.selectedClientFournisseur,
         code: this.codeCmd,
-        etatcommande:"EN_PREPARATION",
-        dateCommande: dateTimestamp,
+        etatcommande: this.etatCommande,
         ligneCommandeFournisseurs: this.ligneDeCommandes
       }
     }

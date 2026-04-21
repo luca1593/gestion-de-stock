@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalService } from 'src/app/services/modal/modal.service';
+import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 
 @Component({
   selector: 'app-details-cmd-clt-frs',
@@ -18,10 +19,14 @@ export class DetailsCmdCltFrsComponent implements OnInit {
   @Input()
   lineDeCommande: any;
   cltFrsDto: any={};
+  
+  @Output()
+  etatChanged = new EventEmitter<{id: number, etat: string}>();
 
   constructor(
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private commandeCltFrs: CmdCltFrsService
   ) { }
 
   ngOnInit(): void {
@@ -54,14 +59,33 @@ export class DetailsCmdCltFrsComponent implements OnInit {
     this.modalService.closeModal(modalId);
   }
 
-  supprimer(idCommande: number){
-    if (idCommande) {
-      if (this.origin === "client") {
+   supprimer(idCommande: number){
+     if (idCommande && confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
+       if (this.origin === "client") {
+         this.commandeCltFrs.supprimerCommandeClient(idCommande).subscribe({
+           next: () => {
+             this.modalService.closeModal('modalDetail' + this.commande.code);
+           },
+           error: (err) => {
+             alert("Erreur lors de la suppression: " + (err.error?.error || err.message));
+           }
+         });
+       } else if(this.origin === "fournisseur"){
+         this.commandeCltFrs.supprimerCommandeFournisseur(idCommande).subscribe({
+           next: () => {
+             this.modalService.closeModal('modalDetail' + this.commande.code);
+           },
+           error: (err) => {
+             alert("Erreur lors de la suppression: " + (err.error?.error || err.message));
+           }
+         });
+       }
+     }
+   }
 
-      } else if(this.origin === "fournisseur"){
-
-      }
-    }
+  onEtatChange(event: {id: number, etat: string}): void {
+    this.commande.etatcommande = event.etat;
+    this.etatChanged.emit(event);
   }
 
   calcluerTotalCommande() : number {
