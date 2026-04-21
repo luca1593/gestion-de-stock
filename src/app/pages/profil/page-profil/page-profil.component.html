@@ -81,6 +81,20 @@
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row">Pays</th>
+                    <td>
+                        <input *ngIf="editable" type="text" class="form-control form-control-sm" [(ngModel)]="utilisateurDto.adresse!.pays">
+                        <span *ngIf="!editable">{{ utilisateurDto.adresse?.pays }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Date de naissance</th>
+                    <td>
+                        <input *ngIf="editable" type="date" class="form-control form-control-sm" [(ngModel)]="utilisateurDto.dateDeNasissanceTemp">
+                        <span *ngIf="!editable">{{ utilisateurDto.dateDeNasissanceTemp | date:'dd/MM/yyyy' }}</span>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row">Entreprise</th>
                     <td>{{ utilisateurDto.entreprise?.nom }}</td>
                 </tr>

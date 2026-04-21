@@ -7,6 +7,28 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       <button class="btn-action btn-modifier" (click)="onModifier()" title="Modifier">
         <i class="fas fa-pencil-alt"></i>
       </button>
+      <div class="dropdown etat-dropdown">
+        <span class="badge-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="badge" 
+                [class.bg-warning]="etatcourant === 'EN_PREPARATION'"
+                [class.bg-success]="etatcourant === 'VALIDEE'"
+                [class.bg-info]="etatcourant === 'LIVREE'"
+                [class.text-dark]="etatcourant === 'LIVREE'">
+            {{ getLibellecourt(etatcourant) }}
+          </span>
+        </span>
+        <ul class="dropdown-menu etat-menu">
+          <li><a class="dropdown-item" (click)="onChangeEtat('EN_PREPARATION')">
+            <span class="badge bg-warning text-dark">EN_PREPARATION</span>
+          </a></li>
+          <li><a class="dropdown-item" (click)="onChangeEtat('VALIDEE')">
+            <span class="badge bg-success">VALIDEE</span>
+          </a></li>
+          <li><a class="dropdown-item" (click)="onChangeEtat('LIVREE')">
+            <span class="badge bg-info text-dark">LIVREE</span>
+          </a></li>
+        </ul>
+      </div>
       <button class="btn-action btn-supprimer" (click)="onSupprimer()" title="Supprimer">
         <i class="fas fa-trash-alt"></i>
       </button>
@@ -16,31 +38,35 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     </div>
   `,
   styles: [`
+    :host {
+      display: inline-block;
+    }
+    
     .ligne-actions {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.25rem;
+      gap: 0.15rem;
     }
 
     .btn-action {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
     .btn-action i {
-      font-size: 0.85rem;
+      font-size: 0.65rem;
     }
 
     .btn-modifier {
-      background: rgba(74, 144, 217, 0.15);
+      background: rgba(74,144,217,0.15);
       color: #4a90d9;
     }
 
@@ -50,7 +76,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     }
 
     .btn-supprimer {
-      background: rgba(220, 53, 69, 0.15);
+      background: rgba(220,53,69,0.15);
       color: #dc3545;
     }
 
@@ -60,7 +86,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     }
 
     .btn-details {
-      background: rgba(108, 117, 125, 0.15);
+      background: rgba(108,117,125,0.15);
       color: #6c757d;
     }
 
@@ -69,47 +95,83 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       color: white;
     }
 
-    body.dark-theme .btn-modifier {
-      background: rgba(74, 144, 217, 0.2);
+    .etat-dropdown {
+      position: relative;
     }
 
-    body.dark-theme .btn-modifier:hover {
-      background: #4a90d9;
+    .badge-dropdown {
+      cursor: pointer;
+      display: inline-block;
     }
 
-    body.dark-theme .btn-supprimer {
-      background: rgba(220, 53, 69, 0.2);
+    .badge-dropdown .badge {
+      padding: 0.2rem 0.4rem;
+      font-size: 0.6rem;
+      border-radius: 3px;
+      transition: all 0.15s ease;
     }
 
-    body.dark-theme .btn-supprimer:hover {
-      background: #dc3545;
+    .badge-dropdown:hover .badge {
+      filter: brightness(0.9);
     }
 
-    body.dark-theme .btn-details {
-      background: rgba(108, 117, 125, 0.2);
+    .etat-menu {
+      font-size: 0.7rem;
+      min-width: 90px;
     }
 
-    body.dark-theme .btn-details:hover {
-      background: #6c757d;
+    .etat-menu .dropdown-item {
+      padding: 0.3rem 0.5rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .etat-menu .dropdown-item:hover {
+      background-color: #f8f9fa;
+    }
+
+    .etat-menu .dropdown-item .badge {
+      font-size: 0.6rem;
+    }
+
+    body.dark-theme .etat-menu {
+      background: #2d2d2d;
+      border-color: #404040;
+    }
+
+    body.dark-theme .etat-menu .dropdown-item:hover {
+      background-color: #3a3a3a;
     }
 
     @media (max-width: 576px) {
       .btn-action {
-        width: 28px;
-        height: 28px;
+        width: 20px;
+        height: 20px;
       }
       
       .btn-action i {
-        font-size: 0.75rem;
+        font-size: 0.55rem;
       }
     }
   `]
 })
 export class LigneActionComponent {
   @Input() itemId?: number;
+  @Input() etatcourant?: string;
   @Output() modifier = new EventEmitter<number>();
   @Output() supprimer = new EventEmitter<number>();
   @Output() details = new EventEmitter<number>();
+  @Output() changeEtat = new EventEmitter<{id: number, etat: string}>();
+
+  getLibellecourt(etat: string | undefined): string {
+    if (!etat) return 'EN_ATT';
+    const etats: {[key: string]: string} = {
+      'EN_PREPARATION': 'EN_ATT',
+      'VALIDEE': 'VAL',
+      'LIVREE': 'LIVR'
+    };
+    return etats[etat] || etat.substring(0, 4);
+  }
 
   onModifier(): void {
     this.modifier.emit(this.itemId);
@@ -121,5 +183,11 @@ export class LigneActionComponent {
 
   onDetails(): void {
     this.details.emit(this.itemId);
+  }
+
+  onChangeEtat(etat: string): void {
+    if (this.itemId && etat !== this.etatcourant) {
+      this.changeEtat.emit({ id: this.itemId, etat: etat });
+    }
   }
 }

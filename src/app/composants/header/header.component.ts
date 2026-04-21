@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UserService } from 'src/app/services/user/user.service';
@@ -39,7 +40,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private routeContextService: RouteContextService,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -158,7 +160,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   markAsRead(notification: Notification): void {
     this.notificationService.markAsRead(notification.id);
     if (notification.link) {
-      window.location.href = notification.link;
+      this.router.navigateByUrl(notification.link);
     }
   }
 

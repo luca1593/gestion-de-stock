@@ -11,6 +11,7 @@ export class PageDashbordComponent implements OnInit {
 
   dateDuJour: Date=new Date();
   public isDarkMode = false;
+  public menuCollapsed = false;
   
   constructor(private themeService: ThemeService) { }
 
@@ -25,6 +26,10 @@ export class PageDashbordComponent implements OnInit {
     .subscribe( v => {
       this.dateDuJour=new Date();
     })
+  }
+
+  toggleMenu(): void {
+    this.menuCollapsed = !this.menuCollapsed;
   }
 
 }

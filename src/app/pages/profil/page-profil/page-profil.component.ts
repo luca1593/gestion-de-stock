@@ -36,10 +36,15 @@ export class PageProfilComponent implements OnInit {
   ngOnInit(): void {
     const user = this.userService.getConnectedUser();
     if (user) {
-      this.utilisateurDto = {
-        ...user,
-        adresse: user.adresse || { adresse1: '', ville: '', codePostal: '' }
-      };
+      let dateString = '';
+      if (user.dateDeNasissance) {
+        const date = new Date(user.dateDeNasissance as any);
+        dateString = date.toISOString().split('T')[0];
+      }
+      const userData: any = { ...user };
+      userData.dateDeNasissanceTemp = dateString;
+      userData.adresse = user.adresse || { adresse1: '', ville: '', codePostal: '' };
+      this.utilisateurDto = userData;
     }
   }
 
@@ -64,20 +69,25 @@ export class PageProfilComponent implements OnInit {
     this.errorMsg = '';
     const currentUser = this.userService.getConnectedUser();
     
+    const paysValue = this.utilisateurDto.adresse?.pays || (this.utilisateurDto as any).pays || '';
+    const dateStr = (this.utilisateurDto as any).dateDeNasissanceTemp;
+    const dateValue = dateStr ? new Date(dateStr).toISOString() : null;
+    
     const userToSave: any = {
-      id: currentUser.id,
+      ...currentUser,
       nom: this.utilisateurDto.nom?.trim(),
       prenom: this.utilisateurDto.prenom?.trim(),
-      email: currentUser.email,
-      entreprise: currentUser.entreprise,
-      motDePasse: currentUser.motDePasse
+      pays: paysValue,
+      dateDeNasissance: dateValue
     };
     
     if (this.utilisateurDto.adresse) {
       userToSave.adresse = {
+        ...(currentUser.adresse || {}),
         adresse1: this.utilisateurDto.adresse.adresse1?.trim(),
         ville: this.utilisateurDto.adresse.ville?.trim(),
-        codePostal: this.utilisateurDto.adresse.codePostal?.trim()
+        codePostal: this.utilisateurDto.adresse.codePostal?.trim(),
+        pays: paysValue
       };
     }
     
@@ -95,6 +105,10 @@ export class PageProfilComponent implements OnInit {
         this.errorMsg = err.error?.message || 'Erreur lors de la mise à jour';
       }
     });
+  }
+
+  onDateChange(event: any): void {
+    // Date change handler
   }
 
   getUserInitials(): string {
@@ -145,8 +159,10 @@ export class PageProfilComponent implements OnInit {
   }
 
   private processFile(file: File): void {
+    console.log('processFile called:', file.name, file.type);
     if (!file.type.startsWith('image/')) return;
     this.selectedPhotoFile = file;
+    console.log('selectedPhotoFile set:', this.selectedPhotoFile);
     const reader = new FileReader();
     reader.onload = () => {
       this.utilisateurDto.photo = reader.result as string;
@@ -155,8 +171,14 @@ export class PageProfilComponent implements OnInit {
   }
 
   private savePhoto(userId: number): void {
-    if (!this.selectedPhotoFile) return;
+    console.log('savePhoto called, selectedPhotoFile:', this.selectedPhotoFile);
+    if (!this.selectedPhotoFile) {
+      console.log('No photo file selected');
+      return;
+    }
 
+    console.log('Saving photo for user:', userId);
+    console.log('Photo params:', { file: this.selectedPhotoFile?.name, id: userId, title: 'profil', context: 'utilisateur' });
     this.photoService.SavePhoto({
       file: this.selectedPhotoFile,
       id: userId,

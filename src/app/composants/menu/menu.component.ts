@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Menu } from './menu';
 import { UserService } from 'src/app/services/user/user.service';
@@ -11,6 +11,7 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
+  @Input() collapsed = false;
   public isDarkMode = false;
 
   public menuProperties : Array<Menu>=[
@@ -169,18 +170,20 @@ export class MenuComponent implements OnInit {
 
   private setActiveMenuFromRoute(url: string): void {
     const currentUrl = url || '';
+    const cleanUrl = currentUrl.split('?')[0].split('#')[0];
+    
     this.menuProperties.forEach(menu => {
       menu.active = false;
       if (menu.sousMenus && menu.sousMenus.length > 0) {
+        let hasActiveSubmenu = false;
         menu.sousMenus.forEach(sousMenu => {
-          sousMenu.active = false;
-          if (sousMenu.url && currentUrl.includes(sousMenu.url)) {
-            sousMenu.active = true;
-            menu.active = true;
-          }
+          const sousMenuActive = sousMenu.url ? cleanUrl === `/${sousMenu.url}` || cleanUrl.endsWith(`/${sousMenu.url}`) : false;
+          sousMenu.active = sousMenuActive;
+          if (sousMenuActive) hasActiveSubmenu = true;
         });
-      } else if (menu.url && currentUrl.includes(menu.url)) {
-        menu.active = true;
+        menu.active = hasActiveSubmenu;
+      } else if (menu.url) {
+        menu.active = cleanUrl === `/${menu.url}` || cleanUrl.endsWith(`/${menu.url}`);
       }
     });
   }
@@ -196,6 +199,22 @@ export class MenuComponent implements OnInit {
   }
 
   navigate(menu: Menu){
+    const targetUrl = menu.url;
+    this.menuProperties.forEach(m => {
+      if (m.sousMenus && m.sousMenus.some(sm => sm.url === targetUrl)) {
+        m.active = true;
+        m.sousMenus.forEach(sm => {
+          sm.active = (sm.url === targetUrl);
+        });
+      } else if (m.url === targetUrl) {
+        m.active = true;
+      } else {
+        m.active = false;
+        if (m.sousMenus) {
+          m.sousMenus.forEach(sm => sm.active = false);
+        }
+      }
+    });
     this.router.navigate([menu.url]);
   }
 
