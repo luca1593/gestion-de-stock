@@ -1,33 +1,180 @@
-<div class="col">
-    <div class="row mx-3 my-0 py-1">
-        <div class="col-md-7 p-0">
-            <h3>Mouvement de stock</h3>
-        </div>
-        <div class="col-md-5 text-end">
-            <app-bouton-action [isImporterVisible]="false" [isNouveauVisible]="false"></app-bouton-action>
+<div class="mvtstk-container">
+    <div class="mvtstk-header">
+        <div class="header-title">
+            <h3><i class="fas fa-exchange-alt"></i> Mouvement de Stock</h3>
         </div>
     </div>
-    <div class="col m-3">
-        <div *ngFor="let article of listArticle | paginate : {
-            itemsPerPage:5,
-            currentPage: page,
-            totalItems: listArticle.length}">
-            <div class="card">
-                <div class="m-0 p-3">
-                    <h3 class="accordion-header p-0 m-0" id="{{article.codeArticle}}">
-                        <app-detail-mvtstk-articles [article]="article"
-                            [listMvtStk]="maplistMvtStk.get(article.id)">
-                        </app-detail-mvtstk-articles>
-                    </h3>
-                </div>
+
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMsg }}</span>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-barcode"></i> Code
+                </label>
+                <input type="text" class="form-control" placeholder="Code article..." [(ngModel)]="searchCode" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-tag"></i> Désignation
+                </label>
+                <input type="text" class="form-control" placeholder="Libellé..." [(ngModel)]="searchLibelle" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-layer-group"></i> Catégorie
+                </label>
+                <input type="text" class="form-control" placeholder="Catégorie..." [(ngModel)]="searchCategory" (input)="filtrer()">
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
             </div>
         </div>
-        <div class="row m-2">
-            <div class="col-md-12 text-center">
-                <pagination-controls class="small-text" previousLabel="Precedent" nextLabel="Suivant" (autoHide)="true"
-                    (responsive)="true" (pageChange)="page=$event">
-                </pagination-controls>
-            </div>
+    </div>
+
+    <div class="mvtstk-table-card">
+        <div class="table-container" *ngIf="listArticleFiltre.length > 0">
+            <table class="mvtstk-table">
+                <thead>
+                    <tr>
+                        <th class="col-article">Article</th>
+                        <th class="col-stock">Stock Actuel</th>
+                        <th class="col-total">Total Entrées</th>
+                        <th class="col-total">Total Sorties</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let article of listArticleFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: listArticleFiltre.length }">
+                        <tr class="article-row" [class.low-stock]="article.stock !== undefined && article.stock < 10">
+                            <td class="col-article">
+                                <div class="article-cell" (click)="toggleDetails(article.id!)" [class.expanded]="expandedArticleId === article.id">
+                                    <img [src]="article.photo ? article.photo : 'favicon.ico'" [alt]="article.designation" class="article-photo">
+                                    <div class="article-info">
+                                        <span class="article-code">{{article.codeArticle}}</span>
+                                        <span class="article-name">{{article.designation}}</span>
+                                        <span class="article-category">{{article.category?.designation || ''}}</span>
+                                    </div>
+                                    <i class="fas" [class.fa-chevron-down]="expandedArticleId !== article.id" [class.fa-chevron-up]="expandedArticleId === article.id"></i>
+                                </div>
+                            </td>
+                            <td class="col-stock">
+                                <div class="stock-badge" [class]="getStockClass(article.stock)">
+                                    {{article.stock || 0}}
+                                </div>
+                            </td>
+                            <td class="col-total">
+                                <span class="total-positive">+{{getTotalEntrees(article.id)}}</span>
+                            </td>
+                            <td class="col-total">
+                                <span class="total-negative">-{{getTotalSorties(article.id)}}</span>
+                            </td>
+                            <td class="col-actions">
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-correct" title="Correction stock" (click)="toggleCorrection(article.id!)">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="btn-action btn-details" title="Voir détails" (click)="voirDetails(article.id!)">
+                                        <i class="fas fa-list-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="details-row" *ngIf="expandedArticleId === article.id">
+                            <td colspan="5">
+                                <div class="mvt-history">
+                                    <h6><i class="fas fa-history"></i> Historique des mouvements</h6>
+                                    <div class="history-list">
+<div class="history-item" *ngFor="let mvt of getMouvements(article.id)"
+                                            [class.entree]="mvt.typeMvt === 'ENTRER'"
+                                            [class.sortie]="mvt.typeMvt === 'SORTIE'">
+                                            <span class="mvt-date">{{mvt.dateMvt | date:'dd/MM/yyyy HH:mm'}}</span>
+                                            <span class="mvt-source-type">{{getSourceLabel(mvt.sourceMvt)}}</span>
+                                            <span class="mvt-qte" [class]="mvt.typeMvt === 'ENTRER' ? 'positive' : 'negative'">
+                                                {{mvt.typeMvt === 'ENTRER' ? '+' : '-'}}{{mvt.quantite}}
+                                            </span>
+                                        </div>
+                                        <div class="no-mvt" *ngIf="!getMouvements(article.id).length">
+                                            Aucun mouvement enregistré
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="correction-row" *ngIf="correctionArticleId === article.id">
+                            <td colspan="5">
+                                <div class="correction-form">
+                                    <div class="correction-header">
+                                        <i class="fas fa-tools"></i> Correction de stock
+                                    </div>
+                                    <div class="correction-content">
+                                        <div class="correction-fields">
+                                            <div class="form-group">
+                                                <label>Quantité</label>
+                                                <input type="number" class="form-control" [(ngModel)]="correctionQuantite" min="1" placeholder="Qté">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Type</label>
+                                                <select class="form-control" [(ngModel)]="correctionType">
+                                                    <option value="ENTRER">Entrée (+)</option>
+                                                    <option value="SORTIE">Sortie (-)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Nouveau stock</label>
+                                                <div class="new-stock-preview" [class]="getNewStockClass()">
+                                                    {{getNouveauStock(article.stock)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="correction-actions">
+                                        <button class="btn btn-outline-secondary" (click)="cancelCorrection()">
+                                            <i class="fas fa-times"></i> Annuler
+                                        </button>
+                                        <button class="btn btn-success" (click)="sauvegarderCorrection(article.id!)" [disabled]="!correctionQuantite || correctionQuantite <= 0">
+                                            <i class="fas fa-save"></i> Sauvegarder
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
         </div>
+
+        <div class="empty-state" *ngIf="listArticleFiltre.length === 0">
+            <div class="empty-icon">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <h5>Aucun article trouvé</h5>
+            <p>Modifiez vos critères de recherche.</p>
+            <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+                <i class="fas fa-redo"></i> Réinitialiser les filtres
+            </button>
+        </div>
+    </div>
+
+    <div class="pagination-wrapper" *ngIf="listArticleFiltre.length > 0">
+        <div class="pagination-info">
+            Affichage de {{((page - 1) * pageSize) + 1}} à {{page * pageSize > listArticleFiltre.length ? listArticleFiltre.length : page * pageSize}} sur {{listArticleFiltre.length}} articles
+        </div>
+        <pagination-controls 
+            previousLabel="Précédent"
+            nextLabel="Suivant"
+            (autoHide)="true"
+            (responsive)="true"
+            (pageChange)="page=$event">
+        </pagination-controls>
     </div>
 </div>

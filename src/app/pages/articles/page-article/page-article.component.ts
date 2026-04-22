@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { ArticleDto } from 'src/gs-api/src/models';
+import { CategoryDto } from 'src/gs-api/src/models/category-dto';
 
 @Component({
   selector: 'app-page-article',
@@ -15,10 +16,40 @@ export class PageArticleComponent implements OnInit {
   listArticleFiltre: Array<ArticleDto>=[];
   errorMsg: string="";
   page: number=1;
+  pageSize: number = 10;
 
   searchCode: string = '';
   searchLibelle: string = '';
   searchCategory: string = '';
+
+  getCategoryClass(category: CategoryDto | undefined): string {
+    if (!category || !category.designation) return 'cat-default';
+    const cat = category.designation.toLowerCase();
+    if (cat.includes('prim') || cat.includes('ele')) return 'cat-primary';
+    if (cat.includes('succ') || cat.includes('bas')) return 'cat-success';
+    if (cat.includes('warn') || cat.includes('haut')) return 'cat-warning';
+    return 'cat-default';
+  }
+
+  getStockClass(stock: number | undefined): string {
+    if (stock === undefined || stock === 0) return 'critical';
+    if (stock < 10) return 'warning';
+    return 'good';
+  }
+
+  voirArticle(article: ArticleDto): void {
+    this.router.navigate(["detail-article", article.id]);
+  }
+
+  modifierArticle(article: ArticleDto): void {
+    this.router.navigate(["nouvel-article", article.id]);
+  }
+
+  supprimerArticle(article: ArticleDto): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'article "${article.designation}" ?`)) {
+      // Implement delete
+    }
+  }
 
   constructor(
     private router: Router,
@@ -41,7 +72,9 @@ export class PageArticleComponent implements OnInit {
     this.listArticleFiltre = this.listArticle.filter(article => {
       const matchCode = !this.searchCode || (article.codeArticle?.toLowerCase().includes(this.searchCode.toLowerCase()));
       const matchLibelle = !this.searchLibelle || (article.designation?.toLowerCase().includes(this.searchLibelle.toLowerCase()));
-      const matchCategory = !this.searchCategory || (article.category?.id?.toString() === this.searchCategory);
+      const matchCategory = !this.searchCategory || 
+        (article.category?.designation?.toLowerCase().includes(this.searchCategory.toLowerCase())) ||
+        (article.category?.id?.toString() === this.searchCategory);
       return matchCode && matchLibelle && matchCategory;
     });
     this.page = 1;

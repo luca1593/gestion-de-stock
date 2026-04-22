@@ -27,20 +27,24 @@
                         id="designation" placeholder="Designation">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="prixfrht" class="form-control" [(ngModel)]="articleDto.prixFrs"
-                        (input)="calculerPrixTTC()" id="prixfrht" placeholder="Prix unitaire fournisseur HT">
+                    <input type="number" name="prixfrht" class="form-control" [(ngModel)]="articleDto.prixFrs"
+                        id="prixfrht" placeholder="Prix unitaire fournisseur HT">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="prixht" class="form-control" [(ngModel)]="articleDto.prixUnitaireht"
+                    <input type="number" name="prixht" class="form-control" [(ngModel)]="articleDto.prixUnitaireht"
                         (input)="calculerPrixTTC()" id="prixht" placeholder="Prix unitaire HT">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="tva" class="form-control" (input)="calculerPrixTTC()"
+                    <input type="number" name="tva" class="form-control" (input)="calculerPrixTTC()"
                         [(ngModel)]="articleDto.tauxTva" id="tva" placeholder="Taux TVA">
                 </div>
                 <div class="col-md-6 mb-2">
-                    <input type="text" name="prixttc" class="form-control" [(ngModel)]="articleDto.prixTtc" id="prixttc"
+                    <input type="number" name="prixttc" class="form-control" [(ngModel)]="articleDto.prixTtc" id="prixttc"
                         placeholder="Prix unitaire TTC">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="number" name="stock" class="form-control" [(ngModel)]="articleDto.stock" id="stock"
+                        placeholder="Stock">
                 </div>
                 <div class="col-md-6 mb-2">
                     <select class="form-control" name="categorie" id="categorie" [(ngModel)]="categoryDto.id">

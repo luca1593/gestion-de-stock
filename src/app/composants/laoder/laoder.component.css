@@ -18,7 +18,7 @@
 }
 
 .loading-container {
-    background: white;
+    background: var(--bg-card, white);
     padding: 30px 50px;
     border-radius: 10px;
     text-align: center;
@@ -35,7 +35,7 @@
     height: 50px;
     margin: 0 auto;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    border-top: 4px solid var(--primary-color, #4a90d9);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -51,7 +51,7 @@
 
 .loading-message {
     font-size: 16px;
-    color: #333;
+    color: var(--text-primary, #333);
     margin-bottom: 15px;
     font-weight: 500;
 }
@@ -59,27 +59,36 @@
 .progress-bar {
     width: 100%;
     height: 8px;
-    background: #e0e0e0;
+    background: var(--bg-body, #e0e0e0);
     border-radius: 4px;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #3498db, #2ecc71);
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
     border-radius: 4px;
     transition: width 0.3s ease;
 }
 
-/* Dark theme support */
-:host-context(.dark-theme) .loading-container {
-    background: #2d2d2d;
+/* Dark Theme */
+body.dark-theme .loading-overlay {
+    background: rgba(0, 0, 0, 0.85);
 }
 
-:host-context(.dark-theme) .loading-message {
-    color: #fff;
+body.dark-theme .loading-container {
+    background: var(--bg-card, #16213e);
 }
 
-:host-context(.dark-theme) .progress-bar {
-    background: #444;
+body.dark-theme .loading-message {
+    color: var(--text-primary, #e4e6eb);
+}
+
+body.dark-theme .progress-bar {
+    background: var(--bg-body, #2d2d2d);
+}
+
+body.dark-theme .spinner {
+    border-color: #3a3a5c;
+    border-top-color: var(--primary-color, #4a90d9);
 }

@@ -1,6 +1,37 @@
-import { DashboardService as ApiDashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto } from 'src/gs-api/src/services/dashboard.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+
+export interface DashboardStatsDto {
+  totalArticles?: number;
+  totalClients?: number;
+  totalFournisseurs?: number;
+  totalCommandesClient?: number;
+  totalCommandesFournisseur?: number;
+  totalVentes?: number;
+  chiffreAffaires?: number;
+  valeurStock?: number;
+  articlesStockBas?: number;
+  commandesEnAttente?: number;
+}
+
+export interface VenteStatsDto {
+  periode?: string;
+  nbVentes?: number;
+  totalVentes?: number;
+  chiffreAffaires?: number;
+}
+
+export interface ArticleStatsDto {
+  articleId?: number;
+  codeArticle?: string;
+  designation?: string;
+  stock?: number;
+  prixUnitaire?: number;
+  category?: string;
+  nbVentes?: number;
+}
 
 function formatDateForBackend(date: Date | string): string {
   if (!date) return '';
@@ -18,37 +49,54 @@ function formatDateForBackend(date: Date | string): string {
 })
 export class DashboardService {
 
-  constructor(private dashboardService: ApiDashboardService) { }
+  constructor(
+    private http: HttpClient
+  ) { }
+
+  private get rootUrl(): string {
+    let url = environment.apiUrl;
+    if (url && !url.endsWith('/')) {
+      url += '/';
+    }
+    return url;
+  }
 
   getStats(): Observable<DashboardStatsDto> {
-    return this.dashboardService.getStats();
+    return this.http.get<DashboardStatsDto>(`${this.rootUrl}v1/dashboard/stats`);
   }
 
   getVentesPeriode(startDate?: string, endDate?: string): Observable<Array<VenteStatsDto>> {
-    return this.dashboardService.getVentesPeriode(
-      startDate ? formatDateForBackend(startDate) : undefined,
-      endDate ? formatDateForBackend(endDate) : undefined
-    );
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('startDate', formatDateForBackend(startDate));
+    }
+    if (endDate) {
+      params = params.set('endDate', formatDateForBackend(endDate));
+    }
+    return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/ventes/periode`, { params });
   }
 
   getChiffreAffairesMois(): Observable<Array<VenteStatsDto>> {
-    return this.dashboardService.getChiffreAffairesMois();
+    return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/chiffre-affaires/mois`);
   }
 
   getTopArticles(limit?: number): Observable<Array<ArticleStatsDto>> {
-    return this.dashboardService.getTopArticles(limit);
+    let params = new HttpParams();
+    if (limit) {
+      params = params.set('limit', String(limit));
+    }
+    return this.http.get<Array<ArticleStatsDto>>(`${this.rootUrl}v1/dashboard/articles/top`, { params });
   }
 
-  // Endpoints non disponibles sur le backend (404)
-  // getInventoryStats(): Observable<InventoryStatsDto> {
-  //   return this.dashboardService.getInventoryStats();
-  // }
+  getCommandesClientStats(): Observable<any> {
+    return this.http.get<any>(`${this.rootUrl}v1/commande-client/all`);
+  }
 
-  // getRotationStock(startDate?: string, endDate?: string): Observable<Array<RotationStockDto>> {
-  //   return this.dashboardService.getRotationStock(startDate, endDate);
-  // }
+  getCommandesFournisseurStats(): Observable<any> {
+    return this.http.get<any>(`${this.rootUrl}v1/commande-fournisseur/all`);
+  }
 
-  // getAnalyseStock(): Observable<AnalyseStockDto> {
-  //   return this.dashboardService.getAnalyseStock();
-  // }
+  getMvtStockStats(): Observable<any> {
+    return this.http.get<any>(`${this.rootUrl}v1/mvtstk/all`);
+  }
 }

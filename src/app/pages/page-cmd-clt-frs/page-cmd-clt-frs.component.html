@@ -8,12 +8,12 @@
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-4">
-          <label class="form-label">Code commande</label>
-          <input type="text" class="form-control" placeholder="Rechercher par code" [(ngModel)]="searchCode" (input)="filtrer()">
+          <label class="form-label">Code / Libellé</label>
+          <input type="text" class="form-control" placeholder="Rechercher code ou libellé" [(ngModel)]="searchCode" (input)="filtrer()">
         </div>
         <div class="col-md-4">
           <label class="form-label">Client / Fournisseur</label>
-          <input type="text" class="form-control" placeholder="Rechercher par client" [(ngModel)]="searchClient" (input)="filtrer()">
+          <input type="text" class="form-control" placeholder="Rechercher par nom" [(ngModel)]="searchClient" (input)="filtrer()">
         </div>
         <div class="col-md-4">
           <label class="form-label">État</label>
@@ -36,23 +36,23 @@
           currentPage: page,
           totalItems: totalItems }"
           class="commande-item" [class.active]="shouldExpandCommande(cmd.id)">
-<div class="row align-items-center py-2" (click)="toggleCommande(cmd.id)">
-          <div class="col-2">
+<div class="row align-items-center g-2 py-2" (click)="toggleCommande(cmd.id)">
+          <div class="col-auto">
             <span class="badge bg-secondary">{{ cmd.code }}</span>
           </div>
-          <div class="col-4 text-truncate">
-            <strong class="text-white">{{ getClientName(cmd) }}</strong>
+          <div class="col text-truncate">
+            <strong>{{ getClientName(cmd) }}</strong>
           </div>
-          <div class="col-2 text-center">
-            <small class="text-muted">{{ cmd.dateCommande | date:'dd/MM/yy' }}</small>
+          <div class="col-auto text-muted small">
+            {{ cmd.dateCommande | date:'dd/MM/yyyy' }}
           </div>
-          <div class="col-2 text-center">
-            <span class="badge" [ngClass]="getBadgeClass(cmd.etatCommande)">{{ getEtatLabel(cmd.etatCommande) }}</span>
+          <div class="col-auto">
+            <span class="badge" [ngClass]="getBadgeClass(cmd.etatcommande)">{{ getEtatLabel(cmd.etatcommande) }}</span>
           </div>
-          <div class="col-1 text-end pe-1">
+          <div class="col-auto text-end">
             <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.0-0':'fr' }}€</strong>
           </div>
-          <div class="col-1 d-flex align-items-center justify-content-end gap-1 action-buttons">
+          <div class="col-auto action-buttons">
             <button class="btn btn-sm btn-outline-primary px-1" (click)="modifierCommande(cmd.id)" title="Modifier">
               <i class="fas fa-edit"></i>
             </button>
@@ -87,14 +87,11 @@
               <tbody>
                 <tr *ngFor="let ligne of mapLigneComandes.get(cmd.id)">
                   <td>
-                    <div class="article-cell">
-                      <span class="article-code">{{ ligne.article?.code }}</span>
-                      <span class="article-libelle">{{ ligne.article?.libelle }}</span>
-                    </div>
+                    <span>{{ ligne.article?.codeArticle }} - {{ ligne.article?.designation }}</span>
                   </td>
                   <td class="text-end">{{ ligne.quantite }}</td>
                   <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
-                  <td class="text-end fw-medium">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
+                  <td class="text-end">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
                 </tr>
               </tbody>
             </table>

@@ -1,113 +1,157 @@
-<div class="col p-2 mb-3">
-  <div class="row mx-3 my-0 py-1">
-    <div class="col-6 p-0">
-      <h3>Historique des ventes</h3>
+<div class="ventes-container">
+    <div class="ventes-header">
+        <div class="header-title">
+            <h3><i class="fas fa-shopping-bag"></i> Historique des Ventes</h3>
+        </div>
+        <div class="header-actions">
+            <app-bouton-action (clickEvent)="nouvelleVente()"></app-bouton-action>
+        </div>
     </div>
-    <div class="col-6 text-end">
-      <app-bouton-action (clickEvent)="nouvelleVente()"></app-bouton-action>
-    </div>
+
     <div class="alert alert-danger" *ngIf="errorMessage">
-      <span>{{ errorMessage }}</span>
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
     </div>
-  </div>
-  <div class="card-body">
-    <table class="table table-bordered border-dark table-sm table-hover align-middle">
-      <thead class="text-bg-secondary">
-        <tr class="fs-6 fw-bold">
-          <th class="px-2">Code</th>
-          <th class="text-center">Date</th>
-          <th class="text-center">Nombre Article</th>
-          <th class="text-center">Commentaire</th>
-          <th class="text-center">Net A Payer</th>
-          <th>...</th>
-        </tr>
-      </thead>
-      <tbody class="table-group-divider">
-        <tr class="fs-6" *ngFor="let vente of listVentes">
-          <td class="px-2">{{ vente.code }}</td>
-          <td class="text-center">{{ vente.dateVente | date : "dd/MM/YYYY" }}</td>
-          <td class="text-center">{{ mapNmbrArticle.get(vente.id) }}</td>
-          <td>{{ vente.commentaire }}</td>
-          <td class="text-center">{{ mapTotalTtc.get(vente.id) }}</td>
-          <td>
-            <button class="btn btn-link" (click)="setVenteSelectione(vente.id!)">
-              <i class="fas fa-list-alt"></i>&nbsp;Details
+
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-barcode"></i> Code
+                </label>
+                <input type="text" class="form-control" placeholder="Code vente..." [(ngModel)]="searchCode" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-calendar"></i> Date
+                </label>
+                <input type="date" class="form-control" [(ngModel)]="searchDate" (input)="filtrer()">
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ventes-table-card">
+        <div class="table-container" *ngIf="listVentesFiltre.length > 0">
+            <table class="ventes-table">
+                <thead>
+                    <tr>
+                        <th class="col-code">Code</th>
+                        <th class="col-date">Date</th>
+                        <th class="col-articles">Nb Articles</th>
+                        <th class="col-comment">Commentaire</th>
+                        <th class="col-total">Total TTC</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let vente of listVentesFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: pageCmd,
+                        totalItems: listVentesFiltre.length }"
+                        class="vente-row">
+                        <td class="col-code">
+                            <span class="vente-code">{{vente.code}}</span>
+                        </td>
+                        <td class="col-date">{{vente.dateVente | date:'dd/MM/yyyy'}}</td>
+                        <td class="col-articles">{{calculNombreArticleVente(vente.id!)}}</td>
+                        <td class="col-comment">
+                            <span class="commentaire">{{vente.commentaire || '-'}}</span>
+                        </td>
+                        <td class="col-total">
+                            <span class="total-value">{{calculTotalVente(vente.id!) | number:'1.2-2':'fr'}} €</span>
+                        </td>
+                        <td class="col-actions">
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" title="Voir détails" (click)="setVenteSelectione(vente.id!)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" *ngIf="listVentesFiltre.length === 0">
+            <div class="empty-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <h5>Aucune vente trouvée</h5>
+            <p>Modifiez vos critères de recherche ou ajoutez une nouvelle vente.</p>
+            <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+                <i class="fas fa-redo"></i> Réinitialiser les filtres
             </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="card-footer text-end">
-    <pagination-controls class="small-text" previousLabel="Precedent" nextLabel="Suivant" (autoHide)="(true)"
-      (responsive)="(true)" (pageChange)="pageCmd=$event" >
-    </pagination-controls>
-  </div>
+        </div>
+    </div>
+
+    <div class="pagination-wrapper" *ngIf="listVentesFiltre.length > 0">
+        <div class="pagination-info">
+            Affichage de {{((pageCmd - 1) * pageSize) + 1}} à {{pageCmd * pageSize > listVentesFiltre.length ? listVentesFiltre.length : pageCmd * pageSize}} sur {{listVentesFiltre.length}} ventes
+        </div>
+        <pagination-controls 
+            previousLabel="Précédent"
+            nextLabel="Suivant"
+            (autoHide)="true"
+            (responsive)="true"
+            (pageChange)="pageCmd=$event">
+        </pagination-controls>
+    </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade max-height-400" id="modalDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl">
-        <div class="modal-content modal-70">
-            <div class="modal-header mb-0 py-0">
-                <h1 class="modal-title text-primary fs-3" id="staticBackdropLabel">Detail des vente</h1>
-                <button type="button" class="btn-close text-bg-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal Detail Vente -->
+<div class="modal fade" id="modalDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-invoice"></i> Détail de la vente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="row px-3 m-0">
-                <table class="table-sm small-text">
-                    <tbody>
+            <div class="modal-body">
+                <div class="vente-summary">
+                    <div class="summary-item">
+                        <label>Code</label>
+                        <span class="vente-code">{{vente.code}}</span>
+                    </div>
+                    <div class="summary-item">
+                        <label>Date</label>
+                        <span>{{vente.dateVente | date:'dd/MM/yyyy'}}</span>
+                    </div>
+                </div>
+
+                <table class="table vente-lines-table">
+                    <thead>
                         <tr>
-                            <th>Code : </th>
-                            <td>{{ vente.code }}</td>
-                        </tr>
-                        <tr>
-                            <th>Date du commande : </th>
-                            <td>{{ vente.dateVente| date: "dd/MM/YYYY" }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <hr>
-            <div class="modal-body max-height-440 shadow">
-                <table class="table table-bordered border-dark table-sm table-hover align-middle">
-                    <thead class="text-bg-primary">
-                        <tr class="fs-6 fw-bold">
-                            <th>Code article</th>
-                            <th class="text-center">Designation</th>
-                            <th class="text-center">Catégorie</th>
-                            <th class="text-center">Quantité</th>
-                            <th class="text-center">Prix unitaire HT</th>
-                            <th class="text-center">Prix unitaire TTC</th>
-                            <th class="text-center">Total</th>
+                            <th>Article</th>
+                            <th class="text-center">Qté</th>
+                            <th class="text-end">PU TTC</th>
+                            <th class="text-end">Total</th>
                         </tr>
                     </thead>
-                    <tbody class="table-group-divider">
+                    <tbody>
                         <tr *ngFor="let ligne of mapListLigneVente.get(idVenteSelectione)">
-                            <td class="text-center">{{ligne.article?.codeArticle}}</td>
-                            <td class="text-center">{{ligne.article?.designation}}</td>
-                            <td class="text-center">{{ligne.article?.category?.designation}}</td>
+                            <td>
+                                <span class="article-full">{{ligne.article?.codeArticle}} - {{ligne.article?.designation}}</span>
+                            </td>
                             <td class="text-center">{{ligne.quantite}}</td>
-                            <td class="text-center">{{ligne.article?.prixUnitaireht}}</td>
-                            <td class="text-center">{{ligne.article?.prixTtc}}</td>
-                            <td class="text-center">
-                              {{
-                                ligne.article?.prixTtc && ligne.quantite ? mapTotalArticle.get(ligne.article?.id!) : 0
-                                }}
+                            <td class="text-end">{{ligne.article?.prixTtc | number:'1.2-2':'fr'}} €</td>
+                            <td class="text-end">
+                                {{ligne.article?.prixTtc && ligne.quantite ? ((ligne.article?.prixTtc || 0) * ligne.quantite) : 0 | number:'1.2-2':'fr'}} €
                             </td>
                         </tr>
                     </tbody>
                     <tfoot>
-                        <tr class="fs-6 fw-bold">
-                            <td colspan="7">
-                                <div class="row px-3">
-                                    <div class="col-6 text-start">
-                                        Nombre article :&nbsp;{{ mapNmbrArticle.get(idVenteSelectione) }}
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        Net a payer :&nbsp;{{ mapTotalTtc.get(idVenteSelectione) }}
-                                    </div>
-                                </div>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td class="text-end"><strong>Net à payer:</strong></td>
+                            <td class="text-end fw-bold text-primary">
+                                {{mapTotalTtc.get(idVenteSelectione) | number:'1.2-2':'fr'}} €
                             </td>
                         </tr>
                     </tfoot>

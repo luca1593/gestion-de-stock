@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto } from 'src/gs-api/src/services/dashboard.service';
+import { DashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto } from 'src/app/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-page-statistiques',
@@ -12,12 +12,21 @@ export class PageStatistiquesComponent implements OnInit {
   chiffreAffairesData: VenteStatsDto[] = [];
   topArticles: ArticleStatsDto[] = [];
   
+  commandesClientData: any[] = [];
+  commandesFournisseurData: any[] = [];
+  mvtStockData: any[] = [];
+  
   maxVente: number = 0;
+  maxCommandeClient: number = 0;
+  maxCommandeFournisseur: number = 0;
+  maxMvtStock: number = 0;
 
   rotationStock: number = 0;
   tauxService: number = 0;
   tauxRupture: number = 0;
   couvertureStock: number = 0;
+
+  selectedChartType: string = 'ventes';
 
   constructor(
     private dashboardService: DashboardService
@@ -27,6 +36,8 @@ export class PageStatistiquesComponent implements OnInit {
     this.loadStats();
     this.loadChiffreAffairesMois();
     this.loadTopArticles();
+    this.loadCommandesStats();
+    this.loadMvtStockStats();
   }
 
   loadStats(): void {
@@ -62,24 +73,20 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadChiffreAffairesMois(): void {
-    console.log('Loading chiffre affaires...');
     this.dashboardService.getChiffreAffairesMois().subscribe({
       next: (data) => {
-        console.log('CA mois API response:', JSON.stringify(data));
         if (data && Array.isArray(data)) {
           this.chiffreAffairesData = data;
           this.maxVente = data.length > 0 
             ? Math.max(...data.map(d => d.chiffreAffaires || d.totalVentes || 0), 1) 
             : 1;
         } else {
-          console.log('CA data empty or invalid:', data);
           this.chiffreAffairesData = [];
           this.maxVente = 1;
         }
       },
       error: (err) => {
         console.error('Erreur chargement CA', err);
-        console.log('CA error response:', err);
         this.chiffreAffairesData = [];
         this.maxVente = 1;
       }
@@ -97,10 +104,49 @@ export class PageStatistiquesComponent implements OnInit {
     });
   }
 
+  loadCommandesStats(): void {
+    this.dashboardService.getCommandesClientStats().subscribe({
+      next: (data) => {
+        if (Array.isArray(data)) {
+          this.commandesClientData = data;
+          this.maxCommandeClient = data.length;
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement commandes client', err);
+      }
+    });
+
+    this.dashboardService.getCommandesFournisseurStats().subscribe({
+      next: (data) => {
+        if (Array.isArray(data)) {
+          this.commandesFournisseurData = data;
+          this.maxCommandeFournisseur = data.length;
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement commandes fournisseur', err);
+      }
+    });
+  }
+
+  loadMvtStockStats(): void {
+    this.dashboardService.getMvtStockStats().subscribe({
+      next: (data) => {
+        if (Array.isArray(data)) {
+          this.mvtStockData = data;
+          this.maxMvtStock = data.length;
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement mvt stock', err);
+      }
+    });
+  }
+
   onPeriodeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
-    console.log('Période sélectionnée:', value);
-    this.loadChiffreAffairesMois();
+    this.selectedChartType = value;
   }
 
   formatNumber(value: number | undefined): string {
@@ -108,25 +154,67 @@ export class PageStatistiquesComponent implements OnInit {
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
-  getBarHeight(item: any): number {
-    const value = item?.chiffreAffaires || item?.totalVentes || 0;
-    if (!value || this.maxVente === 0) return 5;
-    return (value / this.maxVente) * 100;
+  getBarHeight(item: any, max: number): number {
+    const value = item?.chiffreAffaires || item?.nbVentes || item?.totalVentes || item?.quantite || item?.total || 0;
+    if (!value || max === 0) return 5;
+    const percentage = (value / max) * 100;
+    return Math.min(percentage, 100);
   }
 
   getMonthLabel(item: any): string {
-    const periode = item?.periode;
+    const periode = item?.periode || item?.dateCommande || item?.dateMvt || '';
     if (!periode) return '';
     
-    // Format from backend: "10/04/2026 11:34:05" or "2026-04"
-    const parts = periode.split(/[\/\s]/);
-    if (parts.length >= 2) {
-      const month = parseInt(parts[1]);
-      const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
+    if (typeof periode === 'string' && periode.includes('/')) {
+      const parts = periode.split(/[\/\s]/);
+      if (parts.length >= 2) {
+        const month = parseInt(parts[1]);
+        const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+        if (month >= 1 && month <= 12) {
+          return months[month - 1];
+        }
       }
     }
-    return periode.substring(0, 7);
+    return String(periode).substring(0, 7);
+  }
+
+  getCurrentChartData(): any[] {
+    switch (this.selectedChartType) {
+      case 'commandes-client': return this.commandesClientData;
+      case 'commandes-fournisseur': return this.commandesFournisseurData;
+      case 'mvt-stock': return this.mvtStockData;
+      default: return this.chiffreAffairesData;
+    }
+  }
+
+  getCurrentMaxValue(): number {
+    switch (this.selectedChartType) {
+      case 'commandes-client': return this.maxCommandeClient || 1;
+      case 'commandes-fournisseur': return this.maxCommandeFournisseur || 1;
+      case 'mvt-stock': return this.maxMvtStock || 1;
+      default: return this.maxVente || 1;
+    }
+  }
+
+  getChartTitle(): string {
+    switch (this.selectedChartType) {
+      case 'commandes-client': return 'Commandes Clients';
+      case 'commandes-fournisseur': return 'Commandes Fournisseurs';
+      case 'mvt-stock': return 'Mouvements de Stock';
+      default: return 'Chiffre d\'Affaires par Mois';
+    }
+  }
+
+  getChartUnit(): string {
+    switch (this.selectedChartType) {
+      case 'commandes-client':
+      case 'commandes-fournisseur':
+      case 'mvt-stock': return '';
+      default: return ' €';
+    }
+  }
+
+  getItemValue(item: any): number {
+    return item?.chiffreAffaires || item?.totalVentes || item?.nbVentes || item?.quantite || 0;
   }
 }

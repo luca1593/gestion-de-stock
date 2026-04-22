@@ -1,9 +1,9 @@
-<div class="col">
-    <div class="row mx-3 my-0 py-1">
-        <div class="col-md-6 p-0">
-            <h3>List des articles</h3>
+<div class="articles-container">
+    <div class="articles-header">
+        <div class="header-title">
+            <h3><i class="fas fa-cubes"></i> Liste des Articles</h3>
         </div>
-        <div class="col-md-6 text-end">
+        <div class="header-actions">
             <app-bouton-action 
                 (clickEvent)="nouveauArticle()" 
                 (clickExportEvent)="exporterArticles()"
@@ -11,49 +11,133 @@
                 [isExporterVisible]="true">
             </app-bouton-action>
         </div>
-        <div class="alert alert-danger" *ngIf="errorMsg">
-            <span>{{ errorMsg }}</span>
-        </div>
     </div>
-    
-    <div class="card mx-3 mb-3">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Rechercher par code" [(ngModel)]="searchCode" (input)="filtrer()">
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Rechercher par libellé" [(ngModel)]="searchLibelle" (input)="filtrer()">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Rechercher par catégorie" [(ngModel)]="searchCategory" (input)="filtrer()">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-outline-secondary w-100" (click)="reinitialiserFiltres()">
-                        <i class="fas fa-redo"></i> Réinitialiser
-                    </button>
-                </div>
+
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMsg }}</span>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-barcode"></i> Code
+                </label>
+                <input type="text" class="form-control" placeholder="Code article..." [(ngModel)]="searchCode" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-tag"></i> Désignation
+                </label>
+                <input type="text" class="form-control" placeholder="Libellé..." [(ngModel)]="searchLibelle" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-layer-group"></i> Catégorie
+                </label>
+                <input type="text" class="form-control" placeholder="Catégorie..." [(ngModel)]="searchCategory" (input)="filtrer()">
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
             </div>
         </div>
     </div>
-    
-    <div class="col m-3">
-        <app-detail-article *ngFor="let article of listArticleFiltre | paginate : {
-            itemsPerPage: 3,
-            currentPage: page,
-            totalItems: listArticleFiltre.length }"
-        (suppressioResult)="handleSuppression($event)"
-        [articleDTO]="article"></app-detail-article>
+
+    <div class="articles-table-card">
+        <div class="table-container" *ngIf="listArticleFiltre.length > 0">
+            <table class="articles-table">
+                <thead>
+                    <tr>
+                        <th class="col-check">
+                            <input type="checkbox" class="form-check-input">
+                        </th>
+                        <th class="col-code">Code</th>
+                        <th class="col-designation">Désignation</th>
+                        <th class="col-category">Catégorie</th>
+                        <th class="col-price">Prix HT</th>
+                        <th class="col-price">Prix TTC</th>
+                        <th class="col-stock">Stock</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let article of listArticleFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: listArticleFiltre.length }"
+                        class="article-row"
+                        [class.low-stock]="article.stock !== undefined && article.stock < 10"
+                        [class.out-of-stock]="article.stock !== undefined && article.stock === 0">
+                        <td class="col-check">
+                            <input type="checkbox" class="form-check-input">
+                        </td>
+                        <td class="col-code">
+                            <span class="article-code">{{article.codeArticle}}</span>
+                        </td>
+                        <td class="col-designation">
+                            <span class="article-name">{{article.designation}}</span>
+                        </td>
+                        <td class="col-category">
+                            <span class="category-badge" [class]="getCategoryClass(article.category)">
+                                {{article.category?.designation || 'Non classé'}}
+                            </span>
+                        </td>
+                        <td class="col-price">
+                            <span class="price-value">{{article.prixUnitaireht | number:'1.2-2':'fr'}}</span>
+                            <span class="price-currency">€</span>
+                        </td>
+                        <td class="col-price">
+                            <span class="price-value price-ttc">{{article.prixTtc | number:'1.2-2':'fr'}}</span>
+                            <span class="price-currency">€</span>
+                        </td>
+                        <td class="col-stock">
+                            <div class="stock-indicator" [class]="getStockClass(article.stock)">
+                                <span class="stock-value">{{article.stock || 0}}</span>
+                            </div>
+                        </td>
+                        <td class="col-actions">
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" title="Voir détails" (click)="voirArticle(article)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-action btn-edit" title="Modifier" (click)="modifierArticle(article)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-delete" title="Supprimer" (click)="supprimerArticle(article)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" *ngIf="listArticleFiltre.length === 0">
+            <div class="empty-icon">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <h5>Aucun article trouvé</h5>
+            <p>Modifiez vos critères de recherche ou ajoutez un nouvel article.</p>
+            <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+                <i class="fas fa-redo"></i> Réinitialiser les filtres
+            </button>
+        </div>
     </div>
-    <div class="row m-2">
-       <div class="col-md-12 text-center">
-        <pagination-controls class="small-text"
-            previousLabel="Precedent"
+
+    <div class="pagination-wrapper" *ngIf="listArticleFiltre.length > 0">
+        <div class="pagination-info">
+            Affichage de {{((page - 1) * pageSize) + 1}} à {{page * pageSize > listArticleFiltre.length ? listArticleFiltre.length : page * pageSize}} sur {{listArticleFiltre.length}} articles
+        </div>
+        <pagination-controls 
+            previousLabel="Précédent"
             nextLabel="Suivant"
             (autoHide)="true"
             (responsive)="true"
             (pageChange)="page=$event">
         </pagination-controls>
-       </div>
     </div>
 </div>

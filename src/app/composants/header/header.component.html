@@ -65,7 +65,7 @@
                                 <div class="notification-item" 
                                      *ngFor="let notification of notifications"
                                      [class.unread]="!notification.read"
-                                     (click)="markAsRead(notification)"
+                                     (click)="markAsRead(notification, $event)"
                                      [attr.role]="notification.link ? 'button' : null"
                                      [attr.tabindex]="notification.link ? '0' : null">
                                     <i [class]="getNotificationIcon(notification.type)" [class]="getNotificationClass(notification.type)"></i>

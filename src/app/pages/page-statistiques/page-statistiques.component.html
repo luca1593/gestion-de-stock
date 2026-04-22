@@ -134,30 +134,31 @@
         <div class="col-lg-8 mb-4">
             <div class="chart-card">
                 <div class="chart-header">
-                    <h5>Chiffre d'Affaires par Mois</h5>
-                    <div class="chart-actions">
-                        <select class="chart-select" (change)="onPeriodeChange($event)">
-                            <option value="6">6 derniers mois</option>
-                            <option value="12" selected>12 derniers mois</option>
+                    <h5 style="margin-bottom: 0;">{{getChartTitle()}}</h5>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="margin: 0; font-size: 0.8rem; color: var(--text-secondary);">Type:</label>
+                        <select (change)="onPeriodeChange($event)" style="padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color, #dee2e6); background: var(--bg-card, white); color: var(--text-primary, #495057); font-size: 0.85rem; min-width: 180px;">
+                            <option value="ventes">Chiffre d'Affaires</option>
+                            <option value="commandes-client">Commandes Clients</option>
+                            <option value="commandes-fournisseur">Commandes Fournisseurs</option>
+                            <option value="mvt-stock">Mouvements Stock</option>
                         </select>
                     </div>
                 </div>
                 <div class="chart-body">
-                    <div class="debug-info" style="font-size: 10px; color: #666; margin-bottom: 10px;">
-                        Données: {{chiffreAffairesData.length}} | Max: {{maxVente}}
-                    </div>
-                    <div class="chart-bars" *ngIf="chiffreAffairesData.length > 0">
-                        <div class="chart-bar" *ngFor="let item of chiffreAffairesData; let i = index">
+                    <div class="chart-bars" *ngIf="getCurrentChartData().length > 0">
+                        <div class="chart-bar" *ngFor="let item of getCurrentChartData(); let i = index">
                             <div class="bar-container">
-                                <div class="bar" [style.height.%]="getBarHeight(item)" [title]="getMonthLabel(item) + ': ' + formatNumber(item.chiffreAffaires || item.totalVentes) + ' €'"></div>
+                                <div class="bar" [style.height.%]="getBarHeight(item, getCurrentMaxValue())" 
+                                    [title]="getMonthLabel(item) + ': ' + formatNumber(getItemValue(item))"></div>
                             </div>
                             <span class="bar-label">{{getMonthLabel(item)}}</span>
                         </div>
                     </div>
-                    <div class="text-center text-muted py-5" *ngIf="chiffreAffairesData.length === 0">
+                    <div class="text-center text-muted py-5" *ngIf="getCurrentChartData().length === 0">
                         <i class="fas fa-chart-line fa-3x mb-3"></i>
-                        <p>Aucune donnée de chiffre d'affaires disponible</p>
-                        <small>Les données apparaîtront après les premières ventes</small>
+                        <p>Aucune donnée disponible</p>
+                        <small>Les données apparaîtront après les premières transactions</small>
                     </div>
                 </div>
             </div>
@@ -180,6 +181,10 @@
                         <div class="simple-stat-item">
                             <span class="simple-stat-label">En Attente</span>
                             <span class="simple-stat-value text-warning">{{stats?.commandesEnAttente || 0}}</span>
+                        </div>
+                        <div class="simple-stat-item">
+                            <span class="simple-stat-label">Stock Entrant (Mvt)</span>
+                            <span class="simple-stat-value text-success">{{mvtStockData.length || 0}}</span>
                         </div>
                     </div>
                 </div>

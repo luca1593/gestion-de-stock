@@ -1,53 +1,125 @@
-<div class="col">
-    <div class="row mx-3 my-0 py-1">
-        <div class="col-md-7 p-0">
-            <h3>List des utilisateurs</h3>
+<div class="utilisateurs-container">
+    <div class="utilisateurs-header">
+        <div class="header-title">
+            <h3><i class="fas fa-users"></i> Liste des Utilisateurs</h3>
         </div>
-        <div class="col-md-5 text-end">
-            <app-bouton-action
-            (clickEvent)="nouveauUtilisteur()"
-            ></app-bouton-action>
+        <div class="header-actions">
+            <app-bouton-action (clickEvent)="nouveauUtilisateur()"></app-bouton-action>
         </div>
     </div>
-    
-    <div class="card mx-3 mb-3">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Rechercher par nom" [(ngModel)]="searchNom" (input)="filtrer()">
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Rechercher par email" [(ngModel)]="searchEmail" (input)="filtrer()">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Rechercher par entreprise" [(ngModel)]="searchEntreprise" (input)="filtrer()">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-outline-secondary w-100" (click)="reinitialiserFiltres()">
-                        <i class="fas fa-redo"></i> Réinitialiser
-                    </button>
-                </div>
+
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMsg }}</span>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+        <span>Chargement des utilisateurs...</span>
+    </div>
+
+    <div class="filter-card" *ngIf="!loading">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-user"></i> Nom
+                </label>
+                <input type="text" class="form-control" placeholder="Nom ou prénom..." [(ngModel)]="searchNom" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-building"></i> Entreprise
+                </label>
+                <input type="text" class="form-control" placeholder="Entreprise..." [(ngModel)]="searchEntreprise" (input)="filtrer()">
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
             </div>
         </div>
     </div>
-    
-    <div class="col m-3" *ngFor="let user of listUtilisateurFiltre | paginate : {
-        itemsPerPage: 4,
-        currentPage: page,
-        totalItems: listUtilisateurFiltre.length }">
-        <app-detail-utilisateur
-        [utilisateur]="user"
-        ></app-detail-utilisateur>
+
+    <div class="utilisateurs-table-card" *ngIf="!loading">
+        <div class="table-container" *ngIf="listUtilisateurFiltre.length > 0">
+            <table class="utilisateurs-table">
+                <thead>
+                    <tr>
+                        <th class="col-nom">Nom</th>
+                        <th class="col-email">Email</th>
+                        <th class="col-entreprise">Entreprise</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of listUtilisateurFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: listUtilisateurFiltre.length }"
+                        class="user-row">
+                        <td class="col-nom">
+                            <div class="user-info">
+                                <img [src]="user.photo ? user.photo : 'favicon.ico'" class="user-photo">
+                                <div class="user-details">
+                                    <span class="user-nom">{{user.nom}} {{user.prenom}}</span>
+                                    <span class="user-role" *ngIf="user.roles && user.roles.length > 0">{{user.roles[0].roleNom}}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-email">
+                            <a href="mailto:{{user.email}}" class="email-link">{{user.email}}</a>
+                        </td>
+                        <td class="col-entreprise">
+                            <span class="entreprise-name">{{user.entreprise?.nom || '-'}}</span>
+                        </td>
+                        <td class="col-actions">
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" title="Voir détails" (click)="voirDetails(user)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-action btn-edit" title="Modifier" (click)="modifierUtilisateur(user)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-delete" title="Supprimer" (click)="supprimerUtilisateur(user)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" *ngIf="listUtilisateurFiltre.length === 0">
+            <div class="empty-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h5>Aucun utilisateur trouvé</h5>
+            <p>Modifiez vos critères de recherche.</p>
+            <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+                <i class="fas fa-redo"></i> Réinitialiser les filtres
+            </button>
+        </div>
     </div>
-    <div class="row m-2">
-        <div class="col-md-12 text-center">
-            <pagination-controls class="small-text"
-            previousLabel="Precedent"
+
+    <div class="pagination-wrapper" *ngIf="!loading && listUtilisateurFiltre.length > 0">
+        <div class="pagination-info">
+            Affichage de {{((page - 1) * pageSize) + 1}} à {{page * pageSize > listUtilisateurFiltre.length ? listUtilisateurFiltre.length : page * pageSize}} sur {{listUtilisateurFiltre.length}} utilisateurs
+        </div>
+        <pagination-controls 
+            previousLabel="Précédent"
             nextLabel="Suivant"
             (autoHide)="true"
             (responsive)="true"
-            (pageChange)="page=$event" 
-            ></pagination-controls>
-        </div>
+            (pageChange)="page=$event">
+        </pagination-controls>
     </div>
 </div>
