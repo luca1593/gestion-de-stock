@@ -3,7 +3,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color, #667eea) 0%, #764ba2 100%);
     padding: 30px 20px;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .register-header {
-    background: linear-gradient(135deg, #4a90d9 0%, #2a5298 100%);
+    background: linear-gradient(135deg, var(--primary-color, #4a90d9) 0%, var(--primary-dark, #2a5298) 100%);
     padding: 25px 30px;
     text-align: center;
     color: white;
@@ -55,7 +55,7 @@
 }
 
 .register-card .form-control:focus {
-    border-color: #4a90d9;
+    border-color: var(--primary-color, #4a90d9);
     box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
 }
 
@@ -64,7 +64,7 @@
     font-size: 1rem;
     font-weight: 500;
     border-radius: 8px;
-    background: linear-gradient(135deg, #4a90d9 0%, #2a5298 100%);
+    background: linear-gradient(135deg, var(--primary-color, #4a90d9) 0%, var(--primary-dark, #2a5298) 100%);
     border: none;
     transition: all 0.3s;
     color: white;
@@ -81,9 +81,9 @@
 }
 
 .alert-danger {
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    background: linear-gradient(135deg, var(--danger-color, #f8d7da) 0%, #f5c6cb 100%);
     border: none;
-    color: #721c24;
+    color: var(--danger-color, #721c24);
     border-radius: 8px;
     padding: 12px 15px;
 }
@@ -92,12 +92,32 @@
     margin-right: 8px;
 }
 
+/* Dark Theme */
+body.dark-theme .register-container {
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+}
+
 body.dark-theme .register-card {
-    background: var(--bg-card);
+    background: var(--bg-card, #16213e);
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
 body.dark-theme .register-card .form-label,
 body.dark-theme .register-card h5 {
-    color: var(--text-primary);
+    color: var(--text-primary, #e4e6eb);
+}
+
+body.dark-theme .register-card .form-control {
+    background: var(--input-bg, #1e1e3f);
+    border-color: var(--border-color, #3a3a5c);
+    color: var(--text-primary, #e4e6eb);
+}
+
+body.dark-theme .register-card .form-control:focus {
+    border-color: var(--primary-color, #4a90d9);
+}
+
+body.dark-theme .alert-danger {
+    background: linear-gradient(135deg, #3d1e1e 0%, #4a2d2d 100%);
+    color: #f8a5a5;
 }

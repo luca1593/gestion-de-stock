@@ -81,11 +81,29 @@ export class PageCmdCltFrsComponent implements OnInit {
   }
 
   filtrer(): void {
+    const searchLower = this.searchCode.toLowerCase().trim();
+    const searchClientLower = this.searchClient.toLowerCase().trim();
+    
     this.listCommandesFilter = this.listCommandes.filter(cmd => {
-      const matchCode = !this.searchCode || cmd.code?.toLowerCase().includes(this.searchCode.toLowerCase());
-      const matchClient = !this.searchClient || this.getClientName(cmd)?.toLowerCase().includes(this.searchClient.toLowerCase());
-      const matchEtat = !this.searchEtat || cmd.etatCommande === this.searchEtat;
-      return matchCode && matchClient && matchEtat;
+      const codeCmd = (cmd.code || '').toLowerCase();
+      const nomClient = (this.getClientName(cmd) || '').toLowerCase();
+      const etatCmd = cmd.etatCommande || cmd.etatcommande || '';
+      
+      const matchCode = !searchLower || codeCmd.includes(searchLower);
+      const matchClient = !searchClientLower || nomClient.includes(searchClientLower);
+      const matchEtat = !this.searchEtat || etatCmd === this.searchEtat;
+      
+      let matchLibelle = !searchLower;
+      if (!matchLibelle) {
+        const lignes = cmd.ligneCommandeClients || this.mapLigneComandes.get(cmd.id) || [];
+        matchLibelle = lignes.some((ligne: any) => {
+          const codeArticle = (ligne.article?.codeArticle || '').toLowerCase();
+          const designation = (ligne.article?.designation || '').toLowerCase();
+          return codeArticle.includes(searchLower) || designation.includes(searchLower);
+        });
+      }
+      
+      return (matchCode || matchLibelle) && matchClient && matchEtat;
     });
     this.totalItems = this.listCommandesFilter.length;
     this.page = 1;
@@ -159,7 +177,7 @@ export class PageCmdCltFrsComponent implements OnInit {
       case 'VALIDEE': return 'Validée';
       case 'LIVREE': return 'Livrée';
       case 'ANNULEE': return 'Annulée';
-      default: return etat;
+      default: return etat || '';
     }
   }
 
@@ -210,13 +228,13 @@ export class PageCmdCltFrsComponent implements OnInit {
     return this.mapNmbrArticle.get(idCommande);
   }
 
-  onEtatChange(event: {id: number, etat: string}): void {
+  onEtatChange(id: number, etat: string): void {
     if (this.origin === "client") {
-      this.commandeCltFrsService.updateEtatCommandeClient(event.id, event.etat)
+      this.commandeCltFrsService.updateEtatCommandeClient(id, etat)
       .subscribe({
         next: (updated) => {
-          const cmd = this.listCommandes.find(c => c.id === event.id);
-          if (cmd) cmd.etatcommande = event.etat;
+          const cmd = this.listCommandes.find(c => c.id === id);
+          if (cmd) cmd.etatcommande = etat;
           this.finAllCommandeCltFrs();
         },
         error: (err) => {
@@ -224,11 +242,11 @@ export class PageCmdCltFrsComponent implements OnInit {
         }
       });
     } else if (this.origin === "fournisseur") {
-      this.commandeCltFrsService.updateEtatCommandeFournisseur(event.id, event.etat)
+      this.commandeCltFrsService.updateEtatCommandeFournisseur(id, etat)
       .subscribe({
         next: (updated) => {
-          const cmd = this.listCommandes.find(c => c.id === event.id);
-          if (cmd) cmd.etatcommande = event.etat;
+          const cmd = this.listCommandes.find(c => c.id === id);
+          if (cmd) cmd.etatcommande = etat;
           this.finAllCommandeCltFrs();
         },
         error: (err) => {

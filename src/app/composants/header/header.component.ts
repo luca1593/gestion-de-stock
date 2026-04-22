@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -33,6 +33,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   showSessionWarning = false;
   sessionWarningMessage = '';
+
+  private notificationDropdown: HTMLElement | null = null;
 
   constructor(
     private userService: UserService,
@@ -79,6 +81,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    
+    if (this.showNotifications) {
+      const notificationWrapper = target.closest('.notification-wrapper');
+      const notificationDropdown = target.closest('.notification-dropdown');
+      
+      if (!notificationWrapper && !notificationDropdown) {
+        this.showNotifications = false;
+      }
+    }
   }
 
   dismissSessionWarning(): void {
@@ -157,9 +173,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.themeService.toggleTheme();
   }
 
-  markAsRead(notification: Notification): void {
+  markAsRead(notification: Notification, event: MouseEvent): void {
+    event.stopPropagation();
     this.notificationService.markAsRead(notification.id);
     if (notification.link) {
+      this.showNotifications = false;
       this.router.navigateByUrl(notification.link);
     }
   }

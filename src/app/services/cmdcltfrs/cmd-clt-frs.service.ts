@@ -84,22 +84,64 @@ export class CmdCltFrsService {
     return this.commandeFournisseurService.CommandeFournisseurApiFindByIdGET(id);
   }
 
-   updateCommandeClient(commandeClientDTO: CommandeClientDto, date: number): Observable<CommandeClientDto> {
-     commandeClientDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
-     return this.commandeClientService.CommandeClientApiSavePOST(commandeClientDTO, date);
-   }
+updateCommandeClient(commandeClientDTO: CommandeClientDto, date: number): Observable<CommandeClientDto> {
+      console.log('Données commandeClientDTO:', JSON.stringify(commandeClientDTO, null, 2));
+      commandeClientDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
+      console.log('identreprise:', commandeClientDTO.identreprise);
+      return this.commandeClientService.CommandeClientApiSavePOST(commandeClientDTO, date);
+    }
 
    updateCommandeFournisseur(commandeFournisseurDTO: CommandeFournisseurDto, date: number): Observable<CommandeFournisseurDto> {
      commandeFournisseurDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
      return this.commandeFournisseurService.save(commandeFournisseurDTO, date);
    }
 
-   supprimerCommandeClient(id: number): Observable<null> {
-     return this.commandeClientService.CommandeClientApiDeleteDELETE(String(id));
-   }
+supprimerCommandeClient(id: number): Observable<null> {
+      return this.commandeClientService.CommandeClientApiDeleteDELETE(String(id));
+    }
 
-   supprimerCommandeFournisseur(id: number): Observable<null> {
-     return this.commandeFournisseurService.CommandeFournisseurApiDELETE(id);
-   }
+    supprimerCommandeFournisseur(id: number): Observable<null> {
+      return this.commandeFournisseurService.CommandeFournisseurApiDELETE(id);
+    }
+
+    updateQuantiteCommandeClient(idCommande: number, idLigneCommande: number, quantite: number): Observable<CommandeClientDto> {
+      return this.commandeClientService.CommandeClientApiUpdateQuantiterCommandePATCH({
+        idCommande: idCommande,
+        idLigneCommande: idLigneCommande,
+        quantite: quantite
+      });
+    }
+
+    updateQuantiteCommandeFournisseur(idCommande: number, idLigneCommande: number, quantite: number): Observable<CommandeFournisseurDto> {
+      return this.commandeFournisseurService.CommandeFournisseurApiUpdateQuantiterCommandePATCH(
+        String(idCommande),
+        String(idLigneCommande),
+        String(quantite)
+      );
+    }
+
+    updateArticleCommandeClient(idCommande: number, idLigneCommande: number, newIdArticle: number): Observable<CommandeClientDto> {
+      return this.commandeClientService.CommandeClientApiUpdateArticlePATCH({
+        idCommande: idCommande,
+        idLigneCommande: idLigneCommande,
+        newIdArticle: newIdArticle
+      });
+    }
+
+    updateArticleCommandeFournisseur(idCommande: number, idLigneCommande: number, newIdArticle: number): Observable<CommandeFournisseurDto> {
+      return this.commandeFournisseurService.CommandeFournisseurApiUpdateArticlePATCH({
+        idCommande: idCommande,
+        idLigneCommande: idLigneCommande,
+        newIdArticle: newIdArticle
+      });
+    }
+
+    deleteLigneCommandeClient(idCommande: number, idLigneCommande: number): Observable<CommandeClientDto> {
+      return this.commandeClientService.CommandeClientApiDeleteArticleDELETE(String(idCommande), String(idLigneCommande));
+    }
+
+    deleteLigneCommandeFournisseur(idCommande: number, idLigneCommande: number): Observable<CommandeFournisseurDto> {
+      return this.commandeFournisseurService.CommandeFournisseurApiDeleteArticleDELETE(String(idCommande), String(idLigneCommande));
+    }
 
 }

@@ -34,10 +34,21 @@ export class NouvelArticleComponent implements OnInit {
       this.listCategorie=categories;
     });
     const idArticle=this.activatedRoute.snapshot.params['idArticle'];
+    console.log('idArticle from URL:', idArticle, typeof idArticle);
     if (idArticle) {
-      this.articleService.findArticleById(idArticle).subscribe(resp => {
-        this.articleDto=resp;
-        this.categoryDto=this.articleDto.category ? this.articleDto.category : {};
+      const articleId = +idArticle;
+      console.log('Fetching article with id:', articleId);
+      this.articleService.findArticleById(articleId).subscribe({
+        next: (resp) => {
+          console.log('Article loaded:', resp);
+          console.log('prixFrs:', resp.prixFrs);
+          this.articleDto=resp;
+          this.categoryDto=resp.category ? resp.category : {};
+          this.imgUrl = resp.photo ? resp.photo : 'favicon.ico';
+        },
+        error: (err) => {
+          console.error('Error loading article:', err);
+        }
       });
     }
   }

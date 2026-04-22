@@ -47,4 +47,19 @@ export class ArtcleService {
     return this.articleService.ArticleApiFindHistoriqueCommandeFournisseurGET(idArticle);
   }
 
+  findArticlesByCategory(categoryId: number): Observable<ArticleDto[]> {
+    return new Observable(observer => {
+      this.findAllArticle().subscribe({
+        next: (articles) => {
+          const filtered = articles.filter(a => a.category?.id === categoryId);
+          observer.next(filtered);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+        }
+      });
+    });
+  }
+
 }

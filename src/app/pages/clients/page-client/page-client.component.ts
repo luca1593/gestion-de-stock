@@ -15,6 +15,7 @@ export class PageClientComponent implements OnInit {
   listClientsFiltre: Array<ClientDto>=[];
   errorMsg: string='';
   page: number=1;
+  pageSize: number = 10;
 
   searchNom: string = '';
   searchEmail: string = '';
@@ -39,7 +40,7 @@ export class PageClientComponent implements OnInit {
 
   filtrer(): void {
     this.listClientsFiltre = this.listClients.filter(client => {
-      const matchNom = !this.searchNom || (client.nom?.toLowerCase().includes(this.searchNom.toLowerCase()));
+      const matchNom = !this.searchNom || (client.nom?.toLowerCase().includes(this.searchNom.toLowerCase())) || (client.prenom?.toLowerCase().includes(this.searchNom.toLowerCase()));
       const matchEmail = !this.searchEmail || (client.email?.toLowerCase().includes(this.searchEmail.toLowerCase()));
       const matchTelephone = !this.searchTelephone || (client.numTel?.includes(this.searchTelephone));
       return matchNom && matchEmail && matchTelephone;
@@ -61,6 +62,23 @@ export class PageClientComponent implements OnInit {
 
   exporterClients(): void {
     this.exportService.exportClients();
+  }
+
+  voirClient(client: ClientDto): void {
+    this.router.navigate(['detail-client', client.id]);
+  }
+
+  modifierClient(client: ClientDto): void {
+    this.router.navigate(['nouveau-client', client.id]);
+  }
+
+  supprimerClient(client: ClientDto): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer le client "${client.nom}" ?`)) {
+      this.cltfrsService.deleteClient(client.id!).subscribe({
+        next: () => this.finfAllClient(),
+        error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
+      });
+    }
   }
 
   handleSuppression($event: any): void {

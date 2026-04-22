@@ -1,21 +1,39 @@
 .autocomplete{
-    border: solid 1px #ced4da !important;
+    border: solid 1px var(--border-color, #ced4da) !important;
     margin-top: 5px !important;
     border-radius: 5px !important;
     padding: 5px !important;
-    box-shadow: #ced4A5;
     max-height: 350px !important;
     overflow-y: scroll !important;
+    background: var(--input-bg, white);
+    box-shadow: var(--shadow-md);
 }
 
 .autocomplete p{
-    border-bottom: solid 1px #ced4da !important;
+    border-bottom: solid 1px var(--border-color, #ced4da) !important;
     cursor: pointer;
+    color: var(--text-primary, #1f2937);
 }
+
 .autocomplete p:hover{
-   background-color: #ced4da;
+   background-color: var(--table-hover, #e2e8f0);
 }
 
 .autocomplete p:last-child{
     border-bottom: none !important;
+}
+
+/* Dark Theme */
+body.dark-theme .autocomplete{
+    background: var(--input-bg, #1e1e3f);
+    border-color: var(--border-color, #3a3a5c);
+}
+
+body.dark-theme .autocomplete p{
+    border-bottom-color: var(--border-color, #3a3a5c) !important;
+    color: var(--text-primary, #e4e6eb);
+}
+
+body.dark-theme .autocomplete p:hover{
+    background-color: var(--table-hover, #1f2440);
 }

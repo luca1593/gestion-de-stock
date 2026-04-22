@@ -12,8 +12,15 @@ import { ChangeDetectorRef } from '@angular/core';
 })
 export class PageHaveurComponent implements OnInit {
   listAvoirs: AvoirDto[] = [];
+  listAvoirsFiltre: AvoirDto[] = [];
   error = '';
   isLoading = false;
+  page: number = 1;
+  pageSize: number = 10;
+
+  searchCode: string = '';
+  searchClient: string = '';
+  searchEtat: string = '';
 
   constructor(
     private avoirService: HaveurService,
@@ -31,6 +38,7 @@ export class PageHaveurComponent implements OnInit {
     this.avoirService.getAll().subscribe({
       next: (data: any) => {
         this.listAvoirs = data || [];
+        this.listAvoirsFiltre = this.listAvoirs;
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -42,8 +50,48 @@ export class PageHaveurComponent implements OnInit {
     });
   }
 
+  filtrer(): void {
+    this.listAvoirsFiltre = this.listAvoirs.filter(avoir => {
+      const matchCode = !this.searchCode || (avoir.code?.toLowerCase().includes(this.searchCode.toLowerCase()));
+      const matchClient = !this.searchClient || (avoir.client?.nom?.toLowerCase().includes(this.searchClient.toLowerCase()));
+      const matchEtat = !this.searchEtat || (avoir.etat === this.searchEtat);
+      return matchCode && matchClient && matchEtat;
+    });
+    this.page = 1;
+  }
+
+  reinitialiserFiltres(): void {
+    this.searchCode = '';
+    this.searchClient = '';
+    this.searchEtat = '';
+    this.listAvoirsFiltre = this.listAvoirs;
+    this.page = 1;
+  }
+
+  getEtatClass(etat: string | undefined): string {
+    switch (etat) {
+      case 'EN_ATTENTE': return 'etat-warning';
+      case 'VALIDE': return 'etat-success';
+      case 'ANNULE': return 'etat-danger';
+      default: return 'etat-default';
+    }
+  }
+
+  getEtatLabel(etat: string | undefined): string {
+    switch (etat) {
+      case 'EN_ATTENTE': return 'En attente';
+      case 'VALIDE': return 'Validé';
+      case 'ANNULE': return 'Annulé';
+      default: return etat || 'N/A';
+    }
+  }
+
   nouvelAvoir(): void {
     this.router.navigate(['/nouvel-avoir']);
+  }
+
+  voirDetails(avoir: AvoirDto): void {
+    // Navigate to detail page or open modal
   }
 
   deleteAvoir(id: number): void {

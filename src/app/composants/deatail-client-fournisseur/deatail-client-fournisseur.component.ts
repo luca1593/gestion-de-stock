@@ -17,6 +17,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
   origin="";
   page=1;
   pageCmd=1;
+  pageSize: number = 10;
   clientFrournisseurDTO: any={};
   listCmd: Array<any>=[];
   mapLigneComandes=new Map();
@@ -120,6 +121,13 @@ export class DeatailClientFournisseurComponent implements OnInit {
     return this.mapNmbrArticle.get(idCommande);
   }
 
+  formatAdresse(): string {
+    const addr = this.clientFrournisseurDTO.adresse;
+    if (!addr) return '-';
+    const parts = [addr.adresse1, addr.adresse2, addr.ville, addr.codePostal, addr.pays].filter(p => p);
+    return parts.join(', ') || '-';
+  }
+
   setCommandeSelectione(idSelectione: number): void {
     this.idCommandeSelectione=idSelectione;
     this.cmdCltFrs=this.mapCommande.get(idSelectione);
@@ -127,6 +135,39 @@ export class DeatailClientFournisseurComponent implements OnInit {
 
   nouveauxCommande(): void {
     this.router.navigate(["nouvel-commande-" + this.origin, this.clientFrournisseurDTO.id]);
+  }
+
+  goBack(): void {
+    this.router.navigate([this.origin + 's']);
+  }
+
+  modifierClient(): void {
+    this.router.navigate(["nouveau-" + this.origin, this.clientFrournisseurDTO.id]);
+  }
+
+  supprimerClient(): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer ce ${this.origin} ?`)) {
+      if (this.origin === "client") {
+        this.cltFrsService.deleteClient(this.clientFrournisseurDTO.id).subscribe({
+          next: () => this.router.navigate(['clients']),
+          error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
+        });
+      } else {
+        this.cltFrsService.deleteFournisseur(this.clientFrournisseurDTO.id).subscribe({
+          next: () => this.router.navigate(['fournisseurs']),
+          error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
+        });
+      }
+    }
+  }
+
+  getStateClass(etat: string | undefined): string {
+    if (!etat) return '';
+    const etatLower = etat.toLowerCase();
+    if (etatLower.includes('livr') || etatLower.includes('valide')) return 'state-success';
+    if (etatLower.includes('encours') || etatLower.includes('en cours')) return 'state-warning';
+    if (etatLower.includes('annul') || etatLower.includes('rejet')) return 'state-danger';
+    return 'state-default';
   }
 
   exportCommande(): void {
@@ -233,9 +274,6 @@ export class DeatailClientFournisseurComponent implements OnInit {
 
 module DeatailClientFournisseurComponent {
 
-  /**
-   *  Parameters for doc PDF
-   */
   export interface DataToPdf {
     code: string,
     date: string,
@@ -247,4 +285,3 @@ module DeatailClientFournisseurComponent {
     total: number
   }
 }
-

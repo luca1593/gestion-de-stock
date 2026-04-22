@@ -1,73 +1,138 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <h4 class="mb-0"><i class="fas fa-receipt"></i> Gestion des avoirs</h4>
-          <button class="btn btn-light" (click)="nouvelAvoir()">
-            <i class="fas fa-plus"></i> Nouvel avoir
-          </button>
+<div class="avoirs-container">
+    <div class="avoirs-header">
+        <div class="header-title">
+            <h3><i class="fas fa-receipt"></i> Gestion des Avoirs</h3>
         </div>
-        <div class="card-body">
-          <div class="alert alert-danger" *ngIf="error">
-            <i class="fas fa-exclamation-circle"></i> {{error}}
-          </div>
-          
-          <div class="text-center py-4" *ngIf="isLoading">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Chargement...</span>
-            </div>
-          </div>
-          
-          <div class="table-responsive" *ngIf="!isLoading">
-            <table class="table table-hover">
-              <thead class="table-light">
-                <tr>
-                  <th>Code</th>
-                  <th>Date</th>
-                  <th>Client</th>
-                  <th>Montant</th>
-                  <th>Raison</th>
-                  <th>État</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngIf="listAvoirs.length === 0">
-                  <td colspan="7" class="text-center text-muted">
-                    Aucun avoir trouvé
-                  </td>
-                </tr>
-                <tr *ngFor="let avoir of listAvoirs">
-                  <td>{{avoir.code || 'N/A'}}</td>
-                  <td>{{avoir.dateAvoir | date:'dd/MM/yyyy'}}</td>
-                  <td>{{avoir.client?.nom || 'N/A'}}</td>
-                  <td>{{avoir.montant | number:'1.0-0'}} Ar</td>
-                  <td>{{avoir.raison || '-'}}</td>
-                  <td>
-                    <span class="badge" [ngClass]="{
-                      'bg-warning': avoir.etat === 'EN_ATTENTE',
-                      'bg-success': avoir.etat === 'VALIDE',
-                      'bg-danger': avoir.etat === 'ANNULE'
-                    }">{{avoir.etat || 'N/A'}}</span>
-                  </td>
-                  <td>
-                    <button class="btn btn-sm btn-info me-1" title="Voir détails">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-secondary me-1" title="Exporter PDF" (click)="exportPdf(avoir.id!)">
-                      <i class="fas fa-file-pdf"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" title="Supprimer" (click)="deleteAvoir(avoir.id!)">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" (click)="nouvelAvoir()">
+                <i class="fas fa-plus"></i> Nouvel avoir
+            </button>
         </div>
-      </div>
     </div>
-  </div>
+
+    <div class="alert alert-danger" *ngIf="error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+        <span>Chargement des avoirs...</span>
+    </div>
+
+    <div class="filter-card" *ngIf="!isLoading">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-barcode"></i> Code
+                </label>
+                <input type="text" class="form-control" placeholder="Code avoir..." [(ngModel)]="searchCode" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-user"></i> Client
+                </label>
+                <input type="text" class="form-control" placeholder="Nom du client..." [(ngModel)]="searchClient" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-check-circle"></i> État
+                </label>
+                <select class="form-control" [(ngModel)]="searchEtat" (change)="filtrer()">
+                    <option value="">Tous</option>
+                    <option value="EN_ATTENTE">En attente</option>
+                    <option value="VALIDE">Validé</option>
+                    <option value="ANNULE">Annulé</option>
+                </select>
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="avoirs-table-card" *ngIf="!isLoading">
+        <div class="table-container" *ngIf="listAvoirsFiltre.length > 0">
+            <table class="avoirs-table">
+                <thead>
+                    <tr>
+                        <th class="col-code">Code</th>
+                        <th class="col-date">Date</th>
+                        <th class="col-client">Client</th>
+                        <th class="col-montant">Montant</th>
+                        <th class="col-raison">Raison</th>
+                        <th class="col-etat">État</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let avoir of listAvoirsFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: listAvoirsFiltre.length }"
+                        class="avoir-row">
+                        <td class="col-code">
+                            <span class="avoir-code">{{avoir.code || 'N/A'}}</span>
+                        </td>
+                        <td class="col-date">{{avoir.dateAvoir | date:'dd/MM/yyyy'}}</td>
+                        <td class="col-client">
+                            <span class="client-name">{{avoir.client?.nom || 'N/A'}}</span>
+                        </td>
+                        <td class="col-montant">
+                            <span class="montant-value">{{avoir.montant | number:'1.0-0':'fr'}} Ar</span>
+                        </td>
+                        <td class="col-raison">
+                            <span class="raison-text">{{avoir.raison || '-'}}</span>
+                        </td>
+                        <td class="col-etat">
+                            <span class="etat-badge" [class]="getEtatClass(avoir.etat)">
+                                {{getEtatLabel(avoir.etat)}}
+                            </span>
+                        </td>
+                        <td class="col-actions">
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" title="Voir détails" (click)="voirDetails(avoir)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-action btn-pdf" title="Exporter PDF" (click)="exportPdf(avoir.id!)">
+                                    <i class="fas fa-file-pdf"></i>
+                                </button>
+                                <button class="btn-action btn-delete" title="Supprimer" (click)="deleteAvoir(avoir.id!)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" *ngIf="listAvoirsFiltre.length === 0">
+            <div class="empty-icon">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <h5>Aucun avoir trouvé</h5>
+            <p>Modifiez vos critères de recherche ou ajoutez un nouvel avoir.</p>
+            <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+                <i class="fas fa-redo"></i> Réinitialiser les filtres
+            </button>
+        </div>
+    </div>
+
+    <div class="pagination-wrapper" *ngIf="!isLoading && listAvoirsFiltre.length > 0">
+        <div class="pagination-info">
+            Affichage de {{((page - 1) * pageSize) + 1}} à {{page * pageSize > listAvoirsFiltre.length ? listAvoirsFiltre.length : page * pageSize}} sur {{listAvoirsFiltre.length}} avoirs
+        </div>
+        <pagination-controls 
+            previousLabel="Précédent"
+            nextLabel="Suivant"
+            (autoHide)="true"
+            (responsive)="true"
+            (pageChange)="page=$event">
+        </pagination-controls>
+    </div>
 </div>

@@ -1,6 +1,5 @@
-<div class="row mb-1 custom-border small-text  text-center">
-    <!-- Detail article -->
-    <div class="col-md-3 border-right ">
+<div class="row mb-1 custom-border small-text text-center align-items-center">
+    <div class="col-md-2 border-right ">
         <div class="col-md-12">
             <i class="fas fa-info-circle blue-color"></i>&nbsp;
             {{ligneCommande.article?.codeArticle}}
@@ -17,7 +16,14 @@
     <div class="col-md-2 border-right">
         {{ligneCommande.prixUnitaire}}
     </div>
-    <div class="col-md-2 border-right">
-        {{ligneCommande.prixUnitaire && ligneCommande.quantite ? +ligneCommande.prixUnitaire * +ligneCommande.quantite: 0}}
+    <div class="col-md-2 border-right d-flex align-items-center justify-content-center">
+        <span *ngIf="ligneCommande.prixUnitaire && ligneCommande.quantite">{{ +ligneCommande.prixUnitaire * +ligneCommande.quantite }}</span>
+    </div>
+    <div class="col-md-1 border-right text-center" *ngIf="!readonly">
+        <button type="button" class="btn btn-outline-danger btn-sm rounded-circle delete-btn" 
+            (click)="onDelete()"
+            title="Supprimer">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 </div>

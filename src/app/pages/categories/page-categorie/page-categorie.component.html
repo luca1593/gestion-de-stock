@@ -1,63 +1,200 @@
-<div class="col">
-    <div class="row mx-3 my-0 py-1">
-        <div class="col-md-7 p-0">
-            <h3>List des categories</h3>
+<div class="categories-container">
+    <div class="categories-header">
+        <div class="header-title">
+            <h3><i class="fas fa-layer-group"></i> Liste des Catégories</h3>
         </div>
-        <div class="col-md-5 text-end">
+        <div class="header-actions">
             <app-bouton-action (clickEvent)="nouveauCategorie()"></app-bouton-action>
         </div>
-        <div class="alert alert-danger" *ngIf="errorMsg">
-            <span>{{ errorMsg }}</span>
+    </div>
+
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMsg }}</span>
+    </div>
+
+    <div class="filter-card" *ngIf="categoryDtoListFiltre.length > 0">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-barcode"></i> Code
+                </label>
+                <input type="text" class="form-control" placeholder="Code catégorie..." [(ngModel)]="searchCode" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-tag"></i> Désignation
+                </label>
+                <input type="text" class="form-control" placeholder="Désignation..." [(ngModel)]="searchDesignation" (input)="filtrer()">
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
         </div>
     </div>
-    <div class="col m-3 p-3">
-        <div class="row custom-border mb-3 p-0" *ngFor="let category of categoryDtoList">
-            <div class="col-md-3 border-right d-flex align-items-center">
-                <span>{{category.code}}</span>
-            </div>
-            <div class="col-md-6 border-right d-flex align-items-center">
-                <span>{{category.designation}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center justify-content-center">
-                <app-ligne-action
-                    [itemId]="category.id"
-                    (modifier)="modiferCategorie($event)"
-                    (supprimer)="openDeleteModal($event)"
-                    (details)="detailsCategorie()">
-                </app-ligne-action>
-            </div>
+
+    <div class="categories-table-card" *ngIf="categoryDtoListFiltre.length > 0">
+        <div class="table-container">
+            <table class="categories-table">
+                <thead>
+                    <tr>
+                        <th class="col-code">Code</th>
+                        <th class="col-designation">Désignation</th>
+                        <th class="col-date">Date création</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let category of categoryDtoListFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: categoryDtoListFiltre.length }"
+                        class="category-row">
+                        <td class="col-code">
+                            <span class="category-code">{{category.code}}</span>
+                        </td>
+                        <td class="col-designation">
+                            <span class="category-name">{{category.designation}}</span>
+                        </td>
+                        <td class="col-date">
+                            <span class="date-value">{{category.creationDate ? (category.creationDate | date:'dd/MM/yyyy') : '-'}}</span>
+                        </td>
+                        <td class="col-actions">
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" title="Voir détails" (click)="voirDetails(category)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-action btn-edit" title="Modifier" (click)="modiferCategorie(category.id)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-delete" title="Supprimer" (click)="openDeleteModal(category.id!)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="row m-2" *ngIf="categoryDtoList.length > 5">
-        <div class="col-md-12 text-center">
-            <app-pagination></app-pagination>
+
+    <div class="empty-state" *ngIf="categoryDtoListFiltre.length === 0">
+        <div class="empty-icon">
+            <i class="fas fa-layer-group"></i>
         </div>
+        <h5>Aucune catégorie trouvée</h5>
+        <p>Modifiez vos critères de recherche ou ajoutez une nouvelle catégorie.</p>
+        <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+            <i class="fas fa-redo"></i> Réinitialiser les filtres
+        </button>
+    </div>
+
+    <div class="pagination-wrapper" *ngIf="categoryDtoListFiltre.length > 5">
+        <div class="pagination-info">
+            Affichage de {{((page - 1) * pageSize) + 1}} à {{page * pageSize > categoryDtoListFiltre.length ? categoryDtoListFiltre.length : page * pageSize}} sur {{categoryDtoListFiltre.length}} catégories
+        </div>
+        <pagination-controls 
+            previousLabel="Précédent"
+            nextLabel="Suivant"
+            (autoHide)="true"
+            (responsive)="true"
+            (pageChange)="page=$event">
+        </pagination-controls>
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="modalConfirmDeleteCat" data-bs-backdrop="static" 
+<!-- Modal Détails Catégorie -->
+<div class="modal fade" id="modalDetailCat" data-bs-backdrop="static" 
 data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmation</h1>
+                <h5 class="modal-title">
+                    <i class="fas fa-layer-group"></i> Détails de la catégorie
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" 
                 aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Etes vous sur de supprimer cette categories ?
+                <div class="category-header" *ngIf="categorieSelectionnee">
+                    <span class="category-label">Code :</span>
+                    <span class="category-code">{{categorieSelectionnee.code}}</span>
+                    <span class="category-divider">|</span>
+                    <span class="category-label">Désignation :</span>
+                    <span class="category-designation">{{categorieSelectionnee.designation}}</span>
+                </div>
+                
+                <div class="articles-list-section" *ngIf="articlesCategorie.length > 0">
+                    <h6 class="articles-title">
+                        <i class="fas fa-boxes"></i> Articles de cette catégorie ({{articlesCategorie.length}})
+                    </h6>
+                    <div class="articles-mini-list">
+                        <div class="article-mini-item" *ngFor="let article of articlesCategorie | paginate : {
+                            itemsPerPage: articlesPageSize,
+                            currentPage: articlesPage,
+                            totalItems: articlesCategorie.length }">
+                            <span class="article-mini-code">{{article.codeArticle}}</span>
+                            <span class="article-mini-name">{{article.designation}}</span>
+                            <span class="article-mini-date">{{article.creationDate | date:'dd/MM/yyyy'}}</span>
+                            <span class="article-mini-stock" [class.low]="article.stock !== undefined && article.stock < 10">
+                                Stock: {{article.stock || 0}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="articles-pagination" *ngIf="articlesCategorie.length > articlesPageSize">
+                        <pagination-controls 
+                            previousLabel="Préc"
+                            nextLabel="Suiv"
+                            (autoHide)="true"
+                            (pageChange)="articlesPage=$event">
+                        </pagination-controls>
+                    </div>
+                </div>
+                
+                <div class="no-articles" *ngIf="articlesCategorie.length === 0">
+                    <i class="fas fa-inbox"></i>
+                    <p>Aucun article dans cette catégorie</p>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" 
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Fermer
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="modiferCategorie(categorieSelectionnee?.id)">
+                    <i class="fas fa-edit"></i> Modifier
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmation Suppression -->
+<div class="modal fade" id="modalConfirmDeleteCat" data-bs-backdrop="static" 
+data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger"></i> Confirmation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cette catégorie ?</p>
+                <p class="text-muted small">Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" 
                 (click)="annulerSuppression()">
-                    <i class="fas fa-ban"></i>&nbsp;
-                    Annuler
+                    <i class="fas fa-times"></i> Annuler
                 </button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="supprimerCategorie()">
-                    <i class="fas fa-trash-alt"></i>&nbsp;
-                    Supprimer
+                    <i class="fas fa-trash-alt"></i> Supprimer
                 </button>
             </div>
         </div>

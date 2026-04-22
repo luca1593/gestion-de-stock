@@ -1,54 +1,121 @@
-<div class="col">
-    <div class="row mx-3 my-0 py-1">
-        <div class="col-md-6 p-0">
-            <h3>List des clients</h3>
+<div class="clients-container">
+    <div class="clients-header">
+        <div class="header-title">
+            <h3><i class="fas fa-users"></i> Liste des Clients</h3>
         </div>
-        <div class="col-md-6 text-end">
-            <app-bouton-action (clickEvent)="nouveauClient()" (clickExportEvent)="exporterClients()" [isImporterVisible]="false" [isExporterVisible]="true"></app-bouton-action>
-        </div>
-        <div class="alert alert-danger" *ngIf="errorMsg">
-            <span>{{ errorMsg }}</span>
+        <div class="header-actions">
+            <app-bouton-action 
+                (clickEvent)="nouveauClient()" 
+                (clickExportEvent)="exporterClients()"
+                [isImporterVisible]="false" 
+                [isExporterVisible]="true">
+            </app-bouton-action>
         </div>
     </div>
-    
-    <div class="card mx-3 mb-3">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Rechercher par nom" [(ngModel)]="searchNom" (input)="filtrer()">
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Rechercher par email" [(ngModel)]="searchEmail" (input)="filtrer()">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Rechercher par téléphone" [(ngModel)]="searchTelephone" (input)="filtrer()">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-outline-secondary w-100" (click)="reinitialiserFiltres()">
-                        <i class="fas fa-redo"></i> Réinitialiser
-                    </button>
-                </div>
+
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMsg }}</span>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-user"></i> Nom
+                </label>
+                <input type="text" class="form-control" placeholder="Nom du client..." [(ngModel)]="searchNom" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-phone"></i> Téléphone
+                </label>
+                <input type="text" class="form-control" placeholder="Téléphone..." [(ngModel)]="searchTelephone" (input)="filtrer()">
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
             </div>
         </div>
     </div>
-    
-    <div class="col m-3">
-        <app-detail-clt-frs *ngFor="let client of listClientsFiltre | paginate : {
-            itemsPerPage: 4,
-            currentPage: page,
-            totalItems: listClientsFiltre.length }"
-        [origin]="'client'" (suppressioResult)="handleSuppression($event)"
-        [clientFournisseur]="client"></app-detail-clt-frs>
-    </div>
-    <div class="row m-2">
-        <div class="col-md-12 text-center">
-            <pagination-controls class="small-text"
-                previousLabel="Precedent"
-                nextLabel="Suivant"
-                (autoHide)="true"
-                (responsive)="true"
-                (pageChange)="page=$event">
-            </pagination-controls>
+
+    <div class="clients-table-card">
+        <div class="table-container" *ngIf="listClientsFiltre.length > 0">
+            <table class="clients-table">
+                <thead>
+                    <tr>
+                        <th class="col-nom">Nom</th>
+                        <th class="col-email">Email</th>
+                        <th class="col-tel">Téléphone</th>
+                        <th class="col-adresse">Adresse</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let client of listClientsFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: listClientsFiltre.length }"
+                        class="client-row">
+                        <td class="col-nom">
+                            <span class="client-nom">{{client.nom}} {{client.prenom || ''}}</span>
+                        </td>
+                        <td class="col-email">
+                            <a href="mailto:{{client.email}}" class="email-link">{{client.email}}</a>
+                        </td>
+                        <td class="col-tel">
+                            <span class="tel-value">{{client.numTel || '-'}}</span>
+                        </td>
+                        <td class="col-adresse">
+                            <span class="adresse-value">{{client.adresse?.ville || ''}}, {{client.adresse?.pays || ''}}</span>
+                        </td>
+                        <td class="col-actions">
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" title="Voir détails" (click)="voirClient(client)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-action btn-edit" title="Modifier" (click)="modifierClient(client)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-delete" title="Supprimer" (click)="supprimerClient(client)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
+        <div class="empty-state" *ngIf="listClientsFiltre.length === 0">
+            <div class="empty-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h5>Aucun client trouvé</h5>
+            <p>Modifiez vos critères de recherche ou ajoutez un nouveau client.</p>
+            <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+                <i class="fas fa-redo"></i> Réinitialiser les filtres
+            </button>
+        </div>
+    </div>
+
+    <div class="pagination-wrapper" *ngIf="listClientsFiltre.length > 0">
+        <div class="pagination-info">
+            Affichage de {{((page - 1) * pageSize) + 1}} à {{page * pageSize > listClientsFiltre.length ? listClientsFiltre.length : page * pageSize}} sur {{listClientsFiltre.length}} clients
+        </div>
+        <pagination-controls 
+            previousLabel="Précédent"
+            nextLabel="Suivant"
+            (autoHide)="true"
+            (responsive)="true"
+            (pageChange)="page=$event">
+        </pagination-controls>
     </div>
 </div>
