@@ -65,13 +65,13 @@ export class DashboardService {
     return this.http.get<DashboardStatsDto>(`${this.rootUrl}v1/dashboard/stats`);
   }
 
-  getVentesPeriode(startDate?: string, endDate?: string): Observable<Array<VenteStatsDto>> {
+  getVentesPeriode(debut?: string, fin?: string): Observable<Array<VenteStatsDto>> {
     let params = new HttpParams();
-    if (startDate) {
-      params = params.set('startDate', formatDateForBackend(startDate));
+    if (debut) {
+      params = params.set('debut', formatDateForBackend(debut));
     }
-    if (endDate) {
-      params = params.set('endDate', formatDateForBackend(endDate));
+    if (fin) {
+      params = params.set('fin', formatDateForBackend(fin));
     }
     return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/ventes/periode`, { params });
   }

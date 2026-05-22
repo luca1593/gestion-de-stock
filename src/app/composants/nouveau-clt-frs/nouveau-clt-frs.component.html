@@ -1,4 +1,10 @@
 <div class="col p-3 mb-3">
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Chargement...</span>
+        </div>
+    </div>
     <div class="col-md-12 mb-3">
         <button (click)="fileInput.click()" style="background: transparent !important; border: none !important;">
             <img [src]='clientFournisseur.photo ? clientFournisseur.photo : imgUrl' alt="articleDto.designation" class="rounded-circle" width="150px" height="150px">

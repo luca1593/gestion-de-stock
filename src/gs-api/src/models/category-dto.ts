@@ -1,8 +1,10 @@
 /* tslint:disable */
+import { ArticleDto } from './article-dto';
+
 export interface CategoryDto {
+  id?: number;
   code?: string;
   designation?: string;
-  id?: number;
   identreprise?: number;
-  creationDate?: number;
+  articles?: Array<ArticleDto>;
 }

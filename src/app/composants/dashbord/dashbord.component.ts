@@ -33,6 +33,9 @@ export class DashbordComponent implements OnInit {
   listReceteArticle: ArticleDto[] = [];
   stats: DashboardStatsDto = {};
   alertesStock: AlertStockDto[] = [];
+  loading = true;
+  dataLoadCount = 0;
+  totalDataLoads = 7;
 
   constructor(
     private cmdFrsService: CmdCltFrsService,
@@ -57,13 +60,22 @@ export class DashbordComponent implements OnInit {
     this.endDate = this.formatDateForBackend(new Date());
   }
 
+  private checkLoadingComplete(): void {
+    this.dataLoadCount++;
+    if (this.dataLoadCount >= this.totalDataLoads) {
+      this.loading = false;
+    }
+  }
+
   loadAlertesStock(): void {
     this.alertStockService.getAlertesActives().subscribe({
       next: (data) => {
         this.alertesStock = data;
+        this.checkLoadingComplete();
       },
       error: () => {
         this.alertesStock = [];
+        this.checkLoadingComplete();
       }
     });
   }
@@ -73,9 +85,11 @@ export class DashbordComponent implements OnInit {
       next: (data) => {
         this.stats = data;
         this.updateCharts();
+        this.checkLoadingComplete();
       },
       error: (err) => {
         this.error = err.error?.message || 'Erreur lors du chargement des statistiques';
+        this.checkLoadingComplete();
       }
     });
   }
@@ -181,17 +195,33 @@ export class DashbordComponent implements OnInit {
   }
 
   getTotalNumberOfData() {
-    this.articleService.findAllArticle().subscribe(data => {
-      this.totalArticle = data.length;
+    this.articleService.findAllArticle().subscribe({
+      next: (data) => {
+        this.totalArticle = data.length;
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
     });
-    this.cltFrsService.findAllClient().subscribe(data => {
-      this.totalClient = data.length;
+    this.cltFrsService.findAllClient().subscribe({
+      next: (data) => {
+        this.totalClient = data.length;
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
     });
-    this.cltFrsService.findAllFournisseurs().subscribe(data => {
-      this.totalFournisseur = data.length;
+    this.cltFrsService.findAllFournisseurs().subscribe({
+      next: (data) => {
+        this.totalFournisseur = data.length;
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
     });
-    this.userService.findAll().subscribe(data => {
-      this.totalUtilisateur = data.length;
+    this.userService.findAll().subscribe({
+      next: (data) => {
+        this.totalUtilisateur = data.length;
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
     });
   }
 
@@ -260,12 +290,16 @@ export class DashbordComponent implements OnInit {
   }
 
   getRecentArticle() {
-    this.articleService.findAllArticle().subscribe(data => {
-      this.listReceteArticle = data.sort((a, b) => {
-        const dateA = a.creationDate ? new Date(a.creationDate).getTime() : 0;
-        const dateB = b.creationDate ? new Date(b.creationDate).getTime() : 0;
-        return dateB - dateA;
-      }).slice(0, 10);
+    this.articleService.findAllArticle().subscribe({
+      next: (data) => {
+        this.listReceteArticle = data.sort((a, b) => {
+          const dateA = a.creationDate ? new Date(a.creationDate).getTime() : 0;
+          const dateB = b.creationDate ? new Date(b.creationDate).getTime() : 0;
+          return dateB - dateA;
+        }).slice(0, 10);
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
     });
   }
 

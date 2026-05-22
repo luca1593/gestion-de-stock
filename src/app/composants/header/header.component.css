@@ -447,8 +447,26 @@ body.dark-theme .user-greeting {
     font-size: 1.25rem;
     margin-top: 0.15rem;
     flex-shrink: 0;
-    width: 24px;
-    text-align: center;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    margin-left: auto;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.notification-item:hover .notification-close {
+    opacity: 1;
+}
+
+.notification-close:hover {
+    color: var(--danger-color, #dc3545);
 }
 
 .notification-item .text-info {
@@ -542,6 +560,14 @@ body.dark-theme .user-greeting {
     color: white;
     font-weight: 600;
     font-size: 0.9rem;
+    overflow: hidden;
+}
+
+.user-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .user-details {

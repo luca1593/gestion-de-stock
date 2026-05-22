@@ -2,17 +2,18 @@
 import { AdresseDto } from './adresse-dto';
 import { EntrepriseDto } from './entreprise-dto';
 import { RoleDto } from './role-dto';
+
 export interface UtilisateurDto {
-  adresse?: AdresseDto;
+  id?: number;
+  nom?: string;
+  prenom?: string;
+  email?: string;
+  dateDeNaissance?: string;
   dateDeNasissance?: number | string;
   dateDeNasissanceTemp?: string;
-  email?: string;
-  entreprise?: EntrepriseDto;
-  id?: number;
   motDePasse?: string;
-  nom?: string;
-  pays?: string;
+  adresse?: AdresseDto;
   photo?: string;
-  prenom?: string;
+  entreprise?: EntrepriseDto;
   roles?: Array<RoleDto>;
 }

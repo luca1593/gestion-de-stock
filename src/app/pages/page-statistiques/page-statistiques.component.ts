@@ -27,12 +27,16 @@ export class PageStatistiquesComponent implements OnInit {
   couvertureStock: number = 0;
 
   selectedChartType: string = 'ventes';
+  loading = true;
+  apiCallsPending = 0;
 
   constructor(
     private dashboardService: DashboardService
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
+    this.apiCallsPending = 5;
     this.loadStats();
     this.loadChiffreAffairesMois();
     this.loadTopArticles();
@@ -40,14 +44,23 @@ export class PageStatistiquesComponent implements OnInit {
     this.loadMvtStockStats();
   }
 
+  private checkLoadingComplete(): void {
+    this.apiCallsPending--;
+    if (this.apiCallsPending <= 0) {
+      this.loading = false;
+    }
+  }
+
   loadStats(): void {
     this.dashboardService.getStats().subscribe({
       next: (data) => {
         this.stats = data;
         this.calculateKPIs();
+        this.checkLoadingComplete();
       },
       error: (err) => {
         console.error('Erreur chargement stats', err);
+        this.checkLoadingComplete();
       }
     });
   }
@@ -84,11 +97,13 @@ export class PageStatistiquesComponent implements OnInit {
           this.chiffreAffairesData = [];
           this.maxVente = 1;
         }
+        this.checkLoadingComplete();
       },
       error: (err) => {
         console.error('Erreur chargement CA', err);
         this.chiffreAffairesData = [];
         this.maxVente = 1;
+        this.checkLoadingComplete();
       }
     });
   }
@@ -97,9 +112,11 @@ export class PageStatistiquesComponent implements OnInit {
     this.dashboardService.getTopArticles(10).subscribe({
       next: (data) => {
         this.topArticles = data || [];
+        this.checkLoadingComplete();
       },
       error: (err) => {
         console.error('Erreur chargement top articles', err);
+        this.checkLoadingComplete();
       }
     });
   }
@@ -111,9 +128,11 @@ export class PageStatistiquesComponent implements OnInit {
           this.commandesClientData = data;
           this.maxCommandeClient = data.length;
         }
+        this.checkLoadingComplete();
       },
       error: (err) => {
         console.error('Erreur chargement commandes client', err);
+        this.checkLoadingComplete();
       }
     });
 
@@ -123,9 +142,11 @@ export class PageStatistiquesComponent implements OnInit {
           this.commandesFournisseurData = data;
           this.maxCommandeFournisseur = data.length;
         }
+        this.checkLoadingComplete();
       },
       error: (err) => {
         console.error('Erreur chargement commandes fournisseur', err);
+        this.checkLoadingComplete();
       }
     });
   }
@@ -137,9 +158,11 @@ export class PageStatistiquesComponent implements OnInit {
           this.mvtStockData = data;
           this.maxMvtStock = data.length;
         }
+        this.checkLoadingComplete();
       },
       error: (err) => {
         console.error('Erreur chargement mvt stock', err);
+        this.checkLoadingComplete();
       }
     });
   }

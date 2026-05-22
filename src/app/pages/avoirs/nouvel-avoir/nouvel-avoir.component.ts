@@ -39,7 +39,7 @@ export class NouvelAvoirComponent implements OnInit {
     const day = String(today.getDate()).padStart(2, '0');
     this.avoirDto.dateAvoir = `${year}-${month}-${day}`;
     
-    this.avoirDto.etat = 'EN_ATTENTE';
+    this.avoirDto.etat = 'BROUILLON';
     this.avoirDto.code = 'AV-' + Date.now();
   }
 

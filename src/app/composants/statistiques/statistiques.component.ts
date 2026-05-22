@@ -63,12 +63,12 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.dashboardService.getAnalyseStock().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.analyseStock = data; this.updateStockChart(); },
-      error: (err) => { console.error('Erreur analyse stock', err); }
+      error: () => { }
     });
 
     this.dashboardService.getInventoryStats().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.inventoryStats = data; },
-      error: (err) => { console.error('Erreur inventory', err); }
+      error: () => { }
     });
 
     this.dashboardService.getChiffreAffairesMois().pipe(takeUntil(this.destroy$)).subscribe({
@@ -93,7 +93,7 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.dashboardService.getRotationStock().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.rotationStock = data || []; },
-      error: (err) => { console.error('Erreur rotation', err); }
+      error: () => { }
     });
   }
 

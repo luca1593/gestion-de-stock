@@ -9,6 +9,7 @@ import { SearchService, SearchResult } from 'src/app/services/search/search.serv
 import { RouteContextService } from 'src/app/services/search/route-context.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { NotificationService, Notification } from 'src/app/services/notification/notification.service';
+import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 
 @Component({
   selector: 'app-header',
@@ -22,6 +23,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   currentTheme: Theme='light';
   private destroy$ = new Subject<void>();
   userLoading = true;
+  userPhotoUrl: string | null = null;
 
   notifications: Notification[] = [];
   unreadCount = 0;
@@ -43,6 +45,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private routeContextService: RouteContextService,
     private authService: AuthService,
     private notificationService: NotificationService,
+    private photoSyncService: PhotoSyncService,
     private router: Router
   ) { }
 
@@ -54,8 +57,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       if (user && user.id) {
         this.connectedUser = user;
         this.userLoading = false;
+        this.updateUserPhoto();
       }
     });
+
+    this.photoSyncService.photoUpdates$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.updateUserPhoto();
+    });
+
+    this.updateUserPhoto();
     this.currentTheme = this.themeService.getTheme();
     this.themeService.theme$.pipe(takeUntil(this.destroy$)).subscribe(theme => {
       this.currentTheme = theme;
@@ -76,6 +86,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
 
     this.notificationService.loadNotifications();
+  }
+
+  private updateUserPhoto(): void {
+    if (this.connectedUser && this.connectedUser.id) {
+      const syncedPhoto = this.photoSyncService.getPhotoUrl('utilisateur', this.connectedUser.id);
+      if (syncedPhoto) {
+        this.userPhotoUrl = syncedPhoto;
+      } else if (this.connectedUser.photo) {
+        this.userPhotoUrl = this.connectedUser.photo;
+      } else {
+        this.userPhotoUrl = null;
+      }
+    }
   }
 
   ngOnDestroy(): void {
@@ -180,6 +203,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.showNotifications = false;
       this.router.navigateByUrl(notification.link);
     }
+  }
+
+  dismissNotification(notification: Notification, event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationService.dismissNotification(notification.id);
   }
 
   markAllAsRead(): void {

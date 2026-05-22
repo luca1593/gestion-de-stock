@@ -14,7 +14,7 @@ for USER in "${USERS[@]}"; do
     # Login
     TOKEN=$(curl -s -X POST "$BACKEND_URL/v1/auth/authenticate" \
         -H "Content-Type: application/json" \
-        -d "{\"login\":\"$USER\",\"password\":\"$PASSWORD\"}" | jq -r '.accessToken')
+        -d "{\"login\":\"$USER\",\"password\":\"$PASSWORD\"}" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('accessToken',''))")
     
     if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
         echo "❌ Login échoué pour $USER"
@@ -33,7 +33,7 @@ for USER in "${USERS[@]}"; do
         BODY=$(echo "$RESPONSE" | head -n -1)
         
         if [ "$HTTP_CODE" == "200" ]; then
-            COUNT=$(echo "$BODY" | jq -r '. | length' 2>/dev/null)
+            COUNT=$(echo "$BODY" | python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d) if isinstance(d,list) else 0)" 2>/dev/null)
             echo "  ✅ $ENDPOINT: OK (count: $COUNT)"
         else
             echo "  ❌ $ENDPOINT: HTTP $HTTP_CODE"

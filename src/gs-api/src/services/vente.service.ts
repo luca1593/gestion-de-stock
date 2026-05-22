@@ -18,7 +18,7 @@ class VenteService extends __BaseService {
 
   static readonly VenteApiFindAllGETPath='v1/vente/all';
   static readonly VenteApiFindByCodeVenteGETPath='v1/vente/code/{codeVente}';
-  static readonly VenteApiDeleteDELETEPath='v1/vente/detele/{idVente}';
+  static readonly VenteApiDeleteDELETEPath='v1/vente/delete/{idVente}';
   static readonly VenteApiFindByIdGETPath='v1/vente/{idVente}';
 
   constructor(

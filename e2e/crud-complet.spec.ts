@@ -349,7 +349,9 @@ test('5.1 - Commandes clients - chargement', async ({ page }) => {
 
   test('7.2 - Ventes - historique', async ({ page }) => {
     const errors: string[] = [];
+    const requests: string[] = [];
     page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
+    page.on('request', req => { requests.push(req.url()); });
     
     await login(page);
     await page.click('.menu-item:has-text("Ventes")');
@@ -357,8 +359,11 @@ test('5.1 - Commandes clients - chargement', async ({ page }) => {
     await page.waitForURL(/liste-vente/);
     await waitForPageLoad(page);
     
-    console.log('✓ Historique ventes chargé, erreurs: ' + errors.length);
-    expect(errors.filter(e => !e.includes('404')).length).toBe(0);
+    const filtered = errors.filter(e => !e.includes('404'));
+    console.log('✓ Historique ventes chargé, erreurs: ' + errors.length + ', non-404: ' + filtered.length);
+    if (filtered.length > 0) console.log('  Erreurs:', filtered);
+    console.log('  Requests:', requests.filter(r => r.includes('vente')));
+    expect(filtered.length).toBe(0);
   });
 
   test('7.3 - Ventes - avoirs', async ({ page }) => {
@@ -450,8 +455,10 @@ test('5.1 - Commandes clients - chargement', async ({ page }) => {
     await page.waitForURL(/statistiques/);
     await waitForPageLoad(page);
     
-    console.log('✓ Statistiques chargé, erreurs: ' + errors.length);
-    expect(errors.filter(e => !e.includes('404')).length).toBe(0);
+    const filtered = errors.filter(e => !e.includes('404'));
+    console.log('✓ Statistiques chargé, erreurs: ' + errors.length + ', non-404: ' + filtered.length);
+    if (filtered.length > 0) console.log('  Erreurs:', filtered);
+    expect(filtered.length).toBe(0);
   });
 
   test('11.1 - Profil', async ({ page }) => {

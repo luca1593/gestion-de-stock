@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { ExportExcelService } from 'src/app/services/export.service';
+import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { ArticleDto } from 'src/gs-api/src/models';
 import { CategoryDto } from 'src/gs-api/src/models/category-dto';
 
@@ -17,6 +18,7 @@ export class PageArticleComponent implements OnInit {
   errorMsg: string="";
   page: number=1;
   pageSize: number = 10;
+  loading = true;
 
   searchCode: string = '';
   searchLibelle: string = '';
@@ -47,14 +49,21 @@ export class PageArticleComponent implements OnInit {
 
   supprimerArticle(article: ArticleDto): void {
     if (confirm(`Êtes-vous sûr de vouloir supprimer l'article "${article.designation}" ?`)) {
-      // Implement delete
+      this.articleService.delete(article.id!).subscribe({
+        next: () => {
+          this.photoSyncService.clearEntity('article', article.id!);
+          this.findAllArticle();
+        },
+        error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
+      });
     }
   }
 
   constructor(
     private router: Router,
     private articleService: ArtcleService,
-    private exportService: ExportExcelService
+    private exportService: ExportExcelService,
+    private photoSyncService: PhotoSyncService
   ) { }
 
   ngOnInit(): void {
@@ -62,9 +71,16 @@ export class PageArticleComponent implements OnInit {
   }
 
   findAllArticle(): void{
-    this.articleService.findAllArticle().subscribe(resp => {
-      this.listArticle = resp;
-      this.listArticleFiltre = resp;
+    this.loading = true;
+    this.articleService.findAllArticle().subscribe({
+      next: (resp) => {
+        this.listArticle = this.photoSyncService.mergePhotos('article', resp);
+        this.listArticleFiltre = this.listArticle;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 

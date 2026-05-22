@@ -1,0 +1,194 @@
+[
+  {
+    "user": "entreprise1@test.com",
+    "tests": [
+      {
+        "endpoint": "/v1/articles/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 2
+      },
+      {
+        "endpoint": "/v1/client/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 1
+      },
+      {
+        "endpoint": "/v1/fournisseur/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 1
+      },
+      {
+        "endpoint": "/v1/category/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 3
+      },
+      {
+        "endpoint": "/v1/vente/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 4
+      },
+      {
+        "endpoint": "/v1/entreprise/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 5
+      },
+      {
+        "endpoint": "/v1/utilisateur/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 3
+      }
+    ],
+    "timestamp": "2026-05-19T18:43:58.949Z"
+  },
+  {
+    "user": "entreprise1@test.com",
+    "tests": [
+      {
+        "endpoint": "/v1/articles/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 2
+      },
+      {
+        "endpoint": "/v1/client/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 1
+      },
+      {
+        "endpoint": "/v1/fournisseur/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 1
+      },
+      {
+        "endpoint": "/v1/category/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 3
+      },
+      {
+        "endpoint": "/v1/vente/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 4
+      },
+      {
+        "endpoint": "/v1/entreprise/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 5
+      },
+      {
+        "endpoint": "/v1/utilisateur/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 3
+      }
+    ],
+    "timestamp": "2026-05-19T18:44:00.402Z"
+  },
+  {
+    "user": "entreprise2@test.com",
+    "tests": [
+      {
+        "endpoint": "/v1/articles/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/client/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/fournisseur/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/category/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/vente/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/entreprise/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 5
+      },
+      {
+        "endpoint": "/v1/utilisateur/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 2
+      }
+    ],
+    "timestamp": "2026-05-19T18:44:01.823Z"
+  },
+  {
+    "user": "entreprise2@test.com",
+    "tests": [
+      {
+        "endpoint": "/v1/articles/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/client/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/fournisseur/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/category/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/vente/all",
+        "success": true,
+        "hasData": false,
+        "dataCount": 0
+      },
+      {
+        "endpoint": "/v1/entreprise/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 5
+      },
+      {
+        "endpoint": "/v1/utilisateur/all",
+        "success": true,
+        "hasData": true,
+        "dataCount": 2
+      }
+    ],
+    "timestamp": "2026-05-19T18:44:03.227Z"
+  }
+]

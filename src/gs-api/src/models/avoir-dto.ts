@@ -7,7 +7,7 @@ export interface AvoirDto {
   dateAvoir?: string;
   montant?: number;
   raison?: string;
-  etat?: 'EN_ATTENTE' | 'VALIDE' | 'ANNULE';
+  etat?: 'BROUILLON' | 'VALIDE' | 'ANNULE';
   client?: ClientDto;
   vente?: VenteDto;
   identreprise?: number;

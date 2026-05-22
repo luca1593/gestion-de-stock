@@ -1,4 +1,10 @@
 <div class="fournisseurs-container">
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Chargement des fournisseurs...</span>
+        </div>
+    </div>
     <div class="fournisseurs-header">
         <div class="header-title">
             <h3><i class="fas fa-truck"></i> Liste des Fournisseurs</h3>

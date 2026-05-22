@@ -12,13 +12,14 @@
       <div class="alert alert-danger small-text" *ngIf="errorMessage">
         <i class="fas fa-exclamation-circle"></i> {{errorMessage}}
       </div>
+      <form (ngSubmit)="login()">
       <div class="form-group mb-3">
         <label for="mail" class="form-label"><i class="fas fa-envelope"></i> Adresse e-mail</label>
-        <input type="email" class="form-control" id="mail" placeholder="nom@exemple.com" [(ngModel)]="authenticationRequest.login">
+        <input type="email" class="form-control" id="mail" placeholder="nom@exemple.com" [(ngModel)]="authenticationRequest.login" name="login">
       </div>
       <div class="form-group mb-3">
         <label for="motdepasse" class="form-label"><i class="fas fa-lock"></i> Mot de passe</label>
-        <input type="password" class="form-control" id="motdepasse" placeholder="••••••••" [(ngModel)]="authenticationRequest.password">
+        <input type="password" class="form-control" id="motdepasse" placeholder="••••••••" [(ngModel)]="authenticationRequest.password" name="password">
       </div>
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="form-check">
@@ -27,9 +28,10 @@
         </div>
         <a href="javascript:void(0)" class="btn btn-link small-text">Mot de passe oublié?</a>
       </div>
-      <button type="button" class="btn btn-primary w-100" (click)="login()">
+      <button type="submit" class="btn btn-primary w-100">
         <i class='fas fa-sign-in-alt'></i>&nbsp;Se connecter
       </button>
+      </form>
       <hr>
       <p class="text-center mb-0">
         Pas encore de compte? <a [routerLink]="['/inscription']" class="btn btn-link">S'inscrire</a>

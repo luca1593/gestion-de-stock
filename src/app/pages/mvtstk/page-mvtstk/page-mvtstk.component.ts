@@ -114,7 +114,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
     if (!idArticle) return 0;
     const mvts = this.maplistMvtStk.get(idArticle) || [];
     return mvts
-      .filter(m => m.typeMvt === 'SORTIE')
+      .filter(m => m.typeMvt === 'SORTIR')
       .reduce((sum, m) => sum + (m.quantite || 0), 0);
   }
 
@@ -127,7 +127,9 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
     switch (source) {
       case 'COMMANDE_CLIENT': return 'Cmd Client';
       case 'COMMANDE_FOURNISSEUR': return 'Cmd Fournisseur';
-      case 'VENTE': return 'Vente';
+      case 'INVENTAIRE': return 'Inventaire';
+      case 'TRANSFERT': return 'Transfert';
+      case 'MANUEL': return 'Manuel';
       default: return source || '-';
     }
   }

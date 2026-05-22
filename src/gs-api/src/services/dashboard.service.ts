@@ -116,10 +116,10 @@ class DashboardService extends __BaseService {
     );
   }
 
-  getVentesPeriodeResponse(startDate?: string, endDate?: string): __Observable<__StrictHttpResponse<Array<VenteStatsDto>>> {
+  getVentesPeriodeResponse(debut?: string, fin?: string): __Observable<__StrictHttpResponse<Array<VenteStatsDto>>> {
     let __params = this.newParams();
-    if (startDate) __params = __params.set('startDate', startDate);
-    if (endDate) __params = __params.set('endDate', endDate);
+    if (debut) __params = __params.set('debut', debut);
+    if (fin) __params = __params.set('fin', fin);
     let __headers = new HttpHeaders();
     let __body: any = null;
     let req = new HttpRequest<any>(
@@ -139,8 +139,8 @@ class DashboardService extends __BaseService {
     );
   }
 
-  getVentesPeriode(startDate?: string, endDate?: string): __Observable<Array<VenteStatsDto>> {
-    return this.getVentesPeriodeResponse(startDate, endDate).pipe(
+  getVentesPeriode(debut?: string, fin?: string): __Observable<Array<VenteStatsDto>> {
+    return this.getVentesPeriodeResponse(debut, fin).pipe(
       __map(_r => _r.body as Array<VenteStatsDto>)
     );
   }
