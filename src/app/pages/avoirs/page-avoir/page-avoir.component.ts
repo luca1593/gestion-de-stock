@@ -16,7 +16,7 @@ export class PageHaveurComponent implements OnInit {
   error = '';
   isLoading = false;
   page: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
 
   searchCode: string = '';
   searchClient: string = '';

@@ -76,6 +76,17 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-2">
+                                <label class="form-label small fw-bold" style="color: var(--text-primary);">Source</label>
+                                <select class="form-select" [(ngModel)]="correctionSource" name="correctionSource" style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
+                                    <option value="CORRECTION_STOCK">Correction stock</option>
+                                    <option value="INVENTAIRE">Inventaire</option>
+                                    <option value="AVOIR">Avoir</option>
+                                    <option value="LOT">Lot</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-2">
                                 <label class="form-label small fw-bold" style="color: var(--text-primary);">Nouveau stock</label>
                                 <div class="form-control-plaintext text-center py-2 rounded" 
                                     [ngClass]="{'bg-success text-white': correctionType === 'correctionpos', 'bg-danger text-white': correctionType === 'correctionneg' && correctionQuantite > 0 && (article.stock || 0) - correctionQuantite >= 0, 'bg-warning text-dark': correctionType === 'correctionneg' && correctionQuantite > 0 && (article.stock || 0) - correctionQuantite < 0}">

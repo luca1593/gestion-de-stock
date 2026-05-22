@@ -1,101 +1,103 @@
-<div class="row custom-border m-3">
-    <div class="col-1 my-3">
-        <img class="circle" [attr.src]="articleDto.photo ? articleDto.photo : 'favicon.ico'"
-        [alt]="articleDto.designation" width="100px" height="100px"/>
-    </div>
-    <div class="col-md-10 mx-4 mt-3">
-        <div class="row">
-            <div class="col-6">
-                <h3 [attr.class]="articleDto.stock ? '' : 'text-bg-danger p-2'" >Detail de l'article&nbsp;{{articleDto.designation}}</h3>
-            </div>
-            <div class="col-3">
-                <input type="date" name="startDate" class="form-control"
-                    (change)="changeStartDate($event)"
-                    id="startDate" placeholder="Date de debut">
-            </div>
-            <div class="col-3">
-                <input type="date" name="endDate" class="form-control"
-                    id="endDate" placeholder="Date de fin">
-            </div>
+<div class="container-fluid py-3">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <img class="rounded-circle border" [src]="articleDto.photo ? articleDto.photo : 'favicon.ico'"
+          [alt]="articleDto.designation" width="80" height="80" style="object-fit: cover;"/>
         </div>
-        <div class="row mx-1 small-text my-1 custom-border">
-            <div class="col-4 border-right py-2">
-                <div class="row">
-                    <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                    <div class="col-md-10"><strong>Code article :</strong>&nbsp;{{articleDto.codeArticle}}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10"><strong>PU HT :</strong>&nbsp;{{articleDto.prixUnitaireht}}&nbsp;Ariary</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10"><strong>PU TTC :</strong>&nbsp;{{articleDto.prixTtc}}&nbsp;Ariary</div>
-                </div>
-            </div>
-            <div class="col-4 border-right py-2">
-                <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
-                        <strong>En stock :</strong>&nbsp;{{articleDto.stock ? articleDto.stock : 0}}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
-                        <strong>Date de creation :</strong>&nbsp;{{creationDate}}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-1"><i class="fas fa-dollar-sign blue-color"></i></div>
-                    <div class="col-md-10">
-                        <strong>Modification :</strong>&nbsp;{{lastmodificationDate}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-4 py-2">
-                <div class="row">
-                    <div class="col-md-12"><strong>Code Categorie :</strong>&nbsp;
-                        {{articleDto.category?.code}}
-                    </div>
-                    <div class="col-md-12"><strong>Designation Categorie :</strong>&nbsp;
-                        {{articleDto.category?.designation}}
-                    </div>
-                </div>
-            </div>
+        <div class="col">
+          <h4 class="mb-1" [class.text-danger]="!articleDto.stock">
+            <i class="fas fa-cube me-2"></i> {{articleDto.designation}}
+          </h4>
+          <span class="badge bg-secondary">{{articleDto.codeArticle}}</span>
         </div>
-    </div>
-</div>
-<hr>
-<div class="row p-3">
-    <div class="col-4 text-center">
-        <div class="card shadow bg-body-tertiary rounded">
-            <div class="card-header text-bg-secondary p-3">
-                <h4>Vente</h4>
-            </div>
-            <div class="card-body">
-               <canvas id="vente" ></canvas>
-            </div>
+        <div class="col-auto text-end">
+          <div class="fs-4 fw-bold" [class.text-success]="articleDto.stock && articleDto.stock > 0" [class.text-danger]="!articleDto.stock || articleDto.stock === 0">
+            {{articleDto.stock || 0}} <small class="fs-6 fw-normal">en stock</small>
+          </div>
         </div>
-    </div>
-    <div class="col-4 text-center">
-        <div class="card shadow bg-body-tertiary rounded">
-            <div class="card-header text-bg-primary p-3">
-                <h4>Commande client</h4>
-            </div>
-            <div class="card-body">
-                <canvas id="cmdClt" ></canvas>
-            </div>
+      </div>
+      <hr>
+      <div class="row g-3 text-center">
+        <div class="col">
+          <small class="text-muted d-block">PU HT</small>
+          <span class="fw-bold">{{articleDto.prixUnitaireht || 0}} Ar</span>
         </div>
-    </div>
-    <div class="col-4 text-center">
-        <div class="card shadow bg-body-tertiary rounded">
-            <div class="card-header text-bg-success p-3">
-                <h4>Commende fournisseur</h4>
-            </div>
-            <div class="card-body">
-                <canvas id="cmdFrs" ></canvas>
-            </div>
+        <div class="col">
+          <small class="text-muted d-block">PU TTC</small>
+          <span class="fw-bold">{{articleDto.prixTtc || 0}} Ar</span>
         </div>
+        <div class="col">
+          <small class="text-muted d-block">Catégorie</small>
+          <span class="fw-bold">{{articleDto.category?.designation || '-'}}</span>
+        </div>
+        <div class="col">
+          <small class="text-muted d-block">Code catégorie</small>
+          <span class="fw-bold">{{articleDto.category?.code || '-'}}</span>
+        </div>
+        <div class="col">
+          <small class="text-muted d-block">Date de création</small>
+          <span><i class="far fa-calendar-alt me-1"></i>{{creationDate}}</span>
+        </div>
+        <div class="col">
+          <small class="text-muted d-block">Dernière modification</small>
+          <span><i class="far fa-calendar-alt me-1"></i>{{lastmodificationDate}}</span>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row align-items-end g-2">
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted">Date début</label>
+          <input type="date" class="form-control" (change)="onStartDateChange($event)" name="startDate">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted">Date fin</label>
+          <input type="date" class="form-control" (change)="onEndDateChange($event)" name="endDate">
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-outline-secondary" (click)="resetDateFilter()">
+            <i class="fas fa-undo me-1"></i> Réinitialiser
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-danger text-white py-2">
+          <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Ventes</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="vente"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-primary text-white py-2">
+          <h5 class="mb-0"><i class="fas fa-users me-2"></i>Commandes clients</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="cmdClt"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-success text-white py-2">
+          <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Commandes fournisseurs</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="cmdFrs"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

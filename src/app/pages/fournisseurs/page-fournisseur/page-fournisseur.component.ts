@@ -15,7 +15,7 @@ export class PageFournisseurComponent implements OnInit {
   listFournisseursFiltre: Array<FournisseurDto> = [];
   errorMsg: string = '';
   page: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   loading = true;
 
   searchNom: string = '';

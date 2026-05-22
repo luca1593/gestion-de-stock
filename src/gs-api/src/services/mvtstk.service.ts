@@ -13,7 +13,7 @@ import { MvtStkDto } from '../models/mvt-stk-dto';
 })
 class MvtstkService extends __BaseService {
   static readonly MvtStkApiCorrectionMvtStkPosPOSTPath='v1/mvtstk/correction-pos';
-  static readonly MvtStkApiDeleteDELETEPath='v1/mvtstk/detele/{typeMvt}';
+  static readonly MvtStkApiDeleteDELETEPath='v1/mvtstk/delete/{typeMvt}';
   static readonly MvtStkApiStockReelArticleGETPath='v1/mvtstk/stockreel/{idArticle}';
   static readonly MvtStkApiFindMvtStkByTypeGETPath='v1/mvtstk/type/{typeMvt}';
 

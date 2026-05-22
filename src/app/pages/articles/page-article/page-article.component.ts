@@ -17,7 +17,7 @@ export class PageArticleComponent implements OnInit {
   listArticleFiltre: Array<ArticleDto>=[];
   errorMsg: string="";
   page: number=1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   loading = true;
 
   searchCode: string = '';

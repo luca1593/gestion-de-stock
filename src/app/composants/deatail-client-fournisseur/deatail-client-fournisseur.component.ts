@@ -17,7 +17,7 @@ export class DeatailClientFournisseurComponent implements OnInit {
   origin="";
   page=1;
   pageCmd=1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   clientFrournisseurDTO: any={};
   listCmd: Array<any>=[];
   mapLigneComandes=new Map();

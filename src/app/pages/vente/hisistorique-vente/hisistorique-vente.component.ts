@@ -19,7 +19,7 @@ export class HisistoriqueVenteComponent implements OnInit {
   mapTotalArticle = new Map();
   errorMessage = "";
   pageCmd = 1;
-  pageSize = 10;
+  pageSize = 5;
   totalItems = 0;
   selectedVenteId: number | null = null;
   loading = true;
