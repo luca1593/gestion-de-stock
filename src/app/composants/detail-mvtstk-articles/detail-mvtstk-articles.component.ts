@@ -19,6 +19,7 @@ export class DetailMvtstkArticlesComponent implements OnInit {
   isCorrectionOpen = false;
   correctionQuantite: number = 0;
   correctionType: string = 'correctionpos';
+  correctionSource: string = 'CORRECTION_STOCK';
 
   constructor(
     private router: Router,
@@ -34,6 +35,10 @@ export class DetailMvtstkArticlesComponent implements OnInit {
 
   toggleCorrection() {
     this.isCorrectionOpen = !this.isCorrectionOpen;
+    if (!this.isCorrectionOpen) {
+      this.correctionQuantite = 0;
+      this.correctionSource = 'CORRECTION_STOCK';
+    }
   }
 
   sauvegarderCorrection() {
@@ -44,7 +49,7 @@ export class DetailMvtstkArticlesComponent implements OnInit {
       ? (this.article.stock || 0) + this.correctionQuantite 
       : (this.article.stock || 0) - this.correctionQuantite;
     
-    this.mvtStkService.corregerStock(this.article.id!, newStock).subscribe(() => {
+    this.mvtStkService.corregerStock(this.article.id!, newStock, this.correctionSource).subscribe(() => {
       this.article.stock = newStock;
       this.isCorrectionOpen = false;
       this.correctionQuantite = 0;

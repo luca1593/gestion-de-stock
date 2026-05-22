@@ -19,7 +19,7 @@ export class PageCategorieComponent implements OnInit {
   errorMsg: string = "";
   loading = true;
 page: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   categorieSelectionnee?: CategoryDto;
   articlesCategorie: ArticleDto[] = [];
   articlesPage: number = 1;

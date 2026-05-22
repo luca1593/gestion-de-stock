@@ -17,8 +17,12 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   articleDto: ArticleDto={};
   creationDate: string="";
   lastmodificationDate: string="";
-  startDate: Date=new Date();
-  endDate: Date=new Date();
+  startDate: string="";
+  endDate: string="";
+
+  rawCmdClt: Array<LigneCommandeClientDto>=[];
+  rawCmdFrs: Array<LigneCommandeFournisseurDto>=[];
+  rawVente: Array<LigneVenteDto>=[];
 
   constructor(
     @Inject(LOCALE_ID) private locale: string,
@@ -39,121 +43,114 @@ export class DetailArticlesMvtstkComponent implements OnInit {
 
   initialiseDate(article: ArticleDto){
     if (article.creationDate && article.lastModifiedDate) {
-      this.creationDate=formatDate(article.creationDate, "dd/MM/YYY", this.locale);
-      this.lastmodificationDate=formatDate(article.lastModifiedDate, "dd/MM/YYY", this.locale);
+      this.creationDate=formatDate(article.creationDate, "dd/MM/YYYY", this.locale);
+      this.lastmodificationDate=formatDate(article.lastModifiedDate, "dd/MM/YYYY", this.locale);
     }
   }
 
   findHistorique(idArticle: number) {
     this.articleService.findHistoriqueCommandeClient(idArticle)
       .subscribe(list => {
-        this.findAllCmdClt(list);
+        this.rawCmdClt = list;
+        this.filterAndRender();
       });
     this.articleService.findHistoriqueCommandeFournisseur(idArticle)
       .subscribe(list => {
-        this.findAllCmdFrs(list);
+        this.rawCmdFrs = list;
+        this.filterAndRender();
       });
     this.articleService.findHistoriqueVente(idArticle)
       .subscribe(list => {
-        this.findAllVente(list);
+        this.rawVente = list;
+        this.filterAndRender();
       });
   }
 
-  findAllCmdClt(list: Array<LigneCommandeClientDto>) {
-    let mapQnt=new Map();
-    let labels: Array<string>=[];
-    let listQntClt: Array<number>=[];
-    list.forEach(ligne => {
-      if (ligne.commandeClient && ligne.commandeClient.dateCommande && ligne.quantite) {
-        let label=formatDate(ligne.commandeClient.dateCommande, "dd/MM/YYY", this.locale);
-        if (mapQnt && mapQnt.get(label)) {
-          let qnt=mapQnt.get(label) + ligne.quantite;
-          mapQnt.set(label, qnt);
-        }else{
-          mapQnt.set(label, ligne.quantite);
-        }
-      }
-    });
-    mapQnt.forEach((map, key) => {
-      listQntClt.push(map);
-      labels.push(key);
-    });
-    this.createChart("cmdClt", listQntClt, labels);
+  filterAndRender() {
+    this.renderChart("vente", this.rawVente, 'vente');
+    this.renderChart("cmdClt", this.rawCmdClt, 'cmdClt');
+    this.renderChart("cmdFrs", this.rawCmdFrs, 'cmdFrs');
   }
 
-  findAllCmdFrs(list: Array<LigneCommandeFournisseurDto>) {
-    let mapQnt=new Map();
-    let labels: Array<string>=[];
-    let listQntFrs: Array<number>=[];
-    list.forEach(ligne => {
-      if (ligne.commandefournisseur && ligne.commandefournisseur.dateCommande && ligne.quantite) {
-        let label=formatDate(ligne.commandefournisseur.dateCommande, "dd/MM/YYY", this.locale);
-        if (mapQnt && mapQnt.get(label)) {
-          let qnt=mapQnt.get(label) + ligne.quantite;
-          mapQnt.set(label, qnt);
-        }else{
-          mapQnt.set(label, ligne.quantite);
-        }
+  filterByDate<T>(list: T[], dateGetter: (item: T) => string | undefined): T[] {
+    if (!this.startDate && !this.endDate) return list;
+    return list.filter(item => {
+      const d = dateGetter(item);
+      if (!d) return false;
+      const date = new Date(d).getTime();
+      if (this.startDate && date < new Date(this.startDate).getTime()) return false;
+      if (this.endDate) {
+        const end = new Date(this.endDate);
+        end.setHours(23, 59, 59, 999);
+        if (date > end.getTime()) return false;
       }
+      return true;
     });
-    mapQnt.forEach((map, key) => {
-      listQntFrs.push(map);
-      labels.push(key);
-    });
-    this.createChart("cmdFrs", listQntFrs, labels);
   }
 
-  findAllVente(list: Array<LigneVenteDto>) {
-    let mapQnt=new Map();
-    let labels: Array<string>=[];
-    let listQntVente: Array<number>=[];
-    list.forEach(ligne => {
-      if (ligne.vente && ligne.vente.dateVente && ligne.quantite) {
-        let label=formatDate(ligne.vente.dateVente, "dd/MM/YYY", this.locale);
-        if (mapQnt && mapQnt.get(label)) {
-          let qnt=mapQnt.get(label) + ligne.quantite;
-          mapQnt.set(label, qnt);
-        }else{
-          mapQnt.set(label, ligne.quantite);
-        }
-      }
-    });
-    mapQnt.forEach((map, key) => {
-      listQntVente.push(map);
-      labels.push(key);
-    });
-    this.createChart("vente", listQntVente, labels);
+  applyDateFilter() {
+    this.filterAndRender();
   }
 
-  createChart(id: string, data: Array<number>, label: Array<string>): void {
-    const cmdCltChart=new Chart(id, {
+  resetDateFilter() {
+    this.startDate = '';
+    this.endDate = '';
+    this.filterAndRender();
+  }
+
+  onStartDateChange(event: any) {
+    this.startDate = event.target?.value || '';
+    this.applyDateFilter();
+  }
+
+  onEndDateChange(event: any) {
+    this.endDate = event.target?.value || '';
+    this.applyDateFilter();
+  }
+
+  private renderChart(id: string, rawData: any[], type: string) {
+    const chart = Chart.getChart(id);
+    if (chart) chart.destroy();
+
+    const filtered = type === 'vente'
+      ? this.filterByDate(rawData, (i: LigneVenteDto) => i.vente?.dateVente)
+      : type === 'cmdClt'
+        ? this.filterByDate(rawData, (i: LigneCommandeClientDto) => i.commandeClient?.dateCommande)
+        : this.filterByDate(rawData, (i: LigneCommandeFournisseurDto) => i.commandefournisseur?.dateCommande);
+
+    const mapQnt = new Map<string, number>();
+    filtered.forEach((item: any) => {
+      const dateField = type === 'vente' ? item.vente?.dateVente
+        : type === 'cmdClt' ? item.commandeClient?.dateCommande
+        : item.commandefournisseur?.dateCommande;
+      if (dateField && item.quantite) {
+        const label = formatDate(dateField, "dd/MM/YYYY", this.locale);
+        mapQnt.set(label, (mapQnt.get(label) || 0) + item.quantite);
+      }
+    });
+
+    const labels = Array.from(mapQnt.keys());
+    const data = Array.from(mapQnt.values());
+
+    new Chart(id, {
       type: 'line',
       options: {
         responsive: true,
-        plugins:{
-          legend:{
-            display: false
-          },
+        plugins: {
+          legend: { display: false },
           tooltip: {
-            animation: {
-              easing: 'easeInOutCubic'
-            }
+            animation: { easing: 'easeInOutCubic' }
           }
         }
       },
       data: {
-        labels: label,
+        labels,
         datasets: [{
-          label: ' Quantités',
-          data: data,
+          label: 'Quantités',
+          data,
           borderWidth: 1
         }]
       }
     });
   }
-
-  changeStartDate($event: any){
-    console.log(formatDate($event.timeStamp, "dd/MM/YYY", this.locale));
-  }
-
 }

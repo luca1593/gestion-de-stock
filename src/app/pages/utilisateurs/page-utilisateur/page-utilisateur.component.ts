@@ -13,7 +13,7 @@ import { UtilisateurDto } from 'src/gs-api/src/models';
 export class PageUtilisateurComponent implements OnInit, OnDestroy {
 
   page: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   listUtilisateur: Array<UtilisateurDto> = [];
   listUtilisateurFiltre: Array<UtilisateurDto> = [];
   errorMsg = "";

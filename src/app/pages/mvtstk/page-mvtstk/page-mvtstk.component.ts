@@ -12,7 +12,7 @@ import { ArtcleService } from 'src/app/services/article/artcle.service';
 export class PageMvtstkComponent implements OnInit, OnDestroy {
 
   page: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   maplistMvtStk = new Map<number, MvtStkDto[]>();
   listArticle: Array<ArticleDto> = [];
   listArticleFiltre: Array<ArticleDto> = [];
@@ -26,6 +26,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   correctionArticleId: number | null = null;
   correctionQuantite: number | null = null;
   correctionType: string = 'ENTRER';
+  correctionSource: string = 'CORRECTION_STOCK';
 
   constructor(
     private mvtStkService: MvtStkService,
@@ -147,10 +148,12 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
       this.correctionArticleId = null;
       this.correctionQuantite = null;
       this.correctionType = 'ENTRER';
+      this.correctionSource = 'CORRECTION_STOCK';
     } else {
       this.correctionArticleId = idArticle;
       this.correctionQuantite = null;
       this.correctionType = 'ENTRER';
+      this.correctionSource = 'CORRECTION_STOCK';
     }
   }
 
@@ -158,6 +161,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
     this.correctionArticleId = null;
     this.correctionQuantite = null;
     this.correctionType = 'ENTRER';
+    this.correctionSource = 'CORRECTION_STOCK';
   }
 
   getNouveauStock(stockActuel: number | undefined): number {
@@ -180,7 +184,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
     const currentStock = 0;
     const nouveauStock = this.getNouveauStock(currentStock);
 
-    this.mvtStkService.corregerStock(idArticle, nouveauStock).subscribe({
+    this.mvtStkService.corregerStock(idArticle, nouveauStock, this.correctionSource).subscribe({
       next: () => {
         this.findAllArticle();
         this.cancelCorrection();

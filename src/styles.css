@@ -9,17 +9,17 @@
     --dark-color: #343a40;
     --light-color: #f8f9fa;
     --sidebar-width: 260px;
-    --header-height: 60px;
-    --border-radius: 12px;
+    --header-height: 55px;
+    --border-radius: 10px;
     --transition-speed: 0.3s;
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 3px 8px rgba(0,0,0,0.1);
+    --shadow-lg: 0 6px 18px rgba(0,0,0,0.15);
+    --spacing-xs: 0.2rem;
+    --spacing-sm: 0.35rem;
+    --spacing-md: 0.65rem;
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.35rem;
     
     /* Colors for light theme - AMÉLIORÉ */
     --bg-body: #f5f7fa;
@@ -66,7 +66,7 @@ body {
     background-color: var(--bg-body);
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
-    line-height: 1.6;
+    line-height: 1.4;
     color: var(--text-primary);
     transition: background-color 0.3s, color 0.3s;
 }
@@ -674,14 +674,8 @@ body.dark-theme .modal-footer {
     border: none;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
     overflow: hidden;
     background: white;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
 }
 
 .card-header {
@@ -705,7 +699,7 @@ body.dark-theme .modal-footer {
 /* Buttons */
 .btn {
     border-radius: 8px;
-    padding: 0.5rem 1.25rem;
+    padding: 0.4rem 1rem;
     font-weight: 500;
     transition: all var(--transition-speed);
     border: none;
@@ -797,7 +791,7 @@ body.dark-theme .modal-footer {
 .form-control, .form-select {
     border-radius: 8px;
     border: 1px solid #ced4da;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
     transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
     background: white;
 }
@@ -833,8 +827,8 @@ body.dark-theme .modal-footer {
 }
 
 .sidebar .brand {
-    padding: var(--spacing-md) var(--spacing-lg);
-    font-size: 1.5rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 1.25rem;
     font-weight: 700;
     text-align: center;
     border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -872,7 +866,7 @@ body.dark-theme .modal-footer {
 .header {
     background-color: white;
     box-shadow: var(--shadow-sm);
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
     position: sticky;
     top: 0;
     z-index: 999;
@@ -900,7 +894,7 @@ body.dark-theme .modal-footer {
 /* Stat Cards */
 .stat-card {
     border-radius: var(--border-radius);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     margin-bottom: var(--spacing-lg);
     color: white;
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
