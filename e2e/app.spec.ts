@@ -11,7 +11,7 @@ test.describe('Application Tests', () => {
     await expect(page.locator('app-page-login')).toBeVisible();
     await expect(page.locator('#mail')).toBeVisible();
     await expect(page.locator('#motdepasse')).toBeVisible();
-    await expect(page.locator('button[type="button"]')).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toBeVisible();
     
     expect(consoleErrors.length).toBe(0);
   });

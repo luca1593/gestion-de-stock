@@ -1,4 +1,10 @@
 <div class="articles-container">
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Chargement des articles...</span>
+        </div>
+    </div>
     <div class="articles-header">
         <div class="header-title">
             <h3><i class="fas fa-cubes"></i> Liste des Articles</h3>

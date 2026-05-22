@@ -4,11 +4,10 @@ import { LigneCommandeFournisseurDto } from './ligne-commande-fournisseur-dto';
 
 export interface CommandeFournisseurDto {
   id?: number;
-  fournisseur?: FournisseurDto;
   code?: string;
-  commandeLivree?: boolean;
+  dateCommande?: string;
   etatcommande?: 'EN_PREPARATION' | 'VALIDEE' | 'LIVREE';
-  dateCommande?: number;
+  fournisseur?: FournisseurDto;
   ligneCommandeFournisseurs?: Array<LigneCommandeFournisseurDto>;
   identreprise?: number;
 }

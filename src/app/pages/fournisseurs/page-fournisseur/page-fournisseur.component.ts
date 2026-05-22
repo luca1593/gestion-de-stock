@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
+import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { FournisseurDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -15,6 +16,7 @@ export class PageFournisseurComponent implements OnInit {
   errorMsg: string = '';
   page: number = 1;
   pageSize: number = 10;
+  loading = true;
 
   searchNom: string = '';
   searchEmail: string = '';
@@ -22,7 +24,8 @@ export class PageFournisseurComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private cltfrsService: CltfrsService
+    private cltfrsService: CltfrsService,
+    private photoSyncService: PhotoSyncService
   ) { }
 
   ngOnInit(): void {
@@ -30,9 +33,16 @@ export class PageFournisseurComponent implements OnInit {
   }
 
   findAllFournisseur(): void {
-    this.cltfrsService.findAllFournisseurs().subscribe(resp => {
-      this.listFournisseur = resp;
-      this.listFournisseursFiltre = resp;
+    this.loading = true;
+    this.cltfrsService.findAllFournisseurs().subscribe({
+      next: (resp) => {
+        this.listFournisseur = this.photoSyncService.mergePhotos('fournisseur', resp);
+        this.listFournisseursFiltre = this.listFournisseur;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 
@@ -71,7 +81,10 @@ export class PageFournisseurComponent implements OnInit {
   supprimerFournisseur(fournisseur: FournisseurDto): void {
     if (confirm(`Êtes-vous sûr de vouloir supprimer le fournisseur "${fournisseur.nom}" ?`)) {
       this.cltfrsService.deleteFournisseur(fournisseur.id!).subscribe({
-        next: () => this.findAllFournisseur(),
+        next: () => {
+          this.photoSyncService.clearEntity('fournisseur', fournisseur.id!);
+          this.findAllFournisseur();
+        },
         error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
       });
     }

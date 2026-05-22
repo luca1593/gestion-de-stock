@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { PhotoService } from 'src/gs-api/src/services/photo.service';
+import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { UtilisateurDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -30,20 +31,27 @@ export class PageProfilComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private notificationService: NotificationService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private photoSyncService: PhotoSyncService
   ) {}
 
   ngOnInit(): void {
     const user = this.userService.getConnectedUser();
     if (user) {
       let dateString = '';
-      if (user.dateDeNasissance) {
-        const date = new Date(user.dateDeNasissance as any);
+      if (user.dateDeNaissance) {
+        const date = new Date(user.dateDeNaissance);
         dateString = date.toISOString().split('T')[0];
       }
       const userData: any = { ...user };
       userData.dateDeNasissanceTemp = dateString;
       userData.adresse = user.adresse || { adresse1: '', ville: '', codePostal: '' };
+      
+      const syncedPhoto = this.photoSyncService.getPhotoUrl('utilisateur', user.id!);
+      if (syncedPhoto) {
+        userData.photo = syncedPhoto;
+      }
+      
       this.utilisateurDto = userData;
     }
   }
@@ -69,7 +77,6 @@ export class PageProfilComponent implements OnInit {
     this.errorMsg = '';
     const currentUser = this.userService.getConnectedUser();
     
-    const paysValue = this.utilisateurDto.adresse?.pays || (this.utilisateurDto as any).pays || '';
     const dateStr = (this.utilisateurDto as any).dateDeNasissanceTemp;
     const dateValue = dateStr ? new Date(dateStr).toISOString() : null;
     
@@ -77,8 +84,7 @@ export class PageProfilComponent implements OnInit {
       ...currentUser,
       nom: this.utilisateurDto.nom?.trim(),
       prenom: this.utilisateurDto.prenom?.trim(),
-      pays: paysValue,
-      dateDeNasissance: dateValue
+      dateDeNaissance: dateValue
     };
     
     if (this.utilisateurDto.adresse) {
@@ -87,7 +93,7 @@ export class PageProfilComponent implements OnInit {
         adresse1: this.utilisateurDto.adresse.adresse1?.trim(),
         ville: this.utilisateurDto.adresse.ville?.trim(),
         codePostal: this.utilisateurDto.adresse.codePostal?.trim(),
-        pays: paysValue
+        pays: this.utilisateurDto.adresse.pays?.trim() || ''
       };
     }
     
@@ -171,14 +177,10 @@ export class PageProfilComponent implements OnInit {
   }
 
   private savePhoto(userId: number): void {
-    console.log('savePhoto called, selectedPhotoFile:', this.selectedPhotoFile);
     if (!this.selectedPhotoFile) {
-      console.log('No photo file selected');
       return;
     }
 
-    console.log('Saving photo for user:', userId);
-    console.log('Photo params:', { file: this.selectedPhotoFile?.name, id: userId, title: 'profil', context: 'utilisateur' });
     this.photoService.SavePhoto({
       file: this.selectedPhotoFile,
       id: userId,
@@ -186,6 +188,11 @@ export class PageProfilComponent implements OnInit {
       context: 'utilisateur'
     }).subscribe({
       next: (response: any) => {
+        if (response && response.photo) {
+          this.photoSyncService.updatePhoto('utilisateur', userId, response.photo);
+          this.utilisateurDto.photo = response.photo;
+          this.userService.setConnectedUser(this.utilisateurDto);
+        }
         this.selectedPhotoFile = null;
       },
       error: () => {

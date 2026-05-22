@@ -1,4 +1,10 @@
 <div class="categories-container">
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Chargement des catégories...</span>
+        </div>
+    </div>
     <div class="categories-header">
         <div class="header-title">
             <h3><i class="fas fa-layer-group"></i> Liste des Catégories</h3>
@@ -42,7 +48,6 @@
                     <tr>
                         <th class="col-code">Code</th>
                         <th class="col-designation">Désignation</th>
-                        <th class="col-date">Date création</th>
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>
@@ -57,9 +62,6 @@
                         </td>
                         <td class="col-designation">
                             <span class="category-name">{{category.designation}}</span>
-                        </td>
-                        <td class="col-date">
-                            <span class="date-value">{{category.creationDate ? (category.creationDate | date:'dd/MM/yyyy') : '-'}}</span>
                         </td>
                         <td class="col-actions">
                             <div class="action-buttons">

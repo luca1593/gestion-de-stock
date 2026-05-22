@@ -13,50 +13,51 @@
           <i class="fas fa-exclamation-circle"></i> {{msg}}
         </div>
       </div>
+      <form (ngSubmit)="inscrire()">
       <div class="row">
         <div class="col-md-6">
           <div class="form-group mb-3">
             <label for="nom" class="form-label"><i class="fas fa-user"></i> Nom de l'entreprise</label>
-            <input type="text" class="form-control" id="nom" placeholder="Votre nom" [(ngModel)]="entrepriseDto.nom">
+            <input type="text" class="form-control" id="nom" placeholder="Votre nom" [(ngModel)]="entrepriseDto.nom" name="nom">
           </div>
           <div class="form-group mb-3">
             <label for="codefiscal" class="form-label"><i class="fas fa-file-invoice"></i> Code fiscal</label>
-            <input type="text" class="form-control" id="codefiscal" placeholder="Votre code fiscal" [(ngModel)]="entrepriseDto.codeFiscal">
+            <input type="text" class="form-control" id="codefiscal" placeholder="Votre code fiscal" [(ngModel)]="entrepriseDto.codeFiscal" name="codeFiscal">
           </div>
           <div class="form-group mb-3">
             <label for="mail" class="form-label"><i class="fas fa-envelope"></i> Adresse e-mail</label>
-            <input type="email" class="form-control" id="mail" placeholder="nom@exemple.com" [(ngModel)]="entrepriseDto.email">
+            <input type="email" class="form-control" id="mail" placeholder="nom@exemple.com" [(ngModel)]="entrepriseDto.email" name="email">
           </div>
           <div class="form-group mb-3">
             <label for="description" class="form-label"><i class="fas fa-info-circle"></i> Description</label>
-            <textarea class="form-control" id="description" rows="2" placeholder="Description de votre entreprise" [(ngModel)]="entrepriseDto.description"></textarea>
+            <textarea class="form-control" id="description" rows="2" placeholder="Description de votre entreprise" [(ngModel)]="entrepriseDto.description" name="description"></textarea>
           </div>
           <div class="form-group mb-3">
             <label for="numTel" class="form-label"><i class="fas fa-phone"></i> Téléphone</label>
-            <input type="text" class="form-control" id="numTel" placeholder="+261 32 12 345 67" [(ngModel)]="entrepriseDto.numTel">
+            <input type="text" class="form-control" id="numTel" placeholder="+261 32 12 345 67" [(ngModel)]="entrepriseDto.numTel" name="numTel">
           </div>
         </div>
         <div class="col-md-6">
           <h5 class="mb-3"><i class="fas fa-map-marker-alt"></i> Adresse</h5>
           <div class="form-group mb-3">
             <label for="adresse1" class="form-label">Adresse principale</label>
-            <input type="text" class="form-control" id="adresse1" placeholder="Adresse principale" [(ngModel)]="adresseDto.adresse1">
+            <input type="text" class="form-control" id="adresse1" placeholder="Adresse principale" [(ngModel)]="adresseDto.adresse1" name="adresse1">
           </div>
           <div class="form-group mb-3">
             <label for="adresse2" class="form-label">Adresse secondaire</label>
-            <input type="text" class="form-control" id="adresse2" placeholder="Adresse secondaire (optionnel)" [(ngModel)]="adresseDto.adresse2">
+            <input type="text" class="form-control" id="adresse2" placeholder="Adresse secondaire (optionnel)" [(ngModel)]="adresseDto.adresse2" name="adresse2">
           </div>
           <div class="form-group mb-3">
             <label for="ville" class="form-label"><i class="fas fa-city"></i> Ville</label>
-            <input type="text" class="form-control" id="ville" placeholder="Ville" [(ngModel)]="adresseDto.ville">
+            <input type="text" class="form-control" id="ville" placeholder="Ville" [(ngModel)]="adresseDto.ville" name="ville">
           </div>
           <div class="form-group mb-3">
             <label for="codepostal" class="form-label"><i class="fas fa-mail-bulk"></i> Code postal</label>
-            <input type="text" class="form-control" id="codepostal" placeholder="Code postal" [(ngModel)]="adresseDto.codePostal">
+            <input type="text" class="form-control" id="codepostal" placeholder="Code postal" [(ngModel)]="adresseDto.codePostal" name="codePostal">
           </div>
           <div class="form-group mb-3">
             <label for="pays" class="form-label"><i class="fas fa-globe"></i> Pays</label>
-            <input type="text" class="form-control" id="pays" placeholder="Pays" [(ngModel)]="adresseDto.pays">
+            <input type="text" class="form-control" id="pays" placeholder="Pays" [(ngModel)]="adresseDto.pays" name="pays">
           </div>
         </div>
       </div>
@@ -65,10 +66,11 @@
         <a [routerLink]="['/login']" class="btn btn-link">
           <i class="fas fa-arrow-left"></i> Retour à la connexion
         </a>
-        <button type="button" class="btn btn-primary" (click)="inscrire()">
+        <button type="submit" class="btn btn-primary">
           <i class='fas fa-user-plus'></i>&nbsp;S'inscrire
         </button>
       </div>
+      </form>
     </div>
   </div>
 </div>

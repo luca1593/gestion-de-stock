@@ -74,6 +74,9 @@
                                         <p class="notification-message">{{notification.message}}</p>
                                         <span class="notification-time">{{getTimeAgo(notification.timestamp)}}</span>
                                     </div>
+                                    <button class="notification-close" (click)="dismissNotification(notification, $event)" title="Fermer">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                             <ng-template #noNotifications>
@@ -89,7 +92,8 @@
                 <div class="user-menu">
                     <div class="user-info" [routerLink]="['/profil']">
                         <div class="user-avatar">
-                            <span *ngIf="!userLoading">{{getUserInitials()}}</span>
+                            <img *ngIf="userPhotoUrl" [src]="userPhotoUrl" alt="Photo utilisateur" class="user-avatar-img">
+                            <span *ngIf="!userPhotoUrl && !userLoading">{{getUserInitials()}}</span>
                             <span *ngIf="userLoading" class="avatar-loading">
                                 <i class="fas fa-spinner fa-spin"></i>
                             </span>

@@ -96,7 +96,7 @@
                                     <div class="history-list">
 <div class="history-item" *ngFor="let mvt of getMouvements(article.id)"
                                             [class.entree]="mvt.typeMvt === 'ENTRER'"
-                                            [class.sortie]="mvt.typeMvt === 'SORTIE'">
+                                            [class.sortie]="mvt.typeMvt === 'SORTIR'">
                                             <span class="mvt-date">{{mvt.dateMvt | date:'dd/MM/yyyy HH:mm'}}</span>
                                             <span class="mvt-source-type">{{getSourceLabel(mvt.sourceMvt)}}</span>
                                             <span class="mvt-qte" [class]="mvt.typeMvt === 'ENTRER' ? 'positive' : 'negative'">
@@ -126,7 +126,7 @@
                                                 <label>Type</label>
                                                 <select class="form-control" [(ngModel)]="correctionType">
                                                     <option value="ENTRER">Entrée (+)</option>
-                                                    <option value="SORTIE">Sortie (-)</option>
+                                                    <option value="SORTIR">Sortie (-)</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">

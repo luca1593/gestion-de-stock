@@ -49,7 +49,7 @@ export class PageVenteComponent implements OnInit {
     this.dateVente=(date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '/' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '/' + date.getFullYear();
     this.codeVente='VNT' + jour + heure;
     this.venteDto.code=this.codeVente;
-    this.venteDto.dateVente=date.getTime();
+    this.venteDto.dateVente=date.toISOString();
   }
 
   saveClick(): void {
@@ -74,7 +74,7 @@ export class PageVenteComponent implements OnInit {
 
     const venteData: VenteDto = {
       code: this.codeVente,
-      dateVente: new Date().getTime(),
+      dateVente: new Date().toISOString(),
       identreprise: entrepriseId,
       ligneVentes: ligneVentes
     };

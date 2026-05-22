@@ -52,7 +52,7 @@ test.describe('API Mock Tests', () => {
     
     await page.locator('#mail').fill('test@test.com');
     await page.locator('#motdepasse').fill('password');
-    await page.locator('button[type="button"]').click();
+    await page.locator('button[type="submit"]').click();
     
     await page.waitForTimeout(1000);
   });

@@ -17,6 +17,7 @@ export class PageCategorieComponent implements OnInit {
   categoryDtoListFiltre: Array<CategoryDto> = [];
   categoryIdToDelete?: number = -1;
   errorMsg: string = "";
+  loading = true;
 page: number = 1;
   pageSize: number = 10;
   categorieSelectionnee?: CategoryDto;
@@ -40,9 +41,16 @@ page: number = 1;
   }
 
   findAllCategory(): void {
-    this.categoryService.findAll().subscribe(resp => {
-      this.categoryDtoList = resp;
-      this.categoryDtoListFiltre = resp;
+    this.loading = true;
+    this.categoryService.findAll().subscribe({
+      next: (resp) => {
+        this.categoryDtoList = resp;
+        this.categoryDtoListFiltre = resp;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 

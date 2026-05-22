@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { ExportExcelService } from 'src/app/services/export.service';
+import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { ClientDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -16,6 +17,7 @@ export class PageClientComponent implements OnInit {
   errorMsg: string='';
   page: number=1;
   pageSize: number = 10;
+  loading = true;
 
   searchNom: string = '';
   searchEmail: string = '';
@@ -24,7 +26,8 @@ export class PageClientComponent implements OnInit {
   constructor(
     private router: Router,
     private cltfrsService: CltfrsService,
-    private exportService: ExportExcelService
+    private exportService: ExportExcelService,
+    private photoSyncService: PhotoSyncService
     ) { }
 
   ngOnInit(): void {
@@ -32,10 +35,18 @@ export class PageClientComponent implements OnInit {
   }
 
   finfAllClient(): void{
-    this.cltfrsService.findAllClient().subscribe(resp =>{
-      this.listClients = resp;
-      this.listClientsFiltre = resp;
-    })
+    this.loading = true;
+    this.cltfrsService.findAllClient().subscribe({
+      next: (resp) => {
+        this.listClients = this.photoSyncService.mergePhotos('client', resp);
+        this.listClientsFiltre = this.listClients;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.errorMsg = err.error?.message || 'Erreur lors du chargement';
+        this.loading = false;
+      }
+    });
   }
 
   filtrer(): void {
@@ -75,7 +86,10 @@ export class PageClientComponent implements OnInit {
   supprimerClient(client: ClientDto): void {
     if (confirm(`Êtes-vous sûr de vouloir supprimer le client "${client.nom}" ?`)) {
       this.cltfrsService.deleteClient(client.id!).subscribe({
-        next: () => this.finfAllClient(),
+        next: () => {
+          this.photoSyncService.clearEntity('client', client.id!);
+          this.finfAllClient();
+        },
         error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
       });
     }

@@ -42,7 +42,7 @@ test.describe('Form Validation Tests', () => {
     
     const emailInput = page.locator('#mail');
     const passwordInput = page.locator('#motdepasse');
-    const submitButton = page.locator('button[type="button"]');
+    const submitButton = page.locator('button[type="submit"]');
     
     await expect(emailInput).toBeVisible();
     await expect(passwordInput).toBeVisible();
@@ -57,7 +57,7 @@ test.describe('Form Validation Tests', () => {
     const emailInput = page.locator('#mail');
     const descriptionInput = page.locator('#description');
     const numTelInput = page.locator('#numTel');
-    const submitButton = page.locator('button[type="button"]');
+    const submitButton = page.locator('button[type="submit"]');
     
     await expect(nomInput).toBeVisible();
     await expect(codeFiscalInput).toBeVisible();

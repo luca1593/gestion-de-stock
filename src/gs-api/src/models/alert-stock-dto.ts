@@ -5,7 +5,7 @@ export interface AlertStockDto {
   stockActuel?: number;
   seuilMinimum?: number;
   seuilCritique?: number;
-  niveauAlerte?: 'CRITIQUE' | 'BAS' | 'MOYEN';
+  niveauAlerte?: 'FAIBLE' | 'MOYEN' | 'CRITIQUE';
   active?: boolean;
   identreprise?: number;
 }
