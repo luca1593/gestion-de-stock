@@ -44,13 +44,13 @@ export class HaveurService {
   }
 
   save(avoir: any): Observable<AvoirDto> {
-    // Ajouter l'identreprise depuis l'utilisateur connecté
+    if (avoir.dateAvoir) {
+      avoir.dateAvoir = formatDateForBackend(avoir.dateAvoir);
+    }
     const identreprise = this.userService.getConnectedUser()?.entreprise?.id;
     if (identreprise) {
       avoir.identreprise = identreprise;
     }
-    console.log('Service - identreprise ajouté:', identreprise);
-    console.log('Service - objet complet:', JSON.stringify(avoir));
     return this.avoirsApi.AvoirsApiSavePOST(avoir);
   }
 
