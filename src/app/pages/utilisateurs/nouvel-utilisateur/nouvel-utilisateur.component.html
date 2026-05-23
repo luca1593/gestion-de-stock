@@ -1,53 +1,110 @@
-<div class="col p-3 mb-3">
-    <div class="col-md-12 mb-3">
-        <img src="favicon.ico" alt="user" class="rounded-circle" width="100px" height="100px">
+<div class="container-fluid py-3">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-3">
+        <div class="position-relative" style="cursor:pointer;" (click)="fileInput.click()">
+          <img [src]="imgUrl" alt="user" class="rounded-circle border" width="70" height="70" style="object-fit:cover;">
+          <div class="position-absolute bottom-0 end-0 bg-primary rounded-circle p-1 border border-white" style="width:22px;height:22px;">
+            <i class="fas fa-camera text-white" style="font-size:10px;"></i>
+          </div>
+        </div>
+        <input #fileInput type="file" accept="image/*" class="d-none" (change)="onFileInput($event)">
+        <h4 class="ms-3 mb-0">
+          <i class="fas fa-user me-2"></i>
+          {{ isEditMode ? 'Modifier' : 'Nouvel' }} utilisateur
+        </h4>
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMsgs.length > 0">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span *ngFor="let msg of errorMsgs">{{ msg }}</span>
+      </div>
+
+      <div class="text-center py-5" *ngIf="loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+
+      <form class="row" *ngIf="!loading">
+        <div class="col-12 mb-3">
+          <h5><i class="fas fa-info-circle text-primary me-2"></i>Informations de l'utilisateur</h5>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Nom</label>
+            <input type="text" class="form-control" name="nom" placeholder="Nom" [(ngModel)]="utilisateurDto.nom">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Prénom</label>
+            <input type="text" class="form-control" name="prenom" placeholder="Prénom" [(ngModel)]="utilisateurDto.prenom">
+          </div>
+          <ng-container *ngIf="!isEditMode; else passwordFields">
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">E-mail</label>
+              <input type="email" class="form-control" name="email" placeholder="E-mail" [(ngModel)]="utilisateurDto.email">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">Date de naissance</label>
+              <input type="date" class="form-control" name="dateNaissance" [(ngModel)]="dateNaissance">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">Mot de passe</label>
+              <input type="password" class="form-control" name="newPassword" placeholder="Mot de passe" [(ngModel)]="newPassword">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">Confirmer le mot de passe</label>
+              <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword">
+            </div>
+          </ng-container>
+          <ng-template #passwordFields>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">Nouveau mot de passe</label>
+              <input type="password" class="form-control" name="newPassword" placeholder="Nouveau mot de passe" [(ngModel)]="newPassword">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">Confirmer le mot de passe</label>
+              <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">Rôle</label>
+              <select class="form-select" name="role" [(ngModel)]="selectedRole" [compareWith]="compareRoles">
+                <option *ngFor="let role of rolesDisponibles" [ngValue]="role">{{ role.roleNom }}</option>
+              </select>
+            </div>
+          </ng-template>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Adresse 1</label>
+            <input type="text" class="form-control" name="adresse1" placeholder="Adresse 1" [(ngModel)]="adresseDto.adresse1">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Adresse 2</label>
+            <input type="text" class="form-control" name="adresse2" placeholder="Adresse 2" [(ngModel)]="adresseDto.adresse2">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Ville</label>
+            <input type="text" class="form-control" name="ville" placeholder="Ville" [(ngModel)]="adresseDto.ville">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Code postal</label>
+            <input type="text" class="form-control" name="codePostal" placeholder="Code postal" [(ngModel)]="adresseDto.codePostal">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Pays</label>
+            <input type="text" class="form-control" name="pays" placeholder="Pays" [(ngModel)]="adresseDto.pays">
+          </div>
+        </div>
+        <div class="col-12 text-end mt-3">
+          <button class="btn btn-outline-secondary me-2" type="button" (click)="cancelClick()">
+            <i class="fas fa-times"></i>&nbsp;Annuler
+          </button>
+          <button class="btn btn-success" type="button" (click)="saveClick()">
+            <i class="fas fa-save"></i>&nbsp;Sauvegarder
+          </button>
+        </div>
+      </form>
     </div>
-    <hr>
-    <div class="col-md-12">
-        <div class="col-md-12 mb-3">
-            <h2><i class="fas fa-info-circle blue-color"></i>&nbsp;Informations de l'utilisateur</h2>
-        </div>
-        <div class="col-md-12">
-            <form class="row">
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="nom" placeholder="Nom">
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="adresse1" placeholder="Adresse 1">
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="prenom" placeholder="Prenom">
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="adress2" placeholder="Adresse 2">
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="email" class="form-control" id="mail" placeholder="E-mail">
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="tel" placeholder="Telephone">
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="ville" placeholder="Ville">
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="codepostale" placeholder="Code postale">
-                </div>
-                <div class="col-md-6 mb-2">
-                    &nbsp;
-                </div>
-                <div class="col-md-6 mb-2">
-                    <input type="text" class="form-control" id="pays" placeholder="pays">
-                </div>
-            </form>
-        </div>
-        <div class="col-md-12 text-end">
-            <button class="btn btn-danger mx-1" (click)="cancelClick()">
-                <i class="fas fa-ban"></i>&nbsp;Annuler
-            </button>
-            <button class="btn btn-success mx-1" (click)="saveClick()">
-                <i class="fas fa-save"></i>&nbsp;Sauvegarder
-            </button>
-        </div>
-    </div>
+  </div>
 </div>

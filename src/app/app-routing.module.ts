@@ -69,6 +69,7 @@ const routes: Routes=[
       { path: 'nouvel-categorie/:idCategory', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService] },
       { path: 'utilisateurs', component: PageUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-utilisateur', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService] },
+      { path: 'modifier-utilisateur/:id', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'profil', component: PageProfilComponent, canActivate: [ApplicationGuardService] },
       { path: 'modifier-profil', component: ModifProfilComponent, canActivate: [ApplicationGuardService] },
       { path: 'changer-mot-de-passe', component: ChangerMotDePasseComponent, canActivate: [ApplicationGuardService] },

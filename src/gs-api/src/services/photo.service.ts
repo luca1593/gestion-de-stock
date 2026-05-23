@@ -12,7 +12,7 @@ import { map as __map, filter as __filter } from 'rxjs/operators';
 })
 class PhotoService extends __BaseService {
 
-    static readonly PhotoControllerSavePhotoPOSTPath='photos';
+    static readonly PhotoControllerSavePhotoPOSTPath='v1/photos';
 
     constructor(
       config: __Configuration,
@@ -37,7 +37,7 @@ class PhotoService extends __BaseService {
 
     let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `photos/${encodeURIComponent(String(param.context))}/${encodeURIComponent(String(param.id))}/${encodeURIComponent(String(param.title))}`,
+      this.rootUrl + `v1/photos/${encodeURIComponent(String(param.context))}/${encodeURIComponent(String(param.id))}/${encodeURIComponent(String(param.title))}`,
       __body,
       {
         headers: __headers,
