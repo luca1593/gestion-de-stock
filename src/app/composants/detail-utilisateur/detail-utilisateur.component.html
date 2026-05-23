@@ -1,56 +1,61 @@
-<div class="row mb-1 custom-border">
-    <div class="col-md-1">
-        <div class="border-right text-center p-2">
-            <img src="favicon.ico" alt="produit" width="50px" height="50px">
+<div class="container-fluid py-3">
+  <div class="text-center py-5" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <div class="card shadow-sm" *ngIf="!loading && utilisateur.id">
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-3">
+        <img [src]="utilisateur.photo || 'favicon.ico'" class="rounded-circle border" width="70" height="70" style="object-fit:cover;">
+        <div class="ms-3">
+          <h4 class="mb-0">{{utilisateur.nom}} {{utilisateur.prenom}}</h4>
+          <span class="badge bg-primary" *ngIf="utilisateur.roles && utilisateur.roles.length > 0">{{utilisateur.roles[0].roleNom}}</span>
         </div>
-    </div>
-    <!-- Detail utilisateur -->
-    <div class="col-md-4 border-right">
-        <div class="row small-text my-1">
-            <div class="row">
-                <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                <div class="col-md-11">{{utilisateur.nom}}</div>
-            </div>
-            <div class="row">
-                <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
-                <div class="col-md-11">{{utilisateur.prenom}}</div>
-            </div>
-            <div class="row">
-                <div class="col-md-1"><i class="fas fa-phone blue-color"></i></div>
-                <div class="col-md-11">{{utilisateur.email}}</div>
-            </div>
+      </div>
+      <hr>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <h6 class="text-muted mb-3"><i class="fas fa-info-circle me-2"></i>Informations</h6>
+          <div class="mb-2">
+            <small class="text-muted d-block">Email</small>
+            <span>{{utilisateur.email}}</span>
+          </div>
+          <div class="mb-2">
+            <small class="text-muted d-block">Date de naissance</small>
+            <span>{{utilisateur.dateDeNaissance | date:'dd/MM/yyyy'}}</span>
+          </div>
         </div>
-    </div>
-    <!-- Detail Adresse -->
-    <div class="col-md-4 border-right">
-        <div class="row small-text my-1">
-            <div class="row">
-                <div class="col-md-1"><i class="fas fa-home blue-color"></i></div>
-                <div class="col-md-11">
-                    {{utilisateur.adresse?.adresse1}}&nbsp;
-                    <span *ngIf="utilisateur.adresse?.adresse2" >ou&nbsp;{{utilisateur.adresse?.adresse2}}</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-1"><i class="fas fa-map-marker-alt blue-color"></i></div>
-                <div class="col-md-11">
-                    {{utilisateur.adresse?.codePostal}}&nbsp;
-                    {{utilisateur.adresse?.ville}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-1"><i class="fas fa-globe-europe blue-color"></i></div>
-                <div class="col-md-11">{{utilisateur.adresse?.pays}}</div>
-            </div>
+        <div class="col-md-6">
+          <h6 class="text-muted mb-3"><i class="fas fa-map-marker-alt me-2"></i>Adresse</h6>
+          <div class="mb-2" *ngIf="utilisateur.adresse?.adresse1">
+            <small class="text-muted d-block">Adresse 1</small>
+            <span>{{utilisateur.adresse!.adresse1}}</span>
+          </div>
+          <div class="mb-2" *ngIf="utilisateur.adresse?.adresse2">
+            <small class="text-muted d-block">Adresse 2</small>
+            <span>{{utilisateur.adresse!.adresse2}}</span>
+          </div>
+          <div class="mb-2">
+            <small class="text-muted d-block">Ville / Code postal</small>
+            <span>{{utilisateur.adresse?.ville || '-'}} {{utilisateur.adresse?.codePostal || ''}}</span>
+          </div>
+          <div class="mb-2">
+            <small class="text-muted d-block">Pays</small>
+            <span>{{utilisateur.adresse?.pays || '-'}}</span>
+          </div>
         </div>
+      </div>
+      <hr>
+      <div class="text-end">
+        <button class="btn btn-outline-secondary me-2" (click)="retour()">
+          <i class="fas fa-arrow-left me-1"></i> Retour
+        </button>
+        <button class="btn btn-primary" (click)="modifier()">
+          <i class="fas fa-edit me-1"></i> Modifier
+        </button>
+      </div>
     </div>
-    <!-- Boutton action -->
-    <div class="col-md-3 d-flex align-items-center justify-content-center">
-        <app-ligne-action
-            [itemId]="utilisateur.id"
-            (modifier)="modifier()"
-            (supprimer)="openDeleteModal()"
-            (details)="details()">
-        </app-ligne-action>
-    </div>
+  </div>
 </div>
