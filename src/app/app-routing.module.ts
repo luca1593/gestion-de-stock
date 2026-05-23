@@ -69,7 +69,7 @@ const routes: Routes=[
       { path: 'nouvel-categorie', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-categorie/:idCategory', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService] },
       { path: 'utilisateurs', component: PageUtilisateurComponent, canActivate: [ApplicationGuardService] },
-      { path: 'detail-utilisateur/:id', component: DetailUtilisateurComponent, canActivate: [ApplicationGuardService] },
+      { path: 'utilisateur/:id', component: DetailUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-utilisateur', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'modifier-utilisateur/:id', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'profil', component: PageProfilComponent, canActivate: [ApplicationGuardService] },
