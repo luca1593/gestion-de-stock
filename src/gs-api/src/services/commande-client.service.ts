@@ -22,7 +22,7 @@ class CommandeClientService extends __BaseService {
   static readonly CommandeClientApiUpdateQuantiterCommandePATCHPath='v1/commande-client/update/quantite/{idCommande}/{idLigneCommande}/{quantite}';
   static readonly CommandeClientApiFindByIdGETPath='v1/commande-client/{idCommandeClient}';
 
-  static readonly CommandeClientApiSavePOSTPath='v1/commande-client/create';
+  static readonly CommandeClientApiSavePOSTPath='v1/commande-client/save/{dateCommandeClient}';
   static readonly CommandeClientApiFindByDateCommandeGETPath='v1/commande-client/date/{dateCommandeClient}';
   static readonly CommandeClientApiDeleteArticleDELETEPath='v1/commande-client/delete/article/{idCommande}/{idLigneCommande}';
   static readonly CommandeClientApiDeleteDELETEPath='v1/commande-client/delete/{idCommandeClient}';
@@ -357,7 +357,7 @@ class CommandeClientService extends __BaseService {
     let __body=body;
     let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `v1/commande-client/create/${encodeURIComponent(String(dateCommandeClient))}`,
+      this.rootUrl + `v1/commande-client/save/${encodeURIComponent(String(dateCommandeClient))}`,
       __body,
       {
         headers: __headers,

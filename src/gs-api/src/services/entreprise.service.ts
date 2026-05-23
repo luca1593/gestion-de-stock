@@ -13,7 +13,7 @@ import { EntrepriseDto } from '../models/entreprise-dto';
 class EntrepriseService extends __BaseService {
   static readonly EntrepriseApiFindAllGETPath='v1/entreprise/all';
   static readonly EntrepriseApiFindByEmailEntrepriseGETPath='v1/entreprise/email/{emailEntreprise}';
-  static readonly EntrepriseApiSavePOSTPath='v1/entreprise/create';
+  static readonly EntrepriseApiSavePOSTPath='v1/entreprise/save';
   static readonly EntrepriseApiDeleteDELETEPath='v1/entreprise/delete{idEntreprise}';
   static readonly EntrepriseApiFindByNomEntrepriseGETPath='v1/entreprise/nom{nomEntreprise}';
   static readonly EntrepriseApiFindByIdGETPath='v1/entreprise/{idEntreprise}';
@@ -119,7 +119,7 @@ class EntrepriseService extends __BaseService {
     __body=body;
     let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `v1/entreprise/create`,
+      this.rootUrl + `v1/entreprise/save`,
       __body,
       {
         headers: __headers,

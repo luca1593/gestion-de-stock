@@ -19,7 +19,7 @@ class CommandeFournisseurService extends __BaseService {
   static readonly CommandeFournisseurApiFindByIdGETPath='v1/commande-fournisseur/{idCommandeFournisseur}';
 
   static readonly CommandeFournisseurApiFindAllGETPath='v1/commande-fournisseur/all';
-  static readonly CommandeFournisseurApiSavePOSTPath='v1/commande-fournisseur/create';
+  static readonly CommandeFournisseurApiSavePOSTPath='v1/commande-fournisseur/save/{dateCommandeFournisseur}';
   static readonly CommandeFournisseurApiFindByDateCommandeGETPath='v1/commande-fournisseur/date/{dateCommandeFournisseur}';
   static readonly CommandeFournisseurApiDeleteArticleDELETEPath='v1/commande-fournisseur/delete/article/{idCommande}/{idLigneCommande}';
   static readonly CommandeFournisseurApiFindAllByCommandeFournisseurGETPath='v1/commande-fournisseur/list/ligne-commande/{idCommande}';
@@ -267,7 +267,7 @@ class CommandeFournisseurService extends __BaseService {
     let __body=body;
     let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `v1/commande-fournisseur/create/${encodeURIComponent(String(dateCommandeFournisseur))}`,
+      this.rootUrl + `v1/commande-fournisseur/save/${encodeURIComponent(String(dateCommandeFournisseur))}`,
       __body,
       {
         headers: __headers,
