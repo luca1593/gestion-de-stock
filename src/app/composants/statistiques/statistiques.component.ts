@@ -73,11 +73,7 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.dashboardService.getChiffreAffairesMois().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        this.chiffreAffairesData = (data || []).sort((a, b) => {
-          const da = new Date(a.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
-          const db = new Date(b.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
-          return da - db;
-        });
+        this.chiffreAffairesData = this.aggregateByMonth(data || []);
         this.updateCaChart();
         this.loading = false;
       },
@@ -306,6 +302,25 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
       if (month >= 1 && month <= 12) return months[month - 1];
     }
     return periode.substring(0, 7);
+  }
+
+  private aggregateByMonth(data: any[]): any[] {
+    const groups = new Map<string, { periode: string; chiffreAffaires: number; nbVentes: number }>();
+    data.forEach(d => {
+      if (!d.periode) return;
+      const datePart = d.periode.split(' ')[0];
+      const [day, month, year] = datePart.split('/');
+      const key = `${month}/${year}`;
+      const existing = groups.get(key) || { periode: `01/${key}`, chiffreAffaires: 0, nbVentes: 0 };
+      existing.chiffreAffaires += (d.chiffreAffaires || 0);
+      existing.nbVentes += (d.nbVentes || 0);
+      groups.set(key, existing);
+    });
+    const toMonthNum = (p: string) => {
+      const [m, y] = p.split('/');
+      return parseInt(y) * 12 + parseInt(m);
+    };
+    return Array.from(groups.values()).sort((a, b) => toMonthNum(a.periode) - toMonthNum(b.periode));
   }
 
   getStockStatusClass(stock: number | undefined): string {

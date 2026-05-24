@@ -89,13 +89,9 @@ export class PageStatistiquesComponent implements OnInit {
     this.dashboardService.getChiffreAffairesMois().subscribe({
       next: (data) => {
         if (data && Array.isArray(data)) {
-          this.chiffreAffairesData = data.sort((a, b) => {
-            const da = new Date(a.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
-            const db = new Date(b.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
-            return da - db;
-          });
-          this.maxVente = data.length > 0 
-            ? Math.max(...data.map(d => d.chiffreAffaires || d.totalVentes || 0), 1) 
+          this.chiffreAffairesData = this.aggregateByMonth(data);
+          this.maxVente = this.chiffreAffairesData.length > 0 
+            ? Math.max(...this.chiffreAffairesData.map(d => d.chiffreAffaires || d.totalVentes || 0), 1) 
             : 1;
         } else {
           this.chiffreAffairesData = [];
@@ -243,5 +239,24 @@ export class PageStatistiquesComponent implements OnInit {
 
   getItemValue(item: any): number {
     return item?.chiffreAffaires || item?.totalVentes || item?.nbVentes || item?.quantite || 0;
+  }
+
+  private aggregateByMonth(data: any[]): any[] {
+    const groups = new Map<string, { periode: string; chiffreAffaires: number; nbVentes: number }>();
+    data.forEach(d => {
+      if (!d.periode) return;
+      const datePart = d.periode.split(' ')[0];
+      const [day, month, year] = datePart.split('/');
+      const key = `${month}/${year}`;
+      const existing = groups.get(key) || { periode: `01/${key}`, chiffreAffaires: 0, nbVentes: 0 };
+      existing.chiffreAffaires += (d.chiffreAffaires || 0);
+      existing.nbVentes += (d.nbVentes || 0);
+      groups.set(key, existing);
+    });
+    const toMonthNum = (p: string) => {
+      const [m, y] = p.split('/');
+      return parseInt(y) * 12 + parseInt(m);
+    };
+    return Array.from(groups.values()).sort((a, b) => toMonthNum(a.periode) - toMonthNum(b.periode));
   }
 }
