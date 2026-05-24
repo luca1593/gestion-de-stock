@@ -17,6 +17,7 @@ import { PageCmdCltFrsComponent } from './pages/page-cmd-clt-frs/page-cmd-clt-fr
 import { NouvelCmdCltFrsComponent } from './composants/nouvel-cmd-clt-frs/nouvel-cmd-clt-frs.component';
 import { PageCategorieComponent } from './pages/categories/page-categorie/page-categorie.component';
 import { NouveauCategorieComponent } from './pages/categories/nouveau-categorie/nouveau-categorie.component';
+import { DetailUtilisateurComponent } from './composants/detail-utilisateur/detail-utilisateur.component';
 import { PageUtilisateurComponent } from './pages/utilisateurs/page-utilisateur/page-utilisateur.component';
 import { NouvelUtilisateurComponent } from './pages/utilisateurs/nouvel-utilisateur/nouvel-utilisateur.component';
 import { PageProfilComponent } from './pages/profil/page-profil/page-profil.component';
@@ -68,7 +69,9 @@ const routes: Routes=[
       { path: 'nouvel-categorie', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-categorie/:idCategory', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService] },
       { path: 'utilisateurs', component: PageUtilisateurComponent, canActivate: [ApplicationGuardService] },
+      { path: 'utilisateur/:id', component: DetailUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-utilisateur', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService] },
+      { path: 'modifier-utilisateur/:id', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'profil', component: PageProfilComponent, canActivate: [ApplicationGuardService] },
       { path: 'modifier-profil', component: ModifProfilComponent, canActivate: [ApplicationGuardService] },
       { path: 'changer-mot-de-passe', component: ChangerMotDePasseComponent, canActivate: [ApplicationGuardService] },

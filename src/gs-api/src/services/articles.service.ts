@@ -15,7 +15,7 @@ import { LigneCommandeFournisseurDto } from '../models/ligne-commande-fournisseu
   providedIn: 'root',
 })
 class ArticlesService extends __BaseService {
-  static readonly ArticleApiSavePOSTPath='v1/articles/create';
+  static readonly ArticleApiSavePOSTPath='v1/articles/save';
   static readonly ArticleApiFindAllGETPath='v1/articles/all';
   static readonly ArticleApiFindByCodeArticleGETPath='v1/articles/code/{codeArticle}';
   static readonly ArticleApiFindHistoriqueCommandeClientGETPath='v1/articles/historiques/commande-client/{idArticle}';
@@ -45,7 +45,7 @@ class ArticlesService extends __BaseService {
     let __body=body;
     let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `v1/articles/create`,
+      this.rootUrl + ArticlesService.ArticleApiSavePOSTPath,
       __body,
       {
         headers: __headers,

@@ -136,3 +136,119 @@
         </pagination-controls>
     </div>
 </div>
+
+<!-- Modal Détails Avoir -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-header-left">
+                <div class="modal-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div class="modal-title-group">
+                    <h3>Détails de l'avoir</h3>
+                    <span class="modal-code">{{selectedAvoir?.code}}</span>
+                </div>
+            </div>
+            <button class="modal-close" (click)="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" *ngIf="selectedAvoir">
+            <div class="detail-grid">
+                <div class="detail-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-info-circle"></i> Informations générales
+                    </h4>
+                    <div class="detail-rows">
+                        <div class="detail-row">
+                            <span class="detail-label">Code</span>
+                            <span class="detail-value code-value">{{selectedAvoir.code || '—'}}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value">{{selectedAvoir.dateAvoir | date:'dd MMMM yyyy'}}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Montant</span>
+                            <span class="detail-value montant-value">{{selectedAvoir.montant | number:'1.0-0':'fr'}} Ar</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Raison</span>
+                            <span class="detail-value">{{selectedAvoir.raison || '—'}}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Statut</span>
+                            <span class="detail-value">
+                                <span class="etat-badge" [class]="getEtatClass(selectedAvoir.etat)">
+                                    {{getEtatLabel(selectedAvoir.etat)}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-user"></i> Client
+                    </h4>
+                    <div class="detail-rows" *ngIf="selectedAvoir.client; else noClient">
+                        <div class="detail-row">
+                            <span class="detail-label">Nom</span>
+                            <span class="detail-value">{{selectedAvoir.client.nom}} {{selectedAvoir.client.prenom}}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">{{selectedAvoir.client.email || '—'}}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Téléphone</span>
+                            <span class="detail-value">{{selectedAvoir.client.numTel || '—'}}</span>
+                        </div>
+                        <div class="detail-row" *ngIf="selectedAvoir.client.adresse">
+                            <span class="detail-label">Adresse</span>
+                            <span class="detail-value">
+                                {{selectedAvoir.client.adresse.adresse1}}<br>
+                                <ng-container *ngIf="selectedAvoir.client.adresse.adresse2">{{selectedAvoir.client.adresse.adresse2}}<br></ng-container>
+                                {{selectedAvoir.client.adresse.codePostal}} {{selectedAvoir.client.adresse.ville}}<br>
+                                {{selectedAvoir.client.adresse.pays}}
+                            </span>
+                        </div>
+                    </div>
+                    <ng-template #noClient>
+                        <div class="detail-empty">
+                            <i class="fas fa-user-slash"></i>
+                            <span>Aucun client associé</span>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div class="detail-section vente-section" *ngIf="selectedAvoir.vente">
+                <h4 class="section-title">
+                    <i class="fas fa-shopping-cart"></i> Vente associée
+                </h4>
+                <div class="detail-rows">
+                    <div class="detail-row">
+                        <span class="detail-label">Code vente</span>
+                        <span class="detail-value code-value">{{selectedAvoir.vente.code || '—'}}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date vente</span>
+                        <span class="detail-value">{{selectedAvoir.vente.dateVente | date:'dd MMMM yyyy'}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModal()">
+                <i class="fas fa-times"></i> Fermer
+            </button>
+            <button class="btn btn-pdf" (click)="exportPdf(selectedAvoir?.id!); closeModal()">
+                <i class="fas fa-file-pdf"></i> Exporter en PDF
+            </button>
+        </div>
+    </div>
+</div>

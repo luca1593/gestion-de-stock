@@ -13,7 +13,7 @@ import { FournisseurDto } from '../models/fournisseur-dto';
 })
 class FournisseurService extends __BaseService {
   static readonly FournisseurApiFindAllGETPath='v1/fournisseur/all';
-  static readonly FournisseurApiSavePOSTPath='v1/fournisseur/create';
+  static readonly FournisseurApiSavePOSTPath='v1/fournisseur/save';
   static readonly FournisseurApiFindByEmailFournisseurGETPath='v1/fournisseur/email/{emailFournisseur}';
   static readonly FournisseurApiFindByIdGETPath='v1/fournisseur/{idFournisseur}';
 
@@ -80,7 +80,7 @@ class FournisseurService extends __BaseService {
     __body=body;
     let req=new HttpRequest<any>(
       'POST',
-      this.rootUrl + `v1/fournisseur/create`,
+      this.rootUrl + `v1/fournisseur/save`,
       __body,
       {
         headers: __headers,

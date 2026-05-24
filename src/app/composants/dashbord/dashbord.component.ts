@@ -115,11 +115,31 @@ export class DashbordComponent implements OnInit {
     }
   }
 
+  private aggregateByMonth(data: any[]): any[] {
+    const groups = new Map<string, { periode: string; chiffreAffaires: number; nbVentes: number }>();
+    data.forEach(d => {
+      if (!d.periode) return;
+      const parts = d.periode.split(' ');
+      const datePart = parts[0];
+      const [day, month, year] = datePart.split('/');
+      const key = `${month}/${year}`;
+      const existing = groups.get(key) || { periode: `01/${key}`, chiffreAffaires: 0, nbVentes: 0 };
+      existing.chiffreAffaires += (d.chiffreAffaires || 0);
+      existing.nbVentes += (d.nbVentes || 0);
+      groups.set(key, existing);
+    });
+    const toMonthNum = (p: string) => {
+      const [m, y] = p.split('/');
+      return parseInt(y) * 12 + parseInt(m);
+    };
+    return Array.from(groups.values()).sort((a, b) => toMonthNum(a.periode) - toMonthNum(b.periode));
+  }
+
   updateAdvancedCharts(): void {
     this.dashboardService.getChiffreAffairesMois().subscribe({
       next: (data) => {
         if (data && data.length > 0) {
-          this.createLineChart('caChart', data);
+          this.createLineChart('caChart', this.aggregateByMonth(data));
         }
       }
     });
@@ -137,8 +157,8 @@ export class DashbordComponent implements OnInit {
     const existingChart = Chart.getChart(id);
     if (existingChart) existingChart.destroy();
 
-    const labels = data.map(d => d.mois || 'N/A');
-    const values = data.map(d => d.montant || 0);
+    const labels = data.map(d => d.periode || 'N/A');
+    const values = data.map(d => d.chiffreAffaires || 0);
 
     new Chart(id, {
       type: 'line',
@@ -324,11 +344,6 @@ export class DashbordComponent implements OnInit {
   formatDateForBackend(date: Date | string): string {
     if (!date) return '';
     const d = typeof date === 'string' ? new Date(date) : date;
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    const seconds = String(d.getSeconds()).padStart(2, '0');
-    return `${day}/${month}/${d.getFullYear()} ${hours}:${minutes}:${seconds}`;
+    return d.toISOString();
   }
 }

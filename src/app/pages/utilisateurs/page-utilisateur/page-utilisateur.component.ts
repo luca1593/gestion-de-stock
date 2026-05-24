@@ -84,11 +84,11 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
   }
 
   voirDetails(user: UtilisateurDto): void {
-    // Navigate to details or open modal
+    this.router.navigate(["utilisateur", user.id]);
   }
 
   modifierUtilisateur(user: UtilisateurDto): void {
-    this.router.navigate(["nouvel-utilisateur", user.id]);
+    this.router.navigate(["modifier-utilisateur", user.id]);
   }
 
   supprimerUtilisateur(user: UtilisateurDto): void {

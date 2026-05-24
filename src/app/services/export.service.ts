@@ -1,12 +1,32 @@
 import { Injectable } from '@angular/core';
 import { ExportService as ApiExportService } from 'src/gs-api/src/services/export.service';
+import { HaveurService } from './avoir/avoir.service';
+import { UserService } from './user/user.service';
+import { AvoirDto } from 'src/gs-api/src/models';
+import { firstValueFrom } from 'rxjs';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+const COLORS = {
+  primary: [41, 98, 186],
+  accent: [230, 80, 60],
+  lightBg: [245, 247, 250],
+  border: [210, 215, 225],
+  dark: [50, 55, 65],
+  muted: [140, 145, 155],
+  white: [255, 255, 255],
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExportExcelService {
 
-  constructor(private exportApiService: ApiExportService) {}
+  constructor(
+    private exportApiService: ApiExportService,
+    private avoirService: HaveurService,
+    private userService: UserService,
+  ) {}
 
   exportArticles(): void {
     this.exportApiService.ExportApiExcelArticlesGET().subscribe(blob => {
@@ -44,10 +64,237 @@ export class ExportExcelService {
     });
   }
 
-  exportPdfAvoir(id: number): void {
-    this.exportApiService.ExportApiPdfAvoirGET(id).subscribe(blob => {
-      this.downloadBlob(blob, 'avoir_' + id + '_' + this.getDateString() + '.pdf');
+  async exportPdfAvoir(id: number): Promise<void> {
+    try {
+      const avoir: AvoirDto = await firstValueFrom(this.avoirService.getById(id));
+      this.generateAvoirPdf(avoir);
+    } catch (err) {
+      console.error('Erreur génération PDF avoir', err);
+    }
+  }
+
+  private async generateAvoirPdf(avoir: AvoirDto): Promise<void> {
+    const doc = new jsPDF('portrait', 'mm', 'a4');
+    const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
+    const mg = 14;
+    const ct = pw / 2;
+
+    let y = mg;
+
+    // ── Bandeau haut ──
+    doc.setFillColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+    doc.rect(0, 0, pw, 38, 'F');
+    doc.setTextColor(COLORS.white[0], COLORS.white[1], COLORS.white[2]);
+    doc.setFontSize(26);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AVOIR', ct, 18, { align: 'center' });
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('DOCUMENT DE CRÉDIT', ct, 28, { align: 'center' });
+
+    // ── Infos entreprise & référence ──
+    const user = this.userService.getConnectedUser();
+    const entreprise = user?.entreprise;
+
+    doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
+    doc.setFontSize(9);
+
+    // Colonne gauche : entreprise
+    let leftCol = mg + 2;
+    let topY = 48;
+    if (entreprise) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text(entreprise.nom || 'Entreprise', leftCol, topY);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      topY += 6;
+      if (entreprise.email) { doc.text('Email : ' + entreprise.email, leftCol, topY); topY += 4.5; }
+      if (entreprise.numTel) { doc.text('Tél : ' + entreprise.numTel, leftCol, topY); topY += 4.5; }
+      if (entreprise.adresse) {
+        const a = entreprise.adresse;
+        const parts = [a.adresse1, a.adresse2, a.codePostal, a.ville, a.pays].filter((x): x is string => !!x);
+        parts.forEach((line) => {
+          doc.text(line, leftCol, topY);
+          topY += 4.5;
+        });
+      }
+    }
+
+    // Colonne droite : référence
+    let rightCol = ct + 10;
+    let refY = 48;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('RÉFÉRENCE', rightCol, refY);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    refY += 6;
+
+    const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
+    const etatLabel = (e?: string): string => {
+      const map: Record<string, string> = { BROUILLON: 'Brouillon', VALIDE: 'Validé', ANNULE: 'Annulé' };
+      return (e && map[e]) || e || '—';
+    };
+
+    const refs: [string, string][] = [
+      ['N°', avoir.code || '—'],
+      ['Date', formatDate(avoir.dateAvoir)],
+      ['Statut', etatLabel(avoir.etat)],
+      ['Raison', avoir.raison || '—'],
+    ];
+    refs.forEach(([l, v]) => {
+      doc.setFont('helvetica', 'bold');
+      doc.text(l, rightCol, refY);
+      doc.setFont('helvetica', 'normal');
+      doc.text(v, rightCol + 18, refY);
+      refY += 5.5;
     });
+
+    // ── Ligne de séparation ──
+    const sepY = Math.max(topY, refY) + 6;
+    doc.setDrawColor(COLORS.border[0], COLORS.border[1], COLORS.border[2]);
+    doc.setLineWidth(0.5);
+    doc.line(mg, sepY, pw - mg, sepY);
+
+    // ── Section client ──
+    let y2 = sepY + 10;
+    if (avoir.client) {
+      doc.setFillColor(COLORS.lightBg[0], COLORS.lightBg[1], COLORS.lightBg[2]);
+      doc.rect(mg, y2 - 5, pw - 2 * mg, 8, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+      doc.text('CLIENT', mg + 3, y2);
+      doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
+      y2 += 10;
+
+      doc.setFontSize(9);
+      const clientName = [avoir.client.nom, avoir.client.prenom].filter(Boolean).join(' ') || '—';
+      doc.setFont('helvetica', 'bold');
+      doc.text('Nom :', mg + 3, y2);
+      doc.setFont('helvetica', 'normal');
+      doc.text(clientName, mg + 20, y2);
+      y2 += 5.5;
+
+      if (avoir.client.email) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Email :', mg + 3, y2);
+        doc.setFont('helvetica', 'normal');
+        doc.text(avoir.client.email, mg + 20, y2);
+        y2 += 5.5;
+      }
+      if (avoir.client.numTel) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Tél :', mg + 3, y2);
+        doc.setFont('helvetica', 'normal');
+        doc.text(avoir.client.numTel, mg + 20, y2);
+        y2 += 5.5;
+      }
+      if (avoir.client.adresse) {
+        const a = avoir.client.adresse;
+        const parts = [a.adresse1, a.adresse2, a.codePostal, a.ville, a.pays].filter((x): x is string => !!x);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Adresse :', mg + 3, y2);
+        doc.setFont('helvetica', 'normal');
+        parts.forEach((line, i) => {
+          doc.text(line, mg + 20, y2 + (i * 4.5));
+        });
+        y2 += parts.length * 4.5 + 2;
+      }
+    }
+
+    // ── Section vente associée ──
+    if (avoir.vente) {
+      y2 += 3;
+      doc.setFillColor(COLORS.lightBg[0], COLORS.lightBg[1], COLORS.lightBg[2]);
+      doc.rect(mg, y2 - 5, pw - 2 * mg, 8, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+      doc.text('VENTE ASSOCIÉE', mg + 3, y2);
+      doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
+      y2 += 10;
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Code :', mg + 3, y2);
+      doc.setFont('helvetica', 'normal');
+      doc.text(avoir.vente.code || '—', mg + 20, y2);
+      y2 += 5.5;
+
+      if (avoir.vente.dateVente) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Date :', mg + 3, y2);
+        doc.setFont('helvetica', 'normal');
+        doc.text(formatDate(avoir.vente.dateVente), mg + 20, y2);
+        y2 += 5.5;
+      }
+    }
+
+    // ── Espace avant le tableau récapitulatif ──
+    let tableY = Math.max(y2 + 10, sepY + 80);
+
+    // ── Tableau de détails ──
+    const tableBody = [
+      ['Code', avoir.code || '—'],
+      ['Date', formatDate(avoir.dateAvoir)],
+      ['Montant HT', (avoir.montant ?? 0).toFixed(2) + ' €'],
+      ['Raison', avoir.raison || '—'],
+      ['Statut', etatLabel(avoir.etat)],
+    ];
+
+    autoTable(doc, {
+      startY: tableY,
+      head: [['Détail', 'Valeur']],
+      body: tableBody,
+      theme: 'grid',
+      headStyles: {
+        fillColor: COLORS.primary as [number, number, number],
+        textColor: 255,
+        fontStyle: 'bold',
+        fontSize: 10,
+        halign: 'center',
+      },
+      bodyStyles: {
+        fontSize: 9,
+        textColor: COLORS.dark as [number, number, number],
+      },
+      alternateRowStyles: {
+        fillColor: COLORS.lightBg as [number, number, number],
+      },
+      columnStyles: {
+        0: { cellWidth: 50, fontStyle: 'bold', halign: 'left' },
+        1: { cellWidth: 80, halign: 'left' },
+      },
+      margin: { left: mg, right: mg },
+      tableLineColor: COLORS.border as [number, number, number],
+      tableLineWidth: 0.3,
+    });
+
+    // ── Total ──
+    const finalY = (doc as any).lastAutoTable.finalY + 10;
+
+    doc.setFillColor(COLORS.accent[0], COLORS.accent[1], COLORS.accent[2]);
+    doc.rect(mg, finalY, pw - 2 * mg, 14, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('MONTANT TOTAL', mg + 8, finalY + 10);
+    doc.text((avoir.montant ?? 0).toFixed(2) + ' €', pw - mg - 8, finalY + 10, { align: 'right' });
+
+    // ── Pied de page ──
+    doc.setTextColor(COLORS.muted[0], COLORS.muted[1], COLORS.muted[2]);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    const footerY = ph - 12;
+    doc.line(mg, footerY - 3, pw - mg, footerY - 3);
+    const today = new Date().toLocaleDateString('fr-FR');
+    doc.text('Généré le ' + today + ' — Gestion de Stock', ct, footerY + 4, { align: 'center' });
+
+    // ── Download ──
+    doc.save('avoir_' + (avoir.code || avoir.id) + '_' + this.getDateString() + '.pdf');
   }
 
   private downloadBlob(blob: Blob, filename: string): void {

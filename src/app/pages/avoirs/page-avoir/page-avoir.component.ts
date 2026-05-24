@@ -22,6 +22,9 @@ export class PageHaveurComponent implements OnInit {
   searchClient: string = '';
   searchEtat: string = '';
 
+  showModal = false;
+  selectedAvoir: AvoirDto | null = null;
+
   constructor(
     private avoirService: HaveurService,
     private exportService: ExportExcelService,
@@ -91,7 +94,15 @@ export class PageHaveurComponent implements OnInit {
   }
 
   voirDetails(avoir: AvoirDto): void {
-    // Navigate to detail page or open modal
+    this.selectedAvoir = avoir;
+    this.showModal = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.selectedAvoir = null;
+    document.body.style.overflow = '';
   }
 
   deleteAvoir(id: number): void {

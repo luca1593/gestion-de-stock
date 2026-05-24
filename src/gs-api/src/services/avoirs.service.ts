@@ -107,8 +107,8 @@ class AvoirsService extends __BaseService {
 
   AvoirsApiFindByDateRangeGETResponse(startDate?: string, endDate?: string): __Observable<__StrictHttpResponse<Array<AvoirDto>>> {
     let __params = this.newParams();
-    if (startDate) __params = __params.set('startDate', startDate);
-    if (endDate) __params = __params.set('endDate', endDate);
+    if (startDate) __params = __params.set('debut', startDate);
+    if (endDate) __params = __params.set('fin', endDate);
     let __headers = new HttpHeaders();
     let __body: any = null;
     let req = new HttpRequest<any>('GET', this.rootUrl + 'v1/avoirs/date-range', __body, {
