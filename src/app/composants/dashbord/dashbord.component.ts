@@ -119,7 +119,12 @@ export class DashbordComponent implements OnInit {
     this.dashboardService.getChiffreAffairesMois().subscribe({
       next: (data) => {
         if (data && data.length > 0) {
-          this.createLineChart('caChart', data);
+          const sorted = [...data].sort((a, b) => {
+            const da = new Date(a.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
+            const db = new Date(b.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
+            return da - db;
+          });
+          this.createLineChart('caChart', sorted);
         }
       }
     });
@@ -137,8 +142,8 @@ export class DashbordComponent implements OnInit {
     const existingChart = Chart.getChart(id);
     if (existingChart) existingChart.destroy();
 
-    const labels = data.map(d => d.mois || 'N/A');
-    const values = data.map(d => d.montant || 0);
+    const labels = data.map(d => d.periode || 'N/A');
+    const values = data.map(d => d.chiffreAffaires || 0);
 
     new Chart(id, {
       type: 'line',

@@ -73,7 +73,11 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.dashboardService.getChiffreAffairesMois().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        this.chiffreAffairesData = data || [];
+        this.chiffreAffairesData = (data || []).sort((a, b) => {
+          const da = new Date(a.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
+          const db = new Date(b.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
+          return da - db;
+        });
         this.updateCaChart();
         this.loading = false;
       },

@@ -89,7 +89,11 @@ export class PageStatistiquesComponent implements OnInit {
     this.dashboardService.getChiffreAffairesMois().subscribe({
       next: (data) => {
         if (data && Array.isArray(data)) {
-          this.chiffreAffairesData = data;
+          this.chiffreAffairesData = data.sort((a, b) => {
+            const da = new Date(a.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
+            const db = new Date(b.periode?.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1') || 0).getTime();
+            return da - db;
+          });
           this.maxVente = data.length > 0 
             ? Math.max(...data.map(d => d.chiffreAffaires || d.totalVentes || 0), 1) 
             : 1;
