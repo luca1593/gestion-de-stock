@@ -165,9 +165,26 @@ export class ExportExcelService {
     let grandTotalArticles = 0;
     let ventesWithData = 0;
 
-    // ── Parcours chaque vente (treeview) ──
-    ventes.forEach((vente, vIdx) => {
-      const lignes = (vente.ligneVentes || []).filter((l: any) => l.prixUnitaire != null && l.quantite != null);
+    // ── Grouper les ventes par code au cas où il y a des doublons ──
+    const grouped = new Map<string, { code: string; dateVente?: string; commentaire?: string; lignes: any[] }>();
+    ventes.forEach(v => {
+      const key = v.code || 'unknown';
+      if (!grouped.has(key)) {
+        grouped.set(key, { code: v.code, dateVente: v.dateVente, commentaire: v.commentaire, lignes: [] });
+      }
+      const group = grouped.get(key)!;
+      (v.ligneVentes || []).forEach((l: any) => {
+        if (l.prixUnitaire != null && l.quantite != null) {
+          group.lignes.push(l);
+        }
+      });
+    });
+
+    const uniqueVentes = Array.from(grouped.values());
+
+    // ── Parcours chaque vente unique (treeview) ──
+    uniqueVentes.forEach((vente, vIdx) => {
+      const lignes = vente.lignes;
       if (lignes.length === 0) return;
       ventesWithData++;
 
@@ -247,7 +264,7 @@ export class ExportExcelService {
       printY += 10;
 
       // ── Séparateur entre ventes ──
-      if (vIdx < ventes.length - 1) {
+      if (vIdx < uniqueVentes.length - 1) {
         doc.setDrawColor(220, 225, 232);
         doc.setLineWidth(0.3);
         doc.line(mg, printY, pw - mg, printY);
