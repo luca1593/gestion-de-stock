@@ -68,14 +68,20 @@ export class ExportExcelService {
 
   async exportPdfVentes(): Promise<void> {
     try {
-      // Get ventes data using the vente service
       const ventes: any[] = await firstValueFrom(this.venteService.findAllVente());
 
-      // Generate PDF with the actual ventes data
-      this.generateVentesPdf(ventes);
+      const ventesAvecLignes = await Promise.all(ventes.map(async (v) => {
+        try {
+          const lignes = await firstValueFrom(this.venteService.findLigneVenteByVente(v.id));
+          return { ...v, ligneVentes: lignes || [] };
+        } catch {
+          return { ...v, ligneVentes: [] };
+        }
+      }));
+
+      this.generateVentesPdf(ventesAvecLignes);
     } catch (err) {
       console.error('Erreur génération PDF ventes', err);
-      // Fallback to Excel
       this.exportVentes();
     }
   }
@@ -182,8 +188,7 @@ export class ExportExcelService {
     ventes.forEach(vente => {
       if (vente.ligneVentes && vente.ligneVentes.length > 0) {
         vente.ligneVentes.forEach((ligne: any) => {
-          if (ligne.prixUnitaire && ligne.quantite) {
-            // Calcul du remise si applicable
+          if (ligne.prixUnitaire != null && ligne.quantite != null) {
             const remisePourcent = ligne.remise ?? 0;
             const prixUnitaireRemise = ligne.prixUnitaire * (1 - remisePourcent / 100);
             const totalLigne = prixUnitaireRemise * ligne.quantite;
