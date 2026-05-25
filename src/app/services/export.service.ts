@@ -151,8 +151,8 @@ export class ExportExcelService {
       doc.setFont('helvetica', 'bold');
       doc.text(l, rightCol, refY);
       doc.setFont('helvetica', 'normal');
-      doc.text(v, rightCol + 18, refY);
-      refY += 5.5;
+      doc.text(v, rightCol + 30, refY);
+      refY += 6;
     });
 
     const sepY = Math.max(topY, refY) + 6;
@@ -398,8 +398,8 @@ export class ExportExcelService {
       doc.setFont('helvetica', 'bold');
       doc.text(l, rightCol, refY);
       doc.setFont('helvetica', 'normal');
-      doc.text(v, rightCol + 18, refY);
-      refY += 5.5;
+      doc.text(v, rightCol + 25, refY);
+      refY += 6;
     });
 
     // ── Ligne de séparation ──
