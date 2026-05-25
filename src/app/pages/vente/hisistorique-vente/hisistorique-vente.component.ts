@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
+import { ExportExcelService } from 'src/app/services/export.service';
 import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -30,7 +31,8 @@ export class HisistoriqueVenteComponent implements OnInit {
   constructor(
     private venteService: VenteService,
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private exportService: ExportExcelService
   ) { }
 
   ngOnInit(): void {
@@ -50,6 +52,18 @@ export class HisistoriqueVenteComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  exportExcel(): void {
+    this.exportService.exportVentes();
+  }
+
+  async exportPdf(): Promise<void> {
+    await this.exportService.exportPdfVentes();
+  }
+
+  printPage(): void {
+    window.print();
   }
 
   findAllLigneVente(): void {
@@ -112,9 +126,6 @@ export class HisistoriqueVenteComponent implements OnInit {
     this.pageCmd = 1;
   }
 
-  nouvelleVente(): void {
-    this.router.navigate(["vente"]);
-  }
 
   calculerTotalVente(idVente: number, lignes: Array<any>): void {
     let totalTtc = 0;

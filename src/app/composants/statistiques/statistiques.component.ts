@@ -41,7 +41,16 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.initCharts(), 500);
+    // Wait for the view children to be initialized
+    const checkCharts = () => {
+      if (this.caChartRef?.nativeElement && this.categorieChartRef?.nativeElement && this.stockChartRef?.nativeElement) {
+        this.initCharts();
+      } else {
+        // Retry after a short delay
+        setTimeout(checkCharts, 100);
+      }
+    };
+    checkCharts();
   }
 
   ngOnDestroy(): void {
@@ -54,46 +63,81 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadAllData(): void {
     this.loading = true;
+    this.error = '';
     this.lastUpdate = new Date();
-    
+    let pendingRequests = 6;
+
+    const decrementLoading = () => {
+      pendingRequests--;
+      if (pendingRequests === 0) {
+        this.loading = false;
+      }
+    };
+
     this.dashboardService.getStats().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.stats = data; },
-      error: (err) => { console.error('Erreur stats', err); }
+      error: (err) => {
+        console.error('Erreur stats', err);
+        this.error = 'Erreur lors du chargement des statistiques générales';
+        decrementLoading();
+      },
+      complete: () => decrementLoading()
     });
 
     this.dashboardService.getAnalyseStock().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.analyseStock = data; this.updateStockChart(); },
-      error: () => { }
+      error: (err) => {
+        console.error('Erreur analyse stock', err);
+        this.error = 'Erreur lors du chargement de l\'analyse de stock';
+        decrementLoading();
+      },
+      complete: () => decrementLoading()
     });
 
     this.dashboardService.getInventoryStats().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.inventoryStats = data; },
-      error: () => { }
+      error: (err) => {
+        console.error('Erreur inventory stats', err);
+        this.error = 'Erreur lors du chargement des statistiques d\'inventaire';
+        decrementLoading();
+      },
+      complete: () => decrementLoading()
     });
 
     this.dashboardService.getChiffreAffairesMois().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.chiffreAffairesData = this.aggregateByMonth(data || []);
         this.updateCaChart();
-        this.loading = false;
       },
       error: (err) => {
         console.error('Erreur CA', err);
-        this.loading = false;
-      }
+        this.error = 'Erreur lors du chargement du chiffre d\'affaires';
+        decrementLoading();
+      },
+      complete: () => decrementLoading()
     });
 
     this.dashboardService.getTopArticles(10).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => { 
-        this.topArticles = data || []; 
+      next: (data) => {
+        this.topArticles = data || [];
         this.updateCategorieChart();
       },
-      error: (err) => { console.error('Erreur top articles', err); }
+      error: (err) => {
+        console.error('Erreur top articles', err);
+        this.error = 'Erreur lors du chargement des meilleurs articles';
+        decrementLoading();
+      },
+      complete: () => decrementLoading()
     });
 
     this.dashboardService.getRotationStock().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.rotationStock = data || []; },
-      error: () => { }
+      error: (err) => {
+        console.error('Erreur rotation stock', err);
+        this.error = 'Erreur lors du chargement de la rotation de stock';
+        decrementLoading();
+      },
+      complete: () => decrementLoading()
     });
   }
 
@@ -243,8 +287,12 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
     const caData = this.chiffreAffairesData.map(d => d.chiffreAffaires || 0);
     const ventesData = this.chiffreAffairesData.map(d => d.nbVentes || 0);
     this.caChart.data.labels = labels;
-    this.caChart.data.datasets[0].data = caData;
-    this.caChart.data.datasets[1].data = ventesData;
+    if (this.caChart.data.datasets.length > 0) {
+      this.caChart.data.datasets[0].data = caData;
+    }
+    if (this.caChart.data.datasets.length > 1) {
+      this.caChart.data.datasets[1].data = ventesData;
+    }
     this.caChart.update();
   }
 
@@ -308,17 +356,65 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
     const groups = new Map<string, { periode: string; chiffreAffaires: number; nbVentes: number }>();
     data.forEach(d => {
       if (!d.periode) return;
-      const datePart = d.periode.split(' ')[0];
-      const [day, month, year] = datePart.split('/');
-      const key = `${month}/${year}`;
-      const existing = groups.get(key) || { periode: `01/${key}`, chiffreAffaires: 0, nbVentes: 0 };
-      existing.chiffreAffaires += (d.chiffreAffaires || 0);
-      existing.nbVentes += (d.nbVentes || 0);
-      groups.set(key, existing);
+      try {
+        // Handle various date formats: DD/MM/YYYY, DD/MM/YYYY HH:MM, YYYY-MM-DD, etc.
+        let normalizedDate = d.periode;
+        // Remove time part if present
+        if (normalizedDate.includes(' ')) {
+          normalizedDate = normalizedDate.split(' ')[0];
+        }
+
+        // Handle DD/MM/YYYY or MM/DD/YYYY or YYYY-MM-DD
+        let day, month, year;
+        const parts = normalizedDate.split(/[\/-]/);
+
+        if (parts.length === 3) {
+          // Check if first part is likely a year (4 digits or >31)
+          if (parts[0].length === 4 || parseInt(parts[0]) > 31) {
+            // Format: YYYY-MM-DD or YYYY/MM/DD
+            [year, month, day] = parts;
+          } else if (parts[2].length === 4 || parseInt(parts[2]) > 31) {
+            // Format: DD-MM-YYYY or DD/MM/YYYY
+            [day, month, year] = parts;
+          } else {
+            // Ambiguous, assume DD/MM/YYYY
+            [day, month, year] = parts;
+          }
+        } else {
+          // Fallback: try to extract year/month from substring
+          const yearMatch = normalizedDate.match(/\d{4}/);
+          const monthMatch = normalizedDate.match(/(0[1-9]|1[0-2])/);
+          if (yearMatch && monthMatch) {
+            year = yearMatch[0];
+            month = monthMatch[0];
+            day = '01';
+          } else {
+            return; // Skip invalid date
+          }
+        }
+
+        // Validate month and year
+        const monthNum = parseInt(month, 10);
+        const yearNum = parseInt(year, 10);
+        if (isNaN(monthNum) || monthNum < 1 || monthNum > 12 || isNaN(yearNum)) {
+          return; // Skip invalid date
+        }
+
+        const key = `${monthNum}/${yearNum}`;
+        const existing = groups.get(key) || { periode: `01/${key}`, chiffreAffaires: 0, nbVentes: 0 };
+        existing.chiffreAffaires += (d.chiffreAffaires || 0);
+        existing.nbVentes += (d.nbVentes || 0);
+        groups.set(key, existing);
+      } catch (e) {
+        // Skip invalid date entries to prevent crashing the whole aggregation
+        console.warn('Skipping invalid date in aggregateByMonth:', d.periode, e);
+        return;
+      }
     });
+
     const toMonthNum = (p: string) => {
       const [m, y] = p.split('/');
-      return parseInt(y) * 12 + parseInt(m);
+      return parseInt(y, 10) * 12 + parseInt(m, 10);
     };
     return Array.from(groups.values()).sort((a, b) => toMonthNum(a.periode) - toMonthNum(b.periode));
   }

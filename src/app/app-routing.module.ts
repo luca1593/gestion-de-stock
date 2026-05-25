@@ -36,7 +36,8 @@ const routes: Routes=[
     path: '', component: PageDashbordComponent,
     canActivate: [ApplicationGuardService],
     children: [
-      { path: 'dashbord', component: PageStatistiquesComponent, canActivate: [ApplicationGuardService] },
+      { path: '', redirectTo: 'dashbord', pathMatch: 'full' },
+      { path: 'dashbord', component: PageDashbordComponent, canActivate: [ApplicationGuardService] },
       { path: 'statistiques', component: StatistiquesComponent, canActivate: [ApplicationGuardService] },
       { path: 'articles', component: PageArticleComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-article', component: NouvelArticleComponent, canActivate: [ApplicationGuardService] },
@@ -74,8 +75,7 @@ const routes: Routes=[
       { path: 'modifier-utilisateur/:id', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService] },
       { path: 'profil', component: PageProfilComponent, canActivate: [ApplicationGuardService] },
       { path: 'modifier-profil', component: ModifProfilComponent, canActivate: [ApplicationGuardService] },
-      { path: 'changer-mot-de-passe', component: ChangerMotDePasseComponent, canActivate: [ApplicationGuardService] },
-      { path: '', redirectTo: 'dashbord', pathMatch: 'full' }
+      { path: 'changer-mot-de-passe', component: ChangerMotDePasseComponent, canActivate: [ApplicationGuardService] }
     ]
   },
   { path: '**', redirectTo: 'login' }
