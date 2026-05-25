@@ -60,10 +60,75 @@ export class ExportExcelService {
     });
   }
 
-  exportVentes(): void {
-    this.exportApiService.ExportApiExcelVentesGET().subscribe(blob => {
-      this.downloadBlob(blob, 'ventes_' + this.getDateString() + '.xlsx');
-    });
+  async exportVentes(): Promise<void> {
+    try {
+      const ventes: any[] = await firstValueFrom(this.venteService.findAllVente());
+
+      const ventesAvecLignes = await Promise.all(ventes.map(async (v) => {
+        try {
+          const lignes = await firstValueFrom(this.venteService.findLigneVenteByVente(v.id));
+          return { ...v, ligneVentes: lignes || [] };
+        } catch {
+          return { ...v, ligneVentes: [] };
+        }
+      }));
+
+      const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
+
+      // CSV header
+      const csvRows = [
+        ['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (€)', 'Total (€)']
+      ];
+
+      let grandTotal = 0;
+      ventesAvecLignes.forEach(v => {
+        const lignes = (v.ligneVentes || []).filter((l: any) => l.prixUnitaire != null && l.quantite != null);
+        if (lignes.length === 0) return;
+
+        lignes.forEach((l: any) => {
+          const totalLigne = l.prixUnitaire * l.quantite;
+          grandTotal += totalLigne;
+          csvRows.push([
+            v.code || '',
+            formatDate(v.dateVente),
+            l.article?.codeArticle || '',
+            l.article?.designation || '',
+            l.quantite.toString(),
+            l.prixUnitaire.toFixed(2),
+            totalLigne.toFixed(2),
+          ]);
+        });
+
+        // Empty separator row
+        csvRows.push([]);
+      });
+
+      // Total row
+      csvRows.push([]);
+      csvRows.push(['TOTAL GÉNÉRAL', '', '', '', '', '', grandTotal.toFixed(2)]);
+
+      const csvContent = csvRows.map(row =>
+        row.map(cell => {
+          if (cell == null) return '';
+          const str = String(cell);
+          // Escape quotes and wrap in quotes if contains comma, quote or newline
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return '"' + str.replace(/"/g, '""') + '"';
+          }
+          return str;
+        }).join(',')
+      ).join('\n');
+
+      // BOM for Excel UTF-8 detection
+      const bom = '\uFEFF';
+      const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+      this.downloadBlob(blob, 'ventes_' + this.getDateString() + '.csv');
+    } catch (err) {
+      console.error('Erreur export CSV ventes', err);
+      this.exportApiService.ExportApiExcelVentesGET().subscribe(blob => {
+        this.downloadBlob(blob, 'ventes_' + this.getDateString() + '.xlsx');
+      });
+    }
   }
 
   async exportPdfVentes(): Promise<void> {
