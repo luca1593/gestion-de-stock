@@ -93,7 +93,7 @@ export class ExportExcelService {
     const mg = 15;
     const ct = pw / 2;
 
-    const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
+    const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
 
     // ── Bandeau haut ──
     doc.setFillColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
@@ -189,7 +189,7 @@ export class ExportExcelService {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
-      doc.text(`◉ ${vente.code || '—'}  |  ${formatDate(vente.dateVente)}`, mg + 5, printY + 6);
+      doc.text(`# ${vente.code || '-'}  |  ${formatDate(vente.dateVente)}`, mg + 5, printY + 6);
       if (vente.commentaire) {
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(8);
@@ -202,8 +202,8 @@ export class ExportExcelService {
 
       // ── Nœuds enfants : lignes de vente (autoTable) ──
       const body = lignes.map((l: any) => [
-        l.article?.codeArticle || '—',
-        l.article?.designation || '—',
+        l.article?.codeArticle || '-',
+        l.article?.designation || '-',
         l.quantite.toString(),
         l.prixUnitaire.toFixed(2) + ' €',
         (l.prixUnitaire * l.quantite).toFixed(2) + ' €',
@@ -243,7 +243,7 @@ export class ExportExcelService {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
-      doc.text(`Total ${vente.code || '—'} : ${venteTotal.toFixed(2)} €  (${venteQte} article${venteQte > 1 ? 's' : ''})`, mg + 14, printY + 5);
+      doc.text(`Total ${vente.code || '-'} : ${venteTotal.toFixed(2)} €  (${venteQte} article${venteQte > 1 ? 's' : ''})`, mg + 14, printY + 5);
       printY += 10;
 
       // ── Séparateur entre ventes ──
@@ -284,7 +284,7 @@ export class ExportExcelService {
     doc.setFont('helvetica', 'normal');
     const footerY = ph - 12;
     doc.line(mg, footerY - 3, pw - mg, footerY - 3);
-    doc.text('Généré le ' + formatDate(new Date().toISOString()) + ' — Gestion de Stock', ct, footerY + 4, { align: 'center' });
+    doc.text('Généré le ' + formatDate(new Date().toISOString()) + ' - Gestion de Stock', ct, footerY + 4, { align: 'center' });
 
     doc.save('historique-ventes_' + this.getDateString() + '.pdf');
   }
@@ -365,17 +365,17 @@ export class ExportExcelService {
     doc.setFont('helvetica', 'normal');
     refY += 6;
 
-    const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
+    const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
     const etatLabel = (e?: string): string => {
       const map: Record<string, string> = { BROUILLON: 'Brouillon', VALIDE: 'Validé', ANNULE: 'Annulé' };
-      return (e && map[e]) || e || '—';
+      return (e && map[e]) || e || '-';
     };
 
     const refs: [string, string][] = [
-      ['N°', avoir.code || '—'],
+      ['N°', avoir.code || '-'],
       ['Date', formatDate(avoir.dateAvoir)],
       ['Statut', etatLabel(avoir.etat)],
-      ['Raison', avoir.raison || '—'],
+      ['Raison', avoir.raison || '-'],
     ];
     refs.forEach(([l, v]) => {
       doc.setFont('helvetica', 'bold');
@@ -404,7 +404,7 @@ export class ExportExcelService {
       y2 += 10;
 
       doc.setFontSize(9);
-      const clientName = [avoir.client.nom, avoir.client.prenom].filter(Boolean).join(' ') || '—';
+      const clientName = [avoir.client.nom, avoir.client.prenom].filter(Boolean).join(' ') || '-';
       doc.setFont('helvetica', 'bold');
       doc.text('Nom :', mg + 3, y2);
       doc.setFont('helvetica', 'normal');
@@ -454,7 +454,7 @@ export class ExportExcelService {
       doc.setFont('helvetica', 'bold');
       doc.text('Code :', mg + 3, y2);
       doc.setFont('helvetica', 'normal');
-      doc.text(avoir.vente.code || '—', mg + 20, y2);
+      doc.text(avoir.vente.code || '-', mg + 20, y2);
       y2 += 5.5;
 
       if (avoir.vente.dateVente) {
@@ -478,8 +478,8 @@ export class ExportExcelService {
         y2 += 10;
 
         const ligneBody = ligneVentes.map(l => [
-          l.article?.codeArticle || '—',
-          l.article?.designation || '—',
+          l.article?.codeArticle || '-',
+          l.article?.designation || '-',
           (l.quantite ?? 0).toString(),
           (l.prixUnitaire ?? 0).toFixed(2) + ' €',
           ((l.quantite ?? 0) * (l.prixUnitaire ?? 0)).toFixed(2) + ' €',
@@ -520,10 +520,10 @@ export class ExportExcelService {
 
     // ── Tableau de détails ──
     const tableBody = [
-      ['Code', avoir.code || '—'],
+      ['Code', avoir.code || '-'],
       ['Date', formatDate(avoir.dateAvoir)],
       ['Montant HT', (avoir.montant ?? 0).toFixed(2) + ' €'],
-      ['Raison', avoir.raison || '—'],
+      ['Raison', avoir.raison || '-'],
       ['Statut', etatLabel(avoir.etat)],
     ];
 
@@ -573,7 +573,7 @@ export class ExportExcelService {
     const footerY = ph - 12;
     doc.line(mg, footerY - 3, pw - mg, footerY - 3);
     const today = new Date().toLocaleDateString('fr-FR');
-    doc.text('Généré le ' + today + ' — Gestion de Stock', ct, footerY + 4, { align: 'center' });
+    doc.text('Généré le ' + today + ' - Gestion de Stock', ct, footerY + 4, { align: 'center' });
 
     // ── Download ──
     doc.save('avoir_' + (avoir.code || avoir.id) + '_' + this.getDateString() + '.pdf');
