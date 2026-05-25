@@ -7,6 +7,7 @@ import { AvoirDto } from 'src/gs-api/src/models';
 import { firstValueFrom } from 'rxjs';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 const COLORS = {
   primary: [41, 98, 186],
@@ -75,56 +76,83 @@ export class ExportExcelService {
 
       const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
 
-      // CSV header
-      const csvRows = [
-        ['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (€)', 'Total (€)']
-      ];
+      const wsData: any[][] = [];
+      const mergeRanges: XLSX.Range[] = [];
+
+      wsData.push(['HISTORIQUE DES VENTES']);
+      wsData.push([]);
+
+      // ── En-têtes ──
+      wsData.push(['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (€)', 'Total (€)']);
 
       let grandTotal = 0;
+      let rowIdx = 3;
+
       ventesAvecLignes.forEach(v => {
         const lignes = (v.ligneVentes || []).filter((l: any) => l.prixUnitaire != null && l.quantite != null);
         if (lignes.length === 0) return;
 
+        let venteTotal = 0;
+
+        // ── Ligne en-tête vente ──
+        wsData.push([`${v.code || '-'}  |  ${formatDate(v.dateVente)}`]);
+        mergeRanges.push({ s: { r: rowIdx, c: 0 }, e: { r: rowIdx, c: 6 } });
+        rowIdx++;
+
+        // ── Lignes d'articles ──
         lignes.forEach((l: any) => {
           const totalLigne = l.prixUnitaire * l.quantite;
-          grandTotal += totalLigne;
-          csvRows.push([
+          venteTotal += totalLigne;
+          wsData.push([
             v.code || '',
             formatDate(v.dateVente),
             l.article?.codeArticle || '',
             l.article?.designation || '',
-            l.quantite.toString(),
-            l.prixUnitaire.toFixed(2),
-            totalLigne.toFixed(2),
+            l.quantite,
+            l.prixUnitaire,
+            totalLigne,
           ]);
+          rowIdx++;
         });
 
-        // Empty separator row
-        csvRows.push([]);
+        // ── Sous-total vente ──
+        wsData.push(['', '', '', '', '', 'Sous-total', venteTotal]);
+        rowIdx++;
+        grandTotal += venteTotal;
+
+        // ── Ligne vide ──
+        wsData.push([]);
+        rowIdx++;
       });
 
-      // Total row
-      csvRows.push([]);
-      csvRows.push(['TOTAL GÉNÉRAL', '', '', '', '', '', grandTotal.toFixed(2)]);
+      // ── Total général ──
+      wsData.push([]);
+      rowIdx++;
+      wsData.push(['', '', '', '', '', 'TOTAL GÉNÉRAL', grandTotal]);
+      mergeRanges.push({ s: { r: rowIdx, c: 5 }, e: { r: rowIdx, c: 6 } });
 
-      const csvContent = csvRows.map(row =>
-        row.map(cell => {
-          if (cell == null) return '';
-          const str = String(cell);
-          // Escape quotes and wrap in quotes if contains comma, quote or newline
-          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-            return '"' + str.replace(/"/g, '""') + '"';
-          }
-          return str;
-        }).join(',')
-      ).join('\n');
+      // ── Création du workbook ──
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-      // BOM for Excel UTF-8 detection
-      const bom = '\uFEFF';
-      const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
-      this.downloadBlob(blob, 'ventes_' + this.getDateString() + '.csv');
+      // ── Largeurs de colonnes ──
+      ws['!cols'] = [
+        { wch: 20 },  // Code Vente
+        { wch: 14 },  // Date Vente
+        { wch: 14 },  // Code Article
+        { wch: 30 },  // Désignation
+        { wch: 10 },  // Quantité
+        { wch: 12 },  // PU
+        { wch: 14 },  // Total
+      ];
+
+      // ── Fusion des cellules ──
+      if (mergeRanges.length > 0) ws['!merges'] = mergeRanges;
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Ventes');
+      XLSX.writeFile(wb, 'ventes_' + this.getDateString() + '.xlsx');
     } catch (err) {
-      console.error('Erreur export CSV ventes', err);
+      console.error('Erreur export XLSX ventes', err);
       this.exportApiService.ExportApiExcelVentesGET().subscribe(blob => {
         this.downloadBlob(blob, 'ventes_' + this.getDateString() + '.xlsx');
       });
