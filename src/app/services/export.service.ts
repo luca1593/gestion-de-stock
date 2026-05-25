@@ -287,13 +287,21 @@ export class ExportExcelService {
   async exportPdfAvoir(id: number): Promise<void> {
     try {
       const avoir: AvoirDto = await firstValueFrom(this.avoirService.getById(id));
-      this.generateAvoirPdf(avoir);
+      let ligneVentes: any[] | null = null;
+      if (avoir.vente?.id) {
+        try {
+          ligneVentes = await firstValueFrom(this.venteService.findLigneVenteByVente(avoir.vente.id));
+        } catch {
+          ligneVentes = null;
+        }
+      }
+      this.generateAvoirPdf(avoir, ligneVentes);
     } catch (err) {
       console.error('Erreur génération PDF avoir', err);
     }
   }
 
-  private async generateAvoirPdf(avoir: AvoirDto): Promise<void> {
+  private async generateAvoirPdf(avoir: AvoirDto, ligneVentes: any[] | null = null): Promise<void> {
     const doc = new jsPDF('portrait', 'mm', 'a4');
     const pw = doc.internal.pageSize.getWidth();
     const ph = doc.internal.pageSize.getHeight();
@@ -450,6 +458,55 @@ export class ExportExcelService {
         doc.setFont('helvetica', 'normal');
         doc.text(formatDate(avoir.vente.dateVente), mg + 20, y2);
         y2 += 5.5;
+      }
+
+      // ── Ligne de vente (articles) ──
+      if (ligneVentes && ligneVentes.length > 0) {
+        y2 += 3;
+        doc.setFillColor(COLORS.lightBg[0], COLORS.lightBg[1], COLORS.lightBg[2]);
+        doc.rect(mg, y2 - 5, pw - 2 * mg, 8, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+        doc.text('ARTICLES', mg + 3, y2);
+        doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
+        y2 += 10;
+
+        const ligneBody = ligneVentes.map(l => [
+          l.article?.codeArticle || '—',
+          l.article?.designation || '—',
+          (l.quantite ?? 0).toString(),
+          (l.prixUnitaire ?? 0).toFixed(2) + ' €',
+          ((l.quantite ?? 0) * (l.prixUnitaire ?? 0)).toFixed(2) + ' €',
+        ]);
+
+        autoTable(doc, {
+          startY: y2,
+          head: [['Code Article', 'Désignation', 'Qté', 'PU', 'Total']],
+          body: ligneBody,
+          theme: 'grid',
+          headStyles: {
+            fillColor: COLORS.primary as [number, number, number],
+            textColor: 255,
+            fontStyle: 'bold',
+            fontSize: 9,
+            halign: 'center',
+          },
+          bodyStyles: { fontSize: 8, textColor: COLORS.dark as [number, number, number] },
+          alternateRowStyles: { fillColor: COLORS.lightBg as [number, number, number] },
+          columnStyles: {
+            0: { cellWidth: 30, halign: 'left' },
+            1: { cellWidth: 60, halign: 'left' },
+            2: { cellWidth: 15, halign: 'center' },
+            3: { cellWidth: 20, halign: 'right' },
+            4: { cellWidth: 20, halign: 'right' },
+          },
+          margin: { left: mg, right: mg },
+          tableLineColor: COLORS.border as [number, number, number],
+          tableLineWidth: 0.3,
+        });
+
+        y2 = (doc as any).lastAutoTable.finalY + 8;
       }
     }
 
