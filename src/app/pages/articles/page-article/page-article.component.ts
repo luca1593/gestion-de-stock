@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { ArticleDto } from 'src/gs-api/src/models';
 import { CategoryDto } from 'src/gs-api/src/models/category-dto';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-article',
@@ -19,6 +20,8 @@ export class PageArticleComponent implements OnInit {
   page: number=1;
   pageSize: number = 5;
   loading = true;
+
+  sortState: SortState = { column: '', direction: 'asc' };
 
   searchCode: string = '';
   searchLibelle: string = '';
@@ -63,7 +66,8 @@ export class PageArticleComponent implements OnInit {
     private router: Router,
     private articleService: ArtcleService,
     private exportService: ExportExcelService,
-    private photoSyncService: PhotoSyncService
+    private photoSyncService: PhotoSyncService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -76,6 +80,7 @@ export class PageArticleComponent implements OnInit {
       next: (resp) => {
         this.listArticle = this.photoSyncService.mergePhotos('article', resp);
         this.listArticleFiltre = this.listArticle;
+        this.applySort();
         this.loading = false;
       },
       error: () => {
@@ -84,15 +89,45 @@ export class PageArticleComponent implements OnInit {
     });
   }
 
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      this.listArticleFiltre = sortByProperty(this.listArticleFiltre, this.sortState.column, this.sortState.direction);
+    }
+  }
+
   filtrer(): void {
     this.listArticleFiltre = this.listArticle.filter(article => {
-      const matchCode = !this.searchCode || (article.codeArticle?.toLowerCase().includes(this.searchCode.toLowerCase()));
-      const matchLibelle = !this.searchLibelle || (article.designation?.toLowerCase().includes(this.searchLibelle.toLowerCase()));
+      const matchCode = !this.searchCode || 
+        matchSearch(article.codeArticle, this.searchCode) ||
+        matchSearch(article.stock, this.searchCode) ||
+        matchSearch(article.prixUnitaireht, this.searchCode) ||
+        matchSearch(article.prixTtc, this.searchCode);
+      const matchLibelle = !this.searchLibelle || 
+        matchSearch(article.designation, this.searchLibelle) ||
+        matchSearch(article.stock, this.searchLibelle) ||
+        matchSearch(article.prixUnitaireht, this.searchLibelle) ||
+        matchSearch(article.prixTtc, this.searchLibelle);
       const matchCategory = !this.searchCategory || 
-        (article.category?.designation?.toLowerCase().includes(this.searchCategory.toLowerCase())) ||
+        matchSearch(article.category?.designation, this.searchCategory) ||
+        matchSearch(article.stock, this.searchCategory) ||
+        matchSearch(article.prixUnitaireht, this.searchCategory) ||
+        matchSearch(article.prixTtc, this.searchCategory) ||
         (article.category?.id?.toString() === this.searchCategory);
       return matchCode && matchLibelle && matchCategory;
     });
+    this.applySort();
     this.page = 1;
   }
 
@@ -101,6 +136,7 @@ export class PageArticleComponent implements OnInit {
     this.searchLibelle = '';
     this.searchCategory = '';
     this.listArticleFiltre = this.listArticle;
+    this.applySort();
     this.page = 1;
   }
 

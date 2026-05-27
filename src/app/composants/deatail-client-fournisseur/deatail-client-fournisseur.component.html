@@ -71,11 +71,11 @@
                 <table class="orders-table">
                     <thead>
                         <tr>
-                            <th>Code</th>
-                            <th>Date</th>
-                            <th>Nb Articles</th>
-                            <th>Total TTC</th>
-                            <th>État</th>
+                            <th class="sortable" (click)="sortOrders('code')">Code <span class="sort-arrow" *ngIf="sortStateCmd.column === 'code'">{{ sortStateCmd.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="sortable" (click)="sortOrders('dateCommande')">Date <span class="sort-arrow" *ngIf="sortStateCmd.column === 'dateCommande'">{{ sortStateCmd.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="sortable" (click)="sortOrders('nbArticles')">Nb Articles <span class="sort-arrow" *ngIf="sortStateCmd.column === 'nbArticles'">{{ sortStateCmd.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="sortable" (click)="sortOrders('totalTtc')">Total TTC <span class="sort-arrow" *ngIf="sortStateCmd.column === 'totalTtc'">{{ sortStateCmd.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="sortable" (click)="sortOrders('etatcommande')">État <span class="sort-arrow" *ngIf="sortStateCmd.column === 'etatcommande'">{{ sortStateCmd.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -165,15 +165,15 @@
                 <table class="table order-lines-table">
                     <thead>
                         <tr>
-                            <th>Article</th>
-                            <th>Catégorie</th>
-                            <th class="text-center">Qté</th>
-                            <th class="text-end">PU TTC</th>
-                            <th class="text-end">Total</th>
+                            <th class="sortable" (click)="sortLignes('article.designation')">Article <span class="sort-arrow" *ngIf="sortStateLignes.column === 'article.designation'">{{ sortStateLignes.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="sortable" (click)="sortLignes('article.category.designation')">Catégorie <span class="sort-arrow" *ngIf="sortStateLignes.column === 'article.category.designation'">{{ sortStateLignes.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="text-center sortable" (click)="sortLignes('quantite')">Qté <span class="sort-arrow" *ngIf="sortStateLignes.column === 'quantite'">{{ sortStateLignes.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="text-end sortable" (click)="sortLignes('article.prixTtc')">PU TTC <span class="sort-arrow" *ngIf="sortStateLignes.column === 'article.prixTtc'">{{ sortStateLignes.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                            <th class="text-end sortable" (click)="sortLignes('total')">Total <span class="sort-arrow" *ngIf="sortStateLignes.column === 'total'">{{ sortStateLignes.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let ligne of mapLigneComandes.get(idCommandeSelectione)">
+                        <tr *ngFor="let ligne of listeLignesSelectionnees">
                             <td>
                                 <div class="article-info">
                                     <span class="article-code">{{ligne.article?.codeArticle}}</span>

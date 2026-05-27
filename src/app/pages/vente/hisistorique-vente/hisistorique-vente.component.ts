@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-hisistorique-vente',
@@ -28,11 +29,14 @@ export class HisistoriqueVenteComponent implements OnInit {
   searchCode = '';
   searchDate = '';
 
+  sortState: SortState = { column: '', direction: 'asc' };
+
   constructor(
     private venteService: VenteService,
     private router: Router,
     private modalService: ModalService,
-    private exportService: ExportExcelService
+    private exportService: ExportExcelService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -62,8 +66,8 @@ export class HisistoriqueVenteComponent implements OnInit {
     await this.exportService.exportPdfVentes();
   }
 
-  printPage(): void {
-    window.print();
+  async printPage(): Promise<void> {
+    await this.exportService.printPdfVentes();
   }
 
   findAllLigneVente(): void {
@@ -100,13 +104,44 @@ export class HisistoriqueVenteComponent implements OnInit {
     }
   }
 
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.pageCmd = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      if (this.sortState.column === 'total') {
+        this.mapListLigneVente.forEach((lignes, key) => {
+          const sorted = [...lignes].sort((a, b) => {
+            const totalA = (a.quantite || 0) * (a.prixUnitaire || 0);
+            const totalB = (b.quantite || 0) * (b.prixUnitaire || 0);
+            return this.sortState.direction === 'asc' ? totalA - totalB : totalB - totalA;
+          });
+          this.mapListLigneVente.set(key, sorted);
+        });
+      } else {
+        this.mapListLigneVente.forEach((lignes, key) => {
+          this.mapListLigneVente.set(key, sortByProperty(lignes, this.sortState.column, this.sortState.direction));
+        });
+      }
+    }
+  }
+
   filtrer(): void {
-    const searchLower = this.searchCode.toLowerCase().trim();
     this.listVentesFiltre = this.listVentes.filter(vente => {
-      const matchCode = !searchLower || (vente.code?.toLowerCase().includes(searchLower));
+      const matchCode = !this.searchCode || matchSearch(vente.code, this.searchCode);
       const matchDate = !this.searchDate || this.isSameDate(vente.dateVente, this.searchDate);
       return matchCode && matchDate;
     });
+    this.applySort();
     this.totalItems = this.listVentesFiltre.length;
     this.pageCmd = 1;
   }
@@ -122,6 +157,7 @@ export class HisistoriqueVenteComponent implements OnInit {
     this.searchCode = '';
     this.searchDate = '';
     this.listVentesFiltre = this.listVentes;
+    this.applySort();
     this.totalItems = this.listVentes.length;
     this.pageCmd = 1;
   }

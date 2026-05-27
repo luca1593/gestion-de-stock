@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { UtilisateurDto } from 'src/gs-api/src/models';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-utilisateur',
@@ -22,7 +23,10 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
 
   searchNom: string = '';
   searchEmail: string = '';
-  searchEntreprise: string = '';
+  searchAdresse: string = '';
+  searchPays: string = '';
+
+  sortState: SortState = { column: 'nom', direction: 'asc' };
 
   constructor(
     private router: Router,
@@ -49,7 +53,7 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
     this.userService.findAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (list) => {
         this.listUtilisateur = list;
-        this.listUtilisateurFiltre = list;
+        this.listUtilisateurFiltre = sortByProperty(list, 'nom', 'asc');
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -61,15 +65,39 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
     });
   }
 
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      this.listUtilisateurFiltre = sortByProperty(this.listUtilisateurFiltre, this.sortState.column, this.sortState.direction);
+    }
+  }
+
   filtrer(): void {
     this.listUtilisateurFiltre = this.listUtilisateur.filter(user => {
       const matchNom = !this.searchNom || 
-        (user.nom?.toLowerCase().includes(this.searchNom.toLowerCase())) || 
-        (user.prenom?.toLowerCase().includes(this.searchNom.toLowerCase()));
-      const matchEmail = !this.searchEmail || (user.email?.toLowerCase().includes(this.searchEmail.toLowerCase()));
-      const matchEntreprise = !this.searchEntreprise || (user.entreprise?.nom?.toLowerCase().includes(this.searchEntreprise.toLowerCase()));
-      return matchNom && matchEmail && matchEntreprise;
+        matchSearch(user.nom, this.searchNom) || 
+        matchSearch(user.prenom, this.searchNom);
+      const matchEmail = !this.searchEmail || matchSearch(user.email, this.searchEmail);
+      const matchAdresse = !this.searchAdresse || 
+        matchSearch(user.adresse?.adresse1, this.searchAdresse) ||
+        matchSearch(user.adresse?.adresse2, this.searchAdresse) ||
+        matchSearch(user.adresse?.ville, this.searchAdresse) ||
+        matchSearch(user.adresse?.codePostal, this.searchAdresse);
+      const matchPays = !this.searchPays || matchSearch(user.adresse?.pays, this.searchPays);
+      return matchNom && matchEmail && matchAdresse && matchPays;
     });
+    this.applySort();
     this.page = 1;
     this.cdr.markForCheck();
   }
@@ -77,8 +105,10 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
   reinitialiserFiltres(): void {
     this.searchNom = '';
     this.searchEmail = '';
-    this.searchEntreprise = '';
+    this.searchAdresse = '';
+    this.searchPays = '';
     this.listUtilisateurFiltre = this.listUtilisateur;
+    this.applySort();
     this.page = 1;
     this.cdr.markForCheck();
   }

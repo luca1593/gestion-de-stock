@@ -150,12 +150,11 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Code</th>
-                                <th>Désignation</th>
-                                <th>Catégorie</th>
-                                <th class="text-end">Stock</th>
-                                <th class="text-end">Prix</th>
-                                <th class="text-end">Ventes</th>
+                                <th class="sortable" (click)="sortTop('codeArticle')">Code <span class="sort-arrow" *ngIf="sortStateTop.column === 'codeArticle'">{{ sortStateTop.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="sortable" (click)="sortTop('designation')">Désignation <span class="sort-arrow" *ngIf="sortStateTop.column === 'designation'">{{ sortStateTop.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="sortable" (click)="sortTop('category')">Catégorie <span class="sort-arrow" *ngIf="sortStateTop.column === 'category'">{{ sortStateTop.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="text-end sortable" (click)="sortTop('prixUnitaire')">Prix <span class="sort-arrow" *ngIf="sortStateTop.column === 'prixUnitaire'">{{ sortStateTop.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="text-end sortable" (click)="sortTop('nbVentes')">Ventes <span class="sort-arrow" *ngIf="sortStateTop.column === 'nbVentes'">{{ sortStateTop.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -164,16 +163,11 @@
                                 <td><code class="small">{{article.codeArticle}}</code></td>
                                 <td>{{article.designation}}</td>
                                 <td><span class="badge bg-primary bg-sm">{{article.category || '-'}}</span></td>
-                                <td class="text-end">
-                                    <span [class]="getStockStatusClass(article.stock)">
-                                        {{article.stock}}
-                                    </span>
-                                </td>
                                 <td class="text-end">{{formatCurrency(article.prixUnitaire)}}</td>
                                 <td class="text-end"><span class="badge bg-success">{{article.nbVentes}}</span></td>
                             </tr>
                             <tr *ngIf="topArticles.length === 0">
-                                <td colspan="7" class="text-center text-muted py-4">
+                                <td colspan="6" class="text-center text-muted py-4">
                                     <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
                                     Aucune données disponible
                                 </td>
@@ -192,11 +186,11 @@
                     <table class="table table-hover table-sm">
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Désignation</th>
-                                <th class="text-end">Valeur Stock</th>
-                                <th class="text-end">Taux</th>
-                                <th class="text-end">Couverture</th>
+                                <th class="sortable" (click)="sortRotation('codeArticle')">Code <span class="sort-arrow" *ngIf="sortStateRotation.column === 'codeArticle'">{{ sortStateRotation.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="sortable" (click)="sortRotation('designation')">Désignation <span class="sort-arrow" *ngIf="sortStateRotation.column === 'designation'">{{ sortStateRotation.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="text-end sortable" (click)="sortRotation('valeurStock')">Valeur Stock <span class="sort-arrow" *ngIf="sortStateRotation.column === 'valeurStock'">{{ sortStateRotation.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="text-end sortable" (click)="sortRotation('tauxRotation')">Taux <span class="sort-arrow" *ngIf="sortStateRotation.column === 'tauxRotation'">{{ sortStateRotation.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                                <th class="text-end sortable" (click)="sortRotation('joursCouverture')">Couverture <span class="sort-arrow" *ngIf="sortStateRotation.column === 'joursCouverture'">{{ sortStateRotation.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
                             </tr>
                         </thead>
                         <tbody>

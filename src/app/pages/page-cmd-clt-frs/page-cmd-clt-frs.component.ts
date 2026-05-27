@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 import { CommandeClientDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-cmd-clt-frs',
@@ -26,10 +27,13 @@ export class PageCmdCltFrsComponent implements OnInit {
   searchClient = '';
   searchEtat = '';
 
+  sortState: SortState = { column: '', direction: 'asc' };
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private commandeCltFrsService: CmdCltFrsService
+    private commandeCltFrsService: CmdCltFrsService,
+    private cdr: ChangeDetectorRef
     ) { }
 
   ngOnInit(): void {
@@ -80,31 +84,63 @@ export class PageCmdCltFrsComponent implements OnInit {
     }
   }
 
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      if (this.sortState.column === 'total') {
+        this.mapLigneComandes.forEach((lignes, key) => {
+          const sorted = [...lignes].sort((a: any, b: any) => {
+            const totalA = (a.quantite || 0) * (a.prixUnitaire || 0);
+            const totalB = (b.quantite || 0) * (b.prixUnitaire || 0);
+            return this.sortState.direction === 'asc' ? totalA - totalB : totalB - totalA;
+          });
+          this.mapLigneComandes.set(key, sorted);
+        });
+      } else {
+        this.mapLigneComandes.forEach((lignes, key) => {
+          this.mapLigneComandes.set(key, sortByProperty(lignes, this.sortState.column, this.sortState.direction));
+        });
+      }
+    }
+  }
+
   filtrer(): void {
-    const searchLower = this.searchCode.toLowerCase().trim();
-    const searchClientLower = this.searchClient.toLowerCase().trim();
-    
     this.listCommandesFilter = this.listCommandes.filter(cmd => {
-      const codeCmd = (cmd.code || '').toLowerCase();
-      const nomClient = (this.getClientName(cmd) || '').toLowerCase();
+      const codeCmd = cmd.code;
+      const nomClient = this.getClientName(cmd);
       const etatCmd = cmd.etatCommande || cmd.etatcommande || '';
       
-      const matchCode = !searchLower || codeCmd.includes(searchLower);
-      const matchClient = !searchClientLower || nomClient.includes(searchClientLower);
+      const matchCode = !this.searchCode || matchSearch(codeCmd, this.searchCode);
+      const matchClient = !this.searchClient || matchSearch(nomClient, this.searchClient);
       const matchEtat = !this.searchEtat || etatCmd === this.searchEtat;
       
-      let matchLibelle = !searchLower;
+      let matchLibelle = !this.searchCode;
       if (!matchLibelle) {
         const lignes = cmd.ligneCommandeClients || this.mapLigneComandes.get(cmd.id) || [];
         matchLibelle = lignes.some((ligne: any) => {
-          const codeArticle = (ligne.article?.codeArticle || '').toLowerCase();
-          const designation = (ligne.article?.designation || '').toLowerCase();
-          return codeArticle.includes(searchLower) || designation.includes(searchLower);
+          const codeArticle = ligne.article?.codeArticle;
+          const designation = ligne.article?.designation;
+          return matchSearch(codeArticle, this.searchCode) || 
+            matchSearch(designation, this.searchCode) ||
+            matchSearch(ligne.quantite, this.searchCode) ||
+            matchSearch(ligne.prixUnitaire, this.searchCode);
         });
       }
       
       return (matchCode || matchLibelle) && matchClient && matchEtat;
     });
+    this.applySort();
     this.totalItems = this.listCommandesFilter.length;
     this.page = 1;
   }

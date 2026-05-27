@@ -209,9 +209,19 @@
     width: fit-content;
 }
 
-.entreprise-name {
+.pays-name {
     font-size: 0.85rem;
     color: var(--text-secondary, #6b7280);
+}
+
+.adresse-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #6b7280);
+    max-width: 250px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .loading-state {
@@ -388,7 +398,8 @@ body.dark-theme .pagination-info {
     }
     
     .col-email,
-    .col-adresse {
+    .col-adresse,
+    .col-pays {
         display: none;
     }
     

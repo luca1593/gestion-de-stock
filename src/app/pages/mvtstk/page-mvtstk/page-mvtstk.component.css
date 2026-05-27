@@ -114,18 +114,32 @@
 }
 
 .mvtstk-table th {
-    padding: 1rem;
+    padding: 0.5rem 0.4rem;
     text-align: left;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     color: var(--text-primary, #1f2937);
     border-bottom: 2px solid var(--border-color, #cbd5e1);
 }
 
+.mvtstk-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.mvtstk-table th.sortable:hover {
+    color: var(--primary-color, #4a90d9);
+}
+
+.sort-arrow {
+    margin-left: 4px;
+    font-size: 0.7rem;
+}
+
 .mvtstk-table td {
-    padding: 1rem;
+    padding: 0.45rem 0.4rem;
     vertical-align: middle;
     border-bottom: 1px solid var(--border-color, #f1f5f9);
     color: var(--text-primary, #1f2937);
@@ -180,7 +194,7 @@
 
 .article-code {
     font-family: 'Courier New', monospace;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--primary-color, #4a90d9);
 }
@@ -193,16 +207,16 @@
 }
 
 .article-category {
-    font-size: 0.75rem;
+    font-size: 0.62rem;
     color: var(--text-muted, #9ca3af);
 }
 
 .stock-badge {
     display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.72rem;
 }
 
 .stock-badge.good {
@@ -310,14 +324,14 @@
 }
 
 .mvt-date {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     color: var(--text-muted, #9ca3af);
 }
 
 .mvt-type {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    padding: 0.25rem 0.5rem;
+    padding: 0.2rem 0.4rem;
     border-radius: 4px;
     background: var(--bg-card, #f1f5f9);
 }
@@ -336,12 +350,12 @@
 }
 
 .mvt-source {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     color: var(--text-muted, #9ca3af);
 }
 
 .mvt-ref {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 600;
     color: var(--primary-color, #4a90d9);
     background: rgba(74, 144, 217, 0.1);
@@ -403,7 +417,7 @@
 
 .form-group label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 500;
     color: var(--text-secondary, #6b7280);
     margin-bottom: 0.5rem;
@@ -418,11 +432,11 @@
 }
 
 .new-stock-preview {
-    padding: 0.6rem 1rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 8px;
     text-align: center;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.8rem;
 }
 
 .new-stock-preview.success {

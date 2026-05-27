@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto } from 'src/app/services/dashboard/dashboard.service';
+import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-statistiques',
@@ -30,8 +31,11 @@ export class PageStatistiquesComponent implements OnInit {
   loading = true;
   apiCallsPending = 0;
 
+  sortState: SortState = { column: '', direction: 'asc' };
+
   constructor(
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -165,6 +169,23 @@ export class PageStatistiquesComponent implements OnInit {
         this.checkLoadingComplete();
       }
     });
+  }
+
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      this.topArticles = sortByProperty(this.topArticles, this.sortState.column, this.sortState.direction);
+    }
   }
 
   onPeriodeChange(event: Event): void {

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { ClientDto } from 'src/gs-api/src/models';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-client',
@@ -23,11 +24,14 @@ export class PageClientComponent implements OnInit {
   searchEmail: string = '';
   searchTelephone: string = '';
 
+  sortState: SortState = { column: '', direction: 'asc' };
+
   constructor(
     private router: Router,
     private cltfrsService: CltfrsService,
     private exportService: ExportExcelService,
-    private photoSyncService: PhotoSyncService
+    private photoSyncService: PhotoSyncService,
+    private cdr: ChangeDetectorRef
     ) { }
 
   ngOnInit(): void {
@@ -40,6 +44,7 @@ export class PageClientComponent implements OnInit {
       next: (resp) => {
         this.listClients = this.photoSyncService.mergePhotos('client', resp);
         this.listClientsFiltre = this.listClients;
+        this.applySort();
         this.loading = false;
       },
       error: (err) => {
@@ -49,13 +54,32 @@ export class PageClientComponent implements OnInit {
     });
   }
 
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      this.listClientsFiltre = sortByProperty(this.listClientsFiltre, this.sortState.column, this.sortState.direction);
+    }
+  }
+
   filtrer(): void {
     this.listClientsFiltre = this.listClients.filter(client => {
-      const matchNom = !this.searchNom || (client.nom?.toLowerCase().includes(this.searchNom.toLowerCase())) || (client.prenom?.toLowerCase().includes(this.searchNom.toLowerCase()));
-      const matchEmail = !this.searchEmail || (client.email?.toLowerCase().includes(this.searchEmail.toLowerCase()));
+      const matchNom = !this.searchNom || matchSearch(client.nom, this.searchNom) || matchSearch(client.prenom, this.searchNom);
+      const matchEmail = !this.searchEmail || matchSearch(client.email, this.searchEmail);
       const matchTelephone = !this.searchTelephone || (client.numTel?.includes(this.searchTelephone));
       return matchNom && matchEmail && matchTelephone;
     });
+    this.applySort();
     this.page = 1;
   }
 
@@ -64,6 +88,7 @@ export class PageClientComponent implements OnInit {
     this.searchEmail = '';
     this.searchTelephone = '';
     this.listClientsFiltre = this.listClients;
+    this.applySort();
     this.page = 1;
   }
 

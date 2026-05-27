@@ -4,6 +4,7 @@ import { HaveurService } from 'src/app/services/avoir/avoir.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { AvoirDto } from 'src/gs-api/src/models';
 import { ChangeDetectorRef } from '@angular/core';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-avoir',
@@ -25,6 +26,8 @@ export class PageHaveurComponent implements OnInit {
   showModal = false;
   selectedAvoir: AvoirDto | null = null;
 
+  sortState: SortState = { column: '', direction: 'asc' };
+
   constructor(
     private avoirService: HaveurService,
     private exportService: ExportExcelService,
@@ -42,6 +45,7 @@ export class PageHaveurComponent implements OnInit {
       next: (data: any) => {
         this.listAvoirs = data || [];
         this.listAvoirsFiltre = this.listAvoirs;
+        this.applySort();
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -55,11 +59,16 @@ export class PageHaveurComponent implements OnInit {
 
   filtrer(): void {
     this.listAvoirsFiltre = this.listAvoirs.filter(avoir => {
-      const matchCode = !this.searchCode || (avoir.code?.toLowerCase().includes(this.searchCode.toLowerCase()));
-      const matchClient = !this.searchClient || (avoir.client?.nom?.toLowerCase().includes(this.searchClient.toLowerCase()));
+      const matchCode = !this.searchCode || 
+        matchSearch(avoir.code, this.searchCode) ||
+        matchSearch(avoir.montant, this.searchCode);
+      const matchClient = !this.searchClient || 
+        matchSearch(avoir.client?.nom, this.searchClient) ||
+        matchSearch(avoir.montant, this.searchClient);
       const matchEtat = !this.searchEtat || (avoir.etat === this.searchEtat);
       return matchCode && matchClient && matchEtat;
     });
+    this.applySort();
     this.page = 1;
   }
 
@@ -68,7 +77,26 @@ export class PageHaveurComponent implements OnInit {
     this.searchClient = '';
     this.searchEtat = '';
     this.listAvoirsFiltre = this.listAvoirs;
+    this.applySort();
     this.page = 1;
+  }
+
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      this.listAvoirsFiltre = sortByProperty(this.listAvoirsFiltre, this.sortState.column, this.sortState.direction);
+    }
   }
 
   getEtatClass(etat: string | undefined): string {

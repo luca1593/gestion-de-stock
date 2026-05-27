@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { DashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto, AnalyseStockDto, RotationStockDto, InventoryStatsDto } from 'src/gs-api/src/services/dashboard.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-statistiques',
@@ -33,8 +34,13 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
   stockChart: Chart | null = null;
 
   periodeSelected: number = 12;
+  sortStateTop: SortState = { column: '', direction: 'asc' };
+  sortStateRotation: SortState = { column: '', direction: 'asc' };
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(
+    private dashboardService: DashboardService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     this.loadAllData();
@@ -321,6 +327,40 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
     ];
     this.stockChart.data.datasets[0].data = data;
     this.stockChart.update();
+  }
+
+  sortTop(column: string): void {
+    if (this.sortStateTop.column === column) {
+      this.sortStateTop.direction = this.sortStateTop.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortStateTop.column = column;
+      this.sortStateTop.direction = 'asc';
+    }
+    this.applySortTop();
+    this.cdr.markForCheck();
+  }
+
+  private applySortTop(): void {
+    if (this.sortStateTop.column) {
+      this.topArticles = sortByProperty(this.topArticles, this.sortStateTop.column, this.sortStateTop.direction);
+    }
+  }
+
+  sortRotation(column: string): void {
+    if (this.sortStateRotation.column === column) {
+      this.sortStateRotation.direction = this.sortStateRotation.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortStateRotation.column = column;
+      this.sortStateRotation.direction = 'asc';
+    }
+    this.applySortRotation();
+    this.cdr.markForCheck();
+  }
+
+  private applySortRotation(): void {
+    if (this.sortStateRotation.column) {
+      this.rotationStock = sortByProperty(this.rotationStock, this.sortStateRotation.column, this.sortStateRotation.direction);
+    }
   }
 
   onPeriodeChange(event: any): void {

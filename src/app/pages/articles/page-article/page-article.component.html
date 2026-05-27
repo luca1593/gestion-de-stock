@@ -60,12 +60,30 @@
                         <th class="col-check">
                             <input type="checkbox" class="form-check-input">
                         </th>
-                        <th class="col-code">Code</th>
-                        <th class="col-designation">Désignation</th>
-                        <th class="col-category">Catégorie</th>
-                        <th class="col-price">Prix HT</th>
-                        <th class="col-price">Prix TTC</th>
-                        <th class="col-stock">Stock</th>
+                        <th class="col-code sortable" (click)="sort('codeArticle')">
+                            Code
+                            <span class="sort-arrow" *ngIf="sortState.column === 'codeArticle'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-designation sortable" (click)="sort('designation')">
+                            Désignation
+                            <span class="sort-arrow" *ngIf="sortState.column === 'designation'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-category sortable" (click)="sort('categorie.code')">
+                            Catégorie
+                            <span class="sort-arrow" *ngIf="sortState.column === 'categorie.code'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-price sortable" (click)="sort('prixUnitaireHt')">
+                            Prix HT
+                            <span class="sort-arrow" *ngIf="sortState.column === 'prixUnitaireHt'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-price sortable" (click)="sort('prixUnitaireTtc')">
+                            Prix TTC
+                            <span class="sort-arrow" *ngIf="sortState.column === 'prixUnitaireTtc'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-stock sortable" (click)="sort('stock')">
+                            Stock
+                            <span class="sort-arrow" *ngIf="sortState.column === 'stock'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>

@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { MvtStkService } from 'src/app/services/mvtstk/mvt-stk.service';
 import { ArticleDto, MvtStkDto } from 'src/gs-api/src/models';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-mvtstk',
@@ -28,10 +29,13 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   correctionType: string = 'ENTRER';
   correctionSource: string = 'CORRECTION_STOCK';
 
+  sortState: SortState = { column: '', direction: 'asc' };
+
   constructor(
     private mvtStkService: MvtStkService,
     private articleService: ArtcleService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +50,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
       next: (list) => {
         this.listArticle = list;
         this.listArticleFiltre = list;
+        this.applySort();
         list.forEach(article => {
           if (article.id && article.stock) {
             this.mvtStkService.setArticleStock(article.id, article.stock);
@@ -80,12 +85,24 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
 
   filtrer(): void {
     this.listArticleFiltre = this.listArticle.filter(article => {
-      const matchCode = !this.searchCode || (article.codeArticle?.toLowerCase().includes(this.searchCode.toLowerCase()));
-      const matchLibelle = !this.searchLibelle || (article.designation?.toLowerCase().includes(this.searchLibelle.toLowerCase()));
-      const matchCategory = !this.searchCategory ||
-        (article.category?.designation?.toLowerCase().includes(this.searchCategory.toLowerCase()));
+      const matchCode = !this.searchCode || 
+        matchSearch(article.codeArticle, this.searchCode) ||
+        matchSearch(article.stock, this.searchCode) ||
+        matchSearch(article.prixUnitaireht, this.searchCode) ||
+        matchSearch(article.prixTtc, this.searchCode);
+      const matchLibelle = !this.searchLibelle || 
+        matchSearch(article.designation, this.searchLibelle) ||
+        matchSearch(article.stock, this.searchLibelle) ||
+        matchSearch(article.prixUnitaireht, this.searchLibelle) ||
+        matchSearch(article.prixTtc, this.searchLibelle);
+      const matchCategory = !this.searchCategory || 
+        matchSearch(article.category?.designation, this.searchCategory) ||
+        matchSearch(article.stock, this.searchCategory) ||
+        matchSearch(article.prixUnitaireht, this.searchCategory) ||
+        matchSearch(article.prixTtc, this.searchCategory);
       return matchCode && matchLibelle && matchCategory;
     });
+    this.applySort();
     this.page = 1;
   }
 
@@ -94,7 +111,36 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
     this.searchLibelle = '';
     this.searchCategory = '';
     this.listArticleFiltre = this.listArticle;
+    this.applySort();
     this.page = 1;
+  }
+
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      if (this.sortState.column === 'totalEntrees' || this.sortState.column === 'totalSorties') {
+        this.listArticleFiltre = [...this.listArticleFiltre].sort((a, b) => {
+          const valA = this.sortState.column === 'totalEntrees'
+            ? this.getTotalEntrees(a.id) : this.getTotalSorties(a.id);
+          const valB = this.sortState.column === 'totalEntrees'
+            ? this.getTotalEntrees(b.id) : this.getTotalSorties(b.id);
+          return this.sortState.direction === 'asc' ? valA - valB : valB - valA;
+        });
+      } else {
+        this.listArticleFiltre = sortByProperty(this.listArticleFiltre, this.sortState.column, this.sortState.direction);
+      }
+    }
   }
 
   getStockClass(stock: number | undefined): string {

@@ -57,10 +57,22 @@
             <table class="clients-table">
                 <thead>
                     <tr>
-                        <th class="col-nom">Nom</th>
-                        <th class="col-email">Email</th>
-                        <th class="col-tel">Téléphone</th>
-                        <th class="col-adresse">Adresse</th>
+                        <th class="col-nom sortable" (click)="sort('nom')">
+                            Nom
+                            <span class="sort-arrow" *ngIf="sortState.column === 'nom'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-email sortable" (click)="sort('email')">
+                            Email
+                            <span class="sort-arrow" *ngIf="sortState.column === 'email'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-tel sortable" (click)="sort('numTel')">
+                            Téléphone
+                            <span class="sort-arrow" *ngIf="sortState.column === 'numTel'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-adresse sortable" (click)="sort('adresse.adresse1')">
+                            Adresse
+                            <span class="sort-arrow" *ngIf="sortState.column === 'adresse.adresse1'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>

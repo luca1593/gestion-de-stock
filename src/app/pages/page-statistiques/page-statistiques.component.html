@@ -210,12 +210,24 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Code Article</th>
-                                <th>Désignation</th>
-                                <th>Catégorie</th>
-                                <th>Stock</th>
-                                <th>Prix Unit.</th>
-                                <th>Nb Ventes</th>
+                                <th class="sortable" (click)="sort('codeArticle')">
+                                    Code Article <span class="sort-arrow" *ngIf="sortState.column === 'codeArticle'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                                </th>
+                                <th class="sortable" (click)="sort('designation')">
+                                    Désignation <span class="sort-arrow" *ngIf="sortState.column === 'designation'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                                </th>
+                                <th class="sortable" (click)="sort('category')">
+                                    Catégorie <span class="sort-arrow" *ngIf="sortState.column === 'category'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                                </th>
+                                <th class="sortable" (click)="sort('stock')">
+                                    Stock <span class="sort-arrow" *ngIf="sortState.column === 'stock'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                                </th>
+                                <th class="sortable" (click)="sort('prixUnitaire')">
+                                    Prix Unit. <span class="sort-arrow" *ngIf="sortState.column === 'prixUnitaire'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                                </th>
+                                <th class="sortable" (click)="sort('nbVentes')">
+                                    Nb Ventes <span class="sort-arrow" *ngIf="sortState.column === 'nbVentes'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>

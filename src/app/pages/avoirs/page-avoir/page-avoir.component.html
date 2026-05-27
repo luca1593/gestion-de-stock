@@ -60,12 +60,30 @@
             <table class="avoirs-table">
                 <thead>
                     <tr>
-                        <th class="col-code">Code</th>
-                        <th class="col-date">Date</th>
-                        <th class="col-client">Client</th>
-                        <th class="col-montant">Montant</th>
-                        <th class="col-raison">Raison</th>
-                        <th class="col-etat">État</th>
+                        <th class="col-code sortable" (click)="sort('code')">
+                            Code
+                            <span class="sort-arrow" *ngIf="sortState.column === 'code'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-date sortable" (click)="sort('dateAvoir')">
+                            Date
+                            <span class="sort-arrow" *ngIf="sortState.column === 'dateAvoir'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-client sortable" (click)="sort('client.nom')">
+                            Client
+                            <span class="sort-arrow" *ngIf="sortState.column === 'client.nom'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-montant sortable" (click)="sort('montant')">
+                            Montant
+                            <span class="sort-arrow" *ngIf="sortState.column === 'montant'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-raison sortable" (click)="sort('raison')">
+                            Raison
+                            <span class="sort-arrow" *ngIf="sortState.column === 'raison'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-etat sortable" (click)="sort('etat')">
+                            État
+                            <span class="sort-arrow" *ngIf="sortState.column === 'etat'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>

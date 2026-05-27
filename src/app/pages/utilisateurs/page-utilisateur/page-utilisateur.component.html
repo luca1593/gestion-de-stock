@@ -36,9 +36,15 @@
             </div>
             <div class="filter-group">
                 <label class="filter-label">
-                    <i class="fas fa-building"></i> Entreprise
+                    <i class="fas fa-map-marker-alt"></i> Adresse
                 </label>
-                <input type="text" class="form-control" placeholder="Entreprise..." [(ngModel)]="searchEntreprise" (input)="filtrer()">
+                <input type="text" class="form-control" placeholder="Adresse..." [(ngModel)]="searchAdresse" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <i class="fas fa-globe"></i> Pays
+                </label>
+                <input type="text" class="form-control" placeholder="Pays..." [(ngModel)]="searchPays" (input)="filtrer()">
             </div>
             <div class="filter-group filter-actions">
                 <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
@@ -53,9 +59,22 @@
             <table class="utilisateurs-table">
                 <thead>
                     <tr>
-                        <th class="col-nom">Nom</th>
-                        <th class="col-email">Email</th>
-                        <th class="col-entreprise">Entreprise</th>
+                        <th class="col-nom sortable" (click)="sort('nom')">
+                            Nom
+                            <span class="sort-arrow" *ngIf="sortState.column === 'nom'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-email sortable" (click)="sort('email')">
+                            Email
+                            <span class="sort-arrow" *ngIf="sortState.column === 'email'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-adresse sortable" (click)="sort('adresse.adresse1')">
+                            Adresse
+                            <span class="sort-arrow" *ngIf="sortState.column === 'adresse.adresse1'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-pays sortable" (click)="sort('adresse.pays')">
+                            Pays
+                            <span class="sort-arrow" *ngIf="sortState.column === 'adresse.pays'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>
@@ -77,8 +96,11 @@
                         <td class="col-email">
                             <a href="mailto:{{user.email}}" class="email-link">{{user.email}}</a>
                         </td>
-                        <td class="col-entreprise">
-                            <span class="entreprise-name">{{user.entreprise?.nom || '-'}}</span>
+                        <td class="col-adresse">
+                            <span class="adresse-text">{{ (user.adresse?.adresse1 || '') + (user.adresse?.adresse2 ? ', ' + user.adresse?.adresse2 : '') + (user.adresse?.ville ? ', ' + user.adresse?.ville : '') + (user.adresse?.codePostal ? ' ' + user.adresse?.codePostal : '') || '-' }}</span>
+                        </td>
+                        <td class="col-pays">
+                            <span class="pays-name">{{user.adresse?.pays || '-'}}</span>
                         </td>
                         <td class="col-actions">
                             <div class="action-buttons">

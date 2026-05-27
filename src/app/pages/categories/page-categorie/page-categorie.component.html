@@ -46,8 +46,14 @@
             <table class="categories-table">
                 <thead>
                     <tr>
-                        <th class="col-code">Code</th>
-                        <th class="col-designation">Désignation</th>
+                        <th class="col-code sortable" (click)="sort('code')">
+                            Code
+                            <span class="sort-arrow" *ngIf="sortState.column === 'code'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-designation sortable" (click)="sort('designation')">
+                            Désignation
+                            <span class="sort-arrow" *ngIf="sortState.column === 'designation'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>

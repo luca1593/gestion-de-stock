@@ -277,25 +277,26 @@ body.dark-theme .text-muted {
 
 /* Table adjustments */
 .table {
-    font-size: 0.85rem;
+    font-size: 0.72rem;
 }
 
 .table th {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     white-space: nowrap;
-    padding: 0.75rem 0.5rem;
+    padding: 0.5rem 0.35rem;
 }
 
 .table td {
-    padding: 0.5rem;
+    padding: 0.4rem 0.35rem;
+    white-space: nowrap;
 }
 
 .table .badge {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
 }
 
 .table code {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
 }
 
 /* Loading State */
