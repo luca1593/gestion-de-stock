@@ -7,7 +7,7 @@ import { AvoirDto } from 'src/gs-api/src/models';
 import { firstValueFrom } from 'rxjs';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 
 const COLORS = {
   primary: [41, 98, 186],
@@ -74,83 +74,212 @@ export class ExportExcelService {
         }
       }));
 
-      const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'Gestion de Stock';
+      workbook.created = new Date();
 
-      const wsData: any[][] = [];
-      const mergeRanges: XLSX.Range[] = [];
+      const ws = workbook.addWorksheet('Historique des ventes', {
+        properties: { tabColor: { argb: 'FF295BA6' } },
+        pageSetup: {
+          orientation: 'landscape',
+          fitToPage: true,
+          margins: { left: 0.7, right: 0.7, top: 0.7, bottom: 0.7, header: 0.3, footer: 0.3 }
+        }
+      });
 
-      wsData.push(['HISTORIQUE DES VENTES']);
-      wsData.push([]);
+      const DARK_BLUE = 'FF1B3A6B';
+      const HEADER_BLUE = 'FF2B579A';
+      const LIGHT_BLUE = 'FFD6E4F0';
+      const WHITE = 'FFFFFFFF';
+      const LIGHT_GRAY = 'FFF5F5F5';
+      const SUBTOTAL_BG = 'FFE8F0FE';
+      const BORDER_GRAY = 'FFB0B0B0';
 
-      // ── En-têtes ──
-      wsData.push(['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (€)', 'Total (€)']);
+      const border = {
+        top: { style: 'thin' as const, color: { argb: BORDER_GRAY } },
+        left: { style: 'thin' as const, color: { argb: BORDER_GRAY } },
+        bottom: { style: 'thin' as const, color: { argb: BORDER_GRAY } },
+        right: { style: 'thin' as const, color: { argb: BORDER_GRAY } },
+      };
 
-      let grandTotal = 0;
-      let rowIdx = 3;
+      // ── Column widths ──
+      for (let c = 1; c <= 7; c++) ws.getColumn(c).width = [18, 16, 16, 35, 12, 14, 18][c - 1];
 
+      // ── Row 1: Title ──
+      ws.mergeCells(1, 1, 1, 7);
+      const titleCell = ws.getCell('A1');
+      titleCell.value = 'HISTORIQUE DES VENTES';
+      titleCell.font = { name: 'Calibri', size: 20, bold: true, color: { argb: WHITE } };
+      titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_BLUE } };
+      titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws.getRow(1).height = 40;
+
+      // ── Row 2: Company info ──
+      ws.mergeCells(2, 1, 2, 7);
+      const user = this.userService.getConnectedUser();
+      const entreprise = user?.entreprise;
+      const todayStr = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+      const infoCell = ws.getCell('A2');
+      infoCell.value = `${entreprise?.nom || 'Entreprise'}  |  Généré le ${todayStr}`;
+      infoCell.font = { name: 'Calibri', size: 10, color: { argb: 'FF555555' }, italic: true };
+      infoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_GRAY } };
+      infoCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws.getRow(2).height = 24;
+
+      // ── Row 3: Empty ──
+      ws.getRow(3).height = 6;
+
+      // ── Row 4: Column headers ──
+      const headerRow = ws.getRow(4);
+      headerRow.height = 22;
+      const headers = ['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (€)', 'Total (€)'];
+      headers.forEach((h, i) => {
+        const cell = headerRow.getCell(i + 1);
+        cell.value = h;
+        cell.font = { name: 'Calibri', size: 11, bold: true, color: { argb: WHITE } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: HEADER_BLUE } };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.border = border;
+      });
+
+      const formatDate = (d?: string): string =>
+        d ? new Date(d).toLocaleDateString('fr-FR') : '';
+
+      // ── Grouper par code vente (treeview) ──
+      const grouped = new Map<string, { code: string; dateVente?: string; commentaire?: string; lignes: any[] }>();
       ventesAvecLignes.forEach(v => {
-        const lignes = (v.ligneVentes || []).filter((l: any) => l.prixUnitaire != null && l.quantite != null);
+        const key = v.code || 'unknown';
+        if (!grouped.has(key)) {
+          grouped.set(key, { code: v.code, dateVente: v.dateVente, commentaire: v.commentaire, lignes: [] });
+        }
+        const group = grouped.get(key)!;
+        (v.ligneVentes || []).forEach((l: any) => {
+          if (l.prixUnitaire != null && l.quantite != null) {
+            group.lignes.push(l);
+          }
+        });
+      });
+
+      const uniqueVentes = Array.from(grouped.values());
+
+      let rowIdx = 5;
+      let grandTotal = 0;
+      let grandTotalQte = 0;
+
+      uniqueVentes.forEach(v => {
+        const lignes = v.lignes;
         if (lignes.length === 0) return;
 
         let venteTotal = 0;
+        let venteQte = 0;
 
-        // ── Ligne en-tête vente ──
-        wsData.push([`${v.code || '-'}  |  ${formatDate(v.dateVente)}`]);
-        mergeRanges.push({ s: { r: rowIdx, c: 0 }, e: { r: rowIdx, c: 6 } });
+        // ── Section header: merged row for vente info ──
+        ws.mergeCells(rowIdx, 1, rowIdx, 7);
+        const secCell = ws.getCell(rowIdx, 1);
+        secCell.value = `${v.code || '-'}  |  ${formatDate(v.dateVente)}`;
+        secCell.font = { name: 'Calibri', size: 11, bold: true, color: { argb: HEADER_BLUE } };
+        secCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_BLUE } };
+        secCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+        secCell.border = border;
+        ws.getRow(rowIdx).height = 24;
         rowIdx++;
 
-        // ── Lignes d'articles ──
-        lignes.forEach((l: any) => {
+        // ── Article rows ──
+        lignes.forEach((l: any, lIdx: number) => {
           const totalLigne = l.prixUnitaire * l.quantite;
           venteTotal += totalLigne;
-          wsData.push([
-            v.code || '',
-            formatDate(v.dateVente),
-            l.article?.codeArticle || '',
-            l.article?.designation || '',
-            l.quantite,
-            l.prixUnitaire,
-            totalLigne,
-          ]);
+          venteQte += l.quantite;
+
+          const row = ws.getRow(rowIdx);
+          row.getCell(1).value = v.code || '';
+          row.getCell(2).value = formatDate(v.dateVente);
+          row.getCell(3).value = l.article?.codeArticle || '';
+          row.getCell(4).value = l.article?.designation || '';
+          row.getCell(5).value = l.quantite;
+          row.getCell(6).value = l.prixUnitaire;
+          row.getCell(7).value = totalLigne;
+
+          row.getCell(5).numFmt = '#,##0';
+          row.getCell(6).numFmt = '#,##0.00';
+          row.getCell(7).numFmt = '#,##0.00';
+
+          row.getCell(1).alignment = { vertical: 'middle' };
+          row.getCell(2).alignment = { vertical: 'middle', horizontal: 'center' };
+          row.getCell(3).alignment = { vertical: 'middle' };
+          row.getCell(4).alignment = { vertical: 'middle' };
+          row.getCell(5).alignment = { vertical: 'middle', horizontal: 'center' };
+          row.getCell(6).alignment = { vertical: 'middle', horizontal: 'right' };
+          row.getCell(7).alignment = { vertical: 'middle', horizontal: 'right' };
+
+          for (let c = 1; c <= 7; c++) {
+            row.getCell(c).border = border;
+            if (lIdx % 2 === 1) {
+              row.getCell(c).fill = {
+                type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_GRAY }
+              };
+            }
+          }
+          row.height = 20;
           rowIdx++;
         });
 
-        // ── Sous-total vente ──
-        wsData.push(['', '', '', '', '', 'Sous-total', venteTotal]);
+        // ── Sous-total ──
+        const stRow = ws.getRow(rowIdx);
+        stRow.getCell(6).value = 'Sous-total';
+        stRow.getCell(6).font = { name: 'Calibri', size: 10, bold: true };
+        stRow.getCell(6).alignment = { vertical: 'middle', horizontal: 'right' };
+        stRow.getCell(7).value = venteTotal;
+        stRow.getCell(7).numFmt = '#,##0.00';
+        stRow.getCell(7).font = { name: 'Calibri', size: 10, bold: true };
+        stRow.getCell(7).alignment = { vertical: 'middle', horizontal: 'right' };
+        for (let c = 1; c <= 7; c++) {
+          stRow.getCell(c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUBTOTAL_BG } };
+          stRow.getCell(c).border = border;
+        }
+        stRow.height = 22;
         rowIdx++;
-        grandTotal += venteTotal;
 
-        // ── Ligne vide ──
-        wsData.push([]);
+        grandTotal += venteTotal;
+        grandTotalQte += venteQte;
+
+        // ── Separator ──
+        ws.getRow(rowIdx).height = 4;
         rowIdx++;
       });
 
-      // ── Total général ──
-      wsData.push([]);
+      // ── Spacer before totals ──
+      ws.getRow(rowIdx).height = 6;
       rowIdx++;
-      wsData.push(['', '', '', '', '', 'TOTAL GÉNÉRAL', grandTotal]);
-      mergeRanges.push({ s: { r: rowIdx, c: 5 }, e: { r: rowIdx, c: 6 } });
 
-      // ── Création du workbook ──
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      // ── Count row ──
+      ws.mergeCells(rowIdx, 1, rowIdx, 7);
+      const countCell = ws.getCell(rowIdx, 1);
+      countCell.value = `Nombre total d'articles vendus : ${grandTotalQte}`;
+      countCell.font = { name: 'Calibri', size: 11, color: { argb: 'FF555555' } };
+      countCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+      rowIdx++;
 
-      // ── Largeurs de colonnes ──
-      ws['!cols'] = [
-        { wch: 20 },  // Code Vente
-        { wch: 14 },  // Date Vente
-        { wch: 14 },  // Code Article
-        { wch: 30 },  // Désignation
-        { wch: 10 },  // Quantité
-        { wch: 12 },  // PU
-        { wch: 14 },  // Total
-      ];
+      // ── TOTAL GÉNÉRAL ──
+      ws.mergeCells(rowIdx, 1, rowIdx, 6);
+      const totalRow = ws.getRow(rowIdx);
+      totalRow.getCell(6).value = 'TOTAL GÉNÉRAL';
+      totalRow.getCell(6).font = { name: 'Calibri', size: 12, bold: true, color: { argb: WHITE } };
+      totalRow.getCell(6).alignment = { vertical: 'middle', horizontal: 'right' };
+      totalRow.getCell(7).value = grandTotal;
+      totalRow.getCell(7).numFmt = '#,##0.00';
+      totalRow.getCell(7).font = { name: 'Calibri', size: 12, bold: true, color: { argb: WHITE } };
+      totalRow.getCell(7).alignment = { vertical: 'middle', horizontal: 'right' };
+      for (let c = 1; c <= 7; c++) {
+        totalRow.getCell(c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_BLUE } };
+        totalRow.getCell(c).border = border;
+      }
+      totalRow.height = 28;
 
-      // ── Fusion des cellules ──
-      if (mergeRanges.length > 0) ws['!merges'] = mergeRanges;
-
-      XLSX.utils.book_append_sheet(wb, ws, 'Ventes');
-      XLSX.writeFile(wb, 'ventes_' + this.getDateString() + '.xlsx');
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      this.downloadBlob(blob, 'ventes_' + this.getDateString() + '.xlsx');
     } catch (err) {
       console.error('Erreur export XLSX ventes', err);
       this.exportApiService.ExportApiExcelVentesGET().subscribe(blob => {
@@ -172,14 +301,15 @@ export class ExportExcelService {
         }
       }));
 
-      this.generateVentesPdf(ventesAvecLignes);
+      const doc = await this.generateVentesPdf(ventesAvecLignes);
+      doc.save('historique-ventes_' + this.getDateString() + '.pdf');
     } catch (err) {
       console.error('Erreur génération PDF ventes', err);
       this.exportVentes();
     }
   }
 
-  private async generateVentesPdf(ventes: any[]): Promise<void> {
+  private async generateVentesPdf(ventes: any[]): Promise<any> {
     const doc = new jsPDF('landscape', 'mm', 'a4');
     const pw = doc.internal.pageSize.getWidth();
     const ph = doc.internal.pageSize.getHeight();
@@ -396,7 +526,29 @@ export class ExportExcelService {
     doc.line(mg, footerY - 3, pw - mg, footerY - 3);
     doc.text('Généré le ' + formatDate(new Date().toISOString()) + ' - Gestion de Stock', ct, footerY + 4, { align: 'center' });
 
-    doc.save('historique-ventes_' + this.getDateString() + '.pdf');
+    return doc;
+  }
+
+  async printPdfVentes(): Promise<void> {
+    try {
+      const ventes: any[] = await firstValueFrom(this.venteService.findAllVente());
+
+      const ventesAvecLignes = await Promise.all(ventes.map(async (v) => {
+        try {
+          const lignes = await firstValueFrom(this.venteService.findLigneVenteByVente(v.id));
+          return { ...v, ligneVentes: lignes || [] };
+        } catch {
+          return { ...v, ligneVentes: [] };
+        }
+      }));
+
+      const doc = await this.generateVentesPdf(ventesAvecLignes);
+      const blob = doc.output('blob');
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (err) {
+      console.error('Erreur impression PDF ventes', err);
+    }
   }
 
   async exportPdfAvoir(id: number): Promise<void> {

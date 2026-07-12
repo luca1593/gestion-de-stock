@@ -37,7 +37,7 @@ const routes: Routes=[
     canActivate: [ApplicationGuardService],
     children: [
       { path: '', redirectTo: 'dashbord', pathMatch: 'full' },
-      { path: 'dashbord', component: PageDashbordComponent, canActivate: [ApplicationGuardService] },
+      { path: 'dashbord', component: PageStatistiquesComponent, canActivate: [ApplicationGuardService] },
       { path: 'statistiques', component: StatistiquesComponent, canActivate: [ApplicationGuardService] },
       { path: 'articles', component: PageArticleComponent, canActivate: [ApplicationGuardService] },
       { path: 'nouvel-article', component: NouvelArticleComponent, canActivate: [ApplicationGuardService] },

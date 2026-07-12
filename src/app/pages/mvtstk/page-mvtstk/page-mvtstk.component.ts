@@ -75,7 +75,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   findAllMvtStkByArticle(idArticle: number) {
     this.mvtStkService.findAllMvtByArticle(idArticle).subscribe({
       next: (list) => {
-        this.maplistMvtStk.set(idArticle, list);
+        this.maplistMvtStk.set(idArticle, list.sort((a, b) => new Date(b.dateMvt || 0).getTime() - new Date(a.dateMvt || 0).getTime()));
       },
       error: (err) => {
         this.errorMsg = err.error?.error || 'Erreur lors du chargement des mouvements';

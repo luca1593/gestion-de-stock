@@ -4,7 +4,12 @@
             <h3><i class="fas fa-users"></i> Liste des Utilisateurs</h3>
         </div>
         <div class="header-actions">
-            <app-bouton-action (clickEvent)="nouveauUtilisateur()"></app-bouton-action>
+            <app-bouton-action (clickEvent)="nouveauUtilisateur()"
+                (clickExportEvent)="exporterUtilisateurs()"
+                (clickImportEvent)="importTrigger.click()"
+                [isImporterVisible]="true"
+                [isExporterVisible]="true"></app-bouton-action>
+            <input type="file" #importTrigger hidden accept=".xlsx,.xls" (change)="importerUtilisateurs($event)">
         </div>
     </div>
 

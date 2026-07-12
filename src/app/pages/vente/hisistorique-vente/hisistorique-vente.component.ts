@@ -3,8 +3,11 @@ import { Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
 import { ExportExcelService } from 'src/app/services/export.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { firstValueFrom } from 'rxjs';
+import * as ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-hisistorique-vente',
@@ -36,6 +39,7 @@ export class HisistoriqueVenteComponent implements OnInit {
     private router: Router,
     private modalService: ModalService,
     private exportService: ExportExcelService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -46,9 +50,9 @@ export class HisistoriqueVenteComponent implements OnInit {
   findAllVentes(): void {
     this.venteService.findAllVente().subscribe({
       next: (ventes) => {
-        this.listVentes = ventes;
-        this.listVentesFiltre = ventes;
-        this.totalItems = ventes.length;
+        this.listVentes = ventes.sort((a, b) => new Date(b.dateVente || 0).getTime() - new Date(a.dateVente || 0).getTime());
+        this.listVentesFiltre = [...this.listVentes];
+        this.totalItems = this.listVentes.length;
         this.findAllLigneVente();
       },
       error: (err) => {
@@ -58,8 +62,86 @@ export class HisistoriqueVenteComponent implements OnInit {
     });
   }
 
-  exportExcel(): void {
+  nouvelleVente(): void {
+    this.router.navigate(["vente"]);
+  }
+
+  exporterVentes(): void {
     this.exportService.exportVentes();
+  }
+
+  async importerVentes(event: any): Promise<void> {
+    const file: File = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(buffer);
+      const ws = workbook.getWorksheet(1);
+      if (!ws) {
+        this.notificationService.addError('Erreur', 'Fichier Excel invalide');
+        return;
+      }
+
+      const rows: any[] = [];
+      ws.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) return;
+        const codeVente = row.getCell(1).text?.trim();
+        const dateVente = row.getCell(2).text?.trim();
+        const codeArticle = row.getCell(3).text?.trim();
+        const designation = row.getCell(4).text?.trim();
+        const quantite = parseFloat(row.getCell(5).text?.trim()) || 0;
+        const pu = parseFloat(row.getCell(6).text?.trim()) || 0;
+        if (codeVente && quantite > 0 && pu > 0) {
+          rows.push({ codeVente, dateVente, codeArticle, designation, quantite, pu });
+        }
+      });
+
+      if (rows.length === 0) {
+        this.notificationService.addError('Erreur', 'Aucune donnée trouvée dans le fichier');
+        return;
+      }
+
+      const grouped = new Map<string, { code: string; dateVente: string; lignes: any[] }>();
+      rows.forEach(r => {
+        if (!grouped.has(r.codeVente)) {
+          grouped.set(r.codeVente, { code: r.codeVente, dateVente: r.dateVente, lignes: [] });
+        }
+        grouped.get(r.codeVente)!.lignes.push({
+          quantite: r.quantite,
+          prixUnitaire: r.pu,
+          article: { codeArticle: r.codeArticle, designation: r.designation }
+        });
+      });
+
+      let imported = 0;
+      let errors = 0;
+
+      for (const [code, venteData] of grouped) {
+        try {
+          const dto: VenteDto = {
+            code,
+            dateVente: venteData.dateVente || new Date().toISOString(),
+            ligneVentes: venteData.lignes
+          };
+          await firstValueFrom(this.venteService.enregistrerVente(dto));
+          imported++;
+        } catch {
+          errors++;
+        }
+      }
+
+      if (errors > 0) {
+        this.notificationService.addWarning('Attention', `${imported} importée(s), ${errors} erreur(s)`);
+      } else {
+        this.notificationService.addSuccess('Succès', `${imported} vente(s) importée(s)`);
+      }
+
+      this.findAllVentes();
+    } catch (err) {
+      this.notificationService.addError('Erreur', 'Échec de la lecture du fichier');
+    }
   }
 
   async exportPdf(): Promise<void> {

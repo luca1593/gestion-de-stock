@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { Chart, ChartConfiguration } from 'chart.js';
-import { DashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto, AnalyseStockDto, RotationStockDto, InventoryStatsDto } from 'src/gs-api/src/services/dashboard.service';
+import { DashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto, AnalyseStockDto, InventoryStatsDto } from 'src/gs-api/src/services/dashboard.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
@@ -27,7 +27,7 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
   inventoryStats: InventoryStatsDto | null = null;
   chiffreAffairesData: VenteStatsDto[] = [];
   topArticles: ArticleStatsDto[] = [];
-  rotationStock: RotationStockDto[] = [];
+  rotationStock: any[] = [];
   
   caChart: Chart | null = null;
   categorieChart: Chart | null = null;
@@ -67,11 +67,51 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stockChart?.destroy();
   }
 
+  private computeAnalyseStock(): void {
+    if (!this.stats) return;
+    const totalArticles = this.stats.totalArticles || 0;
+    const stockBas = this.stats.articlesStockBas || 0;
+    this.analyseStock = {
+      totalArticles,
+      articlesEnStock: totalArticles - stockBas,
+      articlesRupture: stockBas,
+      articlesSousSecurite: stockBas,
+      articlesExcedent: 0,
+      valeurTotaleStock: this.stats.valeurStock || 0,
+      valeurMoyenneArticle: totalArticles ? (this.stats.valeurStock || 0) / totalArticles : 0,
+      stockMoyen: 0,
+      rotationMoyenne: 0
+    };
+    this.inventoryStats = {
+      valeurInventaire: this.stats.valeurStock || 0,
+      positionsSousSecurite: stockBas,
+      positionsSousSecuritePourcentage: totalArticles ? parseFloat(((stockBas / totalArticles) * 100).toFixed(1)) : 0
+    };
+    this.updateStockChart();
+  }
+
+  private computeRotationStock(): void {
+    this.rotationStock = this.topArticles.map(a => {
+      const stock = a.stock || 0;
+      const prix = a.prixUnitaire || 0;
+      const ventes = a.nbVentes || 0;
+      const tauxRotation = stock > 0 ? parseFloat((ventes / stock).toFixed(1)) : 0;
+      const joursCouverture = ventes > 0 ? parseFloat(((stock / (ventes / 30))).toFixed(0)) : 0;
+      return {
+        codeArticle: a.codeArticle,
+        designation: a.designation,
+        valeurStock: stock * prix,
+        tauxRotation,
+        joursCouverture
+      };
+    });
+  }
+
   loadAllData(): void {
     this.loading = true;
     this.error = '';
     this.lastUpdate = new Date();
-    let pendingRequests = 6;
+    let pendingRequests = 3;
 
     const decrementLoading = () => {
       pendingRequests--;
@@ -81,30 +121,13 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     this.dashboardService.getStats().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => { this.stats = data; },
+      next: (data) => {
+        this.stats = data;
+        this.computeAnalyseStock();
+      },
       error: (err) => {
         console.error('Erreur stats', err);
         this.error = 'Erreur lors du chargement des statistiques générales';
-        decrementLoading();
-      },
-      complete: () => decrementLoading()
-    });
-
-    this.dashboardService.getAnalyseStock().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => { this.analyseStock = data; this.updateStockChart(); },
-      error: (err) => {
-        console.error('Erreur analyse stock', err);
-        this.error = 'Erreur lors du chargement de l\'analyse de stock';
-        decrementLoading();
-      },
-      complete: () => decrementLoading()
-    });
-
-    this.dashboardService.getInventoryStats().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => { this.inventoryStats = data; },
-      error: (err) => {
-        console.error('Erreur inventory stats', err);
-        this.error = 'Erreur lors du chargement des statistiques d\'inventaire';
         decrementLoading();
       },
       complete: () => decrementLoading()
@@ -126,21 +149,12 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dashboardService.getTopArticles(10).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.topArticles = data || [];
+        this.computeRotationStock();
         this.updateCategorieChart();
       },
       error: (err) => {
         console.error('Erreur top articles', err);
         this.error = 'Erreur lors du chargement des meilleurs articles';
-        decrementLoading();
-      },
-      complete: () => decrementLoading()
-    });
-
-    this.dashboardService.getRotationStock().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => { this.rotationStock = data || []; },
-      error: (err) => {
-        console.error('Erreur rotation stock', err);
-        this.error = 'Erreur lors du chargement de la rotation de stock';
         decrementLoading();
       },
       complete: () => decrementLoading()

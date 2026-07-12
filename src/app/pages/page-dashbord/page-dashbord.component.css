@@ -1,11 +1,13 @@
 .dashbord-container {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     background-color: var(--bg-body, #e9ecef);
 }
 
 .app-layout {
     display: flex;
-    min-height: 100vh;
+    flex: 1;
 }
 
 /* Bouton toggle flottant */
@@ -55,7 +57,6 @@
     flex-direction: column;
     box-shadow: 4px 0 15px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
-    overflow-y: auto;
 }
 
 .sidebar.collapsed {
@@ -88,6 +89,8 @@
     min-height: 100vh;
     background-color: var(--bg-body, #f0f2f5);
     transition: margin-left 0.3s ease;
+    padding: 0 1rem;
+    gap: 1rem;
 }
 
 .sidebar.collapsed + .main-content,
@@ -104,18 +107,16 @@
     top: 0;
     z-index: 100;
     flex-shrink: 0;
+    margin: 0 -1rem;
 }
 
-/* Content Area - Scrollable */
+/* Content Area */
 .content-area {
-    flex: 1;
+    flex: 1 0 auto;
     padding: 1.5rem;
     background-color: var(--bg-card, white);
-    margin: 1rem;
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-    overflow-y: auto;
-    overflow-x: auto;
     animation: fadeIn 0.3s ease;
 }
 
@@ -125,6 +126,7 @@
     padding: 1rem 1.5rem;
     border-top: 1px solid var(--border-color, #e9ecef);
     flex-shrink: 0;
+    margin: 0 -1rem;
 }
 
 .footer-content {
@@ -210,7 +212,6 @@
 
 @media (max-width: 768px) {
     .content-area {
-        margin: 0.75rem;
         padding: 1rem;
         border-radius: 8px;
     }
@@ -222,7 +223,6 @@
 
 @media (max-width: 576px) {
     .content-area {
-        margin: 0.5rem;
         padding: 0.75rem;
     }
     
