@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
@@ -8,6 +8,7 @@ import { ArticleDto, DashboardStatsDto, AlertStockDto } from 'src/gs-api/src/mod
 import { UserService } from 'src/app/services/user/user.service';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { AlertStockService } from 'src/app/services/alert-stock/alert-stock.service';
+import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
 
 Chart.register(...registerables);
 
@@ -36,6 +37,7 @@ export class DashbordComponent implements OnInit {
   loading = true;
   dataLoadCount = 0;
   totalDataLoads = 7;
+  sortState: SortState = { column: '', direction: 'asc' };
 
   constructor(
     private cmdFrsService: CmdCltFrsService,
@@ -44,7 +46,8 @@ export class DashbordComponent implements OnInit {
     private articleService: ArtcleService,
     private cltFrsService: CltfrsService,
     private userService: UserService,
-    private alertStockService: AlertStockService
+    private alertStockService: AlertStockService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -307,6 +310,23 @@ export class DashbordComponent implements OnInit {
         }]
       }
     });
+  }
+
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      this.alertesStock = sortByProperty(this.alertesStock, this.sortState.column, this.sortState.direction);
+    }
   }
 
   getRecentArticle() {

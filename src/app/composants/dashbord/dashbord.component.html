@@ -13,10 +13,10 @@
           <table class="table table-sm table-hover">
             <thead>
               <tr>
-                <th>Article</th>
-                <th>Niveau</th>
-                <th>Stock actuel</th>
-                <th>Seuil minimum</th>
+                <th class="sortable" (click)="sort('designation')">Article <span class="sort-arrow" *ngIf="sortState.column === 'designation'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                <th class="sortable" (click)="sort('niveauAlerte')">Niveau <span class="sort-arrow" *ngIf="sortState.column === 'niveauAlerte'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                <th class="sortable" (click)="sort('stockActuel')">Stock actuel <span class="sort-arrow" *ngIf="sortState.column === 'stockActuel'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
+                <th class="sortable" (click)="sort('seuilMinimum')">Seuil minimum <span class="sort-arrow" *ngIf="sortState.column === 'seuilMinimum'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span></th>
               </tr>
             </thead>
             <tbody>

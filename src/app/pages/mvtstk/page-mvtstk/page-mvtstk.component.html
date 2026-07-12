@@ -43,10 +43,22 @@
             <table class="mvtstk-table">
                 <thead>
                     <tr>
-                        <th class="col-article">Article</th>
-                        <th class="col-stock">Stock Actuel</th>
-                        <th class="col-total">Total Entrées</th>
-                        <th class="col-total">Total Sorties</th>
+                        <th class="col-article sortable" (click)="sort('codeArticle')">
+                            Article
+                            <span class="sort-arrow" *ngIf="sortState.column === 'codeArticle'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-stock sortable" (click)="sort('stock')">
+                            Stock Actuel
+                            <span class="sort-arrow" *ngIf="sortState.column === 'stock'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-total sortable" (click)="sort('totalEntrees')">
+                            Total Entrées
+                            <span class="sort-arrow" *ngIf="sortState.column === 'totalEntrees'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
+                        <th class="col-total sortable" (click)="sort('totalSorties')">
+                            Total Sorties
+                            <span class="sort-arrow" *ngIf="sortState.column === 'totalSorties'">{{ sortState.direction === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+                        </th>
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>

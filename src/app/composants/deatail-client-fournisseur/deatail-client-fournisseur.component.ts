@@ -1,4 +1,4 @@
-import { Component, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
@@ -6,6 +6,7 @@ import { ClientDto, CommandeClientDto, FournisseurDto } from 'src/gs-api/src/mod
 import { formatDate } from '@angular/common';
 import { jsPDF } from 'jspdf';
 import autoTable, { RowInput } from 'jspdf-autotable';
+import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-deatail-client-fournisseur',
@@ -28,13 +29,17 @@ export class DeatailClientFournisseurComponent implements OnInit {
   errorMsg="";
   cmdCltFrs: CommandeClientDto={};
   private listDataToPdf: Array<DeatailClientFournisseurComponent.DataToPdf>=[];
+  sortStateCmd: SortState = { column: '', direction: 'asc' };
+  sortStateLignes: SortState = { column: '', direction: 'asc' };
+  listeLignesSelectionnees: Array<any> = [];
 
   constructor(
     @Inject(LOCALE_ID) private locale: string,
     private router: Router,
     private cltFrsService: CltfrsService,
     private cmdCltFrsService: CmdCltFrsService,
-    private activatedRouter: ActivatedRoute
+    private activatedRouter: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -131,6 +136,63 @@ export class DeatailClientFournisseurComponent implements OnInit {
   setCommandeSelectione(idSelectione: number): void {
     this.idCommandeSelectione=idSelectione;
     this.cmdCltFrs=this.mapCommande.get(idSelectione);
+    this.listeLignesSelectionnees = [...(this.mapLigneComandes.get(idSelectione) || [])];
+    this.sortStateLignes = { column: '', direction: 'asc' };
+  }
+
+  sortOrders(column: string): void {
+    if (this.sortStateCmd.column === column) {
+      this.sortStateCmd.direction = this.sortStateCmd.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortStateCmd.column = column;
+      this.sortStateCmd.direction = 'asc';
+    }
+    this.applySortOrders();
+    this.pageCmd = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySortOrders(): void {
+    if (!this.sortStateCmd.column) return;
+    if (this.sortStateCmd.column === 'nbArticles' || this.sortStateCmd.column === 'totalTtc') {
+      this.listCmd = [...this.listCmd].sort((a, b) => {
+        const valA = this.sortStateCmd.column === 'nbArticles'
+          ? this.calculNombreArticleCommande(a.id)
+          : this.calculTotalCommande(a.id);
+        const valB = this.sortStateCmd.column === 'nbArticles'
+          ? this.calculNombreArticleCommande(b.id)
+          : this.calculTotalCommande(b.id);
+        const comparison = valA - valB;
+        return this.sortStateCmd.direction === 'asc' ? comparison : -comparison;
+      });
+    } else {
+      this.listCmd = sortByProperty(this.listCmd, this.sortStateCmd.column, this.sortStateCmd.direction);
+    }
+  }
+
+  sortLignes(column: string): void {
+    if (this.sortStateLignes.column === column) {
+      this.sortStateLignes.direction = this.sortStateLignes.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortStateLignes.column = column;
+      this.sortStateLignes.direction = 'asc';
+    }
+    this.applySortLignes();
+    this.cdr.markForCheck();
+  }
+
+  private applySortLignes(): void {
+    if (!this.sortStateLignes.column) return;
+    if (this.sortStateLignes.column === 'total') {
+      this.listeLignesSelectionnees = [...this.listeLignesSelectionnees].sort((a, b) => {
+        const valA = (a.article?.prixTtc || 0) * (a.quantite || 0);
+        const valB = (b.article?.prixTtc || 0) * (b.quantite || 0);
+        const comparison = valA - valB;
+        return this.sortStateLignes.direction === 'asc' ? comparison : -comparison;
+      });
+    } else {
+      this.listeLignesSelectionnees = sortByProperty(this.listeLignesSelectionnees, this.sortStateLignes.column, this.sortStateLignes.direction);
+    }
   }
 
   nouveauxCommande(): void {

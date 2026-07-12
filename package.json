@@ -34,6 +34,7 @@
     "angular-font-awesome": "^3.1.2",
     "bootstrap": "^5.2.2",
     "chart.js": "^4.4.0",
+    "exceljs": "^4.4.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.7.0",
     "jspdf": "^2.5.1",
@@ -42,6 +43,7 @@
     "rxjs": "~7.5.0",
     "save": "^2.9.0",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -51,6 +53,7 @@
     "@playwright/test": "^1.59.1",
     "@types/jasmine": "~4.0.0",
     "@types/jspdf": "^2.0.0",
+    "@types/xlsx": "^0.0.35",
     "angular-cli-ghpages": "^2.0.0-beta.2",
     "axios": "^1.16.1",
     "jasmine-core": "~4.3.0",

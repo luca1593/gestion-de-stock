@@ -167,6 +167,10 @@ export class UserService {
     return this.utilisateurService.UtilisateurApiFindAllGET();
   }
 
+  delete(id: number): Observable<null>{
+    return this.utilisateurService.UtilisateurApiDELETE(String(id));
+  }
+
   getToken(): string | null {
     const tokenStr = sessionStorage.getItem(this.TOKEN_KEY);
     if (!tokenStr) return null;

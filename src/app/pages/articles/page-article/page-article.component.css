@@ -114,18 +114,18 @@
 }
 
 .articles-table th {
-    padding: 1rem;
+    padding: 0.5rem 0.4rem;
     text-align: left;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     color: var(--text-primary, #1f2937);
     border-bottom: 2px solid var(--border-color, #cbd5e1);
 }
 
 .articles-table td {
-    padding: 1rem;
+    padding: 0.45rem 0.4rem;
     vertical-align: middle;
     border-bottom: 1px solid var(--border-color, #f1f5f9);
     color: var(--text-primary, #1f2937);
@@ -160,11 +160,11 @@
 
 .article-code {
     font-family: 'Courier New', monospace;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--primary-color, #4a90d9);
     background: rgba(74, 144, 217, 0.1);
-    padding: 0.25rem 0.5rem;
+    padding: 0.2rem 0.4rem;
     border-radius: 4px;
 }
 
@@ -186,9 +186,9 @@
 
 .category-badge {
     display: inline-block;
-    padding: 0.35rem 0.75rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.62rem;
     font-weight: 500;
     background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
     color: #475569;
@@ -224,7 +224,7 @@
 }
 
 .price-currency {
-    font-size: 0.75rem;
+    font-size: 0.6rem;
     color: var(--text-muted, #9ca3af);
     margin-left: 2px;
 }
@@ -279,7 +279,7 @@
 }
 
 .stock-label {
-    font-size: 0.75rem;
+    font-size: 0.62rem;
     color: var(--text-muted, #9ca3af);
 }
 

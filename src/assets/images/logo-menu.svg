@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="menuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#DA8CFF"/>
-      <stop offset="100%" style="stop-color:#9A55FF"/>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90d9"/>
+      <stop offset="100%" style="stop-color:#2a5298"/>
     </linearGradient>
   </defs>
-  <rect width="40" height="40" rx="8" fill="url(#menuGrad)"/>
-  <path d="M10 30V10h6v20H10zm8-4V14h6v12h-6zm8 4V12h6v18h-6z" fill="white"/>
+  <rect width="40" height="40" rx="8" fill="url(#g)"/>
+  <g transform="translate(6,6)">
+    <path d="M6 22V10l8-4 8 4v12l-8 4-8-4z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M6 10l8 4m0 0l8-4m-8 4v12" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <path d="M10 14l4 2m0 0l4-2m-4 2v5" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
 </svg>

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CategoryService } from 'src/app/services/category/category.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { CategoryDto, ArticleDto } from 'src/gs-api/src/models';
+import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 
 @Component({
   selector: 'app-page-categorie',
@@ -25,6 +26,8 @@ page: number = 1;
   articlesPage: number = 1;
   articlesPageSize: number = 5;
 
+  sortState: SortState = { column: '', direction: 'asc' };
+
   searchCode: string = '';
   searchDesignation: string = '';
 
@@ -33,7 +36,8 @@ page: number = 1;
     private categoryService: CategoryService,
     private modalService: ModalService,
     private notificationService: NotificationService,
-    private articleService: ArtcleService
+    private articleService: ArtcleService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +50,7 @@ page: number = 1;
       next: (resp) => {
         this.categoryDtoList = resp;
         this.categoryDtoListFiltre = resp;
+        this.applySort();
         this.loading = false;
       },
       error: () => {
@@ -54,12 +59,31 @@ page: number = 1;
     });
   }
 
+  sort(column: string): void {
+    if (this.sortState.column === column) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.column = column;
+      this.sortState.direction = 'asc';
+    }
+    this.applySort();
+    this.page = 1;
+    this.cdr.markForCheck();
+  }
+
+  private applySort(): void {
+    if (this.sortState.column) {
+      this.categoryDtoListFiltre = sortByProperty(this.categoryDtoListFiltre, this.sortState.column, this.sortState.direction);
+    }
+  }
+
   filtrer(): void {
     this.categoryDtoListFiltre = this.categoryDtoList.filter(cat => {
-      const matchCode = !this.searchCode || (cat.code?.toLowerCase().includes(this.searchCode.toLowerCase()));
-      const matchDesignation = !this.searchDesignation || (cat.designation?.toLowerCase().includes(this.searchDesignation.toLowerCase()));
+      const matchCode = !this.searchCode || matchSearch(cat.code, this.searchCode);
+      const matchDesignation = !this.searchDesignation || matchSearch(cat.designation, this.searchDesignation);
       return matchCode && matchDesignation;
     });
+    this.applySort();
     this.page = 1;
   }
 
@@ -67,6 +91,7 @@ page: number = 1;
     this.searchCode = '';
     this.searchDesignation = '';
     this.categoryDtoListFiltre = this.categoryDtoList;
+    this.applySort();
     this.page = 1;
   }
 

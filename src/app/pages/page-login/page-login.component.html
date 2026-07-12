@@ -6,11 +6,11 @@
           <img *ngIf="!isDarkMode" src="assets/images/logo-menu-light.svg" alt="Logo" width="150" height="150">
         </div>
         <h1 class="card-title">Gestion de Stock</h1>
-      <p class="text-muted">Connectez-vous à votre compte</p>
+      <p class="login-subtitle">Connectez-vous à votre compte</p>
     </div>
     <div class="card-body">
-      <div class="alert alert-danger small-text" *ngIf="errorMessage">
-        <i class="fas fa-exclamation-circle"></i> {{errorMessage}}
+      <div class="alert alert-danger login-error" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle me-1"></i> {{errorMessage}}
       </div>
       <form (ngSubmit)="login()">
       <div class="form-group mb-3">
