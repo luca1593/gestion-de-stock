@@ -165,6 +165,11 @@ export class PageClientComponent implements OnInit, OnDestroy {
         const prenom = row.getCell(2).text?.trim();
         const email = row.getCell(3).text?.trim();
         const numTel = row.getCell(4).text?.trim();
+        const adresse1 = row.getCell(5)?.text?.trim();
+        const adresse2 = row.getCell(6)?.text?.trim();
+        const codePostal = row.getCell(7)?.text?.trim();
+        const ville = row.getCell(8)?.text?.trim();
+        const pays = row.getCell(9)?.text?.trim();
         if (!nom && !email) return;
 
         const dto: ClientDto = {
@@ -172,8 +177,16 @@ export class PageClientComponent implements OnInit, OnDestroy {
           prenom: prenom || undefined,
           email: email || undefined,
           numTel: numTel || undefined,
-          adresse: { adresse1: '', adresse2: '', ville: '', codePostal: '', pays: '' }
+          photo: ''
         };
+        if (adresse1 || adresse2 || codePostal || ville || pays) {
+          dto.adresse = {};
+          if (adresse1) dto.adresse.adresse1 = adresse1;
+          if (adresse2) dto.adresse.adresse2 = adresse2;
+          if (codePostal) dto.adresse.codePostal = codePostal;
+          if (ville) dto.adresse.ville = ville;
+          if (pays) dto.adresse.pays = pays;
+        }
         if (!dto.nom || !dto.email) return;
         observables.push(
           this.cltfrsService.enregistreClient(dto).pipe(
