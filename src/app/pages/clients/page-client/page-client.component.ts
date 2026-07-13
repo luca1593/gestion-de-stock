@@ -167,7 +167,7 @@ export class PageClientComponent implements OnInit, OnDestroy {
         const numTel = row.getCell(4).text?.trim();
         if (!nom && !email) return;
 
-        const dto: ClientDto = { nom: nom || undefined, prenom: prenom || undefined, email: email || undefined, numTel: numTel || undefined };
+        const dto: ClientDto = { nom: nom || undefined, prenom: prenom || undefined, email: email || undefined, numTel: numTel || undefined, adresse: {} };
         observables.push(
           this.cltfrsService.enregistreClient(dto).pipe(
             catchError((err) => {
