@@ -85,9 +85,7 @@ export class CmdCltFrsService {
   }
 
 updateCommandeClient(commandeClientDTO: CommandeClientDto, date: number): Observable<CommandeClientDto> {
-      console.log('Données commandeClientDTO:', JSON.stringify(commandeClientDTO, null, 2));
       commandeClientDTO.identreprise = this.userServise.getConnectedUser().entreprise?.id;
-      console.log('identreprise:', commandeClientDTO.identreprise);
       return this.commandeClientService.CommandeClientApiSavePOST(commandeClientDTO, date);
     }
 

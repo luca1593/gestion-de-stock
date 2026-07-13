@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef, OnInit, OnDestroy, ViewChild, AfterViewIn
 import { Chart, ChartConfiguration } from 'chart.js';
 import { DashboardService, DashboardStatsDto, VenteStatsDto, ArticleStatsDto, AnalyseStockDto, InventoryStatsDto } from 'src/gs-api/src/services/dashboard.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
 
 @Component({
@@ -113,14 +113,17 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.lastUpdate = new Date();
     let pendingRequests = 3;
 
-    const decrementLoading = () => {
+    const requestDone = () => {
       pendingRequests--;
       if (pendingRequests === 0) {
         this.loading = false;
       }
     };
 
-    this.dashboardService.getStats().pipe(takeUntil(this.destroy$)).subscribe({
+    this.dashboardService.getStats().pipe(
+      takeUntil(this.destroy$),
+      finalize(() => requestDone())
+    ).subscribe({
       next: (data) => {
         this.stats = data;
         this.computeAnalyseStock();
@@ -128,12 +131,13 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
       error: (err) => {
         console.error('Erreur stats', err);
         this.error = 'Erreur lors du chargement des statistiques générales';
-        decrementLoading();
-      },
-      complete: () => decrementLoading()
+      }
     });
 
-    this.dashboardService.getChiffreAffairesMois().pipe(takeUntil(this.destroy$)).subscribe({
+    this.dashboardService.getChiffreAffairesMois().pipe(
+      takeUntil(this.destroy$),
+      finalize(() => requestDone())
+    ).subscribe({
       next: (data) => {
         this.chiffreAffairesData = this.aggregateByMonth(data || []);
         this.updateCaChart();
@@ -141,12 +145,13 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
       error: (err) => {
         console.error('Erreur CA', err);
         this.error = 'Erreur lors du chargement du chiffre d\'affaires';
-        decrementLoading();
-      },
-      complete: () => decrementLoading()
+      }
     });
 
-    this.dashboardService.getTopArticles(10).pipe(takeUntil(this.destroy$)).subscribe({
+    this.dashboardService.getTopArticles(10).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => requestDone())
+    ).subscribe({
       next: (data) => {
         this.topArticles = data || [];
         this.computeRotationStock();
@@ -155,9 +160,7 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
       error: (err) => {
         console.error('Erreur top articles', err);
         this.error = 'Erreur lors du chargement des meilleurs articles';
-        decrementLoading();
-      },
-      complete: () => decrementLoading()
+      }
     });
   }
 

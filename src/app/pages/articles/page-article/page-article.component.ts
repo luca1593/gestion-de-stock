@@ -1,5 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
@@ -12,7 +14,9 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
   templateUrl: './page-article.component.html',
   styleUrls: ['./page-article.component.css']
 })
-export class PageArticleComponent implements OnInit {
+export class PageArticleComponent implements OnInit, OnDestroy {
+
+  private destroy$ = new Subject<void>();
 
   listArticle: Array<ArticleDto>=[];
   listArticleFiltre: Array<ArticleDto>=[];
@@ -52,7 +56,7 @@ export class PageArticleComponent implements OnInit {
 
   supprimerArticle(article: ArticleDto): void {
     if (confirm(`Êtes-vous sûr de vouloir supprimer l'article "${article.designation}" ?`)) {
-      this.articleService.delete(article.id!).subscribe({
+      this.articleService.delete(article.id!).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.photoSyncService.clearEntity('article', article.id!);
           this.findAllArticle();
@@ -76,15 +80,16 @@ export class PageArticleComponent implements OnInit {
 
   findAllArticle(): void{
     this.loading = true;
-    this.articleService.findAllArticle().subscribe({
+    this.articleService.findAllArticle().pipe(takeUntil(this.destroy$)).subscribe({
       next: (resp) => {
         this.listArticle = this.photoSyncService.mergePhotos('article', resp);
         this.listArticleFiltre = this.listArticle;
         this.applySort();
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
+        this.errorMsg = err.error?.message || 'Erreur lors du chargement des articles';
       }
     });
   }
@@ -150,6 +155,11 @@ export class PageArticleComponent implements OnInit {
 
   exporterStock(): void {
     this.exportService.exportStock();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   handleSuppression($event: any): void {

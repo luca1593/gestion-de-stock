@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
@@ -6,7 +6,8 @@ import { ExportExcelService } from 'src/app/services/export.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
-import { firstValueFrom } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as ExcelJS from 'exceljs';
 
 @Component({
@@ -14,7 +15,7 @@ import * as ExcelJS from 'exceljs';
   templateUrl: './hisistorique-vente.component.html',
   styleUrls: ['./hisistorique-vente.component.css']
 })
-export class HisistoriqueVenteComponent implements OnInit {
+export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
 
   listVentes: Array<VenteDto> = [];
   listVentesFiltre: Array<VenteDto> = [];
@@ -22,6 +23,7 @@ export class HisistoriqueVenteComponent implements OnInit {
   mapNmbrArticle = new Map();
   mapTotalTtc = new Map();
   mapTotalArticle = new Map();
+  private destroy$ = new Subject<void>();
   errorMessage = "";
   pageCmd = 1;
   pageSize = 5;
@@ -48,7 +50,7 @@ export class HisistoriqueVenteComponent implements OnInit {
   }
 
   findAllVentes(): void {
-    this.venteService.findAllVente().subscribe({
+    this.venteService.findAllVente().pipe(takeUntil(this.destroy$)).subscribe({
       next: (ventes) => {
         this.listVentes = ventes.sort((a, b) => new Date(b.dateVente || 0).getTime() - new Date(a.dateVente || 0).getTime());
         this.listVentesFiltre = [...this.listVentes];
@@ -161,7 +163,7 @@ export class HisistoriqueVenteComponent implements OnInit {
   }
 
   findAllLigneVenteByIdVente(idVente: number): void {
-    this.venteService.findLigneVenteByVente(idVente).subscribe({
+    this.venteService.findLigneVenteByVente(idVente).pipe(takeUntil(this.destroy$)).subscribe({
       next: (lignes) => {
         this.mapListLigneVente.set(idVente, lignes);
         this.calculerTotalVente(idVente, lignes);
@@ -273,6 +275,11 @@ export class HisistoriqueVenteComponent implements OnInit {
         this.mapTotalArticle.set(ligne.article.id, Math.floor(total));
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onPageChange(event: number): void {

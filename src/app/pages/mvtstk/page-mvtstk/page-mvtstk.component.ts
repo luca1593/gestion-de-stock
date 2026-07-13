@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { MvtStkService } from 'src/app/services/mvtstk/mvt-stk.service';
 import { ArticleDto, MvtStkDto } from 'src/gs-api/src/models';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
@@ -18,6 +20,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   listArticle: Array<ArticleDto> = [];
   listArticleFiltre: Array<ArticleDto> = [];
   errorMsg: string = "";
+  loading = false;
 
   searchCode: string = '';
   searchLibelle: string = '';
@@ -28,6 +31,8 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   correctionQuantite: number | null = null;
   correctionType: string = 'ENTRER';
   correctionSource: string = 'CORRECTION_STOCK';
+
+  private destroy$ = new Subject<void>();
 
   sortState: SortState = { column: '', direction: 'asc' };
 
@@ -43,22 +48,28 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   findAllArticle() {
-    this.articleService.findAllArticle().subscribe({
+    this.loading = true;
+    this.errorMsg = '';
+    this.articleService.findAllArticle().pipe(takeUntil(this.destroy$)).subscribe({
       next: (list) => {
         this.listArticle = list;
         this.listArticleFiltre = list;
         this.applySort();
         list.forEach(article => {
-          if (article.id && article.stock) {
-            this.mvtStkService.setArticleStock(article.id, article.stock);
+          if (article.id) {
+            this.mvtStkService.setArticleStock(article.id, article.stock || 0);
           }
         });
+        this.loading = false;
         this.findAllMvtStk();
       },
       error: (err) => {
+        this.loading = false;
         this.errorMsg = err.error?.message || 'Erreur lors du chargement des articles';
       }
     });
@@ -73,7 +84,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   }
 
   findAllMvtStkByArticle(idArticle: number) {
-    this.mvtStkService.findAllMvtByArticle(idArticle).subscribe({
+    this.mvtStkService.findAllMvtByArticle(idArticle).pipe(takeUntil(this.destroy$)).subscribe({
       next: (list) => {
         this.maplistMvtStk.set(idArticle, list.sort((a, b) => new Date(b.dateMvt || 0).getTime() - new Date(a.dateMvt || 0).getTime()));
       },
@@ -212,7 +223,7 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
 
   getNouveauStock(stockActuel: number | undefined): number {
     if (!this.correctionQuantite || this.correctionQuantite <= 0) return stockActuel || 0;
-    return this.correctionType === 'ENTREE'
+    return this.correctionType === 'ENTRER'
       ? (stockActuel || 0) + this.correctionQuantite
       : (stockActuel || 0) - this.correctionQuantite;
   }
@@ -227,10 +238,11 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
   sauvegarderCorrection(idArticle: number): void {
     if (!this.correctionQuantite || this.correctionQuantite <= 0) return;
 
-    const currentStock = 0;
+    const article = this.listArticle.find(a => a.id === idArticle);
+    const currentStock = article?.stock ?? 0;
     const nouveauStock = this.getNouveauStock(currentStock);
 
-    this.mvtStkService.corregerStock(idArticle, nouveauStock, this.correctionSource).subscribe({
+    this.mvtStkService.corregerStock(idArticle, nouveauStock, this.correctionSource).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.findAllArticle();
         this.cancelCorrection();

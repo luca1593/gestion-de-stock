@@ -1,4 +1,14 @@
 <div class="commande-wrapper">
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Chargement des commandes...</span>
+    </div>
+  </div>
+  <div class="alert alert-danger" *ngIf="errorMsg">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ errorMsg }}</span>
+  </div>
   <div class="commande-header">
     <h3>Commandes {{origin}}</h3>
     <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false" [isExporterVisible]="false"></app-bouton-action>

@@ -5,7 +5,6 @@ import { ApiConfiguration, ApiConfigurationInterface } from './api-configuration
 
 import { AuthenticationService } from './services/authentication.service';
 import { ArticlesService } from './services/articles.service';
-import { ApiService } from './services/api.service';
 import { CategoryService } from './services/category.service';
 import { ClientService } from './services/client.service';
 import { CommandeClientService } from './services/commande-client.service';
@@ -31,7 +30,6 @@ import { VenteService } from './services/vente.service';
     ApiConfiguration,
     AuthenticationService,
     ArticlesService,
-    ApiService,
     CategoryService,
     ClientService,
     CommandeClientService,
@@ -40,8 +38,7 @@ import { VenteService } from './services/vente.service';
     FournisseurService,
     MvtstkService,
     UtilisateurService,
-    VenteService,
-    ApiService
+    VenteService
   ],
 })
 export class ApiModule {

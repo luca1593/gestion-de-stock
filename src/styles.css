@@ -527,10 +527,6 @@ body.dark-theme .btn-icon:hover {
     --bs-tooltip-bg: var(--bs-primary);
 }
 
-div {
-    border: 0 !important;
-}
-
 .border-right {
     border-right: 2px solid #dee2e6 !important;
 }
@@ -633,36 +629,6 @@ body.dark-theme .loading-overlay {
 
 .super-top {
     z-index: 50000;
-}
-
-/* Modal proper z-index */
-.modal {
-    z-index: 1055 !important;
-}
-
-.modal-backdrop {
-    z-index: 1050;
-}
-
-.modal-dialog {
-    z-index: 1060 !important;
-}
-
-.modal-dialog-centered {
-    align-items: center;
-    display: flex;
-    min-height: calc(100% - 1rem);
-}
-
-.modal-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-clip: padding-box;
-    border-radius: 0.75rem;
-    outline: 0;
 }
 
 body.dark-theme .modal-content {

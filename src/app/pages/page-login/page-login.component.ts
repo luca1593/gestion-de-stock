@@ -18,6 +18,8 @@ export class PageLoginComponent implements OnInit, OnDestroy {
   errorMessage="";
   loading=false;
   public isDarkMode = false;
+  rememberMe = false;
+  submitted = false;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -40,6 +42,7 @@ export class PageLoginComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
+    this.submitted = true;
     if (!this.authenticationRequest.login || !this.authenticationRequest.password) {
       this.errorMessage="Veuillez entrer votre email et mot de passe";
       return;
@@ -50,7 +53,7 @@ export class PageLoginComponent implements OnInit, OnDestroy {
     
     this.userServices.login(this.authenticationRequest).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        this.userServices.setAccessToken(data);
+        this.userServices.setAccessToken(data, this.rememberMe);
         this.getUserByEmailAndNavigate();
       },
       error: (error) => {
@@ -69,7 +72,7 @@ export class PageLoginComponent implements OnInit, OnDestroy {
   getUserByEmailAndNavigate(): void {
     this.userServices.getUserByEmail(this.authenticationRequest.login).pipe(takeUntil(this.destroy$)).subscribe({
       next: (user) => {
-        this.userServices.setConnectedUser(user);
+        this.userServices.setConnectedUser(user, this.rememberMe);
         this.loading = false;
         setTimeout(() => {
           this.router.navigate(['dashbord']);

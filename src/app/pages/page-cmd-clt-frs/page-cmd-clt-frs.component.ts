@@ -1,5 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 import { CommandeClientDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
@@ -9,7 +11,9 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
   templateUrl: './page-cmd-clt-frs.component.html',
   styleUrls: ['./page-cmd-clt-frs.component.css']
 })
-export class PageCmdCltFrsComponent implements OnInit {
+export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
+
+  private destroy$ = new Subject<void>();
 
   origin='';
   listCommandes: Array<any>=[];
@@ -18,6 +22,7 @@ export class PageCmdCltFrsComponent implements OnInit {
   mapNmbrArticle=new Map();
   mapTotalTtc=new Map();
   errorMsg="";
+  loading = false;
   page: number=1;
   pageSize = 5;
   totalItems = 0;
@@ -37,10 +42,10 @@ export class PageCmdCltFrsComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(data => {
+    this.activatedRoute.data.pipe(takeUntil(this.destroy$)).subscribe(data => {
       this.origin=data['origin'];
     });
-    this.activatedRoute.params.subscribe(params => {
+    this.activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe(params => {
       if (params['id']) {
         this.selectedCommandeId = +params['id'];
       }
@@ -61,25 +66,37 @@ export class PageCmdCltFrsComponent implements OnInit {
   }
 
   finAllCommandeCltFrs(){
+    this.loading = true;
+    this.errorMsg = '';
     if(this.origin === "client"){
       this.commandeCltFrsService.findAllCommandeClient()
-      .subscribe( commandes => {
-        this.listCommandes=commandes;
-        this.listCommandesFilter=commandes;
-        this.totalItems=commandes.length;
-        this.findAllLigneCommande();
-      }, error => {
-        this.errorMsg=error.error.error;
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (commandes) => {
+          this.listCommandes=commandes;
+          this.listCommandesFilter=commandes;
+          this.totalItems=commandes.length;
+          this.findAllLigneCommande();
+          this.loading = false;
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMsg = err.error?.message || err.error?.error || 'Erreur lors du chargement des commandes';
+        }
       });
     }else if(this.origin === "fournisseur"){
       this.commandeCltFrsService.findAllCommandeFournisseur()
-      .subscribe( commandes => {
-        this.listCommandes=commandes;
-        this.listCommandesFilter=commandes;
-        this.totalItems=commandes.length;
-        this.findAllLigneCommande();
-      }, error => {
-        this.errorMsg=error.error.error;
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (commandes) => {
+          this.listCommandes=commandes;
+          this.listCommandesFilter=commandes;
+          this.totalItems=commandes.length;
+          this.findAllLigneCommande();
+          this.loading = false;
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMsg = err.error?.message || err.error?.error || 'Erreur lors du chargement des commandes';
+        }
       });
     }
   }
@@ -164,7 +181,7 @@ export class PageCmdCltFrsComponent implements OnInit {
    supprimerCommande(id: number): void {
      if (confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
        if(this.origin === "client"){
-         this.commandeCltFrsService.supprimerCommandeClient(id).subscribe({
+         this.commandeCltFrsService.supprimerCommandeClient(id).pipe(takeUntil(this.destroy$)).subscribe({
            next: () => {
              this.finAllCommandeCltFrs();
            },
@@ -173,7 +190,7 @@ export class PageCmdCltFrsComponent implements OnInit {
            }
          });
        } else if(this.origin === "fournisseur"){
-         this.commandeCltFrsService.supprimerCommandeFournisseur(id).subscribe({
+         this.commandeCltFrsService.supprimerCommandeFournisseur(id).pipe(takeUntil(this.destroy$)).subscribe({
            next: () => {
              this.finAllCommandeCltFrs();
            },
@@ -226,19 +243,25 @@ export class PageCmdCltFrsComponent implements OnInit {
   findAllLigneCommandeByIdCommande(idCommande: number): void{
     if(this.origin === "client"){
       this.commandeCltFrsService.findAllLigneCommandeClient(idCommande)
-      .subscribe( list => {
-        this.mapLigneComandes.set(idCommande, list);
-        this.calculerTotalCmd(idCommande, list);
-      }, error => {
-        this.errorMsg=error.error.error;
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (list) => {
+          this.mapLigneComandes.set(idCommande, list);
+          this.calculerTotalCmd(idCommande, list);
+        },
+        error: (err) => {
+          this.errorMsg = err.error?.message || err.error?.error || 'Erreur lors du chargement des lignes';
+        }
       });
     }else if(this.origin === "fournisseur"){
       this.commandeCltFrsService.findAllLigneCommandeFournisseur(idCommande)
-      .subscribe( list => {
-        this.mapLigneComandes.set(idCommande, list);
-        this.calculerTotalCmd(idCommande, list);
-      }, error => {
-        this.errorMsg=error.error.error;
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (list) => {
+          this.mapLigneComandes.set(idCommande, list);
+          this.calculerTotalCmd(idCommande, list);
+        },
+        error: (err) => {
+          this.errorMsg = err.error?.message || err.error?.error || 'Erreur lors du chargement des lignes';
+        }
       });
     }
   }
@@ -264,10 +287,15 @@ export class PageCmdCltFrsComponent implements OnInit {
     return this.mapNmbrArticle.get(idCommande);
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   onEtatChange(id: number, etat: string): void {
     if (this.origin === "client") {
       this.commandeCltFrsService.updateEtatCommandeClient(id, etat)
-      .subscribe({
+      .pipe(takeUntil(this.destroy$)).subscribe({
         next: (updated) => {
           const cmd = this.listCommandes.find(c => c.id === id);
           if (cmd) cmd.etatcommande = etat;
@@ -279,7 +307,7 @@ export class PageCmdCltFrsComponent implements OnInit {
       });
     } else if (this.origin === "fournisseur") {
       this.commandeCltFrsService.updateEtatCommandeFournisseur(id, etat)
-      .subscribe({
+      .pipe(takeUntil(this.destroy$)).subscribe({
         next: (updated) => {
           const cmd = this.listCommandes.find(c => c.id === id);
           if (cmd) cmd.etatcommande = etat;

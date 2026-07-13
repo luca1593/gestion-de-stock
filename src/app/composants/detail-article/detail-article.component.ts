@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ArticleDto } from 'src/gs-api/src/models';
 
 @Component({
@@ -9,13 +11,15 @@ import { ArticleDto } from 'src/gs-api/src/models';
   templateUrl: './detail-article.component.html',
   styleUrls: ['./detail-article.component.css']
 })
-export class DetailArticleComponent implements OnInit {
+export class DetailArticleComponent implements OnInit, OnDestroy {
 
   @Input()
   articleDTO: ArticleDto={};
 
   @Output()
   suppressioResult=new EventEmitter();
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
@@ -37,7 +41,7 @@ export class DetailArticleComponent implements OnInit {
 
   supprimerArticle(): void {
     if(this.articleDTO.id){
-      this.articleService.delete(this.articleDTO.id).subscribe( resp => {
+      this.articleService.delete(this.articleDTO.id).pipe(takeUntil(this.destroy$)).subscribe( resp => {
         this.suppressioResult.emit("success");
         this.closeDeleteModal();
       }, error => {
@@ -45,6 +49,11 @@ export class DetailArticleComponent implements OnInit {
         this.closeDeleteModal();
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   closeDeleteModal(): void {

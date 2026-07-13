@@ -1,14 +1,16 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalService } from 'src/app/services/modal/modal.service';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-details-cmd-clt-frs',
   templateUrl: './details-cmd-clt-frs.component.html',
   styleUrls: ['./details-cmd-clt-frs.component.css']
 })
-export class DetailsCmdCltFrsComponent implements OnInit {
+export class DetailsCmdCltFrsComponent implements OnInit, OnDestroy {
 
   @Input()
   origin="";
@@ -22,6 +24,8 @@ export class DetailsCmdCltFrsComponent implements OnInit {
   
   @Output()
   etatChanged = new EventEmitter<{id: number, etat: string}>();
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
@@ -62,7 +66,7 @@ export class DetailsCmdCltFrsComponent implements OnInit {
    supprimer(idCommande: number){
      if (idCommande && confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
        if (this.origin === "client") {
-         this.commandeCltFrs.supprimerCommandeClient(idCommande).subscribe({
+         this.commandeCltFrs.supprimerCommandeClient(idCommande).pipe(takeUntil(this.destroy$)).subscribe({
            next: () => {
              this.modalService.closeModal('modalDetail' + this.commande.code);
            },
@@ -71,7 +75,7 @@ export class DetailsCmdCltFrsComponent implements OnInit {
            }
          });
        } else if(this.origin === "fournisseur"){
-         this.commandeCltFrs.supprimerCommandeFournisseur(idCommande).subscribe({
+         this.commandeCltFrs.supprimerCommandeFournisseur(idCommande).pipe(takeUntil(this.destroy$)).subscribe({
            next: () => {
              this.modalService.closeModal('modalDetail' + this.commande.code);
            },
@@ -86,6 +90,11 @@ export class DetailsCmdCltFrsComponent implements OnInit {
   onEtatChange(event: {id: number, etat: string}): void {
     this.commande.etatcommande = event.etat;
     this.etatChanged.emit(event);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   calcluerTotalCommande() : number {
