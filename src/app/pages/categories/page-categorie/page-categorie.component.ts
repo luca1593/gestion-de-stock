@@ -4,8 +4,10 @@ import { CategoryService } from 'src/app/services/category/category.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
+import { ExportExcelService } from 'src/app/services/export.service';
 import { CategoryDto, ArticleDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import * as ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-page-categorie',
@@ -37,6 +39,7 @@ page: number = 1;
     private modalService: ModalService,
     private notificationService: NotificationService,
     private articleService: ArtcleService,
+    private exportService: ExportExcelService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -151,6 +154,52 @@ page: number = 1;
   annulerSuppression() {
     this.categoryIdToDelete = -1;
     this.closeDeleteModal();
+  }
+
+  exporterCategories(): void {
+    this.exportService.exportCategories(this.categoryDtoList);
+  }
+
+  async importerCategories(event: any): Promise<void> {
+    const file: File = event.target.files?.[0];
+    if (!file) return;
+    this.loading = true;
+    this.errorMsg = '';
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(buffer);
+      const ws = workbook.getWorksheet(1);
+      if (!ws) {
+        this.notificationService.addError('Import', 'Fichier Excel invalide');
+        this.loading = false;
+        return;
+      }
+
+      let imported = 0;
+      ws.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) return;
+        const code = row.getCell(1).text?.trim();
+        const designation = row.getCell(2).text?.trim();
+        if (!code && !designation) return;
+
+        const dto: CategoryDto = { code: code || undefined, designation: designation || undefined };
+        this.categoryService.enregistrer(dto).subscribe({
+          next: () => { imported++; },
+          error: (err) => { this.errorMsg = err.error?.message || `Erreur ligne ${rowNumber}`; }
+        });
+      });
+
+      this.notificationService.addSuccess('Import', `${imported} catégorie(s) importée(s) avec succès`);
+      this.findAllCategory();
+    } catch (err) {
+      this.errorMsg = 'Erreur lors de la lecture du fichier';
+      this.notificationService.addError('Import', this.errorMsg);
+    } finally {
+      this.loading = false;
+      event.target.value = '';
+    }
   }
 
 }
