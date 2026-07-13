@@ -7,6 +7,8 @@ import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { CategoryDto, ArticleDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { forkJoin, of, firstValueFrom } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import * as ExcelJS from 'exceljs';
 
 @Component({
@@ -177,7 +179,7 @@ page: number = 1;
         return;
       }
 
-      let imported = 0;
+      const observables: any[] = [];
       ws.eachRow((row, rowNumber) => {
         if (rowNumber === 1) return;
         const code = row.getCell(1).text?.trim();
@@ -185,11 +187,21 @@ page: number = 1;
         if (!code && !designation) return;
 
         const dto: CategoryDto = { code: code || undefined, designation: designation || undefined };
-        this.categoryService.enregistrer(dto).subscribe({
-          next: () => { imported++; },
-          error: (err) => { this.errorMsg = err.error?.message || `Erreur ligne ${rowNumber}`; }
-        });
+        observables.push(
+          this.categoryService.enregistrer(dto).pipe(
+            catchError(() => of(null))
+          )
+        );
       });
+
+      if (observables.length === 0) {
+        this.notificationService.addWarning('Import', 'Aucune ligne valide trouvée dans le fichier');
+        this.loading = false;
+        return;
+      }
+
+      const results = await firstValueFrom(forkJoin(observables));
+      const imported = results.filter(r => r !== null).length;
 
       this.notificationService.addSuccess('Import', `${imported} catégorie(s) importée(s) avec succès`);
       this.findAllCategory();
