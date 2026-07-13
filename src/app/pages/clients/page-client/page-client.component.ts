@@ -1,12 +1,14 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of, firstValueFrom } from 'rxjs';
+import { takeUntil, catchError } from 'rxjs/operators';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { ClientDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { NotificationService } from 'src/app/services/notification/notification.service';
+import * as ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-page-client',
@@ -35,6 +37,7 @@ export class PageClientComponent implements OnInit, OnDestroy {
     private cltfrsService: CltfrsService,
     private exportService: ExportExcelService,
     private photoSyncService: PhotoSyncService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
     ) { }
 
@@ -134,6 +137,67 @@ export class PageClientComponent implements OnInit, OnDestroy {
       this.finfAllClient();
     }else{
       this.errorMsg=$event;
+    }
+  }
+
+  async importerClients(event: any): Promise<void> {
+    const file: File = event.target.files?.[0];
+    if (!file) return;
+    this.loading = true;
+    this.errorMsg = '';
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(buffer);
+      const ws = workbook.getWorksheet(1);
+      if (!ws) {
+        this.notificationService.addError('Import', 'Fichier Excel invalide');
+        this.loading = false;
+        return;
+      }
+
+      const observables: any[] = [];
+      const errors: string[] = [];
+      ws.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) return;
+        const nom = row.getCell(1).text?.trim();
+        const prenom = row.getCell(2).text?.trim();
+        const email = row.getCell(3).text?.trim();
+        const numTel = row.getCell(4).text?.trim();
+        if (!nom && !email) return;
+
+        const dto: ClientDto = { nom: nom || undefined, prenom: prenom || undefined, email: email || undefined, numTel: numTel || undefined };
+        observables.push(
+          this.cltfrsService.enregistreClient(dto).pipe(
+            catchError((err) => {
+              errors.push(`Ligne ${rowNumber}: ${err.error?.message || 'Erreur'}`);
+              return of(null);
+            })
+          )
+        );
+      });
+
+      if (observables.length === 0) {
+        this.notificationService.addWarning('Import', 'Aucune ligne valide trouvée dans le fichier');
+        this.loading = false;
+        return;
+      }
+
+      const results = await firstValueFrom(forkJoin(observables));
+      const imported = results.filter(r => r !== null).length;
+
+      this.notificationService.addSuccess('Import', `${imported} client(s) importé(s) avec succès`);
+      if (errors.length > 0) {
+        this.errorMsg = errors.join('; ');
+      }
+      this.finfAllClient();
+    } catch (err) {
+      this.errorMsg = 'Erreur lors de la lecture du fichier';
+      this.notificationService.addError('Import', this.errorMsg);
+    } finally {
+      this.loading = false;
+      event.target.value = '';
     }
   }
 
