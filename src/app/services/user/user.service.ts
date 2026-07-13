@@ -10,6 +10,7 @@ import { AuthenticationService, UtilisateurService } from 'src/gs-api/src/servic
 export class UserService {
   private readonly TOKEN_KEY = 'gs_access_token';
   private readonly USER_KEY = 'gs_user';
+  private readonly REMEMBER_KEY = 'gs_remember';
   
   private connectedUserSubject = new BehaviorSubject<UtilisateurDto | null>(null);
   connectedUser$ = this.connectedUserSubject.asObservable();
@@ -24,12 +25,33 @@ export class UserService {
     private ngZone: NgZone
   ) {
     this.initSession();
+    this.setupVisibilityHandler();
+  }
+
+  private get storage(): Storage {
+    return sessionStorage.getItem(this.REMEMBER_KEY) === 'true' ? localStorage : sessionStorage;
+  }
+
+  private setupVisibilityHandler(): void {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.validateSession();
+      }
+    });
+  }
+
+  private validateSession(): void {
+    const token = sessionStorage.getItem(this.TOKEN_KEY) || localStorage.getItem(this.TOKEN_KEY);
+    if (!token) {
+      this.clearSession();
+      this.router.navigate(['/login']);
+    }
   }
 
   private initSession(): void {
     try {
-      const storedToken = sessionStorage.getItem(this.TOKEN_KEY);
-      const storedUser = sessionStorage.getItem(this.USER_KEY);
+      const storedToken = this.storage.getItem(this.TOKEN_KEY);
+      const storedUser = this.storage.getItem(this.USER_KEY);
       
       if (storedToken && storedUser) {
         const tokenData = JSON.parse(storedToken);
@@ -79,9 +101,10 @@ export class UserService {
     return this.authenticationService.authenticate(authRequest);
   }
 
-  onLoginSuccess(response: AuthenticationResponse, user: UtilisateurDto): void {
-    sessionStorage.setItem(this.TOKEN_KEY, JSON.stringify(response));
-    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+  onLoginSuccess(response: AuthenticationResponse, user: UtilisateurDto, rememberMe = false): void {
+    sessionStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
+    this.storage.setItem(this.TOKEN_KEY, JSON.stringify(response));
+    this.storage.setItem(this.USER_KEY, JSON.stringify(user));
     this.connectedUserSubject.next(user);
     this.isAuthenticatedSubject.next(true);
   }
@@ -92,18 +115,23 @@ export class UserService {
   }
 
   private clearSession(): void {
+    sessionStorage.removeItem(this.REMEMBER_KEY);
     sessionStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
     this.connectedUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
   }
 
-  setAccessToken(authenticationResponse: AuthenticationResponse): void {
-    sessionStorage.setItem(this.TOKEN_KEY, JSON.stringify(authenticationResponse));
+  setAccessToken(authenticationResponse: AuthenticationResponse, rememberMe = false): void {
+    sessionStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
+    this.storage.setItem(this.TOKEN_KEY, JSON.stringify(authenticationResponse));
   }
 
-  setConnectedUser(utilisateur: UtilisateurDto): void {
-    sessionStorage.setItem(this.USER_KEY, JSON.stringify(utilisateur));
+  setConnectedUser(utilisateur: UtilisateurDto, rememberMe = false): void {
+    sessionStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
+    this.storage.setItem(this.USER_KEY, JSON.stringify(utilisateur));
     this.connectedUserSubject.next(utilisateur);
   }
 
@@ -111,7 +139,7 @@ export class UserService {
     const user = this.connectedUserSubject.value;
     if (user) return user;
     
-    const stored = sessionStorage.getItem(this.USER_KEY);
+    const stored = this.storage.getItem(this.USER_KEY);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
@@ -172,7 +200,7 @@ export class UserService {
   }
 
   getToken(): string | null {
-    const tokenStr = sessionStorage.getItem(this.TOKEN_KEY);
+    const tokenStr = this.storage.getItem(this.TOKEN_KEY);
     if (!tokenStr) return null;
     
     try {

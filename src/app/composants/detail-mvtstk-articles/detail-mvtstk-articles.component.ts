@@ -1,14 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArticleDto, MvtStkDto } from 'src/gs-api/src/models';
 import { MvtStkService } from 'src/app/services/mvtstk/mvt-stk.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-detail-mvtstk-articles',
   templateUrl: './detail-mvtstk-articles.component.html',
   styleUrls: ['./detail-mvtstk-articles.component.css']
 })
-export class DetailMvtstkArticlesComponent implements OnInit {
+export class DetailMvtstkArticlesComponent implements OnInit, OnDestroy {
 
   @Input()
   article: ArticleDto = {};
@@ -21,12 +23,19 @@ export class DetailMvtstkArticlesComponent implements OnInit {
   correctionType: string = 'correctionpos';
   correctionSource: string = 'CORRECTION_STOCK';
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private router: Router,
     private mvtStkService: MvtStkService
   ) { }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   detailArticle() {
@@ -49,7 +58,7 @@ export class DetailMvtstkArticlesComponent implements OnInit {
       ? (this.article.stock || 0) + this.correctionQuantite 
       : (this.article.stock || 0) - this.correctionQuantite;
     
-    this.mvtStkService.corregerStock(this.article.id!, newStock, this.correctionSource).subscribe(() => {
+    this.mvtStkService.corregerStock(this.article.id!, newStock, this.correctionSource).pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.article.stock = newStock;
       this.isCorrectionOpen = false;
       this.correctionQuantite = 0;

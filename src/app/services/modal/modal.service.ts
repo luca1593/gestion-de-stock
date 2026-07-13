@@ -21,11 +21,17 @@ export class ModalService {
       return;
     }
 
+    const bootstrap = (window as any).bootstrap;
+    if (!bootstrap) {
+      console.warn('Bootstrap not available');
+      return;
+    }
+
     try {
-      let bsModal = (window as any).bootstrap.Modal.getInstance(modalElement);
+      let bsModal = bootstrap.Modal.getInstance(modalElement);
       
       if (!bsModal) {
-        bsModal = new (window as any).bootstrap.Modal(modalElement, {
+        bsModal = new bootstrap.Modal(modalElement, {
           backdrop: 'static',
           keyboard: true,
           focus: true
@@ -73,8 +79,10 @@ export class ModalService {
     document.querySelectorAll('.modal.show').forEach((el) => {
       try {
         const m = (window as any).bootstrap.Modal.getInstance(el);
-        if (m) m.hide();
-        m.dispose();
+        if (m) {
+          m.hide();
+          m.dispose();
+        }
       } catch (e) {}
     });
     this.modals.clear();

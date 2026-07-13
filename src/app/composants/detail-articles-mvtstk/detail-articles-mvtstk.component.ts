@@ -1,7 +1,9 @@
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { ArticleDto, LigneCommandeClientDto, LigneCommandeFournisseurDto, LigneVenteDto } from 'src/gs-api/src/models';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Chart, registerables } from 'chart.js';
 import { formatDate } from '@angular/common';
 
@@ -12,7 +14,7 @@ Chart.register(...registerables);
   templateUrl: './detail-articles-mvtstk.component.html',
   styleUrls: ['./detail-articles-mvtstk.component.css']
 })
-export class DetailArticlesMvtstkComponent implements OnInit {
+export class DetailArticlesMvtstkComponent implements OnInit, OnDestroy {
 
   articleDto: ArticleDto={};
   creationDate: string="";
@@ -24,6 +26,8 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   rawCmdFrs: Array<LigneCommandeFournisseurDto>=[];
   rawVente: Array<LigneVenteDto>=[];
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     @Inject(LOCALE_ID) private locale: string,
     private articleService: ArtcleService,
@@ -33,7 +37,7 @@ export class DetailArticlesMvtstkComponent implements OnInit {
   ngOnInit(): void {
     const idArticle=this.activatedRouter.snapshot.params['id'];
     if (idArticle) {
-      this.articleService.findArticleById(idArticle).subscribe(article => {
+      this.articleService.findArticleById(idArticle).pipe(takeUntil(this.destroy$)).subscribe(article => {
         this.articleDto=article;
         this.initialiseDate(article);
       });
@@ -50,20 +54,25 @@ export class DetailArticlesMvtstkComponent implements OnInit {
 
   findHistorique(idArticle: number) {
     this.articleService.findHistoriqueCommandeClient(idArticle)
-      .subscribe(list => {
+      .pipe(takeUntil(this.destroy$)).subscribe(list => {
         this.rawCmdClt = list;
         this.filterAndRender();
       });
     this.articleService.findHistoriqueCommandeFournisseur(idArticle)
-      .subscribe(list => {
+      .pipe(takeUntil(this.destroy$)).subscribe(list => {
         this.rawCmdFrs = list;
         this.filterAndRender();
       });
     this.articleService.findHistoriqueVente(idArticle)
-      .subscribe(list => {
+      .pipe(takeUntil(this.destroy$)).subscribe(list => {
         this.rawVente = list;
         this.filterAndRender();
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   filterAndRender() {

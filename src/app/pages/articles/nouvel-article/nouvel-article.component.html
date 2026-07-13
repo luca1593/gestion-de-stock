@@ -26,27 +26,29 @@
             <form class="row">
                 <div class="col-md-6 mb-2">
                     <input type="text" name="codearticle" class="form-control" [(ngModel)]="articleDto.codeArticle"
-                        id="codearticle" placeholder="Code article">
+                        id="codearticle" placeholder="Code article" required #codeField="ngModel">
+                    <div class="invalid-feedback" *ngIf="codeField.invalid && codeField.touched">Le code article est requis</div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" name="designation" class="form-control" [(ngModel)]="articleDto.designation"
-                        id="designation" placeholder="Designation">
+                        id="designation" placeholder="Designation" required #designationField="ngModel">
+                    <div class="invalid-feedback" *ngIf="designationField.invalid && designationField.touched">La désignation est requise</div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="number" name="prixht" class="form-control" [(ngModel)]="articleDto.prixUnitaireht"
-                        (input)="calculerPrixTTC()" id="prixht" placeholder="Prix unitaire HT">
+                        (input)="calculerPrixTTC()" id="prixht" placeholder="Prix unitaire HT" required min="0" step="0.01">
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="number" name="tva" class="form-control" (input)="calculerPrixTTC()"
-                        [(ngModel)]="articleDto.tauxTva" id="tva" placeholder="Taux TVA">
+                        [(ngModel)]="articleDto.tauxTva" id="tva" placeholder="Taux TVA" required min="0" max="100" step="0.1">
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="number" name="prixttc" class="form-control" [(ngModel)]="articleDto.prixTtc" id="prixttc"
-                        placeholder="Prix unitaire TTC">
+                        placeholder="Prix unitaire TTC" required min="0">
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="number" name="stock" class="form-control" [(ngModel)]="articleDto.stock" id="stock"
-                        placeholder="Stock">
+                        placeholder="Stock" min="0">
                 </div>
                 <div class="col-md-6 mb-2">
                     <select class="form-control" name="categorie" id="categorie" [(ngModel)]="categoryDto.id">

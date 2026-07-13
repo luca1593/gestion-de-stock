@@ -1,5 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { FournisseurDto } from 'src/gs-api/src/models';
@@ -10,7 +12,9 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
   templateUrl: './page-fournisseur.component.html',
   styleUrls: ['./page-fournisseur.component.css']
 })
-export class PageFournisseurComponent implements OnInit {
+export class PageFournisseurComponent implements OnInit, OnDestroy {
+
+  private destroy$ = new Subject<void>();
 
   listFournisseur: Array<FournisseurDto> = [];
   listFournisseursFiltre: Array<FournisseurDto> = [];
@@ -38,15 +42,16 @@ export class PageFournisseurComponent implements OnInit {
 
   findAllFournisseur(): void {
     this.loading = true;
-    this.cltfrsService.findAllFournisseurs().subscribe({
+    this.cltfrsService.findAllFournisseurs().pipe(takeUntil(this.destroy$)).subscribe({
       next: (resp) => {
         this.listFournisseur = this.photoSyncService.mergePhotos('fournisseur', resp);
         this.listFournisseursFiltre = this.listFournisseur;
         this.applySort();
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
+        this.errorMsg = err.error?.message || 'Erreur lors du chargement des fournisseurs';
       }
     });
   }
@@ -105,7 +110,7 @@ export class PageFournisseurComponent implements OnInit {
 
   supprimerFournisseur(fournisseur: FournisseurDto): void {
     if (confirm(`Êtes-vous sûr de vouloir supprimer le fournisseur "${fournisseur.nom}" ?`)) {
-      this.cltfrsService.deleteFournisseur(fournisseur.id!).subscribe({
+      this.cltfrsService.deleteFournisseur(fournisseur.id!).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.photoSyncService.clearEntity('fournisseur', fournisseur.id!);
           this.findAllFournisseur();
@@ -120,6 +125,11 @@ export class PageFournisseurComponent implements OnInit {
     if (!addr) return '-';
     const parts = [addr.adresse1, addr.adresse2, addr.ville, addr.codePostal, addr.pays].filter(p => p);
     return parts.join(', ') || '-';
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   handleSuppression($event: any): void {

@@ -1,4 +1,14 @@
 <div class="stats-container">
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Chargement des statistiques...</span>
+        </div>
+    </div>
+    <div class="alert alert-danger" *ngIf="error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+    </div>
     <div class="stats-header">
         <div>
             <h4><i class="fas fa-chart-bar me-2"></i>Tableau de Bord Statistique</h4>

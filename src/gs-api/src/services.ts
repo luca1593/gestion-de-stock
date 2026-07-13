@@ -1,8 +1,5 @@
-import { from } from 'rxjs';
-
 export { AuthenticationService } from './services/authentication.service';
 export { ArticlesService } from './services/articles.service';
-export { ApiService } from './services/api.service';
 export { CategoryService } from './services/category.service';
 export { ClientService } from './services/client.service';
 export { CommandeClientService } from './services/commande-client.service';

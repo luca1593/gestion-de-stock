@@ -68,7 +68,7 @@
                                      (click)="markAsRead(notification, $event)"
                                      [attr.role]="notification.link ? 'button' : null"
                                      [attr.tabindex]="notification.link ? '0' : null">
-                                    <i [class]="getNotificationIcon(notification.type)" [class]="getNotificationClass(notification.type)"></i>
+                                    <i [class]="getNotificationIcon(notification.type) + ' ' + getNotificationClass(notification.type)"></i>
                                     <div class="notification-text">
                                         <p class="notification-title">{{notification.title}}</p>
                                         <p class="notification-message">{{notification.message}}</p>

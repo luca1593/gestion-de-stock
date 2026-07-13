@@ -3,6 +3,7 @@ import { ExportService as ApiExportService } from 'src/gs-api/src/services/expor
 import { HaveurService } from './avoir/avoir.service';
 import { UserService } from './user/user.service';
 import { VenteService } from './vente/vente.service';
+import { NotificationService } from './notification/notification.service';
 import { AvoirDto } from 'src/gs-api/src/models';
 import { firstValueFrom } from 'rxjs';
 import jsPDF from 'jspdf';
@@ -28,7 +29,8 @@ export class ExportExcelService {
     private exportApiService: ApiExportService,
     private avoirService: HaveurService,
     private userService: UserService,
-    private venteService: VenteService
+    private venteService: VenteService,
+    private notificationService: NotificationService
   ) {}
 
   exportArticles(): void {
@@ -305,7 +307,7 @@ export class ExportExcelService {
       doc.save('historique-ventes_' + this.getDateString() + '.pdf');
     } catch (err) {
       console.error('Erreur génération PDF ventes', err);
-      this.exportVentes();
+      this.notificationService.addError('Export PDF', 'Erreur lors de la génération du PDF des ventes');
     }
   }
 

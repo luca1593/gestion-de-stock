@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of } from 'rxjs';
+import { map, catchError, take } from 'rxjs/operators';
 import { AlertStockDto, CommandeClientDto, CommandeFournisseurDto } from 'src/gs-api/src/models';
 import { AlertStockService } from 'src/gs-api/src/services/alert-stock.service';
 import { CmdCltFrsService } from '../cmdcltfrs/cmd-clt-frs.service';
@@ -75,7 +75,8 @@ export class NotificationService {
   private checkAlertsStock(entrepriseId: number): void {
     this.alertStockService.AlertStockApiFindActivesGET(entrepriseId).pipe(
       map((alerts: AlertStockDto[]) => alerts.filter(a => a.active)),
-      catchError(() => [])
+      catchError(() => of([] as AlertStockDto[])),
+      take(1)
     ).subscribe(alerts => {
       alerts.forEach((alert: AlertStockDto) => {
         const dismissKey = `alert-stock-${alert.articleId}-${entrepriseId}`;
@@ -104,7 +105,8 @@ export class NotificationService {
   private checkCommandesEnAttente(entrepriseId: number): void {
     this.commandeService.findAllCommandeClient().pipe(
       map(cmds => cmds.filter((c: CommandeClientDto) => c.etatcommande === 'EN_PREPARATION')),
-      catchError(() => [])
+      catchError(() => of([] as CommandeClientDto[])),
+      take(1)
     ).subscribe(commandes => {
       commandes.forEach((cmd: CommandeClientDto) => {
         if (cmd.id) {
@@ -124,7 +126,8 @@ export class NotificationService {
 
     this.commandeService.findAllCommandeFournisseur().pipe(
       map(cmds => cmds.filter((c: CommandeFournisseurDto) => c.etatcommande === 'EN_PREPARATION')),
-      catchError(() => [])
+      catchError(() => of([] as CommandeFournisseurDto[])),
+      take(1)
     ).subscribe(commandes => {
       commandes.forEach((cmd: CommandeFournisseurDto) => {
         if (cmd.id) {

@@ -1,5 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { ExportExcelService } from 'src/app/services/export.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
@@ -11,7 +13,9 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
   templateUrl: './page-client.component.html',
   styleUrls: ['./page-client.component.css']
 })
-export class PageClientComponent implements OnInit {
+export class PageClientComponent implements OnInit, OnDestroy {
+
+  private destroy$ = new Subject<void>();
   
   listClients: Array<ClientDto>=[];
   listClientsFiltre: Array<ClientDto>=[];
@@ -40,7 +44,7 @@ export class PageClientComponent implements OnInit {
 
   finfAllClient(): void{
     this.loading = true;
-    this.cltfrsService.findAllClient().subscribe({
+    this.cltfrsService.findAllClient().pipe(takeUntil(this.destroy$)).subscribe({
       next: (resp) => {
         this.listClients = this.photoSyncService.mergePhotos('client', resp);
         this.listClientsFiltre = this.listClients;
@@ -110,7 +114,7 @@ export class PageClientComponent implements OnInit {
 
   supprimerClient(client: ClientDto): void {
     if (confirm(`Êtes-vous sûr de vouloir supprimer le client "${client.nom}" ?`)) {
-      this.cltfrsService.deleteClient(client.id!).subscribe({
+      this.cltfrsService.deleteClient(client.id!).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.photoSyncService.clearEntity('client', client.id!);
           this.finfAllClient();
@@ -118,6 +122,11 @@ export class PageClientComponent implements OnInit {
         error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   handleSuppression($event: any): void {

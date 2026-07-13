@@ -1,5 +1,4 @@
 /* tslint:disable */
-
 export interface DashboardStatsDto {
   totalArticles?: number;
   totalClients?: number;
@@ -7,8 +6,9 @@ export interface DashboardStatsDto {
   totalCommandesClient?: number;
   totalCommandesFournisseur?: number;
   totalVentes?: number;
+  totalAvoirs?: number;
+  stockTotal?: number;
+  articlesFaibleStock?: number;
   chiffreAffaires?: number;
   valeurStock?: number;
-  articlesStockBas?: number;
-  commandesEnAttente?: number;
 }
