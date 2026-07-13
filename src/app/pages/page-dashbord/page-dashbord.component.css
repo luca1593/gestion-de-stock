@@ -13,13 +13,13 @@
 /* Bouton toggle flottant */
 .menu-toggle {
     position: fixed;
-    left: 10px;
+    left: calc(260px - 18px);
     top: 80px;
     z-index: 1001;
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: none;
+    border: 2px solid rgba(255,255,255,0.3);
     background: linear-gradient(135deg, #4a90d9, #2a5298);
     color: white;
     cursor: pointer;
@@ -41,7 +41,7 @@
 }
 
 .menu-toggle.collapsed {
-    left: 70px;
+    left: calc(70px - 18px);
 }
 
 /* Sidebar */

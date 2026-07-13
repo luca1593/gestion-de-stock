@@ -1,8 +1,8 @@
 <div class="dashbord-container">
     <div class="app-layout">
         <!-- Bouton toggle menu flottant -->
-        <button class="menu-toggle" (click)="toggleMenu()" [class.collapsed]="menuCollapsed" title="Basculer le menu">
-            <i class="fas" [class.fa-bars]="!menuCollapsed" [class.fa-chevron-left]="menuCollapsed"></i>
+        <button class="menu-toggle" (click)="toggleMenu()" [class.collapsed]="menuCollapsed" [title]="menuCollapsed ? 'Déplier le menu' : 'Replier le menu'">
+            <i class="fas" [class.fa-chevron-left]="!menuCollapsed" [class.fa-chevron-right]="menuCollapsed"></i>
         </button>
         
         <!-- Sidebar -->
