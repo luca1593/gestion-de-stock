@@ -39,6 +39,9 @@ export class NouvelUtilisateurComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const today = new Date();
+    const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    this.dateNaissance = eighteenYearsAgo.toISOString().split('T')[0];
     const id = this.activatedRoute.snapshot.params['id'];
     if (id) {
       this.isEditMode = true;
