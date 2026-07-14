@@ -29,10 +29,11 @@
       <form class="row" *ngIf="!loading">
         <div class="col-12 mb-3">
           <h5><i class="fas fa-info-circle text-primary me-2"></i>Informations de l'utilisateur</h5>
+          <small class="text-muted">Les champs marqués de <span class="text-danger">*</span> sont obligatoires</small>
         </div>
         <div class="col-md-6">
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Nom</label>
+            <label class="form-label small text-muted mb-1">Nom <span class="text-danger">*</span></label>
             <input type="text" class="form-control" name="nom" placeholder="Nom" [(ngModel)]="utilisateurDto.nom">
           </div>
           <div class="mb-2">
@@ -41,7 +42,7 @@
           </div>
           <ng-container *ngIf="!isEditMode; else passwordFields">
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">E-mail</label>
+              <label class="form-label small text-muted mb-1">E-mail <span class="text-danger">*</span></label>
               <input type="email" class="form-control" name="email" placeholder="E-mail" [(ngModel)]="utilisateurDto.email">
             </div>
             <div class="mb-2">
@@ -49,21 +50,21 @@
               <input type="date" class="form-control" name="dateNaissance" [(ngModel)]="dateNaissance">
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Mot de passe</label>
+              <label class="form-label small text-muted mb-1">Mot de passe <span class="text-danger">*</span></label>
               <input type="password" class="form-control" name="newPassword" placeholder="Mot de passe" [(ngModel)]="newPassword">
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Confirmer le mot de passe</label>
+              <label class="form-label small text-muted mb-1">Confirmer le mot de passe <span class="text-danger">*</span></label>
               <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword">
             </div>
           </ng-container>
           <ng-template #passwordFields>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Nouveau mot de passe</label>
+              <label class="form-label small text-muted mb-1">Nouveau mot de passe <span class="text-danger">*</span></label>
               <input type="password" class="form-control" name="newPassword" placeholder="Nouveau mot de passe" [(ngModel)]="newPassword">
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Confirmer le mot de passe</label>
+              <label class="form-label small text-muted mb-1">Confirmer le mot de passe <span class="text-danger">*</span></label>
               <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword">
             </div>
             <div class="mb-2">
