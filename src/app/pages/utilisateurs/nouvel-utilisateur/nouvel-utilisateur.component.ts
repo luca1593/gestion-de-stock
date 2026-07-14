@@ -17,6 +17,7 @@ export class NouvelUtilisateurComponent implements OnInit {
   errorMsgs: Array<string> = [];
   isEditMode = false;
   loading = false;
+  submitted = false;
   newPassword = '';
   confirmPassword = '';
   dateNaissance = '';
@@ -61,8 +62,16 @@ export class NouvelUtilisateurComponent implements OnInit {
     }
   }
 
+  canSave(): boolean {
+    if (!this.utilisateurDto.nom || !this.utilisateurDto.email) return false;
+    if (!this.isEditMode && (!this.newPassword || !this.confirmPassword)) return false;
+    return true;
+  }
+
   saveClick(): void {
+    this.submitted = true;
     this.errorMsgs = [];
+    if (!this.canSave()) return;
     if (!this.isEditMode) {
       if (!this.newPassword) {
         this.errorMsgs = ['Veuillez renseigner un mot de passe'];
