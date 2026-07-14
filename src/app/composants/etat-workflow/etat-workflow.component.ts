@@ -45,7 +45,10 @@ interface WorkflowStep {
           </button>
           <ul class="dropdown-menu">
             <li *ngFor="let step of steps">
-              <a class="dropdown-item" (click)="onChange(step.key)" [class.active]="etat === step.key">
+              <a class="dropdown-item"
+                 (click)="onChange(step.key)"
+                 [class.active]="etat === step.key"
+                 [class.disabled]="isStepDesactive(step.key)">
                 <span class="badge" [style.background-color]="step.color">{{ step.label }}</span>
               </a>
             </li>
@@ -217,8 +220,14 @@ interface WorkflowStep {
       padding: 0.4rem 0.75rem;
     }
 
-    .dropdown-item:hover {
+    .dropdown-item:hover:not(.disabled) {
       background-color: #f8f9fa;
+    }
+
+    .dropdown-item.disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+      pointer-events: none;
     }
 
     body.dark-theme .step-circle {
@@ -282,6 +291,7 @@ export class EtatoWorkflowComponent {
   @Input() etat: string = 'EN_PREPARATION';
   @Input() compact: boolean = true;
   @Input() vertical: boolean = false;
+  @Input() stepsDesactivees: string[] = [];
   @Output() etatChange = new EventEmitter<string>();
 
   steps: WorkflowStep[] = [
@@ -292,6 +302,10 @@ export class EtatoWorkflowComponent {
 
   getStepIndex(etat: string): number {
     return this.steps.findIndex(s => s.key === etat);
+  }
+
+  isStepDesactive(key: string): boolean {
+    return this.stepsDesactivees.includes(key);
   }
 
   getCurrentStep(): WorkflowStep | undefined {
@@ -310,7 +324,7 @@ export class EtatoWorkflowComponent {
   }
 
   onChange(newEtat: string): void {
-    if (newEtat !== this.etat) {
+    if (newEtat !== this.etat && !this.isStepDesactive(newEtat)) {
       this.etatChange.emit(newEtat);
     }
   }

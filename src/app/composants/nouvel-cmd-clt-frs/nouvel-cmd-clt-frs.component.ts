@@ -130,6 +130,16 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.quantiteListArticle = qnt;
   }
 
+  get stepsDesactivees(): string[] {
+    if (!this.isModification) {
+      return ['VALIDEE', 'LIVREE'];
+    }
+    const steps = ['EN_PREPARATION', 'VALIDEE', 'LIVREE'];
+    const currentIndex = steps.indexOf(this.etatCommande);
+    if (currentIndex <= 0) return [];
+    return steps.slice(0, currentIndex);
+  }
+
   onEtatChange(newEtat: string): void {
     this.etatCommande = newEtat;
   }
