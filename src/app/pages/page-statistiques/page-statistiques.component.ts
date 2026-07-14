@@ -131,23 +131,25 @@ export class PageStatistiquesComponent implements OnInit {
     if (this.dateDebut && this.dateFin) {
       const caTotal = this.chiffreAffairesData.reduce((sum, d) => sum + (d.chiffreAffaires || d.totalVentes || 0), 0);
       const nbVentesTotal = this.chiffreAffairesData.reduce((sum, d) => sum + (d.nbVentes || 0), 0);
+      const cmdClientFiltrees = this.filterByDateRange(this.commandesClientData);
+      const cmdFournisseurFiltrees = this.filterByDateRange(this.commandesFournisseurData);
 
       this.stats = {
         ...this.stats,
         chiffreAffaires: caTotal,
-        totalVentes: nbVentesTotal || this.commandesClientData.length,
-        totalCommandesClient: this.commandesClientData.length,
-        totalCommandesFournisseur: this.commandesFournisseurData.length,
+        totalVentes: nbVentesTotal || cmdClientFiltrees.length,
+        totalCommandesClient: cmdClientFiltrees.length,
+        totalCommandesFournisseur: cmdFournisseurFiltrees.length,
       };
 
       const clientIds = new Set<number>();
-      this.commandesClientData.forEach((cmd: any) => {
+      cmdClientFiltrees.forEach((cmd: any) => {
         if (cmd.client?.id) clientIds.add(cmd.client.id);
       });
       if (clientIds.size > 0) this.stats.totalClients = clientIds.size;
 
       const fournisseurIds = new Set<number>();
-      this.commandesFournisseurData.forEach((cmd: any) => {
+      cmdFournisseurFiltrees.forEach((cmd: any) => {
         if (cmd.fournisseur?.id) fournisseurIds.add(cmd.fournisseur.id);
       });
       if (fournisseurIds.size > 0) this.stats.totalFournisseurs = fournisseurIds.size;
@@ -325,8 +327,9 @@ export class PageStatistiquesComponent implements OnInit {
 
   private getGroupedChartData(): any[] {
     const raw = this.getCurrentChartData();
-    if (this.selectedChartType === 'ventes') return raw;
-    const normalised = raw.map((d: any) => {
+    const filtered = this.filterByDateRange(raw);
+    if (this.selectedChartType === 'ventes') return filtered;
+    const normalised = filtered.map((d: any) => {
       const value = this.selectedChartType === 'mvt-stock'
         ? (d.quantite || 1)
         : 1;
@@ -338,6 +341,21 @@ export class PageStatistiquesComponent implements OnInit {
       };
     });
     return this.groupChartData(normalised);
+  }
+
+  private filterByDateRange(data: any[]): any[] {
+    if (!this.dateDebut && !this.dateFin) return data;
+    const debut = this.dateDebut ? new Date(this.dateDebut + 'T00:00:00') : null;
+    const fin = this.dateFin ? new Date(this.dateFin + 'T23:59:59') : null;
+    return data.filter((d: any) => {
+      const raw = d.periode || d.dateCommande || d.dateMvt || '';
+      if (!raw) return true;
+      const dt = this.parsePeriode(raw);
+      if (!dt) return true;
+      if (debut && dt < debut) return false;
+      if (fin && dt > fin) return false;
+      return true;
+    });
   }
 
   private getGroupedMaxValue(): number {
