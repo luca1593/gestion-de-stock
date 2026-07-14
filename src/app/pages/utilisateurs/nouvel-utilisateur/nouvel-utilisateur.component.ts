@@ -62,9 +62,14 @@ export class NouvelUtilisateurComponent implements OnInit {
     }
   }
 
+  get passwordMismatch(): boolean {
+    return !!this.newPassword && !!this.confirmPassword && this.newPassword !== this.confirmPassword;
+  }
+
   canSave(): boolean {
     if (!this.utilisateurDto.nom || !this.utilisateurDto.email) return false;
     if (!this.isEditMode && (!this.newPassword || !this.confirmPassword)) return false;
+    if (this.passwordMismatch) return false;
     return true;
   }
 

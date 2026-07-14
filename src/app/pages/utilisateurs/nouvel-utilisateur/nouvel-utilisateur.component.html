@@ -69,6 +69,9 @@
               <div class="invalid-feedback" *ngIf="confirmField.invalid && submitted">
                 <span>La confirmation du mot de passe doit être renseignée</span>
               </div>
+              <div class="text-danger small mt-1" *ngIf="passwordMismatch && submitted">
+                <i class="fas fa-exclamation-circle me-1"></i>Les mots de passe ne correspondent pas
+              </div>
             </div>
           </ng-container>
           <ng-template #passwordFields>
@@ -79,6 +82,9 @@
             <div class="mb-2">
               <label class="form-label small text-muted mb-1">Confirmer le mot de passe</label>
               <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword">
+              <div class="text-danger small mt-1" *ngIf="passwordMismatch && submitted">
+                <i class="fas fa-exclamation-circle me-1"></i>Les mots de passe ne correspondent pas
+              </div>
             </div>
             <div class="mb-2">
               <label class="form-label small text-muted mb-1">Rôle</label>
