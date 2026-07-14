@@ -31,6 +31,11 @@ export class PageStatistiquesComponent implements OnInit {
   loading = true;
   apiCallsPending = 0;
 
+  periodeFiltre: string = 'mois';
+  dateDebut: string = '';
+  dateFin: string = '';
+  filtreLabel: string = 'Ce mois-ci';
+
   sortState: SortState = { column: '', direction: 'asc' };
 
   constructor(
@@ -39,6 +44,53 @@ export class PageStatistiquesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
+    this.apiCallsPending = 5;
+    this.setPeriode('mois');
+  }
+
+  setPeriode(type: string, debut?: string, fin?: string): void {
+    this.periodeFiltre = type;
+    const now = new Date();
+    
+    switch (type) {
+      case 'semaine': {
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay());
+        this.dateDebut = weekStart.toISOString().split('T')[0];
+        this.dateFin = now.toISOString().split('T')[0];
+        this.filtreLabel = 'Cette semaine';
+        break;
+      }
+      case 'mois': {
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        this.dateDebut = monthStart.toISOString().split('T')[0];
+        this.dateFin = now.toISOString().split('T')[0];
+        this.filtreLabel = 'Ce mois-ci';
+        break;
+      }
+      case 'annee': {
+        const yearStart = new Date(now.getFullYear(), 0, 1);
+        this.dateDebut = yearStart.toISOString().split('T')[0];
+        this.dateFin = now.toISOString().split('T')[0];
+        this.filtreLabel = 'Cette année';
+        break;
+      }
+      case 'custom': {
+        this.dateDebut = debut || '';
+        this.dateFin = fin || '';
+        this.filtreLabel = this.dateDebut && this.dateFin
+          ? `Du ${this.dateDebut} au ${this.dateFin}`
+          : 'Période personnalisée';
+        break;
+      }
+      default: {
+        this.dateDebut = '';
+        this.dateFin = '';
+        this.filtreLabel = 'Tout';
+      }
+    }
+    
     this.loading = true;
     this.apiCallsPending = 5;
     this.loadStats();
@@ -90,7 +142,10 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadChiffreAffairesMois(): void {
-    this.dashboardService.getChiffreAffairesMois().subscribe({
+    const obs = this.dateDebut && this.dateFin
+      ? this.dashboardService.getVentesPeriode(this.dateDebut, this.dateFin)
+      : this.dashboardService.getChiffreAffairesMois();
+    obs.subscribe({
       next: (data) => {
         if (data && Array.isArray(data)) {
           this.chiffreAffairesData = this.aggregateByMonth(data);
@@ -241,12 +296,15 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   getChartTitle(): string {
-    switch (this.selectedChartType) {
-      case 'commandes-client': return 'Commandes Clients';
-      case 'commandes-fournisseur': return 'Commandes Fournisseurs';
-      case 'mvt-stock': return 'Mouvements de Stock';
-      default: return 'Chiffre d\'Affaires par Mois';
-    }
+    const base = (() => {
+      switch (this.selectedChartType) {
+        case 'commandes-client': return 'Commandes Clients';
+        case 'commandes-fournisseur': return 'Commandes Fournisseurs';
+        case 'mvt-stock': return 'Mouvements de Stock';
+        default: return 'Chiffre d\'Affaires';
+      }
+    })();
+    return `${base} — ${this.filtreLabel}`;
   }
 
   getChartUnit(): string {

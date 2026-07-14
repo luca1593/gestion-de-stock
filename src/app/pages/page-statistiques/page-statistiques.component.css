@@ -287,6 +287,65 @@
     margin: 0;
 }
 
+/* Filter Bar */
+.filter-card {
+    background: var(--bg-card, white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 0.75rem 1.25rem;
+}
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary, #6c757d);
+    white-space: nowrap;
+}
+
+.filter-bar .btn-group .btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+}
+
+.filter-bar .btn-group .btn.active {
+    background: var(--primary-color, #4a90d9);
+    color: white;
+    border-color: var(--primary-color, #4a90d9);
+}
+
+.date-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.date-range-inputs input[type="date"] {
+    width: 150px;
+    font-size: 0.8rem;
+}
+
+.date-separator {
+    color: var(--text-muted, #adb5bd);
+    font-size: 0.85rem;
+}
+
+.filtre-label {
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+body.dark-theme .filter-card {
+    background: var(--bg-card);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
 /* Dark Theme */
 body.dark-theme .stat-card,
 body.dark-theme .metric-card,

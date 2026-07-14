@@ -135,6 +135,29 @@
         </div>
     </div>
 
+    <!-- Filter Bar -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="filter-card">
+                <div class="filter-bar">
+                    <span class="filter-label"><i class="fas fa-filter me-1"></i>Période :</span>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button class="btn btn-outline-primary" [class.active]="periodeFiltre === 'semaine'" (click)="setPeriode('semaine')">Semaine</button>
+                        <button class="btn btn-outline-primary" [class.active]="periodeFiltre === 'mois'" (click)="setPeriode('mois')">Mois</button>
+                        <button class="btn btn-outline-primary" [class.active]="periodeFiltre === 'annee'" (click)="setPeriode('annee')">Année</button>
+                        <button class="btn btn-outline-primary" [class.active]="periodeFiltre === 'custom'" (click)="setPeriode('custom')">Personnalisé</button>
+                    </div>
+                    <div class="date-range-inputs" *ngIf="periodeFiltre === 'custom'">
+                        <input type="date" class="form-control form-control-sm" [(ngModel)]="dateDebut" name="dateDebut" (change)="setPeriode('custom', dateDebut, dateFin)">
+                        <span class="date-separator">—</span>
+                        <input type="date" class="form-control form-control-sm" [(ngModel)]="dateFin" name="dateFin" (change)="setPeriode('custom', dateDebut, dateFin)">
+                    </div>
+                    <span class="filtre-label ms-2 text-muted small">{{filtreLabel}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Charts Row -->
     <div class="row mb-4">
         <div class="col-lg-8 mb-4">
