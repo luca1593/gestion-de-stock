@@ -20,7 +20,7 @@ export class NouvelArticleComponent implements OnInit {
   errorMsgs: Array<string>=[];
   erreur="";
   file: File | null=null;
-  imgUrl: string | ArrayBuffer='favicon.ico';
+  imgUrl: string | ArrayBuffer='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2212%22%20fill%3D%22%23e9ecef%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2230%22%20width%3D%2244%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%23adb5bd%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2270%22%20width%3D%2236%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2278%22%20width%3D%2224%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3C%2Fsvg%3E';
   loading = true;
   submitted = false;
 
@@ -56,7 +56,7 @@ export class NouvelArticleComponent implements OnInit {
         next: (resp) => {
           this.articleDto=resp;
           this.categoryDto=resp.category ? resp.category : { id: null };
-          this.imgUrl = resp.photo ? resp.photo : 'favicon.ico';
+          this.imgUrl = resp.photo ? resp.photo : 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2212%22%20fill%3D%22%23e9ecef%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2230%22%20width%3D%2244%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%23adb5bd%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2270%22%20width%3D%2236%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2278%22%20width%3D%2224%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3C%2Fsvg%3E';
           checkDone();
         },
         error: (err) => {
