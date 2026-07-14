@@ -28,14 +28,14 @@
                     <input type="text" class="form-control" id="nom" name="nom"
                     placeholder="Nom *" [(ngModel)]="clientFournisseur.nom" required #nomField="ngModel">
                     <div class="text-danger small mt-1" *ngIf="nomField.invalid && (nomField.dirty || nomField.touched || submitted)">
-                        Le nom est requis
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="adresse1" name="adresse1"
                     placeholder="Adresse 1 *" [(ngModel)]="adresseDto.adresse1" required #adresse1Field="ngModel">
                     <div class="text-danger small mt-1" *ngIf="adresse1Field.invalid && (adresse1Field.dirty || adresse1Field.touched || submitted)">
-                        L'adresse 1 est requise
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
@@ -54,7 +54,7 @@
                     <input type="text" class="form-control" id="ville" name="ville"
                     placeholder="Ville *" [(ngModel)]="adresseDto.ville" required #villeField="ngModel">
                     <div class="text-danger small mt-1" *ngIf="villeField.invalid && (villeField.dirty || villeField.touched || submitted)">
-                        La ville est requise
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
@@ -65,7 +65,7 @@
                     <input type="text" class="form-control" id="codepostale" name="codepostale"
                     placeholder="Code postal *" [(ngModel)]="adresseDto.codePostal" required #codePostalField="ngModel">
                     <div class="text-danger small mt-1" *ngIf="codePostalField.invalid && (codePostalField.dirty || codePostalField.touched || submitted)">
-                        Le code postal est requis
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
@@ -75,7 +75,7 @@
                     <input type="text" class="form-control" id="pays" name="pays"
                     placeholder="Pays *" [(ngModel)]="adresseDto.pays" required #paysField="ngModel">
                     <div class="text-danger small mt-1" *ngIf="paysField.invalid && (paysField.dirty || paysField.touched || submitted)">
-                        Le pays est requis
+                        Ce champ est obligatoire
                     </div>
                 </div>
             </form>

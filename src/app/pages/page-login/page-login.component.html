@@ -17,7 +17,7 @@
         <label for="mail" class="form-label"><i class="fas fa-envelope"></i> Adresse e-mail</label>
         <input type="email" class="form-control" id="mail" placeholder="nom@exemple.com" [(ngModel)]="authenticationRequest.login" name="login" required email #loginField="ngModel">
         <div class="invalid-feedback" *ngIf="loginField.invalid && loginField.touched">
-          <span *ngIf="loginField.errors?.['required']">L'adresse e-mail est requise</span>
+          <span *ngIf="loginField.errors?.['required']">Ce champ est obligatoire</span>
           <span *ngIf="loginField.errors?.['email']">Format d'adresse e-mail invalide</span>
         </div>
       </div>
@@ -25,7 +25,7 @@
         <label for="motdepasse" class="form-label"><i class="fas fa-lock"></i> Mot de passe</label>
         <input type="password" class="form-control" id="motdepasse" placeholder="••••••••" [(ngModel)]="authenticationRequest.password" name="password" required minlength="4" #passwordField="ngModel">
         <div class="invalid-feedback" *ngIf="passwordField.invalid && passwordField.touched">
-          <span *ngIf="passwordField.errors?.['required']">Le mot de passe est requis</span>
+          <span *ngIf="passwordField.errors?.['required']">Ce champ est obligatoire</span>
           <span *ngIf="passwordField.errors?.['minlength']">Minimum 4 caractères</span>
         </div>
       </div>

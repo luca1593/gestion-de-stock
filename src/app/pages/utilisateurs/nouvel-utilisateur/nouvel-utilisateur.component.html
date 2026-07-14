@@ -35,7 +35,7 @@
           <div class="mb-2">
             <input type="text" class="form-control" name="nom" placeholder="Nom *" [(ngModel)]="utilisateurDto.nom" required #nomField="ngModel">
             <div class="text-danger small mt-1" *ngIf="nomField.invalid && (nomField.dirty || nomField.touched || submitted)">
-              <span>Le nom doit être renseigné</span>
+              <span>Ce champ est obligatoire</span>
             </div>
           </div>
           <div class="mb-2">
@@ -45,7 +45,7 @@
             <div class="mb-2">
               <input type="email" class="form-control" name="email" placeholder="E-mail *" [(ngModel)]="utilisateurDto.email" required email #emailField="ngModel">
               <div class="text-danger small mt-1" *ngIf="emailField.invalid && (emailField.dirty || emailField.touched || submitted)">
-                <span *ngIf="emailField.errors?.['required']">L'e-mail doit être renseigné</span>
+                <span *ngIf="emailField.errors?.['required']">Ce champ est obligatoire</span>
                 <span *ngIf="emailField.errors?.['email']">Format d'e-mail invalide</span>
               </div>
             </div>
@@ -55,13 +55,13 @@
             <div class="mb-2">
               <input type="password" class="form-control" name="newPassword" placeholder="Mot de passe *" [(ngModel)]="newPassword" required #passwordField="ngModel">
               <div class="text-danger small mt-1" *ngIf="passwordField.invalid && (passwordField.dirty || passwordField.touched || submitted)">
-                <span>Le mot de passe doit être renseigné</span>
+                <span>Ce champ est obligatoire</span>
               </div>
             </div>
             <div class="mb-2">
               <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe *" [(ngModel)]="confirmPassword" required #confirmField="ngModel">
               <div class="text-danger small mt-1" *ngIf="confirmField.invalid && (confirmField.dirty || confirmField.touched || submitted)">
-                <span>La confirmation du mot de passe doit être renseignée</span>
+                <span>Ce champ est obligatoire</span>
               </div>
               <div class="text-danger small mt-1" *ngIf="passwordMismatch">
                 <i class="fas fa-exclamation-circle me-1"></i>Les mots de passe ne correspondent pas
@@ -89,7 +89,7 @@
           <div class="mb-2">
             <input type="text" class="form-control" name="adresse1" placeholder="Adresse 1 *" [(ngModel)]="adresseDto.adresse1" required #adresse1Field="ngModel">
             <div class="text-danger small mt-1" *ngIf="adresse1Field.invalid && (adresse1Field.dirty || adresse1Field.touched || submitted)">
-              <span>L'adresse 1 est obligatoire</span>
+              <span>Ce champ est obligatoire</span>
             </div>
           </div>
           <div class="mb-2">
@@ -98,19 +98,19 @@
           <div class="mb-2">
             <input type="text" class="form-control" name="ville" placeholder="Ville *" [(ngModel)]="adresseDto.ville" required #villeField="ngModel">
             <div class="text-danger small mt-1" *ngIf="villeField.invalid && (villeField.dirty || villeField.touched || submitted)">
-              <span>La ville est obligatoire</span>
+              <span>Ce champ est obligatoire</span>
             </div>
           </div>
           <div class="mb-2">
             <input type="text" class="form-control" name="codePostal" placeholder="Code postal *" [(ngModel)]="adresseDto.codePostal" required #codePostalField="ngModel">
             <div class="text-danger small mt-1" *ngIf="codePostalField.invalid && (codePostalField.dirty || codePostalField.touched || submitted)">
-              <span>Le code postal est obligatoire</span>
+              <span>Ce champ est obligatoire</span>
             </div>
           </div>
           <div class="mb-2">
             <input type="text" class="form-control" name="pays" placeholder="Pays *" [(ngModel)]="adresseDto.pays" required #paysField="ngModel">
             <div class="text-danger small mt-1" *ngIf="paysField.invalid && (paysField.dirty || paysField.touched || submitted)">
-              <span>Le pays est obligatoire</span>
+              <span>Ce champ est obligatoire</span>
             </div>
           </div>
         </div>

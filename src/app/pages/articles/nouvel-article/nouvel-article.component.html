@@ -32,14 +32,14 @@
                     <input type="text" name="codearticle" class="form-control" [(ngModel)]="articleDto.codeArticle"
                         id="codearticle" placeholder="Code article *" required #codeField="ngModel">
                     <div class="text-danger small mt-1" *ngIf="codeField.invalid && (codeField.dirty || codeField.touched || submitted)">
-                        Le code article est requis
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" name="designation" class="form-control" [(ngModel)]="articleDto.designation"
                         id="designation" placeholder="Désignation *" required #designationField="ngModel">
                     <div class="text-danger small mt-1" *ngIf="designationField.invalid && (designationField.dirty || designationField.touched || submitted)">
-                        La désignation est requise
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
@@ -47,7 +47,7 @@
                         (input)="calculerPrixTTC()" id="prixht" placeholder="Prix unitaire HT *" required min="0" step="0.01"
                         #prixhtField="ngModel" (keydown)="$event.key === '-' ? $event.preventDefault() : true">
                     <div class="text-danger small mt-1" *ngIf="(prixhtField.invalid || (articleDto.prixUnitaireht != null && articleDto.prixUnitaireht < 0)) && (prixhtField.dirty || prixhtField.touched || submitted)">
-                        Le prix HT est requis et doit être positif
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
@@ -55,7 +55,7 @@
                         [(ngModel)]="articleDto.tauxTva" id="tva" placeholder="Taux TVA *" required min="0" max="100" step="0.1"
                         #tvaField="ngModel" (keydown)="$event.key === '-' ? $event.preventDefault() : true">
                     <div class="text-danger small mt-1" *ngIf="(tvaField.invalid || (articleDto.tauxTva != null && articleDto.tauxTva < 0)) && (tvaField.dirty || tvaField.touched || submitted)">
-                        Le taux TVA est requis et doit être entre 0 et 100
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
@@ -63,7 +63,7 @@
                         placeholder="Prix unitaire TTC *" required min="0" step="0.01" #prixttcField="ngModel"
                         (keydown)="$event.key === '-' ? $event.preventDefault() : true">
                     <div class="text-danger small mt-1" *ngIf="(prixttcField.invalid || (articleDto.prixTtc != null && articleDto.prixTtc < 0)) && (prixttcField.dirty || prixttcField.touched || submitted)">
-                        Le prix TTC est requis et doit être positif
+                        Ce champ est obligatoire
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
@@ -79,7 +79,7 @@
                         </option>
                     </select>
                     <div class="text-danger small mt-1" *ngIf="categorieField.invalid && (categorieField.dirty || categorieField.touched || submitted)">
-                        La catégorie est requise
+                        Ce champ est obligatoire
                     </div>
                 </div>
             </form>
