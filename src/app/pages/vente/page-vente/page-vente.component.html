@@ -48,7 +48,9 @@
             <div class="card-body scroll-body-max-height-130" *ngIf="ligneDeVentes.length > 0">
               <app-details-cmd
                 *ngFor="let ligneVente of ligneDeVentes"
-                [ligneCommande]="ligneVente"></app-details-cmd>
+                [ligneCommande]="ligneVente"
+                (quantiteChange)="onQuantiteChange($event)"
+                (deleteLigne)="onDeleteLigne($event)"></app-details-cmd>
             </div>
             <div class="card-footer">
               <div class="row">

@@ -167,4 +167,32 @@ export class PageVenteComponent implements OnInit {
       this.listArticles=articles;
     });
   }
+
+  onQuantiteChange(event: {ligne: any, delta: number}): void {
+    const nouvelleQte = (event.ligne.quantite || 0) + event.delta;
+    if (nouvelleQte < 1) return;
+    event.ligne.quantite = nouvelleQte;
+    this.calculerTotalVente();
+  }
+
+  onDeleteLigne(ligne: any): void {
+    const index = this.ligneDeVentes.indexOf(ligne);
+    if (index > -1) {
+      this.ligneDeVentes.splice(index, 1);
+      this.calculerTotalVente();
+    }
+  }
+
+  private calculerTotalVente(): void {
+    let totalCmd = 0;
+    let totalQnt = 0;
+    this.ligneDeVentes.forEach((ligne) => {
+      if (ligne.prixUnitaire && ligne.quantite) {
+        totalCmd += ligne.prixUnitaire * ligne.quantite;
+        totalQnt += ligne.quantite;
+      }
+    });
+    this.totalVente = Math.floor(totalCmd);
+    this.quantiteListArticle = totalQnt;
+  }
 }
