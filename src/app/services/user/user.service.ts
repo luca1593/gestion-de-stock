@@ -157,7 +157,7 @@ export class UserService {
   }
 
   isUserLogedAndAccessTokenValid(): boolean{
-    const tokenStr = sessionStorage.getItem(this.TOKEN_KEY);
+    const tokenStr = this.storage.getItem(this.TOKEN_KEY);
     if (!tokenStr) {
       this.router.navigate(['login']);
       return false;
