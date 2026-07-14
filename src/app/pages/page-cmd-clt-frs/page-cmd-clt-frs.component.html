@@ -63,10 +63,10 @@
             <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.0-0':'fr' }}€</strong>
           </div>
           <div class="col-auto action-buttons">
-            <button class="btn btn-sm btn-outline-primary px-1" (click)="modifierCommande(cmd.id)" title="Modifier">
+            <button class="btn btn-sm btn-outline-primary px-1" (click)="modifierCommande(cmd.id)" title="Modifier" [disabled]="isCommandeVerrouillee(cmd.etatcommande)">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger px-1" (click)="supprimerCommande(cmd.id)" title="Supprimer">
+            <button class="btn btn-sm btn-outline-danger px-1" (click)="supprimerCommande(cmd.id)" title="Supprimer" [disabled]="isCommandeVerrouillee(cmd.etatcommande)">
               <i class="fas fa-trash-alt"></i>
             </button>
             <button class="btn btn-sm btn-outline-secondary px-1" (click)="toggleCommande(cmd.id)" [attr.aria-expanded]="shouldExpandCommande(cmd.id)">

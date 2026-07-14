@@ -170,6 +170,10 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
      }
    }
 
+   isCommandeVerrouillee(etat: string | undefined): boolean {
+     return etat === 'LIVREE' || etat === 'VALIDEE';
+   }
+
    modifierCommande(id: number): void {
      if(this.origin === "client"){
        this.router.navigate(["nouvel-commande-client/" + id]);
