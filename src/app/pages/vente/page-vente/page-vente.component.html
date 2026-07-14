@@ -43,6 +43,9 @@
             </div>
           </form>
         </div>
+        <div class="text-danger small mb-2" *ngIf="stockErrorMsg">
+          {{ stockErrorMsg }}
+        </div>
         <div class="row custom-border mb-2">
           <div class="card">
             <div class="card-body scroll-body-max-height-130" *ngIf="ligneDeVentes.length > 0">

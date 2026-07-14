@@ -22,6 +22,7 @@ export class PageVenteComponent implements OnInit {
   listArticles: Array<ArticleDto>=[];
   articleNotYetSelected=true;
   errorMsg: Array<string>=[];
+  stockErrorMsg: string = '';
   dateVente='';
   codeVente='';
   venteDto: VenteDto={};
@@ -107,12 +108,14 @@ export class PageVenteComponent implements OnInit {
         art?.designation ?.toLowerCase().startsWith(this.codeArticle.toLowerCase())
     );
     this.articleNotYetSelected=true;
+    this.stockErrorMsg = '';
   }
 
   selectedArticle(article: ArticleDto): void {
     this.searchedArticle=article;
     this.codeArticle=article.codeArticle ? article.codeArticle : '';
     this.articleNotYetSelected=false;
+    this.stockErrorMsg = '';
   }
 
   addLigneCommande(): void {
@@ -121,6 +124,23 @@ export class PageVenteComponent implements OnInit {
       return;
     }
 
+    if (!this.searchedArticle || !this.searchedArticle.id) {
+      this.errorMsg = ['Veuillez sélectionner un article valide'];
+      return;
+    }
+
+    const stockDispo = this.searchedArticle.stock || 0;
+    const ligneExistante = this.ligneDeVentes.find(
+      (ligne) => ligne.article?.codeArticle === this.searchedArticle.codeArticle
+    );
+    const qteExistante = ligneExistante ? (ligneExistante.quantite || 0) : 0;
+    if (qteExistante + this.quantite > stockDispo) {
+      this.errorMsg = [];
+      this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+      return;
+    }
+
+    this.stockErrorMsg = '';
     let totalCmd=0;
     let totalQnt=0;
 
@@ -166,11 +186,22 @@ export class PageVenteComponent implements OnInit {
     this.articleService.findAllArticle().subscribe((articles) => {
       this.listArticles=articles;
     });
+    this.stockErrorMsg = '';
   }
 
   onQuantiteChange(event: {ligne: any, delta: number}): void {
     const nouvelleQte = (event.ligne.quantite || 0) + event.delta;
     if (nouvelleQte < 1) return;
+
+    if (event.delta > 0) {
+      const stockDispo = event.ligne.article?.stock || 0;
+      if (nouvelleQte > stockDispo) {
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        return;
+      }
+    }
+
+    this.stockErrorMsg = '';
     event.ligne.quantite = nouvelleQte;
     this.calculerTotalVente();
   }
@@ -181,6 +212,7 @@ export class PageVenteComponent implements OnInit {
       this.ligneDeVentes.splice(index, 1);
       this.calculerTotalVente();
     }
+    this.stockErrorMsg = '';
   }
 
   private calculerTotalVente(): void {
