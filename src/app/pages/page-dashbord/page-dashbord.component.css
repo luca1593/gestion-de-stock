@@ -10,12 +10,12 @@
     flex: 1;
 }
 
-/* Bouton toggle flottant */
+/* Bouton toggle intégré à la sidebar */
 .menu-toggle {
-    position: fixed;
-    left: calc(260px - 18px);
+    position: absolute;
+    right: -14px;
     top: 80px;
-    z-index: 1001;
+    z-index: 5;
     width: 28px;
     height: 48px;
     border-radius: 0 6px 6px 0;
@@ -38,8 +38,8 @@
     transition: transform 0.3s ease;
 }
 
-.menu-toggle.collapsed {
-    left: calc(70px - 18px);
+.sidebar.collapsed .menu-toggle {
+    right: -14px;
     border-radius: 6px 0 0 6px;
 }
 
