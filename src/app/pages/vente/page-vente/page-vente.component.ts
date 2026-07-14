@@ -116,6 +116,11 @@ export class PageVenteComponent implements OnInit {
   }
 
   addLigneCommande(): void {
+    if (!this.quantite || this.quantite < 1) {
+      this.errorMsg = ['La quantité doit être supérieure à 0'];
+      return;
+    }
+
     let totalCmd=0;
     let totalQnt=0;
 

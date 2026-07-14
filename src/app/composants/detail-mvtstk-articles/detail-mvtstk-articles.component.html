@@ -62,7 +62,7 @@
                         <div class="col-md-4">
                             <div class="mb-2">
                                 <label class="form-label small fw-bold" style="color: var(--text-primary);">Quantité</label>
-                                <input type="number" class="form-control" [(ngModel)]="correctionQuantite" name="quantite" min="1" placeholder="Qté" style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
+                                <input type="number" class="form-control" [(ngModel)]="correctionQuantite" name="quantite" min="1" placeholder="Qté" (keydown)="$event.key === '-' ? $event.preventDefault() : true" style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
                             </div>
                         </div>
                         <div class="col-md-4">
