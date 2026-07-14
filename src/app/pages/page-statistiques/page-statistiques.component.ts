@@ -35,6 +35,7 @@ export class PageStatistiquesComponent implements OnInit {
   dateDebut: string = '';
   dateFin: string = '';
   filtreLabel: string = 'Ce mois-ci';
+  groupUnit: 'day' | 'week' | 'month' = 'month';
 
   sortState: SortState = { column: '', direction: 'asc' };
 
@@ -55,11 +56,12 @@ export class PageStatistiquesComponent implements OnInit {
     
     switch (type) {
       case 'semaine': {
-        const weekStart = new Date(now);
-        weekStart.setDate(now.getDate() - now.getDay());
-        this.dateDebut = weekStart.toISOString().split('T')[0];
+        const mon = new Date(now);
+        mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+        this.dateDebut = mon.toISOString().split('T')[0];
         this.dateFin = now.toISOString().split('T')[0];
         this.filtreLabel = 'Cette semaine';
+        this.groupUnit = 'day';
         break;
       }
       case 'mois': {
@@ -67,6 +69,7 @@ export class PageStatistiquesComponent implements OnInit {
         this.dateDebut = monthStart.toISOString().split('T')[0];
         this.dateFin = now.toISOString().split('T')[0];
         this.filtreLabel = 'Ce mois-ci';
+        this.groupUnit = 'week';
         break;
       }
       case 'annee': {
@@ -74,6 +77,7 @@ export class PageStatistiquesComponent implements OnInit {
         this.dateDebut = yearStart.toISOString().split('T')[0];
         this.dateFin = now.toISOString().split('T')[0];
         this.filtreLabel = 'Cette année';
+        this.groupUnit = 'month';
         break;
       }
       case 'custom': {
@@ -82,12 +86,14 @@ export class PageStatistiquesComponent implements OnInit {
         this.filtreLabel = this.dateDebut && this.dateFin
           ? `Du ${this.dateDebut} au ${this.dateFin}`
           : 'Période personnalisée';
+        this.groupUnit = this.guessGroupUnit(this.dateDebut, this.dateFin);
         break;
       }
       default: {
         this.dateDebut = '';
         this.dateFin = '';
         this.filtreLabel = 'Tout';
+        this.groupUnit = 'month';
       }
     }
     
@@ -98,6 +104,16 @@ export class PageStatistiquesComponent implements OnInit {
     this.loadTopArticles();
     this.loadCommandesStats();
     this.loadMvtStockStats();
+  }
+
+  private guessGroupUnit(debut: string, fin: string): 'day' | 'week' | 'month' {
+    if (!debut || !fin) return 'month';
+    const d1 = new Date(debut);
+    const d2 = new Date(fin);
+    const diffDays = Math.ceil((d2.getTime() - d1.getTime()) / (1000 * 3600 * 24));
+    if (diffDays <= 7) return 'day';
+    if (diffDays <= 60) return 'week';
+    return 'month';
   }
 
   private checkLoadingComplete(): void {
@@ -178,7 +194,7 @@ export class PageStatistiquesComponent implements OnInit {
     obs.subscribe({
       next: (data) => {
         if (data && Array.isArray(data)) {
-          this.chiffreAffairesData = this.aggregateByMonth(data);
+          this.chiffreAffairesData = this.groupChartData(data);
           this.maxVente = this.chiffreAffairesData.length > 0 
             ? Math.max(...this.chiffreAffairesData.map(d => d.chiffreAffaires || d.totalVentes || 0), 1) 
             : 1;
@@ -284,20 +300,19 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   getMonthLabel(item: any): string {
-    const periode = item?.periode || item?.dateCommande || item?.dateMvt || '';
-    if (!periode) return '';
-    
-    if (typeof periode === 'string' && periode.includes('/')) {
-      const parts = periode.split(/[\/\s]/);
-      if (parts.length >= 2) {
-        const month = parseInt(parts[1]);
-        const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
-        if (month >= 1 && month <= 12) {
-          return months[month - 1];
-        }
-      }
+    const raw = item?.periode || item?.dateCommande || item?.dateMvt || '';
+    if (!raw) return '';
+    const dt = this.parsePeriode(raw);
+    if (!dt) return raw.substring(0, 7);
+    if (this.groupUnit === 'day') {
+      const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+      return days[dt.getDay()] + ' ' + dt.getDate();
     }
-    return String(periode).substring(0, 7);
+    if (this.groupUnit === 'week') {
+      return item?.periode || `Sem ${this.getWeekNumber(dt)}`;
+    }
+    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+    return months[dt.getMonth()];
   }
 
   // SVG Line Chart
@@ -398,22 +413,80 @@ export class PageStatistiquesComponent implements OnInit {
     return item?.chiffreAffaires || item?.totalVentes || item?.nbVentes || item?.quantite || 0;
   }
 
-  private aggregateByMonth(data: any[]): any[] {
-    const groups = new Map<string, { periode: string; chiffreAffaires: number; nbVentes: number }>();
+  private getMonday(date: Date): Date {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  private formatDateStr(d: Date): string {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
+
+  private parsePeriode(periode: string): Date | null {
+    if (!periode) return null;
+    const p = periode.split(' ')[0];
+    if (p.includes('/')) {
+      const parts = p.split('/');
+      if (parts.length === 3) {
+        const [dd, mm, yyyy] = parts.map(Number);
+        return new Date(yyyy, mm - 1, dd);
+      }
+    }
+    const d = new Date(p);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  private groupChartData(data: any[]): any[] {
+    const groups = new Map<string, { periode: string; chiffreAffaires: number; nbVentes: number; sortKey: number }>();
     data.forEach(d => {
-      if (!d.periode) return;
-      const datePart = d.periode.split(' ')[0];
-      const [day, month, year] = datePart.split('/');
-      const key = `${month}/${year}`;
-      const existing = groups.get(key) || { periode: `01/${key}`, chiffreAffaires: 0, nbVentes: 0 };
+      const dt = this.parsePeriode(d.periode);
+      if (!dt) return;
+      let key: string;
+      let sortKey: number;
+      let labelDate: Date;
+      if (this.groupUnit === 'day') {
+        key = this.formatDateStr(dt);
+        sortKey = dt.getTime();
+        labelDate = dt;
+      } else if (this.groupUnit === 'week') {
+        const mon = this.getMonday(dt);
+        const nextSun = new Date(mon);
+        nextSun.setDate(mon.getDate() + 6);
+        key = `Sem ${this.getWeekNumber(mon)}`;
+        sortKey = mon.getTime();
+        labelDate = mon;
+      } else {
+        key = `${String(dt.getMonth() + 1).padStart(2, '0')}/${dt.getFullYear()}`;
+        sortKey = dt.getFullYear() * 12 + dt.getMonth();
+        labelDate = dt;
+      }
+      const existing = groups.get(key) || {
+        periode: key,
+        chiffreAffaires: 0,
+        nbVentes: 0,
+        sortKey
+      };
       existing.chiffreAffaires += (d.chiffreAffaires || 0);
       existing.nbVentes += (d.nbVentes || 0);
       groups.set(key, existing);
     });
-    const toMonthNum = (p: string) => {
-      const [m, y] = p.split('/');
-      return parseInt(y) * 12 + parseInt(m);
-    };
-    return Array.from(groups.values()).sort((a, b) => toMonthNum(a.periode) - toMonthNum(b.periode));
+    return Array.from(groups.values())
+      .sort((a, b) => a.sortKey - b.sortKey)
+      .map(({ sortKey, ...rest }) => rest);
+  }
+
+  private getWeekNumber(d: Date): number {
+    const temp = new Date(d);
+    temp.setHours(0, 0, 0, 0);
+    temp.setDate(temp.getDate() + 3 - (temp.getDay() + 6) % 7);
+    const week1 = new Date(temp.getFullYear(), 0, 4);
+    return 1 + Math.round(((temp.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
   }
 }
