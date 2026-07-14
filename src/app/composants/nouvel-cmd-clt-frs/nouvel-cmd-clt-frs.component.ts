@@ -34,6 +34,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   etatCommande: string = 'EN_PREPARATION';
   etatCommandeOriginal: string = '';
   commandeId: number | null = null;
+  submitted: boolean = false;
 
   constructor(
     private router: Router,
@@ -161,6 +162,13 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   saveClick():void {
+    this.submitted = true;
+
+    if (!this.selectedClientFournisseur || !this.selectedClientFournisseur.id) {
+      this.errorMsg = ['Veuillez sélectionner un ' + this.origin];
+      return;
+    }
+
     if (this.ligneDeCommandes.length === 0) {
       this.errorMsg = ['Veuillez ajouter au moins un article pour la commande'];
       return;

@@ -23,14 +23,18 @@
                         [(ngModel)]="dateCmd" id="dateCmd" placeholder="Date commande">
                     </div>
                     <div class="mb-2">
-                        <select class="form-control" autofocus id="cltfrs" name="cltFrs" 
+                        <select class="form-control" autofocus id="cltfrs" name="cltFrs"
+                            #cltFrs="ngModel" required
                             [compareWith]="compareClientFournisseur"
                             [(ngModel)]="selectedClientFournisseur">
-                            <option value="">Selectione un {{origin}}</option>
+                            <option value="">Sélectionnez un {{ origin === 'client' ? 'client' : 'fournisseur' }}</option>
                             <option *ngFor="let obj of listClientFouenisseur" [ngValue]="obj">
                                 {{obj.nom}}&nbsp;{{obj.prenom}}
                             </option>
                         </select>
+                        <div class="text-danger small mt-1" *ngIf="cltFrs.invalid && (cltFrs.dirty || cltFrs.touched || submitted)">
+                          <span>Le {{ origin }} est obligatoire</span>
+                        </div>
                     </div>
                 </form>
             </div>
