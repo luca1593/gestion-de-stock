@@ -27,7 +27,7 @@
                             #cltFrs="ngModel" required
                             [compareWith]="compareClientFournisseur"
                             [(ngModel)]="selectedClientFournisseur">
-                            <option value="">Sélectionnez un {{ origin === 'client' ? 'client' : 'fournisseur' }}</option>
+                            <option [ngValue]="null">Sélectionnez un {{ origin === 'client' ? 'client' : 'fournisseur' }}</option>
                             <option *ngFor="let obj of listClientFouenisseur" [ngValue]="obj">
                                 {{obj.nom}}&nbsp;{{obj.prenom}}
                             </option>
@@ -39,7 +39,7 @@
                 </form>
             </div>
             <div class="col-md-7 border-right">
-                <div class="row my-1" *ngIf="selectedClientFournisseur.nom">
+                <div class="row my-1" *ngIf="selectedClientFournisseur?.nom">
                     <div class="row">
                         <div class="col-md-1"><i class="fas fa-info-circle blue-color"></i></div>
                         <div class="col-md-11">
@@ -72,7 +72,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-2 text-center p-3" *ngIf="selectedClientFournisseur.nom">
+            <div class="col-md-2 text-center p-3" *ngIf="selectedClientFournisseur?.nom">
                 <img [src]="selectedClientFournisseur.photo ? selectedClientFournisseur.photo : 'favicon.ico'" alt="user" class="rounded-circle" width="100px" height="100px">
             </div>
         </div>
@@ -94,7 +94,8 @@
                 </div>
                 <div class="col-md-4 mb-2">
                     <input type="number" class="form-control" name="quantite" 
-                    [(ngModel)]="quantite" placeholder="Quantite">
+                    [(ngModel)]="quantite" placeholder="Quantite" min="1"
+                    (keydown)="$event.key === '-' ? $event.preventDefault() : true">
                 </div>
                 <div class="col-md-3 mb-2">
                     <input type="text" class="form-control" 
@@ -107,6 +108,9 @@
                     </button>
                 </div>
             </form>
+        </div>
+        <div class="text-danger small mb-2" *ngIf="stockErrorMsg">
+            {{ stockErrorMsg }}
         </div>
         <div class="row custom-border mb-2">
             <div class="card">
@@ -134,7 +138,7 @@
             <button class="btn btn-danger mx-1" (click)="cancelClick()">
                 <i class="fas fa-ban"  ></i>&nbsp;Annuler
             </button>
-            <button class="btn btn-success mx-1" (click)="saveClick()" >
+            <button class="btn btn-success mx-1" (click)="saveClick()" [disabled]="!selectedClientFournisseur || !selectedClientFournisseur.id">
                 <i class="fas fa-save"></i>&nbsp;Sauvegarder
             </button>
         </div>
