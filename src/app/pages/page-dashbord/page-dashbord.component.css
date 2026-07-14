@@ -16,32 +16,31 @@
     left: calc(260px - 18px);
     top: 80px;
     z-index: 1001;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.3);
-    background: linear-gradient(135deg, #4a90d9, #2a5298);
+    width: 28px;
+    height: 48px;
+    border-radius: 0 6px 6px 0;
+    border: none;
+    background: #4a90d9;
     color: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
 }
 
 .menu-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    background: #3a7bc8;
 }
 
 .menu-toggle i {
-    font-size: 1rem;
+    font-size: 0.85rem;
     transition: transform 0.3s ease;
 }
 
 .menu-toggle.collapsed {
     left: calc(70px - 18px);
+    border-radius: 6px 0 0 6px;
 }
 
 /* Sidebar */
