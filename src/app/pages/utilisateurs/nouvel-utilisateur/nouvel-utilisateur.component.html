@@ -26,47 +26,41 @@
         </div>
       </div>
 
-      <form class="row" *ngIf="!loading" #utilisateurForm="ngForm" (ngSubmit)="saveClick()" [class.was-validated]="submitted">
+      <form class="row" *ngIf="!loading" #utilisateurForm="ngForm" (ngSubmit)="saveClick()">
         <div class="col-12 mb-3">
           <h5><i class="fas fa-info-circle text-primary me-2"></i>Informations de l'utilisateur</h5>
           <small class="text-muted">Les champs marqués de <span class="text-danger">*</span> sont obligatoires</small>
         </div>
         <div class="col-md-6">
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Nom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="nom" placeholder="Nom" [(ngModel)]="utilisateurDto.nom" required #nomField="ngModel">
-            <div class="invalid-feedback" *ngIf="nomField.invalid && submitted">
+            <input type="text" class="form-control" name="nom" placeholder="Nom *" [(ngModel)]="utilisateurDto.nom" required #nomField="ngModel">
+            <div class="text-danger small mt-1" *ngIf="nomField.invalid && (nomField.dirty || nomField.touched || submitted)">
               <span>Le nom doit être renseigné</span>
             </div>
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Prénom</label>
             <input type="text" class="form-control" name="prenom" placeholder="Prénom" [(ngModel)]="utilisateurDto.prenom">
           </div>
           <ng-container *ngIf="!isEditMode; else passwordFields">
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">E-mail <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" name="email" placeholder="E-mail" [(ngModel)]="utilisateurDto.email" required email #emailField="ngModel">
-              <div class="invalid-feedback" *ngIf="emailField.invalid && submitted">
+              <input type="email" class="form-control" name="email" placeholder="E-mail *" [(ngModel)]="utilisateurDto.email" required email #emailField="ngModel">
+              <div class="text-danger small mt-1" *ngIf="emailField.invalid && (emailField.dirty || emailField.touched || submitted)">
                 <span *ngIf="emailField.errors?.['required']">L'e-mail doit être renseigné</span>
                 <span *ngIf="emailField.errors?.['email']">Format d'e-mail invalide</span>
               </div>
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Date de naissance</label>
               <input type="date" class="form-control" name="dateNaissance" [(ngModel)]="dateNaissance">
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Mot de passe <span class="text-danger">*</span></label>
-              <input type="password" class="form-control" name="newPassword" placeholder="Mot de passe" [(ngModel)]="newPassword" required #passwordField="ngModel">
-              <div class="invalid-feedback" *ngIf="passwordField.invalid && submitted">
+              <input type="password" class="form-control" name="newPassword" placeholder="Mot de passe *" [(ngModel)]="newPassword" required #passwordField="ngModel">
+              <div class="text-danger small mt-1" *ngIf="passwordField.invalid && (passwordField.dirty || passwordField.touched || submitted)">
                 <span>Le mot de passe doit être renseigné</span>
               </div>
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Confirmer le mot de passe <span class="text-danger">*</span></label>
-              <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword" required #confirmField="ngModel">
-              <div class="invalid-feedback" *ngIf="confirmField.invalid && submitted">
+              <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe *" [(ngModel)]="confirmPassword" required #confirmField="ngModel">
+              <div class="text-danger small mt-1" *ngIf="confirmField.invalid && (confirmField.dirty || confirmField.touched || submitted)">
                 <span>La confirmation du mot de passe doit être renseignée</span>
               </div>
               <div class="text-danger small mt-1" *ngIf="passwordMismatch">
@@ -76,18 +70,15 @@
           </ng-container>
           <ng-template #passwordFields>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Nouveau mot de passe</label>
               <input type="password" class="form-control" name="newPassword" placeholder="Nouveau mot de passe" [(ngModel)]="newPassword">
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Confirmer le mot de passe</label>
               <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword">
               <div class="text-danger small mt-1" *ngIf="passwordMismatch">
                 <i class="fas fa-exclamation-circle me-1"></i>Les mots de passe ne correspondent pas
               </div>
             </div>
             <div class="mb-2">
-              <label class="form-label small text-muted mb-1">Rôle</label>
               <select class="form-select" name="role" [(ngModel)]="selectedRole" [compareWith]="compareRoles">
                 <option *ngFor="let role of rolesDisponibles" [ngValue]="role">{{ role.roleNom }}</option>
               </select>
@@ -96,34 +87,29 @@
         </div>
         <div class="col-md-6">
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Adresse 1 <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="adresse1" placeholder="Adresse 1" [(ngModel)]="adresseDto.adresse1" required #adresse1Field="ngModel">
-            <div class="invalid-feedback" *ngIf="adresse1Field.invalid && submitted">
+            <input type="text" class="form-control" name="adresse1" placeholder="Adresse 1 *" [(ngModel)]="adresseDto.adresse1" required #adresse1Field="ngModel">
+            <div class="text-danger small mt-1" *ngIf="adresse1Field.invalid && (adresse1Field.dirty || adresse1Field.touched || submitted)">
               <span>L'adresse 1 est obligatoire</span>
             </div>
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Adresse 2</label>
             <input type="text" class="form-control" name="adresse2" placeholder="Adresse 2" [(ngModel)]="adresseDto.adresse2">
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Ville <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="ville" placeholder="Ville" [(ngModel)]="adresseDto.ville" required #villeField="ngModel">
-            <div class="invalid-feedback" *ngIf="villeField.invalid && submitted">
+            <input type="text" class="form-control" name="ville" placeholder="Ville *" [(ngModel)]="adresseDto.ville" required #villeField="ngModel">
+            <div class="text-danger small mt-1" *ngIf="villeField.invalid && (villeField.dirty || villeField.touched || submitted)">
               <span>La ville est obligatoire</span>
             </div>
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Code postal <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="codePostal" placeholder="Code postal" [(ngModel)]="adresseDto.codePostal" required #codePostalField="ngModel">
-            <div class="invalid-feedback" *ngIf="codePostalField.invalid && submitted">
+            <input type="text" class="form-control" name="codePostal" placeholder="Code postal *" [(ngModel)]="adresseDto.codePostal" required #codePostalField="ngModel">
+            <div class="text-danger small mt-1" *ngIf="codePostalField.invalid && (codePostalField.dirty || codePostalField.touched || submitted)">
               <span>Le code postal est obligatoire</span>
             </div>
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Pays <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="pays" placeholder="Pays" [(ngModel)]="adresseDto.pays" required #paysField="ngModel">
-            <div class="invalid-feedback" *ngIf="paysField.invalid && submitted">
+            <input type="text" class="form-control" name="pays" placeholder="Pays *" [(ngModel)]="adresseDto.pays" required #paysField="ngModel">
+            <div class="text-danger small mt-1" *ngIf="paysField.invalid && (paysField.dirty || paysField.touched || submitted)">
               <span>Le pays est obligatoire</span>
             </div>
           </div>

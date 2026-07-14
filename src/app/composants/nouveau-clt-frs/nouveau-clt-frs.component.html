@@ -22,18 +22,25 @@
                     <span>{{msg}}</span>
                 </div>
             </div>
-            <form class="row">
+            <small class="text-muted d-block mb-2">Les champs marqués de <span class="text-danger">*</span> sont obligatoires</small>
+            <form class="row" #cltFrsForm="ngForm">
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="nom" name="nom"
-                    placeholder="Nom" [(ngModel)]="clientFournisseur.nom" >
+                    placeholder="Nom *" [(ngModel)]="clientFournisseur.nom" required #nomField="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="nomField.invalid && (nomField.dirty || nomField.touched || submitted)">
+                        Le nom est requis
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="adresse1" name="adresse1"
-                    placeholder="Adresse 1" [(ngModel)]="adresseDto.adresse1">
+                    placeholder="Adresse 1 *" [(ngModel)]="adresseDto.adresse1" required #adresse1Field="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="adresse1Field.invalid && (adresse1Field.dirty || adresse1Field.touched || submitted)">
+                        L'adresse 1 est requise
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="prenom" name="prenom"
-                    placeholder="Prenom" [(ngModel)]="clientFournisseur.prenom">
+                    placeholder="Prénom" [(ngModel)]="clientFournisseur.prenom">
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="adress2" name="adresse2"
@@ -45,22 +52,31 @@
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="ville" name="ville"
-                    placeholder="Ville" [(ngModel)]="adresseDto.ville">
+                    placeholder="Ville *" [(ngModel)]="adresseDto.ville" required #villeField="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="villeField.invalid && (villeField.dirty || villeField.touched || submitted)">
+                        La ville est requise
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="numtel" name="numetel"
-                    placeholder="Telephone" [(ngModel)]="clientFournisseur.numTel">
+                    placeholder="Téléphone" [(ngModel)]="clientFournisseur.numTel">
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="codepostale" name="codepostale"
-                    placeholder="Code postale" [(ngModel)]="adresseDto.codePostal">
+                    placeholder="Code postal *" [(ngModel)]="adresseDto.codePostal" required #codePostalField="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="codePostalField.invalid && (codePostalField.dirty || codePostalField.touched || submitted)">
+                        Le code postal est requis
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     &nbsp;
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="pays" name="pays"
-                    placeholder="pays" [(ngModel)]="adresseDto.pays">
+                    placeholder="Pays *" [(ngModel)]="adresseDto.pays" required #paysField="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="paysField.invalid && (paysField.dirty || paysField.touched || submitted)">
+                        Le pays est requis
+                    </div>
                 </div>
             </form>
         </div>
@@ -68,7 +84,8 @@
             <button class="btn btn-danger mx-1" (click)="cancelClick()">
                 <i class="fas fa-ban"></i>&nbsp;Annuler
             </button>
-            <button class="btn btn-success mx-1" (click)="enregistrer()" >
+            <button class="btn btn-success mx-1" (click)="enregistrer()"
+                [disabled]="!clientFournisseur.nom || !adresseDto.adresse1 || !adresseDto.ville || !adresseDto.codePostal || !adresseDto.pays">
                 <i class="fas fa-save"></i>&nbsp;Sauvegarder
             </button>
         </div>
