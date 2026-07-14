@@ -157,7 +157,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadStats(): void {
-    this.dashboardService.getStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
+    this.dashboardService.getStats().subscribe({
       next: (data) => {
         this.stats = data;
         this.checkLoadingComplete();
@@ -216,7 +216,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadTopArticles(): void {
-    this.dashboardService.getTopArticles(10, this.dateDebut || undefined, this.dateFin || undefined).subscribe({
+    this.dashboardService.getTopArticles(10).subscribe({
       next: (data) => {
         this.topArticles = data || [];
         this.checkLoadingComplete();
@@ -229,7 +229,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadCommandesStats(): void {
-    this.dashboardService.getCommandesClientStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
+    this.dashboardService.getCommandesClientStats().subscribe({
       next: (data) => {
         if (Array.isArray(data)) {
           this.commandesClientData = data;
@@ -243,7 +243,7 @@ export class PageStatistiquesComponent implements OnInit {
       }
     });
 
-    this.dashboardService.getCommandesFournisseurStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
+    this.dashboardService.getCommandesFournisseurStats().subscribe({
       next: (data) => {
         if (Array.isArray(data)) {
           this.commandesFournisseurData = data;
@@ -259,7 +259,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadMvtStockStats(): void {
-    this.dashboardService.getMvtStockStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
+    this.dashboardService.getMvtStockStats().subscribe({
       next: (data) => {
         if (Array.isArray(data)) {
           this.mvtStockData = data;

@@ -62,10 +62,8 @@ export class DashboardService {
     return params;
   }
 
-  getStats(debut?: string, fin?: string): Observable<DashboardStatsDto> {
-    let params = new HttpParams();
-    params = this.addDateParams(params, debut, fin);
-    return this.http.get<DashboardStatsDto>(`${this.rootUrl}v1/dashboard/stats`, { params });
+  getStats(): Observable<DashboardStatsDto> {
+    return this.http.get<DashboardStatsDto>(`${this.rootUrl}v1/dashboard/stats`);
   }
 
   getVentesPeriode(debut?: string, fin?: string): Observable<Array<VenteStatsDto>> {
@@ -80,28 +78,21 @@ export class DashboardService {
     return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/chiffre-affaires/mois`, { params });
   }
 
-  getTopArticles(limit?: number, debut?: string, fin?: string): Observable<Array<ArticleStatsDto>> {
+  getTopArticles(limit?: number): Observable<Array<ArticleStatsDto>> {
     let params = new HttpParams();
     if (limit) { params = params.set('limit', String(limit)); }
-    params = this.addDateParams(params, debut, fin);
     return this.http.get<Array<ArticleStatsDto>>(`${this.rootUrl}v1/dashboard/articles/top`, { params });
   }
 
-  getCommandesClientStats(debut?: string, fin?: string): Observable<any> {
-    let params = new HttpParams();
-    params = this.addDateParams(params, debut, fin);
-    return this.http.get<any>(`${this.rootUrl}v1/commande-client/all`, { params });
+  getCommandesClientStats(): Observable<any> {
+    return this.http.get<any>(`${this.rootUrl}v1/commande-client/all`);
   }
 
-  getCommandesFournisseurStats(debut?: string, fin?: string): Observable<any> {
-    let params = new HttpParams();
-    params = this.addDateParams(params, debut, fin);
-    return this.http.get<any>(`${this.rootUrl}v1/commande-fournisseur/all`, { params });
+  getCommandesFournisseurStats(): Observable<any> {
+    return this.http.get<any>(`${this.rootUrl}v1/commande-fournisseur/all`);
   }
 
-  getMvtStockStats(debut?: string, fin?: string): Observable<any> {
-    let params = new HttpParams();
-    params = this.addDateParams(params, debut, fin);
-    return this.http.get<any>(`${this.rootUrl}v1/mvtstk/all`, { params });
+  getMvtStockStats(): Observable<any> {
+    return this.http.get<any>(`${this.rootUrl}v1/mvtstk/all`);
   }
 }
