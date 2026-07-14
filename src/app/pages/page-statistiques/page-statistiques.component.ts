@@ -45,8 +45,6 @@ export class PageStatistiquesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loading = true;
-    this.apiCallsPending = 5;
     this.setPeriode('mois');
   }
 
@@ -98,7 +96,7 @@ export class PageStatistiquesComponent implements OnInit {
     }
     
     this.loading = true;
-    this.apiCallsPending = 5;
+    this.apiCallsPending = 6;
     this.loadStats();
     this.loadChiffreAffairesMois();
     this.loadTopArticles();
@@ -344,16 +342,17 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   private filterByDateRange(data: any[]): any[] {
-    if (!this.dateDebut && !this.dateFin) return data;
-    const debut = this.dateDebut ? new Date(this.dateDebut + 'T00:00:00') : null;
-    const fin = this.dateFin ? new Date(this.dateFin + 'T23:59:59') : null;
+    if (!this.dateDebut || !this.dateFin) return data;
+    const debut = new Date(this.dateDebut + 'T00:00:00');
+    const fin = new Date(this.dateFin + 'T23:59:59');
+    if (isNaN(debut.getTime()) || isNaN(fin.getTime())) return data;
     return data.filter((d: any) => {
       const raw = d.periode || d.dateCommande || d.dateMvt || '';
       if (!raw) return true;
       const dt = this.parsePeriode(raw);
       if (!dt) return true;
-      if (debut && dt < debut) return false;
-      if (fin && dt > fin) return false;
+      if (dt < debut) return false;
+      if (dt > fin) return false;
       return true;
     });
   }
