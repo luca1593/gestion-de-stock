@@ -70,6 +70,7 @@ export class NouvelUtilisateurComponent implements OnInit {
     if (!this.utilisateurDto.nom || !this.utilisateurDto.email) return false;
     if (!this.isEditMode && (!this.newPassword || !this.confirmPassword)) return false;
     if (this.passwordMismatch) return false;
+    if (!this.adresseDto.adresse1 || !this.adresseDto.ville || !this.adresseDto.codePostal || !this.adresseDto.pays) return false;
     return true;
   }
 

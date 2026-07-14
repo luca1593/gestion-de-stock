@@ -96,24 +96,36 @@
         </div>
         <div class="col-md-6">
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Adresse 1</label>
-            <input type="text" class="form-control" name="adresse1" placeholder="Adresse 1" [(ngModel)]="adresseDto.adresse1">
+            <label class="form-label small text-muted mb-1">Adresse 1 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="adresse1" placeholder="Adresse 1" [(ngModel)]="adresseDto.adresse1" required #adresse1Field="ngModel">
+            <div class="invalid-feedback" *ngIf="adresse1Field.invalid && submitted">
+              <span>L'adresse 1 est obligatoire</span>
+            </div>
           </div>
           <div class="mb-2">
             <label class="form-label small text-muted mb-1">Adresse 2</label>
             <input type="text" class="form-control" name="adresse2" placeholder="Adresse 2" [(ngModel)]="adresseDto.adresse2">
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Ville</label>
-            <input type="text" class="form-control" name="ville" placeholder="Ville" [(ngModel)]="adresseDto.ville">
+            <label class="form-label small text-muted mb-1">Ville <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="ville" placeholder="Ville" [(ngModel)]="adresseDto.ville" required #villeField="ngModel">
+            <div class="invalid-feedback" *ngIf="villeField.invalid && submitted">
+              <span>La ville est obligatoire</span>
+            </div>
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Code postal</label>
-            <input type="text" class="form-control" name="codePostal" placeholder="Code postal" [(ngModel)]="adresseDto.codePostal">
+            <label class="form-label small text-muted mb-1">Code postal <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="codePostal" placeholder="Code postal" [(ngModel)]="adresseDto.codePostal" required #codePostalField="ngModel">
+            <div class="invalid-feedback" *ngIf="codePostalField.invalid && submitted">
+              <span>Le code postal est obligatoire</span>
+            </div>
           </div>
           <div class="mb-2">
-            <label class="form-label small text-muted mb-1">Pays</label>
-            <input type="text" class="form-control" name="pays" placeholder="Pays" [(ngModel)]="adresseDto.pays">
+            <label class="form-label small text-muted mb-1">Pays <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="pays" placeholder="Pays" [(ngModel)]="adresseDto.pays" required #paysField="ngModel">
+            <div class="invalid-feedback" *ngIf="paysField.invalid && submitted">
+              <span>Le pays est obligatoire</span>
+            </div>
           </div>
         </div>
         <div class="col-12 text-end mt-3">
