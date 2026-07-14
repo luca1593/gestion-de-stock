@@ -56,42 +56,52 @@ export class DashboardService {
     return url;
   }
 
-  getStats(): Observable<DashboardStatsDto> {
-    return this.http.get<DashboardStatsDto>(`${this.rootUrl}v1/dashboard/stats`);
+  private addDateParams(params: HttpParams, debut?: string, fin?: string): HttpParams {
+    if (debut) { params = params.set('debut', formatDateForBackend(debut)); }
+    if (fin) { params = params.set('fin', formatDateForBackend(fin)); }
+    return params;
+  }
+
+  getStats(debut?: string, fin?: string): Observable<DashboardStatsDto> {
+    let params = new HttpParams();
+    params = this.addDateParams(params, debut, fin);
+    return this.http.get<DashboardStatsDto>(`${this.rootUrl}v1/dashboard/stats`, { params });
   }
 
   getVentesPeriode(debut?: string, fin?: string): Observable<Array<VenteStatsDto>> {
     let params = new HttpParams();
-    if (debut) {
-      params = params.set('debut', formatDateForBackend(debut));
-    }
-    if (fin) {
-      params = params.set('fin', formatDateForBackend(fin));
-    }
+    params = this.addDateParams(params, debut, fin);
     return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/ventes/periode`, { params });
   }
 
-  getChiffreAffairesMois(): Observable<Array<VenteStatsDto>> {
-    return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/chiffre-affaires/mois`);
+  getChiffreAffairesMois(debut?: string, fin?: string): Observable<Array<VenteStatsDto>> {
+    let params = new HttpParams();
+    params = this.addDateParams(params, debut, fin);
+    return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/chiffre-affaires/mois`, { params });
   }
 
-  getTopArticles(limit?: number): Observable<Array<ArticleStatsDto>> {
+  getTopArticles(limit?: number, debut?: string, fin?: string): Observable<Array<ArticleStatsDto>> {
     let params = new HttpParams();
-    if (limit) {
-      params = params.set('limit', String(limit));
-    }
+    if (limit) { params = params.set('limit', String(limit)); }
+    params = this.addDateParams(params, debut, fin);
     return this.http.get<Array<ArticleStatsDto>>(`${this.rootUrl}v1/dashboard/articles/top`, { params });
   }
 
-  getCommandesClientStats(): Observable<any> {
-    return this.http.get<any>(`${this.rootUrl}v1/commande-client/all`);
+  getCommandesClientStats(debut?: string, fin?: string): Observable<any> {
+    let params = new HttpParams();
+    params = this.addDateParams(params, debut, fin);
+    return this.http.get<any>(`${this.rootUrl}v1/commande-client/all`, { params });
   }
 
-  getCommandesFournisseurStats(): Observable<any> {
-    return this.http.get<any>(`${this.rootUrl}v1/commande-fournisseur/all`);
+  getCommandesFournisseurStats(debut?: string, fin?: string): Observable<any> {
+    let params = new HttpParams();
+    params = this.addDateParams(params, debut, fin);
+    return this.http.get<any>(`${this.rootUrl}v1/commande-fournisseur/all`, { params });
   }
 
-  getMvtStockStats(): Observable<any> {
-    return this.http.get<any>(`${this.rootUrl}v1/mvtstk/all`);
+  getMvtStockStats(debut?: string, fin?: string): Observable<any> {
+    let params = new HttpParams();
+    params = this.addDateParams(params, debut, fin);
+    return this.http.get<any>(`${this.rootUrl}v1/mvtstk/all`, { params });
   }
 }

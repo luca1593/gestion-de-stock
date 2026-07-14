@@ -108,7 +108,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadStats(): void {
-    this.dashboardService.getStats().subscribe({
+    this.dashboardService.getStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
       next: (data) => {
         this.stats = data;
         this.calculateKPIs();
@@ -144,7 +144,7 @@ export class PageStatistiquesComponent implements OnInit {
   loadChiffreAffairesMois(): void {
     const obs = this.dateDebut && this.dateFin
       ? this.dashboardService.getVentesPeriode(this.dateDebut, this.dateFin)
-      : this.dashboardService.getChiffreAffairesMois();
+      : this.dashboardService.getChiffreAffairesMois(this.dateDebut || undefined, this.dateFin || undefined);
     obs.subscribe({
       next: (data) => {
         if (data && Array.isArray(data)) {
@@ -168,7 +168,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadTopArticles(): void {
-    this.dashboardService.getTopArticles(10).subscribe({
+    this.dashboardService.getTopArticles(10, this.dateDebut || undefined, this.dateFin || undefined).subscribe({
       next: (data) => {
         this.topArticles = data || [];
         this.checkLoadingComplete();
@@ -181,7 +181,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadCommandesStats(): void {
-    this.dashboardService.getCommandesClientStats().subscribe({
+    this.dashboardService.getCommandesClientStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
       next: (data) => {
         if (Array.isArray(data)) {
           this.commandesClientData = data;
@@ -195,7 +195,7 @@ export class PageStatistiquesComponent implements OnInit {
       }
     });
 
-    this.dashboardService.getCommandesFournisseurStats().subscribe({
+    this.dashboardService.getCommandesFournisseurStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
       next: (data) => {
         if (Array.isArray(data)) {
           this.commandesFournisseurData = data;
@@ -211,7 +211,7 @@ export class PageStatistiquesComponent implements OnInit {
   }
 
   loadMvtStockStats(): void {
-    this.dashboardService.getMvtStockStats().subscribe({
+    this.dashboardService.getMvtStockStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
       next: (data) => {
         if (Array.isArray(data)) {
           this.mvtStockData = data;
