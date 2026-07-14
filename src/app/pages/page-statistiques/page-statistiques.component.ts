@@ -283,13 +283,6 @@ export class PageStatistiquesComponent implements OnInit {
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
-  getBarHeight(item: any, max: number): number {
-    const value = item?.chiffreAffaires || item?.nbVentes || item?.totalVentes || item?.quantite || item?.total || 0;
-    if (!value || max === 0) return 5;
-    const percentage = (value / max) * 100;
-    return Math.min(percentage, 100);
-  }
-
   getMonthLabel(item: any): string {
     const periode = item?.periode || item?.dateCommande || item?.dateMvt || '';
     if (!periode) return '';
@@ -305,6 +298,61 @@ export class PageStatistiquesComponent implements OnInit {
       }
     }
     return String(periode).substring(0, 7);
+  }
+
+  // SVG Line Chart
+  readonly svgVbW = 600;
+  readonly svgVbH = 240;
+  chartPadding = { top: 10, right: 15, bottom: 35, left: 60 };
+
+  get chartData(): any[] { return this.getCurrentChartData(); }
+  get chartMax(): number { return this.getCurrentMaxValue(); }
+
+  get plotW(): number {
+    return this.svgVbW - this.chartPadding.left - this.chartPadding.right;
+  }
+  get plotH(): number {
+    return this.svgVbH - this.chartPadding.top - this.chartPadding.bottom;
+  }
+
+  getX(i: number): number {
+    const count = this.chartData.length;
+    if (count <= 1) return this.chartPadding.left + this.plotW / 2;
+    return this.chartPadding.left + (i / (count - 1)) * this.plotW;
+  }
+
+  getY(value: number): number {
+    const max = this.chartMax || 1;
+    return this.chartPadding.top + this.plotH - (value / max) * this.plotH;
+  }
+
+  get polylinePoints(): string {
+    return this.chartData
+      .map((d, i) => {
+        const x = this.getX(i);
+        const y = this.getY(this.getItemValue(d));
+        return `${x},${y}`;
+      })
+      .join(' ');
+  }
+
+  get yGridLines(): number[] {
+    const steps = 4;
+    const max = this.chartMax || 1;
+    return Array.from({ length: steps + 1 }, (_, i) => (max / steps) * i);
+  }
+
+  yGridY(value: number): number {
+    return this.getY(value);
+  }
+
+  yGridLabel(value: number): string {
+    if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+    return value.toFixed(0);
+  }
+
+  get showGradientFill(): boolean {
+    return this.chartData.length >= 2;
   }
 
   getCurrentChartData(): any[] {

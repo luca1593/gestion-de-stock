@@ -188,56 +188,33 @@
     padding: 1.25rem;
 }
 
-/* Chart Bars */
-.chart-bars {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    min-height: 200px;
-    height: auto;
-    gap: 8px;
-    padding: 10px 0;
-}
-
-.chart-bar {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 50px;
-    height: auto;
-    max-height: 300px;
-}
-
-.bar-container {
+/* Line Chart */
+.line-chart {
     width: 100%;
-    min-height: 50px;
-    height: 200px;
-    max-height: 300px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    padding: 0;
 }
 
-.bar {
-    width: 70%;
-    max-width: 60px;
-    background: linear-gradient(180deg, #4a90d9, #2a5298);
-    border-radius: 6px 6px 0 0;
-    min-height: 5px;
-    max-height: 280px;
-    transition: height 0.5s ease;
+.chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-.bar:hover {
-    background: linear-gradient(180deg, #5a9fe9, #3a6298);
+.chart-svg text {
+    font-family: inherit;
 }
 
-.bar-label {
-    font-size: 0.7rem;
-    color: var(--text-muted, #6c757d);
-    margin-top: 0.5rem;
-    white-space: nowrap;
+.chart-svg circle {
+    transition: r 0.2s ease;
+    cursor: pointer;
+}
+
+.chart-svg circle:hover {
+    r: 6;
+}
+
+.chart-svg polyline {
+    transition: d 0.4s ease;
 }
 
 /* Simple Stats */
@@ -378,8 +355,17 @@ body.dark-theme .table-header {
     border-color: var(--border-color);
 }
 
-body.dark-theme .bar {
-    background: linear-gradient(180deg, #4a90d9, #3a6298);
+body.dark-theme .chart-svg text {
+    fill: var(--text-primary, #e0e0e0) !important;
+}
+
+body.dark-theme .chart-svg circle {
+    fill: var(--bg-card, #2d3a4a) !important;
+    stroke: var(--primary-color, #5a9fe9) !important;
+}
+
+body.dark-theme .chart-svg line {
+    stroke: var(--border-color, #3a4a5a) !important;
 }
 
 body.dark-theme .simple-stat-item {
