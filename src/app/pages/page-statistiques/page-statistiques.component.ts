@@ -320,8 +320,31 @@ export class PageStatistiquesComponent implements OnInit {
   readonly svgVbH = 240;
   chartPadding = { top: 10, right: 15, bottom: 35, left: 60 };
 
-  get chartData(): any[] { return this.getCurrentChartData(); }
-  get chartMax(): number { return this.getCurrentMaxValue(); }
+  get chartData(): any[] { return this.getGroupedChartData(); }
+  get chartMax(): number { return this.getGroupedMaxValue(); }
+
+  private getGroupedChartData(): any[] {
+    const raw = this.getCurrentChartData();
+    if (this.selectedChartType === 'ventes') return raw;
+    const normalised = raw.map((d: any) => {
+      const value = this.selectedChartType === 'mvt-stock'
+        ? (d.quantite || 1)
+        : 1;
+      return {
+        ...d,
+        periode: d.periode || d.dateCommande || d.dateMvt || '',
+        chiffreAffaires: value,
+        nbVentes: value
+      };
+    });
+    return this.groupChartData(normalised);
+  }
+
+  private getGroupedMaxValue(): number {
+    const data = this.chartData;
+    if (data.length === 0) return 1;
+    return Math.max(...data.map(d => this.getItemValue(d)), 1);
+  }
 
   get plotW(): number {
     return this.svgVbW - this.chartPadding.left - this.chartPadding.right;
@@ -450,22 +473,16 @@ export class PageStatistiquesComponent implements OnInit {
       if (!dt) return;
       let key: string;
       let sortKey: number;
-      let labelDate: Date;
       if (this.groupUnit === 'day') {
         key = this.formatDateStr(dt);
         sortKey = dt.getTime();
-        labelDate = dt;
       } else if (this.groupUnit === 'week') {
         const mon = this.getMonday(dt);
-        const nextSun = new Date(mon);
-        nextSun.setDate(mon.getDate() + 6);
         key = `Sem ${this.getWeekNumber(mon)}`;
         sortKey = mon.getTime();
-        labelDate = mon;
       } else {
-        key = `${String(dt.getMonth() + 1).padStart(2, '0')}/${dt.getFullYear()}`;
+        key = `01/${String(dt.getMonth() + 1).padStart(2, '0')}/${dt.getFullYear()}`;
         sortKey = dt.getFullYear() * 12 + dt.getMonth();
-        labelDate = dt;
       }
       const existing = groups.get(key) || {
         periode: key,
