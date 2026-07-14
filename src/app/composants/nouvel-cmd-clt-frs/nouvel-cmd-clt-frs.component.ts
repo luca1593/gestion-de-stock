@@ -493,6 +493,23 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.stockErrorMsg = '';
   }
 
+  onQuantiteChange(event: {ligne: any, delta: number}): void {
+    const nouvelleQte = (event.ligne.quantite || 0) + event.delta;
+    if (nouvelleQte < 1) return;
+
+    if (this.origin === 'client' && event.delta > 0) {
+      const stockDispo = event.ligne.article?.stock || 0;
+      if (nouvelleQte > stockDispo) {
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        return;
+      }
+    }
+
+    this.stockErrorMsg = '';
+    event.ligne.quantite = nouvelleQte;
+    this.calculateTotal();
+  }
+
   trackByLigneId(index: number, ligne: any): number {
     return ligne.id || index;
   }

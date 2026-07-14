@@ -119,6 +119,7 @@
                     <app-details-cmd *ngFor="let ligneCmd of ligneDeCommandes; trackBy: trackByLigneId"
                     [ligneCommande]="ligneCmd"
                     (deleteLigne)="onDeleteLigne($event)"
+                    (quantiteChange)="onQuantiteChange($event)"
                     ></app-details-cmd>
                 </div>
                 <div class="card-footer">

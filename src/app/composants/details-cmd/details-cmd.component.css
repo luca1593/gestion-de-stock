@@ -17,3 +17,68 @@
 .delete-btn:active {
     transform: scale(0.95);
 }
+
+.qte-control {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.qte-control .qte-btn {
+    border: none;
+    background: #f8f9fa;
+    color: #495057;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    line-height: 1;
+}
+
+.qte-control .qte-btn:hover {
+    background: #e9ecef;
+    color: #212529;
+}
+
+.qte-control .qte-btn:active {
+    background: #dee2e6;
+}
+
+.qte-control .qte-valeur {
+    min-width: 28px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #212529;
+    padding: 0 4px;
+    user-select: none;
+}
+
+body.dark-theme .qte-control {
+    background: #2d2d2d;
+    border-color: #404040;
+}
+
+body.dark-theme .qte-control .qte-btn {
+    background: #3a3a3a;
+    color: #adb5bd;
+}
+
+body.dark-theme .qte-control .qte-btn:hover {
+    background: #4a4a4a;
+    color: #e9ecef;
+}
+
+body.dark-theme .qte-control .qte-valeur {
+    color: #e9ecef;
+}
