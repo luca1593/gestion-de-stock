@@ -13,9 +13,11 @@
             <app-bouton-action 
                 (clickEvent)="nouveauClient()" 
                 (clickExportEvent)="exporterClients()"
-                [isImporterVisible]="false" 
+                (clickImportEvent)="importerTrigger.click()"
+                [isImporterVisible]="true" 
                 [isExporterVisible]="true">
             </app-bouton-action>
+            <input type="file" #importerTrigger hidden accept=".xlsx,.xls" (change)="importerClients($event)">
         </div>
     </div>
 

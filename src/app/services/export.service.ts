@@ -4,7 +4,7 @@ import { HaveurService } from './avoir/avoir.service';
 import { UserService } from './user/user.service';
 import { VenteService } from './vente/vente.service';
 import { NotificationService } from './notification/notification.service';
-import { AvoirDto } from 'src/gs-api/src/models';
+import { AvoirDto, CategoryDto } from 'src/gs-api/src/models';
 import { firstValueFrom } from 'rxjs';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -61,6 +61,35 @@ export class ExportExcelService {
     this.exportApiService.ExportApiExcelStockGET().subscribe(blob => {
       this.downloadBlob(blob, 'stock_' + this.getDateString() + '.xlsx');
     });
+  }
+
+  async exportCategories(categories: CategoryDto[]): Promise<void> {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet('Catégories');
+
+      sheet.columns = [
+        { header: 'Code', key: 'code', width: 20 },
+        { header: 'Désignation', key: 'designation', width: 40 },
+      ];
+
+      sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      sheet.getRow(1).fill = {
+        type: 'pattern', pattern: 'solid',
+        fgColor: { argb: 'FF2962BA' }
+      };
+
+      categories.forEach(cat => {
+        sheet.addRow({ code: cat.code, designation: cat.designation });
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      this.downloadBlob(blob, 'categories_' + this.getDateString() + '.xlsx');
+    } catch (err) {
+      console.error('Erreur export catégories', err);
+      this.notificationService.addError('Export', 'Erreur lors de l\'export des catégories');
+    }
   }
 
   async exportVentes(): Promise<void> {
