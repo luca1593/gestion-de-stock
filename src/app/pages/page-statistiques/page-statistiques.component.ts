@@ -103,7 +103,38 @@ export class PageStatistiquesComponent implements OnInit {
   private checkLoadingComplete(): void {
     this.apiCallsPending--;
     if (this.apiCallsPending <= 0) {
+      this.computeFilteredStats();
+      this.calculateKPIs();
       this.loading = false;
+    }
+  }
+
+  private computeFilteredStats(): void {
+    if (!this.stats) return;
+
+    if (this.dateDebut && this.dateFin) {
+      const caTotal = this.chiffreAffairesData.reduce((sum, d) => sum + (d.chiffreAffaires || d.totalVentes || 0), 0);
+      const nbVentesTotal = this.chiffreAffairesData.reduce((sum, d) => sum + (d.nbVentes || 0), 0);
+
+      this.stats = {
+        ...this.stats,
+        chiffreAffaires: caTotal,
+        totalVentes: nbVentesTotal || this.commandesClientData.length,
+        totalCommandesClient: this.commandesClientData.length,
+        totalCommandesFournisseur: this.commandesFournisseurData.length,
+      };
+
+      const clientIds = new Set<number>();
+      this.commandesClientData.forEach((cmd: any) => {
+        if (cmd.client?.id) clientIds.add(cmd.client.id);
+      });
+      if (clientIds.size > 0) this.stats.totalClients = clientIds.size;
+
+      const fournisseurIds = new Set<number>();
+      this.commandesFournisseurData.forEach((cmd: any) => {
+        if (cmd.fournisseur?.id) fournisseurIds.add(cmd.fournisseur.id);
+      });
+      if (fournisseurIds.size > 0) this.stats.totalFournisseurs = fournisseurIds.size;
     }
   }
 
@@ -111,7 +142,6 @@ export class PageStatistiquesComponent implements OnInit {
     this.dashboardService.getStats(this.dateDebut || undefined, this.dateFin || undefined).subscribe({
       next: (data) => {
         this.stats = data;
-        this.calculateKPIs();
         this.checkLoadingComplete();
       },
       error: (err) => {
