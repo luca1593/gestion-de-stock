@@ -15,13 +15,14 @@ import SavePhotoParams=PhotoService.SavePhotoParams;
 export class NouvelArticleComponent implements OnInit {
 
   articleDto: ArticleDto={};
-  categoryDto: CategoryDto={};
+  categoryDto: any = { id: null };
   listCategorie: Array<CategoryDto>=[];
   errorMsgs: Array<string>=[];
   erreur="";
   file: File | null=null;
   imgUrl: string | ArrayBuffer='favicon.ico';
   loading = true;
+  submitted = false;
 
   constructor(
     private articleService: ArtcleService,
@@ -54,7 +55,7 @@ export class NouvelArticleComponent implements OnInit {
       this.articleService.findArticleById(articleId).subscribe({
         next: (resp) => {
           this.articleDto=resp;
-          this.categoryDto=resp.category ? resp.category : {};
+          this.categoryDto=resp.category ? resp.category : { id: null };
           this.imgUrl = resp.photo ? resp.photo : 'favicon.ico';
           checkDone();
         },
@@ -67,7 +68,18 @@ export class NouvelArticleComponent implements OnInit {
   }
 
   saveClick(): void {
+    this.submitted = true;
     this.articleDto.category=this.categoryDto;
+
+    if (!this.articleDto.codeArticle || !this.articleDto.designation ||
+        this.articleDto.prixUnitaireht == null || this.articleDto.prixUnitaireht < 0 ||
+        this.articleDto.tauxTva == null || this.articleDto.tauxTva < 0 ||
+        this.articleDto.prixTtc == null || this.articleDto.prixTtc < 0 ||
+        !this.categoryDto.id) {
+      this.errorMsgs = ['Veuillez remplir tous les champs obligatoires'];
+      return;
+    }
+
     this.articleService.enregistrerArticle(this.articleDto).subscribe(art => {
       this.articleDto = art;
       this.savePhoto(art.id, art.codeArticle);
