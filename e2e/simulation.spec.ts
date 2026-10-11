@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Simulation Utilisateur Complet', () => {
-  const USER_EMAIL = 'entreprise1@test.com';
+  const USER_EMAIL = 'entreprise2@test.com';
   const USER_PASSWORD = 'luca1593';
 
   async function login(page: any) {

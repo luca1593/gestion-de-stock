@@ -46,10 +46,6 @@ export class DetailUtilisateurComponent implements OnInit {
     this.router.navigate(['modifier-utilisateur', this.utilisateur.id]);
   }
 
-  retour(): void {
-    this.router.navigate(['utilisateurs']);
-  }
-
   openDeleteModal(): void {
     if (this.utilisateur.id) {
       const modalId = 'modalConfirmDelete' + this.utilisateur.id;

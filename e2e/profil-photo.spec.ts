@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const USER_EMAIL = 'entreprise1@test.com';
+const USER_EMAIL = 'entreprise2@test.com';
 const USER_PASSWORD = 'luca1593';
 
 test.describe('Test Modification Photo Profil', () => {

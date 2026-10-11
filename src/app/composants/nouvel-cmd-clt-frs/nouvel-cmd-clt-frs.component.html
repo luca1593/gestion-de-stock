@@ -1,7 +1,7 @@
 <div class="col p-3 mb-3">
     <div class="col-md-12 p-3">
         <div class="col-md-12 mb-3 d-flex align-items-center">
-            <h2 class="me-3"><i class="fas" [class.fa-plus-circle]="!isModification" [class.fa-edit]="isModification"></i>&nbsp;{{ isModification ? 'Modification' : 'Nouvel' }} commande {{origin}}</h2>
+            <h2 class="me-3"><i class="fas" [class.fa-plus-circle]="!isModification" [class.fa-edit]="isModification"></i>&nbsp;{{ isModification ? 'Modification commande ' + origin + ' ' + codeCmd : 'Nouvelle commande ' + origin }}</h2>
             <app-etat-workflow [etat]="etatCommande" [compact]="true" (etatChange)="onEtatChange($event)" [stepsDesactivees]="stepsDesactivees"></app-etat-workflow>
         </div>
         <div class="alert alert-danger" *ngIf="errorMsg && errorMsg.length">

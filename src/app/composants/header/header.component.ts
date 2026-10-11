@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, timer } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UserService } from 'src/app/services/user/user.service';
 import { UtilisateurDto } from 'src/gs-api/src/models';
@@ -10,6 +10,7 @@ import { RouteContextService } from 'src/app/services/search/route-context.servi
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { NotificationService, Notification } from 'src/app/services/notification/notification.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
+import { SidebarService } from 'src/app/services/sidebar/sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -36,7 +37,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showSessionWarning = false;
   sessionWarningMessage = '';
 
-  private notificationDropdown: HTMLElement | null = null;
+  dateDuJour: Date = new Date();
+
+    private notificationDropdown: HTMLElement | null = null;
 
   constructor(
     private userService: UserService,
@@ -46,6 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private notificationService: NotificationService,
     private photoSyncService: PhotoSyncService,
+    private sidebarService: SidebarService,
     private router: Router
   ) { }
 
@@ -86,6 +90,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
 
     this.notificationService.loadNotifications();
+
+    timer(new Date(), 1000).pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.dateDuJour = new Date();
+    });
   }
 
   private updateUserPhoto(): void {
@@ -194,6 +202,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  toggleSidebar(): void {
+    this.sidebarService.toggle();
   }
 
   markAsRead(notification: Notification, event: MouseEvent): void {

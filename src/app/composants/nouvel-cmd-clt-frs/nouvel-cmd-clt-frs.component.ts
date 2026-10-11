@@ -58,7 +58,9 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     } else {
       this.initCodeCmd();
     }
-    const idCltFrs=this.activatedRoute.snapshot.params['id'];
+    const idCltFrs = this.activatedRoute.snapshot.params['id']
+      ?? this.activatedRoute.snapshot.queryParams['idClient']
+      ?? this.activatedRoute.snapshot.queryParams['idFournisseur'];
     if (idCltFrs && !idCmd) {
       if (this.origin === "client") {
         this.cltFrsService.findClientById(idCltFrs).subscribe(clt => {

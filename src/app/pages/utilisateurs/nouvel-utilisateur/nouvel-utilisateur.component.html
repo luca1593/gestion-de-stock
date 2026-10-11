@@ -10,8 +10,8 @@
         </div>
         <input #fileInput type="file" accept="image/*" class="d-none" (change)="onFileInput($event)">
         <h4 class="ms-3 mb-0">
-          <i class="fas fa-user me-2"></i>
-          {{ isEditMode ? 'Modifier' : 'Nouvel' }} utilisateur
+          <i class="fas me-2" [class.fa-user]="!isEditMode" [class.fa-pen]="isEditMode"></i>
+          {{ isEditMode ? 'Modification de l\'utilisateur ' + utilisateurDto.nom : 'Nouvel utilisateur' }}
         </h4>
       </div>
 

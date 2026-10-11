@@ -288,24 +288,14 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* ========== RESPONSIVE ========== */
-@media (max-width: 1200px) {
-    .menu-item span,
-    .submenu-item span {
-        display: none;
-    }
-    
-    .menu-item {
-        justify-content: center;
-        padding: 1rem;
-    }
-    
-    .menu-item .arrow {
-        display: none;
-    }
-    
-    .submenu-item {
-        padding: 0.75rem;
-        justify-content: center;
-    }
-}
+/*
+ * RESPONSIVE : aucune règle de largeur ni de masquage des libellés ici.
+ *
+ * Historique : un bloc (max-width: 1200px) forçait la sidebar en rail de 80px
+ * avec libellés masqués entre 993px et 1200px, ce qui rendait le bouton de
+ * repli inopérant (il basculait une classe .collapsed sans effet visible).
+ * Le collapse est désormais piloté uniquement par l'état de l'application :
+ *   .sidebar-menu.collapsed  -> libellés masqués (display: none !important)
+ *   .sidebar.collapsed       -> largeur 70px
+ * Le tiroir mobile (<= 992px) est géré dans page-dashbord.component.css.
+ */

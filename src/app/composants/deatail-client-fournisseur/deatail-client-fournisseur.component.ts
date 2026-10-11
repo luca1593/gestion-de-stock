@@ -196,11 +196,12 @@ export class DeatailClientFournisseurComponent implements OnInit {
   }
 
   nouveauxCommande(): void {
-    this.router.navigate(["nouvel-commande-" + this.origin, this.clientFrournisseurDTO.id]);
-  }
-
-  goBack(): void {
-    this.router.navigate([this.origin + 's']);
+    // Le fournisseur/client est passé en query param (pas en :idCmd, réservé à
+    // l'id de commande en mode édition) pour rester en mode création pré-rempli.
+    const key = this.origin === "client" ? "idClient" : "idFournisseur";
+    this.router.navigate(["nouvel-commande-" + this.origin], {
+      queryParams: { [key]: this.clientFrournisseurDTO.id }
+    });
   }
 
   modifierClient(): void {

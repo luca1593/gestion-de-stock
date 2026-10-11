@@ -6,9 +6,8 @@ import { ExportExcelService } from 'src/app/services/export.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
-import { Subject, firstValueFrom } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import * as ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-hisistorique-vente',
@@ -20,6 +19,9 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
   listVentes: Array<VenteDto> = [];
   listVentesFiltre: Array<VenteDto> = [];
   mapListLigneVente = new Map();
+  // Copie de l'ordre API (jamais triée) pour restaurer l'ordre par défaut
+  // quand on change de ligne.
+  mapListLigneVenteRaw = new Map();
   mapNmbrArticle = new Map();
   mapTotalTtc = new Map();
   mapTotalArticle = new Map();
@@ -71,81 +73,6 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
   exporterVentes(): void {
     this.exportService.exportVentes();
   }
-
-  async importerVentes(event: any): Promise<void> {
-    const file: File = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const buffer = await file.arrayBuffer();
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.load(buffer);
-      const ws = workbook.getWorksheet(1);
-      if (!ws) {
-        this.notificationService.addError('Erreur', 'Fichier Excel invalide');
-        return;
-      }
-
-      const rows: any[] = [];
-      ws.eachRow((row, rowNumber) => {
-        if (rowNumber === 1) return;
-        const codeVente = row.getCell(1).text?.trim();
-        const dateVente = row.getCell(2).text?.trim();
-        const codeArticle = row.getCell(3).text?.trim();
-        const designation = row.getCell(4).text?.trim();
-        const quantite = parseFloat(row.getCell(5).text?.trim()) || 0;
-        const pu = parseFloat(row.getCell(6).text?.trim()) || 0;
-        if (codeVente && quantite > 0 && pu > 0) {
-          rows.push({ codeVente, dateVente, codeArticle, designation, quantite, pu });
-        }
-      });
-
-      if (rows.length === 0) {
-        this.notificationService.addError('Erreur', 'Aucune donnée trouvée dans le fichier');
-        return;
-      }
-
-      const grouped = new Map<string, { code: string; dateVente: string; lignes: any[] }>();
-      rows.forEach(r => {
-        if (!grouped.has(r.codeVente)) {
-          grouped.set(r.codeVente, { code: r.codeVente, dateVente: r.dateVente, lignes: [] });
-        }
-        grouped.get(r.codeVente)!.lignes.push({
-          quantite: r.quantite,
-          prixUnitaire: r.pu,
-          article: { codeArticle: r.codeArticle, designation: r.designation }
-        });
-      });
-
-      let imported = 0;
-      let errors = 0;
-
-      for (const [code, venteData] of grouped) {
-        try {
-          const dto: VenteDto = {
-            code,
-            dateVente: venteData.dateVente || new Date().toISOString(),
-            ligneVentes: venteData.lignes
-          };
-          await firstValueFrom(this.venteService.enregistrerVente(dto));
-          imported++;
-        } catch {
-          errors++;
-        }
-      }
-
-      if (errors > 0) {
-        this.notificationService.addWarning('Attention', `${imported} importée(s), ${errors} erreur(s)`);
-      } else {
-        this.notificationService.addSuccess('Succès', `${imported} vente(s) importée(s)`);
-      }
-
-      this.findAllVentes();
-    } catch (err) {
-      this.notificationService.addError('Erreur', 'Échec de la lecture du fichier');
-    }
-  }
-
   async exportPdf(): Promise<void> {
     await this.exportService.exportPdfVentes();
   }
@@ -166,7 +93,11 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
     this.venteService.findLigneVenteByVente(idVente).pipe(takeUntil(this.destroy$)).subscribe({
       next: (lignes) => {
         this.mapListLigneVente.set(idVente, lignes);
-        this.calculerTotalVente(idVente, lignes);
+        this.mapListLigneVenteRaw.set(idVente, [...lignes]);
+        // Les reponses arrivent a des moments differents : une reponse tardive
+        // ecraserait sinon un tri deja applique par l'utilisateur.
+        this.applySortForVente(idVente);
+        this.calculerTotalVente(idVente, this.mapListLigneVente.get(idVente) || lignes);
         this.loading = false;
       },
       error: (err) => {
@@ -181,11 +112,19 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
   }
 
   toggleVente(venteId: number): void {
-    if (this.selectedVenteId === venteId) {
-      this.selectedVenteId = null;
-    } else {
-      this.selectedVenteId = venteId;
+    const switching = this.selectedVenteId !== venteId;
+    this.selectedVenteId = switching ? venteId : null;
+    if (switching) {
+      this.resetTriLignes();
     }
+  }
+
+  // Chaque ligne affichée repart de l'ordre par défaut (API), sans flèche.
+  private resetTriLignes(): void {
+    this.sortState = { column: '', direction: 'asc' };
+    this.mapListLigneVenteRaw.forEach((lignes, key) => {
+      this.mapListLigneVente.set(key, [...lignes]);
+    });
   }
 
   sort(column: string): void {
@@ -196,26 +135,35 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
       this.sortState.direction = 'asc';
     }
     this.applySort();
-    this.pageCmd = 1;
+    // Pas de reset de pageCmd ici : ce tri ne concerne que le tableau des
+    // lignes de la vente dépliée, pas la liste principale des ventes.
     this.cdr.markForCheck();
   }
 
   private applySort(): void {
-    if (this.sortState.column) {
-      if (this.sortState.column === 'total') {
-        this.mapListLigneVente.forEach((lignes, key) => {
-          const sorted = [...lignes].sort((a, b) => {
-            const totalA = (a.quantite || 0) * (a.prixUnitaire || 0);
-            const totalB = (b.quantite || 0) * (b.prixUnitaire || 0);
-            return this.sortState.direction === 'asc' ? totalA - totalB : totalB - totalA;
-          });
-          this.mapListLigneVente.set(key, sorted);
-        });
-      } else {
-        this.mapListLigneVente.forEach((lignes, key) => {
-          this.mapListLigneVente.set(key, sortByProperty(lignes, this.sortState.column, this.sortState.direction));
-        });
-      }
+    if (!this.sortState.column) {
+      return;
+    }
+    this.mapListLigneVente.forEach((_, key) => this.applySortForVente(key));
+  }
+
+  private applySortForVente(idVente: number): void {
+    if (!this.sortState.column) {
+      return;
+    }
+    const lignes = this.mapListLigneVente.get(idVente);
+    if (!lignes) {
+      return;
+    }
+    if (this.sortState.column === 'total') {
+      const sorted = [...lignes].sort((a, b) => {
+        const totalA = (a.quantite || 0) * (a.prixUnitaire || 0);
+        const totalB = (b.quantite || 0) * (b.prixUnitaire || 0);
+        return this.sortState.direction === 'asc' ? totalA - totalB : totalB - totalA;
+      });
+      this.mapListLigneVente.set(idVente, sorted);
+    } else {
+      this.mapListLigneVente.set(idVente, sortByProperty(lignes, this.sortState.column, this.sortState.direction));
     }
   }
 

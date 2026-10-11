@@ -53,6 +53,7 @@ import { PageVenteComponent } from './pages/vente/page-vente/page-vente.componen
 import { PageHaveurComponent } from './pages/avoirs/page-avoir/page-avoir.component';
 import { NouvelAvoirComponent } from './pages/avoirs/nouvel-avoir/nouvel-avoir.component';
 import { EtatoWorkflowComponent } from './composants/etat-workflow/etat-workflow.component';
+import { BreadcrumbComponent } from './composants/breadcrumb/breadcrumb.component';
 
 registerLocaleData(localeFr, 'fr');
 
@@ -98,7 +99,8 @@ registerLocaleData(localeFr, 'fr');
     StatistiquesComponent,
     PageHaveurComponent,
     NouvelAvoirComponent,
-   EtatoWorkflowComponent
+   EtatoWorkflowComponent,
+    BreadcrumbComponent
   ],
   imports: [
     BrowserModule,

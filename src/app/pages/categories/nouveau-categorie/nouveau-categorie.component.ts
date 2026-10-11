@@ -13,6 +13,7 @@ export class NouveauCategorieComponent implements OnInit {
 
   categoryDto: CategoryDto={};
   errorMsg : Array<string>=[];
+  isEditMode = false;
 
   constructor(
     private router: Router,
@@ -24,6 +25,7 @@ export class NouveauCategorieComponent implements OnInit {
   ngOnInit(): void {
     const idCategory=this.activatedRouter.snapshot.params['idCategory'];
     if(idCategory){
+      this.isEditMode = true;
       this.categoryService.fidById(idCategory).subscribe(resp =>{
         this.categoryDto=resp;
       });

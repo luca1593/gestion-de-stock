@@ -18,7 +18,8 @@
     <hr>
     <div class="col-md-12">
         <div class="col-md-12 mb-3">
-            <h2><i class="fas fa-info-circle blue-color"></i>&nbsp;Informations de l'article</h2>
+                <h2 *ngIf="!isEditMode"><i class="fas fa-info-circle blue-color"></i>&nbsp;Informations de l'article</h2>
+                <h2 *ngIf="isEditMode"><i class="fas fa-pen blue-color"></i>&nbsp;Modification de l'article {{articleDto.designation}}</h2>
         </div>
         <div class="col-md-12">
             <div class="alert alert-danger" *ngIf="errorMsgs.length > 0">

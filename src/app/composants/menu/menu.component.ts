@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Menu } from './menu';
 import { UserService } from 'src/app/services/user/user.service';
@@ -12,6 +12,7 @@ import { filter } from 'rxjs/operators';
 })
 export class MenuComponent implements OnInit {
   @Input() collapsed = false;
+  @Output() itemClicked = new EventEmitter<void>();
   public isDarkMode = false;
 
   public menuProperties : Array<Menu>=[
@@ -45,13 +46,15 @@ export class MenuComponent implements OnInit {
           id: '21',
           titre: 'Articles',
           icon: 'fas fa-cube',
-          url: 'articles'
+          url: 'articles',
+          matchUrls: ['nouvel-article', 'detail-article']
         },
         {
           id: '22',
           titre: 'Mouvement de stock',
           icon: 'fas fa-dolly',
-          url: 'mvtstk'
+          url: 'mvtstk',
+          matchUrls: ['detail-mvtstk']
         }
       ]
     },
@@ -65,13 +68,15 @@ export class MenuComponent implements OnInit {
           id: '31',
           titre: 'Clients',
           icon: 'fas fa-users',
-          url: 'clients'
+          url: 'clients',
+          matchUrls: ['nouveau-client', 'detail-client']
         },
         {
           id: '32',
           titre: 'Commande clients',
           icon: 'fas fa-shopping-basket',
-          url: 'commande-client'
+          url: 'commande-client',
+          matchUrls: ['nouvel-commande-client']
         }
       ]
     },
@@ -85,13 +90,15 @@ export class MenuComponent implements OnInit {
           id: '41',
           titre: 'Fournisseurs',
           icon: 'fas fa-truck',
-          url: 'fournisseurs'
+          url: 'fournisseurs',
+          matchUrls: ['nouveau-fournisseur', 'detail-fournisseur']
         },
         {
           id: '42',
           titre: 'Commande fournisseur',
           icon: 'fas fa-clipboard-list',
-          url: 'commande-fournisseur'
+          url: 'commande-fournisseur',
+          matchUrls: ['nouvel-commande-fournisseur']
         }
       ]
     },
@@ -117,7 +124,8 @@ export class MenuComponent implements OnInit {
           id: '53',
           titre: 'Avoirs',
           icon: 'fas fa-receipt',
-          url: 'avoirs'
+          url: 'avoirs',
+          matchUrls: ['nouvel-avoir']
         }
       ]
     },
@@ -131,13 +139,15 @@ export class MenuComponent implements OnInit {
           id: '61',
           titre: 'Catégories',
           icon: 'fas fa-tags',
-          url: 'categories'
+          url: 'categories',
+          matchUrls: ['nouvel-categorie']
         },
         {
           id: '62',
           titre: 'Utilisateurs',
           icon: 'fas fa-user-cog',
-          url: 'utilisateurs'
+          url: 'utilisateurs',
+          matchUrls: ['nouvel-utilisateur', 'modifier-utilisateur', 'utilisateur']
         }
       ]
     },
@@ -171,21 +181,32 @@ export class MenuComponent implements OnInit {
   private setActiveMenuFromRoute(url: string): void {
     const currentUrl = url || '';
     const cleanUrl = currentUrl.split('?')[0].split('#')[0];
-    
+    // Premier segment : '/detail-article/19' -> 'detail-article'.
+    // Comparaison exacte (pas de endsWith) pour eviter les faux positifs.
+    const firstSegment = cleanUrl.split('/').filter(Boolean)[0] ?? '';
+
     this.menuProperties.forEach(menu => {
       menu.active = false;
       if (menu.sousMenus && menu.sousMenus.length > 0) {
         let hasActiveSubmenu = false;
         menu.sousMenus.forEach(sousMenu => {
-          const sousMenuActive = sousMenu.url ? cleanUrl === `/${sousMenu.url}` || cleanUrl.endsWith(`/${sousMenu.url}`) : false;
+          const sousMenuActive = this.isMenuEntryActive(sousMenu, firstSegment);
           sousMenu.active = sousMenuActive;
           if (sousMenuActive) hasActiveSubmenu = true;
         });
         menu.active = hasActiveSubmenu;
       } else if (menu.url) {
-        menu.active = cleanUrl === `/${menu.url}` || cleanUrl.endsWith(`/${menu.url}`);
+        menu.active = firstSegment === menu.url;
       }
     });
+  }
+
+  private isMenuEntryActive(entry: Menu, firstSegment: string): boolean {
+    if (!firstSegment) {
+      return false;
+    }
+    const candidates = [entry.url, ...(entry.matchUrls ?? [])].filter(Boolean) as string[];
+    return candidates.some(candidate => firstSegment === candidate);
   }
 
   toggleMenu(menu: Menu): void {
@@ -216,6 +237,7 @@ export class MenuComponent implements OnInit {
       }
     });
     this.router.navigate([menu.url]);
+    this.itemClicked.emit();
   }
 
   logoutApp(){
