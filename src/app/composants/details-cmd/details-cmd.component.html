@@ -5,13 +5,22 @@
             {{ligneCommande.article?.codeArticle}}
         </div>
     </div>
-    <div class="col-md-3 border-right">
+    <div class="col-md-2 border-right">
         <div class="col-md-12">
             {{ligneCommande.article?.designation}}
         </div>
     </div>
-    <div class="col-md-2 border-right">
-        {{ligneCommande.quantite}}
+    <div class="col-md-3 border-right">
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="qte-control" *ngIf="!readonly; else qteTexte">
+                <button type="button" class="qte-btn" (click)="decrementer()" title="Diminuer">−</button>
+                <span class="qte-valeur">{{ligneCommande.quantite}}</span>
+                <button type="button" class="qte-btn" (click)="incrementer()" title="Augmenter">+</button>
+            </div>
+            <ng-template #qteTexte>
+                <span class="fw-medium">{{ligneCommande.quantite}}</span>
+            </ng-template>
+        </div>
     </div>
     <div class="col-md-2 border-right">
         {{ligneCommande.prixUnitaire}}

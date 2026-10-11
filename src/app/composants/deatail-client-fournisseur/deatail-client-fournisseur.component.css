@@ -2,24 +2,6 @@
     padding: 0;
 }
 
-.detail-header {
-    padding: 1rem 1.5rem;
-}
-
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary, #6b7280);
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.back-link:hover {
-    color: var(--primary-color, #4a90d9);
-}
-
 .client-profile-card {
     margin: 0 1.5rem 1.5rem;
     border-radius: 12px;

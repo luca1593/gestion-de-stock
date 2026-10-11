@@ -15,7 +15,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
 
   origin='';
   isModification: boolean = false;
-  selectedClientFournisseur: any={};
+  selectedClientFournisseur: any=null;
   selectedAdressCltFrs: AdresseDto={};
   listClientFouenisseur: Array<any>=[];
   searchedArticle: ArticleDto={};
@@ -29,11 +29,13 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   listArticles: Array<ArticleDto>=[];
   articleNotYetSelected=true;
   errorMsg: Array<string>=[];
+  stockErrorMsg: string = '';
   dateCmd="";
   codeCmd="";
   etatCommande: string = 'EN_PREPARATION';
   etatCommandeOriginal: string = '';
   commandeId: number | null = null;
+  submitted: boolean = false;
 
   constructor(
     private router: Router,
@@ -56,7 +58,9 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     } else {
       this.initCodeCmd();
     }
-    const idCltFrs=this.activatedRoute.snapshot.params['id'];
+    const idCltFrs = this.activatedRoute.snapshot.params['id']
+      ?? this.activatedRoute.snapshot.queryParams['idClient']
+      ?? this.activatedRoute.snapshot.queryParams['idFournisseur'];
     if (idCltFrs && !idCmd) {
       if (this.origin === "client") {
         this.cltFrsService.findClientById(idCltFrs).subscribe(clt => {
@@ -77,7 +81,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         this.codeCmd = cmd.code || '';
         this.etatCommande = cmd.etatcommande || 'EN_PREPARATION';
         this.etatCommandeOriginal = cmd.etatcommande || 'EN_PREPARATION';
-        this.selectedClientFournisseur = cmd.client ? {...cmd.client} : {};
+        this.selectedClientFournisseur = cmd.client ? {...cmd.client} : null;
         console.log('Client chargé:', this.selectedClientFournisseur);
         if (cmd.dateCommande) {
           const date = new Date(cmd.dateCommande);
@@ -98,7 +102,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         this.codeCmd = cmd.code || '';
         this.etatCommande = cmd.etatcommande || 'EN_PREPARATION';
         this.etatCommandeOriginal = cmd.etatcommande || 'EN_PREPARATION';
-        this.selectedClientFournisseur = cmd.fournisseur ? {...cmd.fournisseur} : {};
+        this.selectedClientFournisseur = cmd.fournisseur ? {...cmd.fournisseur} : null;
         console.log('Fournisseur chargé:', this.selectedClientFournisseur);
         if (cmd.dateCommande) {
           const date = new Date(cmd.dateCommande);
@@ -130,6 +134,16 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.quantiteListArticle = qnt;
   }
 
+  get stepsDesactivees(): string[] {
+    if (!this.isModification) {
+      return ['VALIDEE', 'LIVREE'];
+    }
+    const steps = ['EN_PREPARATION', 'VALIDEE', 'LIVREE'];
+    const currentIndex = steps.indexOf(this.etatCommande);
+    if (currentIndex <= 0) return [];
+    return steps.slice(0, currentIndex);
+  }
+
   onEtatChange(newEtat: string): void {
     this.etatCommande = newEtat;
   }
@@ -151,6 +165,13 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   saveClick():void {
+    this.submitted = true;
+
+    if (!this.selectedClientFournisseur || !this.selectedClientFournisseur.id) {
+      this.errorMsg = ['Veuillez sélectionner un ' + this.origin];
+      return;
+    }
+
     if (this.ligneDeCommandes.length === 0) {
       this.errorMsg = ['Veuillez ajouter au moins un article pour la commande'];
       return;
@@ -387,12 +408,14 @@ export class NouvelCmdCltFrsComponent implements OnInit {
       || art?.designation?.toLowerCase().startsWith(this.codeArticle.toLowerCase())
     );
     this.articleNotYetSelected=true;
+    this.stockErrorMsg = '';
   }
 
   selectedArticle(article: ArticleDto): void{
     this.searchedArticle=article;
     this.codeArticle=article.codeArticle ? article.codeArticle : "";
     this.articleNotYetSelected=false;
+    this.stockErrorMsg = '';
   }
 
   addLigneCommande():void {
@@ -404,13 +427,31 @@ export class NouvelCmdCltFrsComponent implements OnInit {
       this.errorMsg = ['Veuillez sélectionner un article valide'];
       return;
     }
-    
+
+    if (!this.quantite || this.quantite < 1) {
+      this.errorMsg = ['La quantité doit être supérieure à 0'];
+      return;
+    }
+
     let totalCmd=0;
     let totalQnt=0;
 
     const ligneArleadyExist=this.ligneDeCommandes.find(
       ligne => ligne.article?.codeArticle === this.searchedArticle.codeArticle
     );
+
+    if (this.origin === 'client') {
+      const stockDispo = this.searchedArticle.stock || 0;
+      const qteExistante = ligneArleadyExist ? (ligneArleadyExist.quantite || 0) : 0;
+      const qteTotale = qteExistante + this.quantite;
+      if (qteTotale > stockDispo) {
+        this.errorMsg = [];
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        return;
+      }
+    }
+
+    this.stockErrorMsg = '';
 
     if(ligneArleadyExist){
       this.ligneDeCommandes.forEach(ligne => {
@@ -451,6 +492,24 @@ export class NouvelCmdCltFrsComponent implements OnInit {
       this.ligneDeCommandes.splice(index, 1);
       this.calculateTotal();
     }
+    this.stockErrorMsg = '';
+  }
+
+  onQuantiteChange(event: {ligne: any, delta: number}): void {
+    const nouvelleQte = (event.ligne.quantite || 0) + event.delta;
+    if (nouvelleQte < 1) return;
+
+    if (this.origin === 'client' && event.delta > 0) {
+      const stockDispo = event.ligne.article?.stock || 0;
+      if (nouvelleQte > stockDispo) {
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        return;
+      }
+    }
+
+    this.stockErrorMsg = '';
+    event.ligne.quantite = nouvelleQte;
+    this.calculateTotal();
   }
 
   trackByLigneId(index: number, ligne: any): number {
@@ -462,6 +521,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     .subscribe(articles => {
       this.listArticles=articles;
     });
+    this.stockErrorMsg = '';
   }
 
 }

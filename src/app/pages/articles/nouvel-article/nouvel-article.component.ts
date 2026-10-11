@@ -15,13 +15,15 @@ import SavePhotoParams=PhotoService.SavePhotoParams;
 export class NouvelArticleComponent implements OnInit {
 
   articleDto: ArticleDto={};
-  categoryDto: CategoryDto={};
+  categoryDto: any = { id: null };
   listCategorie: Array<CategoryDto>=[];
   errorMsgs: Array<string>=[];
   erreur="";
   file: File | null=null;
-  imgUrl: string | ArrayBuffer='favicon.ico';
+  imgUrl: string | ArrayBuffer='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2212%22%20fill%3D%22%23e9ecef%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2230%22%20width%3D%2244%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%23adb5bd%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2270%22%20width%3D%2236%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2278%22%20width%3D%2224%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3C%2Fsvg%3E';
   loading = true;
+  submitted = false;
+  isEditMode = false;
 
   constructor(
     private articleService: ArtcleService,
@@ -50,12 +52,13 @@ export class NouvelArticleComponent implements OnInit {
       error: () => checkDone()
     });
     if (idArticle) {
+      this.isEditMode = true;
       const articleId = +idArticle;
       this.articleService.findArticleById(articleId).subscribe({
         next: (resp) => {
           this.articleDto=resp;
-          this.categoryDto=resp.category ? resp.category : {};
-          this.imgUrl = resp.photo ? resp.photo : 'favicon.ico';
+          this.categoryDto=resp.category ? resp.category : { id: null };
+          this.imgUrl = resp.photo ? resp.photo : 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2212%22%20fill%3D%22%23e9ecef%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2230%22%20width%3D%2244%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%23adb5bd%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2270%22%20width%3D%2236%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2278%22%20width%3D%2224%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23ced4da%22%2F%3E%3C%2Fsvg%3E';
           checkDone();
         },
         error: (err) => {
@@ -67,7 +70,18 @@ export class NouvelArticleComponent implements OnInit {
   }
 
   saveClick(): void {
+    this.submitted = true;
     this.articleDto.category=this.categoryDto;
+
+    if (!this.articleDto.codeArticle || !this.articleDto.designation ||
+        this.articleDto.prixUnitaireht == null || this.articleDto.prixUnitaireht < 0 ||
+        this.articleDto.tauxTva == null || this.articleDto.tauxTva < 0 ||
+        this.articleDto.prixTtc == null || this.articleDto.prixTtc < 0 ||
+        !this.categoryDto.id) {
+      this.errorMsgs = ['Veuillez remplir tous les champs obligatoires'];
+      return;
+    }
+
     this.articleService.enregistrerArticle(this.articleDto).subscribe(art => {
       this.articleDto = art;
       this.savePhoto(art.id, art.codeArticle);

@@ -1,0 +1,12 @@
+.user-avatar-mdp {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #6c757d;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    user-select: none;
+    overflow: hidden;
+}

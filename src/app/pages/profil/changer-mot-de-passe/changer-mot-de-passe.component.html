@@ -2,11 +2,16 @@
     <div class="card col-md-5 custom-border">
         <div class="card-body text-center">
             <div class="col mb-3">
-                <img src="favicon.ico" class="rounded-circle mx-auto d-block" alt="image" width="150" height="150">
+                <div class="user-avatar-mdp mx-auto d-flex align-items-center justify-content-center"
+                     [style.backgroundImage]="photoUtilisateur ? 'url(' + photoUtilisateur + ')' : ''"
+                     [style.backgroundSize]="photoUtilisateur ? 'cover' : ''"
+                     [style.backgroundPosition]="photoUtilisateur ? 'center' : ''">
+                    <span *ngIf="!photoUtilisateur">{{ getUserInitials() }}</span>
+                </div>
             </div>
             <div class="col mb-4">
-                <h2>Nom prenom</h2>
-                <small class="form-text text-muted">Adresse, Ville, cp-12345</small>
+                <h2>{{ utilisateurDto?.nom }} {{ utilisateurDto?.prenom }}</h2>
+                <small class="form-text text-muted">{{ getAdresse() }}</small>
             </div>
         </div>
     </div>

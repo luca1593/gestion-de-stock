@@ -17,11 +17,12 @@ export class NouvelUtilisateurComponent implements OnInit {
   errorMsgs: Array<string> = [];
   isEditMode = false;
   loading = false;
+  submitted = false;
   newPassword = '';
   confirmPassword = '';
   dateNaissance = '';
   file: File | null = null;
-  imgUrl: string | ArrayBuffer = 'favicon.ico';
+  imgUrl: string | ArrayBuffer = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2250%22%20fill%3D%22%23e9ecef%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2238%22%20r%3D%2216%22%20fill%3D%22%23adb5bd%22%2F%3E%3Cpath%20d%3D%22M18%2082c0-16%2014-30%2032-30s32%2014%2032%2030%22%20fill%3D%22%23adb5bd%22%2F%3E%3C%2Fsvg%3E';
 
   rolesDisponibles: RoleDto[] = [
     { id: 1, roleNom: 'Admin' },
@@ -38,6 +39,9 @@ export class NouvelUtilisateurComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const today = new Date();
+    const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    this.dateNaissance = eighteenYearsAgo.toISOString().split('T')[0];
     const id = this.activatedRoute.snapshot.params['id'];
     if (id) {
       this.isEditMode = true;
@@ -61,8 +65,22 @@ export class NouvelUtilisateurComponent implements OnInit {
     }
   }
 
+  get passwordMismatch(): boolean {
+    return !!this.newPassword && !!this.confirmPassword && this.newPassword !== this.confirmPassword;
+  }
+
+  canSave(): boolean {
+    if (!this.utilisateurDto.nom || !this.utilisateurDto.email) return false;
+    if (!this.isEditMode && (!this.newPassword || !this.confirmPassword)) return false;
+    if (this.passwordMismatch) return false;
+    if (!this.adresseDto.adresse1 || !this.adresseDto.ville || !this.adresseDto.codePostal || !this.adresseDto.pays) return false;
+    return true;
+  }
+
   saveClick(): void {
+    this.submitted = true;
     this.errorMsgs = [];
+    if (!this.canSave()) return;
     if (!this.isEditMode) {
       if (!this.newPassword) {
         this.errorMsgs = ['Veuillez renseigner un mot de passe'];

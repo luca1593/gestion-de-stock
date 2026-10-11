@@ -11,7 +11,7 @@
     </div>
     <div class="header-content">
         <div class="d-flex justify-content-between align-items-center w-100">
-            <div class="search-container flex-grow-1 me-4" style="max-width: 400px;">
+            <div class="search-container flex-grow-1 me-3">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" 
@@ -40,8 +40,12 @@
                 </div>
             </div>
             <div class="header-actions d-flex align-items-center">
-                <!-- Toggle Sidebar (mobile) -->
-                <button class="btn-icon d-md-none" id="sidebarToggle">
+                <!-- Toggle Sidebar (tiroir < 992px) : la visibilité est pilotée
+                     en CSS (media min-width: 993px) pour rester alignee au pixel
+                     sur le breakpoint du tiroir. Une classe Bootstrap d-lg-none
+                     masquerait le bouton des 992px (scrollbar comprise) alors que
+                     le tiroir est encore actif -> menu inaccessible. -->
+                <button class="btn-icon" id="sidebarToggle" (click)="toggleSidebar()" title="Menu">
                     <i class="fas fa-bars"></i>
                 </button>
                 
@@ -112,5 +116,13 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="header-breadcrumb">
+        <app-breadcrumb></app-breadcrumb>
+        <span class="header-datetime">
+            <i class="fas fa-calendar-alt"></i>
+            <span class="date-text">{{dateDuJour | date:'dd MMMM yyyy'}}</span>
+            <span class="time-badge">{{dateDuJour | date:'HH:mm:ss'}}</span>
+        </span>
     </div>
 </div>

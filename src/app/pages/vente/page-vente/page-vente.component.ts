@@ -22,6 +22,7 @@ export class PageVenteComponent implements OnInit {
   listArticles: Array<ArticleDto>=[];
   articleNotYetSelected=true;
   errorMsg: Array<string>=[];
+  stockErrorMsg: string = '';
   dateVente='';
   codeVente='';
   venteDto: VenteDto={};
@@ -107,15 +108,39 @@ export class PageVenteComponent implements OnInit {
         art?.designation ?.toLowerCase().startsWith(this.codeArticle.toLowerCase())
     );
     this.articleNotYetSelected=true;
+    this.stockErrorMsg = '';
   }
 
   selectedArticle(article: ArticleDto): void {
     this.searchedArticle=article;
     this.codeArticle=article.codeArticle ? article.codeArticle : '';
     this.articleNotYetSelected=false;
+    this.stockErrorMsg = '';
   }
 
   addLigneCommande(): void {
+    if (!this.quantite || this.quantite < 1) {
+      this.errorMsg = ['La quantité doit être supérieure à 0'];
+      return;
+    }
+
+    if (!this.searchedArticle || !this.searchedArticle.id) {
+      this.errorMsg = ['Veuillez sélectionner un article valide'];
+      return;
+    }
+
+    const stockDispo = this.searchedArticle.stock || 0;
+    const ligneExistante = this.ligneDeVentes.find(
+      (ligne) => ligne.article?.codeArticle === this.searchedArticle.codeArticle
+    );
+    const qteExistante = ligneExistante ? (ligneExistante.quantite || 0) : 0;
+    if (qteExistante + this.quantite > stockDispo) {
+      this.errorMsg = [];
+      this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+      return;
+    }
+
+    this.stockErrorMsg = '';
     let totalCmd=0;
     let totalQnt=0;
 
@@ -161,5 +186,45 @@ export class PageVenteComponent implements OnInit {
     this.articleService.findAllArticle().subscribe((articles) => {
       this.listArticles=articles;
     });
+    this.stockErrorMsg = '';
+  }
+
+  onQuantiteChange(event: {ligne: any, delta: number}): void {
+    const nouvelleQte = (event.ligne.quantite || 0) + event.delta;
+    if (nouvelleQte < 1) return;
+
+    if (event.delta > 0) {
+      const stockDispo = event.ligne.article?.stock || 0;
+      if (nouvelleQte > stockDispo) {
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        return;
+      }
+    }
+
+    this.stockErrorMsg = '';
+    event.ligne.quantite = nouvelleQte;
+    this.calculerTotalVente();
+  }
+
+  onDeleteLigne(ligne: any): void {
+    const index = this.ligneDeVentes.indexOf(ligne);
+    if (index > -1) {
+      this.ligneDeVentes.splice(index, 1);
+      this.calculerTotalVente();
+    }
+    this.stockErrorMsg = '';
+  }
+
+  private calculerTotalVente(): void {
+    let totalCmd = 0;
+    let totalQnt = 0;
+    this.ligneDeVentes.forEach((ligne) => {
+      if (ligne.prixUnitaire && ligne.quantite) {
+        totalCmd += ligne.prixUnitaire * ligne.quantite;
+        totalQnt += ligne.quantite;
+      }
+    });
+    this.totalVente = Math.floor(totalCmd);
+    this.quantiteListArticle = totalQnt;
   }
 }

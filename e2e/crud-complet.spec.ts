@@ -1,6 +1,6 @@
 import { test, expect, Page } from '@playwright/test';
 
-const USER_EMAIL = 'entreprise1@test.com';
+const USER_EMAIL = 'entreprise2@test.com';
 const USER_PASSWORD = 'luca1593';
 
 async function login(page: Page) {

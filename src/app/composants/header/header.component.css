@@ -9,6 +9,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    min-width: 0;
 }
 
 .header-content .row {
@@ -247,8 +248,52 @@ body.dark-theme .user-greeting {
 }
 
 .search-container {
-    max-width: 450px;
+    position: relative;
+    /* max-width en CSS (plus de valeur en dur dans le markup) + min-width: 0
+       pour que le champ puisse rétrécir sur mobile au lieu de pousser la ligne. */
+    width: 100%;
+    max-width: 400px;
+    min-width: 0;
     flex-grow: 1;
+}
+
+.header-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color, #eef0f3);
+    min-width: 0;
+}
+
+.header-breadcrumb app-breadcrumb {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.header-datetime {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+    color: var(--text-secondary, #6c757d);
+    font-size: 0.85rem;
+}
+
+.header-datetime > i {
+    color: var(--text-secondary, #6c757d);
+}
+
+.header-datetime .time-badge {
+    background: linear-gradient(135deg, #4a90d9, #2a5298);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
 .search-box {
@@ -310,6 +355,16 @@ body.dark-theme .user-greeting {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+/* Le tiroir est actif jusqu'a 992px : le bouton doit rester visible
+   jusqu'a 992px inclus et disparaitre a 993px, aligne au pixel pres.
+   Une classe Bootstrap (d-lg-none) masquerait le bouton des 992px
+   viewport, scrollbar comprise, alors que le tiroir est encore actif. */
+@media (min-width: 993px) {
+    #sidebarToggle {
+        display: none;
+    }
 }
 
 .btn-icon {
@@ -595,7 +650,26 @@ body.dark-theme .user-greeting {
     .header-wrapper {
         padding: 0.75rem 1rem;
     }
-    
+
+    /* La ligne recherche + actions ne tient pas sur mobile : on la passe sur
+       deux lignes (actions en haut, recherche pleine largeur en dessous)
+       au lieu de laisser déborder. */
+    .header-content .d-flex {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .header-actions {
+        order: 1;
+    }
+
+    .search-container {
+        order: 2;
+        flex: 1 1 100%;
+        max-width: 100%;
+        margin-right: 0 !important;
+    }
+
     .search-box {
         padding: 0.4rem 0.75rem;
     }
@@ -613,6 +687,10 @@ body.dark-theme .user-greeting {
 @media (max-width: 576px) {
     .header-actions {
         gap: 0.25rem;
+    }
+
+    .header-datetime .date-text {
+        display: none;
     }
     
     .notification-dropdown {

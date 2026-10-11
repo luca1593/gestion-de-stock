@@ -8,7 +8,7 @@
   <div class="card shadow-sm" *ngIf="!loading && utilisateur.id">
     <div class="card-body">
       <div class="d-flex align-items-center mb-3">
-        <img [src]="utilisateur.photo || 'favicon.ico'" class="rounded-circle border" width="70" height="70" style="object-fit:cover;">
+        <img [src]="utilisateur.photo || 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2250%22%20fill%3D%22%23e9ecef%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2238%22%20r%3D%2216%22%20fill%3D%22%23adb5bd%22%2F%3E%3Cpath%20d%3D%22M18%2082c0-16%2014-30%2032-30s32%2014%2032%2030%22%20fill%3D%22%23adb5bd%22%2F%3E%3C%2Fsvg%3E'" class="rounded-circle border" width="70" height="70" style="object-fit:cover;">
         <div class="ms-3">
           <h4 class="mb-0">{{utilisateur.nom}} {{utilisateur.prenom}}</h4>
           <span class="badge bg-primary" *ngIf="utilisateur.roles && utilisateur.roles.length > 0">{{utilisateur.roles[0].roleNom}}</span>
@@ -49,9 +49,6 @@
       </div>
       <hr>
       <div class="text-end">
-        <button class="btn btn-outline-secondary me-2" (click)="retour()">
-          <i class="fas fa-arrow-left me-1"></i> Retour
-        </button>
         <button class="btn btn-primary" (click)="modifier()">
           <i class="fas fa-edit me-1"></i> Modifier
         </button>

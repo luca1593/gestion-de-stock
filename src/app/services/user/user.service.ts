@@ -29,7 +29,7 @@ export class UserService {
   }
 
   private get storage(): Storage {
-    return sessionStorage.getItem(this.REMEMBER_KEY) === 'true' ? localStorage : sessionStorage;
+    return (sessionStorage.getItem(this.REMEMBER_KEY) || localStorage.getItem(this.REMEMBER_KEY)) === 'true' ? localStorage : sessionStorage;
   }
 
   private setupVisibilityHandler(): void {
@@ -102,7 +102,7 @@ export class UserService {
   }
 
   onLoginSuccess(response: AuthenticationResponse, user: UtilisateurDto, rememberMe = false): void {
-    sessionStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
+    localStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
     this.storage.setItem(this.TOKEN_KEY, JSON.stringify(response));
     this.storage.setItem(this.USER_KEY, JSON.stringify(user));
     this.connectedUserSubject.next(user);
@@ -115,7 +115,7 @@ export class UserService {
   }
 
   private clearSession(): void {
-    sessionStorage.removeItem(this.REMEMBER_KEY);
+    localStorage.removeItem(this.REMEMBER_KEY);
     sessionStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
     localStorage.removeItem(this.TOKEN_KEY);
@@ -125,12 +125,12 @@ export class UserService {
   }
 
   setAccessToken(authenticationResponse: AuthenticationResponse, rememberMe = false): void {
-    sessionStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
+    localStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
     this.storage.setItem(this.TOKEN_KEY, JSON.stringify(authenticationResponse));
   }
 
   setConnectedUser(utilisateur: UtilisateurDto, rememberMe = false): void {
-    sessionStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
+    localStorage.setItem(this.REMEMBER_KEY, rememberMe ? 'true' : 'false');
     this.storage.setItem(this.USER_KEY, JSON.stringify(utilisateur));
     this.connectedUserSubject.next(utilisateur);
   }
@@ -157,7 +157,7 @@ export class UserService {
   }
 
   isUserLogedAndAccessTokenValid(): boolean{
-    const tokenStr = sessionStorage.getItem(this.TOKEN_KEY);
+    const tokenStr = this.storage.getItem(this.TOKEN_KEY);
     if (!tokenStr) {
       this.router.navigate(['login']);
       return false;

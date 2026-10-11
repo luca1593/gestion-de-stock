@@ -19,6 +19,9 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
   listCommandes: Array<any>=[];
   listCommandesFilter: Array<any>=[];
   mapLigneComandes=new Map();
+  // Copie de l'ordre API (jamais triée) pour restaurer l'ordre par défaut
+  // quand on change de ligne.
+  mapLigneComandesRaw=new Map();
   mapNmbrArticle=new Map();
   mapTotalTtc=new Map();
   errorMsg="";
@@ -109,26 +112,35 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
       this.sortState.direction = 'asc';
     }
     this.applySort();
-    this.page = 1;
+    // Pas de reset de page ici : ce tri ne concerne que le tableau des
+    // lignes de la commande dépliée, pas la liste principale des commandes.
     this.cdr.markForCheck();
   }
 
   private applySort(): void {
-    if (this.sortState.column) {
-      if (this.sortState.column === 'total') {
-        this.mapLigneComandes.forEach((lignes, key) => {
-          const sorted = [...lignes].sort((a: any, b: any) => {
-            const totalA = (a.quantite || 0) * (a.prixUnitaire || 0);
-            const totalB = (b.quantite || 0) * (b.prixUnitaire || 0);
-            return this.sortState.direction === 'asc' ? totalA - totalB : totalB - totalA;
-          });
-          this.mapLigneComandes.set(key, sorted);
-        });
-      } else {
-        this.mapLigneComandes.forEach((lignes, key) => {
-          this.mapLigneComandes.set(key, sortByProperty(lignes, this.sortState.column, this.sortState.direction));
-        });
-      }
+    if (!this.sortState.column) {
+      return;
+    }
+    this.mapLigneComandes.forEach((_, key) => this.applySortForCommande(key));
+  }
+
+  private applySortForCommande(idCommande: number): void {
+    if (!this.sortState.column) {
+      return;
+    }
+    const lignes = this.mapLigneComandes.get(idCommande);
+    if (!lignes) {
+      return;
+    }
+    if (this.sortState.column === 'total') {
+      const sorted = [...lignes].sort((a: any, b: any) => {
+        const totalA = (a.quantite || 0) * (a.prixUnitaire || 0);
+        const totalB = (b.quantite || 0) * (b.prixUnitaire || 0);
+        return this.sortState.direction === 'asc' ? totalA - totalB : totalB - totalA;
+      });
+      this.mapLigneComandes.set(idCommande, sorted);
+    } else {
+      this.mapLigneComandes.set(idCommande, sortByProperty(lignes, this.sortState.column, this.sortState.direction));
     }
   }
 
@@ -163,11 +175,23 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
   }
 
    toggleCommande(cmdId: number): void {
-     if (this.selectedCommandeId === cmdId) {
-       this.selectedCommandeId = null;
-     } else {
-       this.selectedCommandeId = cmdId;
+     const switching = this.selectedCommandeId !== cmdId;
+     this.selectedCommandeId = switching ? cmdId : null;
+     if (switching) {
+       this.resetTriLignes();
      }
+   }
+
+   // Chaque ligne affichée repart de l'ordre par défaut (API), sans flèche.
+   private resetTriLignes(): void {
+     this.sortState = { column: '', direction: 'asc' };
+     this.mapLigneComandesRaw.forEach((lignes, key) => {
+       this.mapLigneComandes.set(key, [...lignes]);
+     });
+   }
+
+   isCommandeVerrouillee(etat: string | undefined): boolean {
+     return etat === 'LIVREE' || etat === 'VALIDEE';
    }
 
    modifierCommande(id: number): void {
@@ -246,6 +270,8 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (list) => {
           this.mapLigneComandes.set(idCommande, list);
+          this.mapLigneComandesRaw.set(idCommande, [...list]);
+          this.applySortForCommande(idCommande);
           this.calculerTotalCmd(idCommande, list);
         },
         error: (err) => {
@@ -257,6 +283,8 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (list) => {
           this.mapLigneComandes.set(idCommande, list);
+          this.mapLigneComandesRaw.set(idCommande, [...list]);
+          this.applySortForCommande(idCommande);
           this.calculerTotalCmd(idCommande, list);
         },
         error: (err) => {

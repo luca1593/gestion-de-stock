@@ -17,8 +17,19 @@ export class DetailsCmdComponent {
   @Output()
   deleteLigne = new EventEmitter<LigneCommandeClientDto>();
 
+  @Output()
+  quantiteChange = new EventEmitter<{ligne: LigneCommandeClientDto, delta: number}>();
+
   onDelete(): void {
     this.deleteLigne.emit(this.ligneCommande);
+  }
+
+  incrementer(): void {
+    this.quantiteChange.emit({ligne: this.ligneCommande, delta: 1});
+  }
+
+  decrementer(): void {
+    this.quantiteChange.emit({ligne: this.ligneCommande, delta: -1});
   }
 
 }

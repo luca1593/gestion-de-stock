@@ -113,6 +113,17 @@ body {
     background-color: var(--table-hover, #edf2f7);
 }
 
+/* En-têtes bleus (.table thead) : le survol global clair y rendrait le texte
+   blanc illisible. Voile blanc translucide + texte/chevron blancs. */
+.table thead .sortable:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+
+.table thead .sort-arrow {
+    color: #fff;
+}
+
 .sort-arrow {
     font-size: 0.7rem;
     margin-left: 0.3rem;
@@ -1132,31 +1143,21 @@ body.dark-theme .modal-footer {
 .p-5 { padding: var(--spacing-xl) !important; }
 
 /* Responsive adjustments */
+/*
+ * Le rail forcé (width: 80px + libellés masqués) a été retiré d'ici :
+ * il court-circuitait le mécanisme de collapse de l'app
+ * (.sidebar.collapsed / .main-content.menu-collapsed) et rendait le bouton
+ * de repli inopérant entre 993px et 1200px. Le collapse est désormais piloté
+ * par l'état de l'application à toutes les tailles.
+ */
 @media (max-width: 1200px) {
-    .sidebar {
-        width: 80px;
-    }
-    
     .sidebar .brand {
         font-size: 1rem;
         padding: var(--spacing-sm);
     }
-    
-    .sidebar .menu-item span {
-        display: none;
-    }
-    
-    .sidebar .menu-item {
+
+    .sidebar .brand {
         justify-content: center;
-        padding: var(--spacing-md);
-    }
-    
-    .header {
-        margin-left: 80px;
-    }
-    
-    .main-container {
-        margin-left: 80px;
     }
 }
 

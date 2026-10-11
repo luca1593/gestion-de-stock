@@ -1,6 +1,6 @@
 <div class="col p-2 mb-3">
   <div class="row">
-    <div class="col-8 col-lg-9 px-3">
+    <div class="col-12 col-md-8 col-lg-9 px-3">
       <div class="col-md-12 mb-2">
         <h4>
           <i class="fas fa-shopping-cart blue-color"></i>&nbsp;Nouvel {{ origin }}
@@ -26,7 +26,7 @@
               </div>
             </div>
             <div class="col-md-2 mb-2">
-              <input type="number" class="form-control form-control-sm" name="quantite" [(ngModel)]="quantite" placeholder="Qté"/>
+              <input type="number" class="form-control form-control-sm" name="quantite" [(ngModel)]="quantite" placeholder="Qté" min="1" (keydown)="$event.key === '-' ? $event.preventDefault() : true"/>
             </div>
             <div class="col-md-3 mb-2">
               <input type="text" class="form-control form-control-sm" name="prixTtc" disabled
@@ -43,12 +43,17 @@
             </div>
           </form>
         </div>
+        <div class="text-danger small mb-2" *ngIf="stockErrorMsg">
+          {{ stockErrorMsg }}
+        </div>
         <div class="row custom-border mb-2">
           <div class="card">
             <div class="card-body scroll-body-max-height-130" *ngIf="ligneDeVentes.length > 0">
               <app-details-cmd
                 *ngFor="let ligneVente of ligneDeVentes"
-                [ligneCommande]="ligneVente"></app-details-cmd>
+                [ligneCommande]="ligneVente"
+                (quantiteChange)="onQuantiteChange($event)"
+                (deleteLigne)="onDeleteLigne($event)"></app-details-cmd>
             </div>
             <div class="card-footer">
               <div class="row">
@@ -73,7 +78,7 @@
         </div>
       </div>
     </div>
-    <div class="col-4 col-lg-3 p-2">
+    <div class="col-12 col-md-4 col-lg-3 p-2">
       <app-calculator></app-calculator>
     </div>
   </div>

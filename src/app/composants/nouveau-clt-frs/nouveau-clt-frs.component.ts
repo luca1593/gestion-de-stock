@@ -18,9 +18,11 @@ export class NouveauCltFrsComponent implements OnInit {
   clientFournisseur: any={};
   adresseDto: AdresseDto={};
   errorMsgs: Array<string>=[];
+  submitted = false;
   file: File | null=null;
-  imgUrl: string | ArrayBuffer='favicon.ico';
+  imgUrl: string | ArrayBuffer='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2250%22%20fill%3D%22%23e9ecef%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2238%22%20r%3D%2216%22%20fill%3D%22%23adb5bd%22%2F%3E%3Cpath%20d%3D%22M18%2082c0-16%2014-30%2032-30s32%2014%2032%2030%22%20fill%3D%22%23adb5bd%22%2F%3E%3C%2Fsvg%3E';
   loading = true;
+  isEditMode = false;
 
   constructor(
     private router: Router,
@@ -40,6 +42,7 @@ export class NouveauCltFrsComponent implements OnInit {
   findCltfrs():void{
     const id=this.activatedRoute.snapshot.params['id'];
     if(id){
+      this.isEditMode = true;
       this.loading = true;
       if(this.origin === "client"){
         this.cltfrsService.findClientById(id).subscribe({
@@ -78,6 +81,13 @@ export class NouveauCltFrsComponent implements OnInit {
   }
 
   enregistrer(): void {
+    this.submitted = true;
+
+    if (!this.clientFournisseur.nom || !this.adresseDto.adresse1 || !this.adresseDto.ville || !this.adresseDto.codePostal || !this.adresseDto.pays) {
+      this.errorMsgs = ['Veuillez remplir tous les champs obligatoires'];
+      return;
+    }
+
     if(this.origin === "client"){
       this.cltfrsService.enregistreClient(this.mapToClient()).subscribe(resp =>{
         this.clientFournisseur = resp;

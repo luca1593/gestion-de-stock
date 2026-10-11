@@ -10,37 +10,80 @@
     flex: 1;
 }
 
-/* Bouton toggle intégré à la sidebar */
+/* Bouton toggle flat sur le bord de la sidebar */
 .menu-toggle {
     position: absolute;
-    right: -14px;
-    top: 80px;
+    right: -17px;
+    top: 88px;
     z-index: 5;
-    width: 28px;
-    height: 48px;
-    border-radius: 0 6px 6px 0;
-    border: none;
-    background: #4a90d9;
-    color: white;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-body, #e9ecef);
+    background: var(--primary-color, #4a90d9);
+    color: #fff;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s ease, transform 0.25s ease;
 }
 
 .menu-toggle:hover {
     background: #3a7bc8;
+    transform: translateX(2px);
+}
+
+.menu-toggle:active {
+    transform: scale(0.95);
+}
+
+.menu-toggle:focus-visible {
+    outline: 2px solid #4a90d9;
+    outline-offset: 2px;
 }
 
 .menu-toggle i {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     transition: transform 0.3s ease;
 }
 
-.sidebar.collapsed .menu-toggle {
-    right: -14px;
-    border-radius: 6px 0 0 6px;
+.menu-toggle i.rotated {
+    transform: rotate(180deg);
+}
+
+/* Fond assombri derriere le menu mobile : ferme au clic */
+.sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.45);
+    animation: backdropFade 0.2s ease;
+}
+
+@keyframes backdropFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (min-width: 993px) {
+    /* Le fond ne sert qu'en mobile */
+    .sidebar-backdrop {
+        display: none;
+    }
+}
+
+/* Menu masque hors ecran : retire du flux clavier et des lecteurs d'ecran */
+@media (max-width: 992px) {
+    .sidebar {
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .sidebar.open {
+        visibility: visible;
+        pointer-events: auto;
+    }
 }
 
 /* Sidebar */
@@ -86,16 +129,25 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    /* min-width: 0 est indispensable : sans lui, un enfant large (header,
+       tableau) impose sa largeur au layout et déborde sur mobile. */
+    min-width: 0;
     background-color: var(--bg-body, #f0f2f5);
     transition: margin-left 0.3s ease;
     padding: 0 1rem;
     gap: 1rem;
 }
 
-.sidebar.collapsed + .main-content,
-.sidebar.collapsed ~ .main-content,
-.main-content.menu-collapsed {
-    margin-left: 70px;
+/* Le décalage en mode réduit ne concerne que le bureau : en dessous de 992px
+   le tiroir est hors canvas et le contenu doit occuper toute la largeur.
+   Sans cette borne, .main-content.menu-collapsed gardait ses 70px de marge
+   sur mobile/tablette et créait une bande morte à gauche. */
+@media (min-width: 993px) {
+    .sidebar.collapsed + .main-content,
+    .sidebar.collapsed ~ .main-content,
+    .main-content.menu-collapsed {
+        margin-left: 70px;
+    }
 }
 
 /* Header */
@@ -130,7 +182,7 @@
 
 .footer-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     color: var(--text-secondary, #6c757d);
     font-size: 0.9rem;
@@ -141,45 +193,19 @@
     color: #4a90d9;
 }
 
-.footer-content .date-time {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.footer-content .date-time i {
-    color: var(--text-secondary, #6c757d);
-}
-
-.time-badge {
-    background: linear-gradient(135deg, #4a90d9, #2a5298);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
 /* Responsive */
+/*
+ * Le rail forcé (width: 80px + libellés masqués) a été retiré d'ici aussi :
+ * il court-circuitait le collapse de l'app (.sidebar.collapsed) et rendait le
+ * bouton de repli inopérant entre 993px et 1200px.
+ */
 @media (max-width: 1200px) {
-    .sidebar {
-        width: 80px;
-    }
-    
     .sidebar .brand span {
         display: none;
     }
-    
+
     .sidebar .brand {
         justify-content: center;
-    }
-    
-    .main-content {
-        margin-left: 80px;
-    }
-    
-    .menu-toggle {
-        left: 50px;
     }
 }
 
@@ -188,20 +214,22 @@
         transform: translateX(-100%);
         transition: transform 0.3s ease;
     }
-    
+
     .sidebar.open {
         transform: translateX(0);
         width: 260px;
     }
-    
+
     .main-content {
         margin-left: 0;
     }
-    
+
+    /* Le hamburger du header ouvre/ferme le tiroir : ce bouton flottant
+       chevauchait le logo et doublonnait. Masque sur mobile. */
     .menu-toggle {
-        left: 10px;
+        display: none;
     }
-    
+
     .footer-content {
         flex-direction: column;
         gap: 0.5rem;
@@ -223,9 +251,5 @@
 @media (max-width: 576px) {
     .content-area {
         padding: 0.75rem;
-    }
-    
-    .time-badge {
-        display: none;
     }
 }

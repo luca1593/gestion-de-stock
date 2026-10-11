@@ -197,3 +197,15 @@ body.dark-theme .calc-btn.equals:hover {
 .calc-btn:active {
     animation: btnPress 0.1s ease;
 }
+/* En dessous de 768px la calculatrice passe en pleine largeur sous le
+   formulaire : boutons plus hauts (cible tactile) et plus de gouttières. */
+@media (max-width: 767px) {
+    .calculator-container {
+        max-width: 100%;
+    }
+
+    .calc-btn {
+        height: 48px;
+        font-size: 1.1rem;
+    }
+}

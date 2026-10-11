@@ -56,30 +56,31 @@ export class DashboardService {
     return url;
   }
 
+  private addDateParams(params: HttpParams, debut?: string, fin?: string): HttpParams {
+    if (debut) { params = params.set('debut', formatDateForBackend(debut)); }
+    if (fin) { params = params.set('fin', formatDateForBackend(fin)); }
+    return params;
+  }
+
   getStats(): Observable<DashboardStatsDto> {
     return this.http.get<DashboardStatsDto>(`${this.rootUrl}v1/dashboard/stats`);
   }
 
   getVentesPeriode(debut?: string, fin?: string): Observable<Array<VenteStatsDto>> {
     let params = new HttpParams();
-    if (debut) {
-      params = params.set('debut', formatDateForBackend(debut));
-    }
-    if (fin) {
-      params = params.set('fin', formatDateForBackend(fin));
-    }
+    params = this.addDateParams(params, debut, fin);
     return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/ventes/periode`, { params });
   }
 
-  getChiffreAffairesMois(): Observable<Array<VenteStatsDto>> {
-    return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/chiffre-affaires/mois`);
+  getChiffreAffairesMois(debut?: string, fin?: string): Observable<Array<VenteStatsDto>> {
+    let params = new HttpParams();
+    params = this.addDateParams(params, debut, fin);
+    return this.http.get<Array<VenteStatsDto>>(`${this.rootUrl}v1/dashboard/chiffre-affaires/mois`, { params });
   }
 
   getTopArticles(limit?: number): Observable<Array<ArticleStatsDto>> {
     let params = new HttpParams();
-    if (limit) {
-      params = params.set('limit', String(limit));
-    }
+    if (limit) { params = params.set('limit', String(limit)); }
     return this.http.get<Array<ArticleStatsDto>>(`${this.rootUrl}v1/dashboard/articles/top`, { params });
   }
 
