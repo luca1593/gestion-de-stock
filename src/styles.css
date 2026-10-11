@@ -1142,6 +1142,88 @@ body.dark-theme .modal-footer {
 .p-4 { padding: var(--spacing-lg) !important; }
 .p-5 { padding: var(--spacing-xl) !important; }
 
+/* ========== EN-TÊTES DE PAGE RESPONSIVE ========== */
+
+/*
+ * Toutes les pages de liste (articles, catégories, clients, fournisseurs,
+ * utilisateurs, avoirs) partagent la même structure : un titre à gauche et
+ * les boutons Importer/Exporter/Nouveau à droite. Sur mobile, cette ligne ne
+ * tient pas : le titre était écrasé et les boutons entassés.
+ *
+ * Une seule règle pour les six pages grâce à la classe commune .page-header,
+ * plutôt qu'une copie du même bloc dans six fichiers de composant.
+ *
+ * !important nécessaire : les règles de base (.categories-header, etc.) sont
+ * dans le CSS de chaque composant, donc porteuses de l'attribut
+ * d'encapsulation Angular -- leur spécificité (0,2,0) bat un sélecteur global
+ * simple, et elles sont injectées après la feuille globale.
+ */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+        padding: 1rem !important;
+    }
+
+    .page-header .header-title h3 {
+        font-size: 1.15rem;
+    }
+
+    .page-header .header-actions {
+        width: 100%;
+    }
+
+    /*
+     * Les trois boutons du composant app-bouton-action (Importer / Exporter /
+     * Nouveau) étaient entasses et le texte rogne. Chaque bouton occupe un
+     * tiers de la largeur, passe a la ligne si l'espace manque vraiment, et
+     * son intitule n'est jamais coupe.
+     */
+    .page-header .header-actions .d-flex {
+        flex-wrap: wrap;
+    }
+
+    .page-header .header-actions .d-flex > div {
+        flex: 1 1 30%;
+        min-width: 88px;
+    }
+
+    .page-header .header-actions .btn {
+        width: 100%;
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* ========== RESPONSIVE : ECHELLE TYPOGRAPHIQUE ========== */
+
+/*
+ * Réduire la base (html) plutôt que chaque font-size : l'application utilise
+ * le rem presque partout (texte ET tokens d'espacement), donc une seule règle
+ * fait suivre tout le monde de façon cohérente. Toucher les 252 valeurs en dur
+ * serait ingérable et produirait des tailles incohérentes entre composants.
+ *
+ * Tablette : -5%   (confort sur 768-991px)
+ * Mobile  : -10%  (densité sur <=768px)
+ *
+ * Réduction volontairement modérée : au-delà, les petites tailles des
+ * tableaux passent sous 10px et deviennent illisibles. Ces valeurs ont par
+ * ailleurs été remontées à un plancher de 0.75rem dans les composants.
+ */
+@media (max-width: 992px) {
+    html {
+        font-size: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 90%;
+    }
+}
+
 /* Responsive adjustments */
 /*
  * Le rail forcé (width: 80px + libellés masqués) a été retiré d'ici :

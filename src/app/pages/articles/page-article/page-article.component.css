@@ -116,7 +116,7 @@
 .articles-table th {
     padding: 0.5rem 0.4rem;
     text-align: left;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -188,7 +188,7 @@
     display: inline-block;
     padding: 0.2rem 0.5rem;
     border-radius: 20px;
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     font-weight: 500;
     background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
     color: #475569;
@@ -224,7 +224,7 @@
 }
 
 .price-currency {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     color: var(--text-muted, #9ca3af);
     margin-left: 2px;
 }
@@ -279,7 +279,7 @@
 }
 
 .stock-label {
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     color: var(--text-muted, #9ca3af);
 }
 

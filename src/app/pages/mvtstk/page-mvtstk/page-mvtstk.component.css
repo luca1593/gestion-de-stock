@@ -116,7 +116,7 @@
 .mvtstk-table th {
     padding: 0.5rem 0.4rem;
     text-align: left;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -207,7 +207,7 @@
 }
 
 .article-category {
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     color: var(--text-muted, #9ca3af);
 }
 
@@ -324,12 +324,12 @@
 }
 
 .mvt-date {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: var(--text-muted, #9ca3af);
 }
 
 .mvt-type {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 600;
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
@@ -350,12 +350,12 @@
 }
 
 .mvt-source {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: var(--text-muted, #9ca3af);
 }
 
 .mvt-ref {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--primary-color, #4a90d9);
     background: rgba(74, 144, 217, 0.1);
