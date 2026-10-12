@@ -204,6 +204,25 @@ export class DeatailClientFournisseurComponent implements OnInit {
     });
   }
 
+  /**
+   * Ouvre la liste des factures filtrée sur ce client / fournisseur.
+   *
+   * Le filtre passe par query param (et non par une nouvelle route) : la page
+   * Factures reste la seule vue de la liste, elle lit simplement le filtre à
+   * l'entrée.
+   */
+  voirFactures(): void {
+    const nom = [this.clientFrournisseurDTO?.nom, this.clientFrournisseurDTO?.prenom]
+      .filter(Boolean)
+      .join(' ');
+    this.router.navigate(['factures'], {
+      queryParams: {
+        tiers: nom,
+        type: this.origin === 'client' ? 'CLIENT' : 'FOURNISSEUR'
+      }
+    });
+  }
+
   modifierClient(): void {
     this.router.navigate(["nouveau-" + this.origin, this.clientFrournisseurDTO.id]);
   }

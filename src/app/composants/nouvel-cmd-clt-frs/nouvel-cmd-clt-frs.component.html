@@ -135,12 +135,19 @@
             </div>
         </div>
 
+        <div *ngIf="!isModification">
+            <app-encaissement
+                [montantDu]="totalCommande"
+                [libelleMontant]="'Total de la commande'"
+                (encaissementChange)="onEncaissementChange($event)"></app-encaissement>
+        </div>
+
         <div class="col-md-12 text-end">
             <button class="btn btn-danger mx-1" (click)="cancelClick()">
                 <i class="fas fa-ban"  ></i>&nbsp;Annuler
             </button>
             <button class="btn btn-success mx-1" (click)="saveClick()" [disabled]="!selectedClientFournisseur || !selectedClientFournisseur.id">
-                <i class="fas fa-save"></i>&nbsp;Sauvegarder
+                <i class="fas fa-save"></i>&nbsp;{{ isModification ? 'Sauvegarder' : 'Encaisser la commande' }}
             </button>
         </div>
     </div>

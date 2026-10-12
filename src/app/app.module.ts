@@ -51,6 +51,9 @@ import { CalculatorComponent } from './composants/calculator/calculator.componen
 import { HisistoriqueVenteComponent } from './pages/vente/hisistorique-vente/hisistorique-vente.component';
 import { PageVenteComponent } from './pages/vente/page-vente/page-vente.component';
 import { PageHaveurComponent } from './pages/avoirs/page-avoir/page-avoir.component';
+import { PageFactureComponent } from './pages/factures/page-facture/page-facture.component';
+import { PaiementFactureComponent } from './pages/factures/paiement-facture/paiement-facture.component';
+import { EncaissementComponent } from './composants/encaissement/encaissement.component';
 import { NouvelAvoirComponent } from './pages/avoirs/nouvel-avoir/nouvel-avoir.component';
 import { EtatoWorkflowComponent } from './composants/etat-workflow/etat-workflow.component';
 import { BreadcrumbComponent } from './composants/breadcrumb/breadcrumb.component';
@@ -100,7 +103,10 @@ registerLocaleData(localeFr, 'fr');
     PageHaveurComponent,
     NouvelAvoirComponent,
    EtatoWorkflowComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    PageFactureComponent,
+    PaiementFactureComponent,
+    EncaissementComponent
   ],
   imports: [
     BrowserModule,

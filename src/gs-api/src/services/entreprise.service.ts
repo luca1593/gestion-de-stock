@@ -14,8 +14,8 @@ class EntrepriseService extends __BaseService {
   static readonly EntrepriseApiFindAllGETPath='v1/entreprise/all';
   static readonly EntrepriseApiFindByEmailEntrepriseGETPath='v1/entreprise/email/{emailEntreprise}';
   static readonly EntrepriseApiSavePOSTPath='v1/entreprise/save';
-  static readonly EntrepriseApiDeleteDELETEPath='v1/entreprise/delete{idEntreprise}';
-  static readonly EntrepriseApiFindByNomEntrepriseGETPath='v1/entreprise/nom{nomEntreprise}';
+  static readonly EntrepriseApiDeleteDELETEPath='v1/entreprise/delete/{idEntreprise}';
+  static readonly EntrepriseApiFindByNomEntrepriseGETPath='v1/entreprise/nom/{nomEntreprise}';
   static readonly EntrepriseApiFindByIdGETPath='v1/entreprise/{idEntreprise}';
 
   constructor(
@@ -157,7 +157,7 @@ class EntrepriseService extends __BaseService {
     let __body: any=null;
     let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `v1/entreprise/delete${encodeURIComponent(String(idEntreprise))}`,
+      this.rootUrl + `v1/entreprise/delete/${encodeURIComponent(String(idEntreprise))}`,
       __body,
       {
         headers: __headers,
@@ -196,7 +196,7 @@ class EntrepriseService extends __BaseService {
     let __body: any=null;
     let req=new HttpRequest<any>(
       'GET',
-      this.rootUrl + `v1/entreprise/nom${encodeURIComponent(String(nomEntreprise))}`,
+      this.rootUrl + `v1/entreprise/nom/${encodeURIComponent(String(nomEntreprise))}`,
       __body,
       {
         headers: __headers,

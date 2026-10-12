@@ -68,12 +68,32 @@
           </div>
         </div>
 
+        <div class="row mb-2">
+          <div class="col-12 col-md-6 col-lg-4">
+            <select class="form-control form-control-sm" name="clientFacture" aria-label="Client facturé"
+                    [(ngModel)]="clientFacture" [compareWith]="compareClient" required>
+              <option [ngValue]="null">Sélectionnez le client facturé *</option>
+              <option *ngFor="let client of listClients" [ngValue]="client">
+                {{ client.nom }}&nbsp;{{ client.prenom }}
+              </option>
+            </select>
+            <div class="text-danger small mt-1" *ngIf="!clientFacture">
+              Ce champ est obligatoire
+            </div>
+          </div>
+        </div>
+
+        <app-encaissement
+          [montantDu]="totalVente"
+          libelleMontant="Total de la vente"
+          (encaissementChange)="onEncaissementChange($event)"></app-encaissement>
+
         <div class="col-md-12 text-end">
           <button class="btn btn-danger mx-1 btn-sm" (click)="cancelClick()">
             <i class="fas fa-ban"></i>&nbsp;Annuler
           </button>
-          <button class="btn btn-success mx-1 btn-sm" (click)="saveClick()">
-            <i class="fas fa-save"></i>&nbsp;Sauvegarder
+          <button class="btn btn-success mx-1 btn-sm" (click)="saveClick()" [disabled]="!clientFacture">
+            <i class="fas fa-save"></i>&nbsp;Encaisser la vente
           </button>
         </div>
       </div>

@@ -126,6 +126,13 @@ export class MenuComponent implements OnInit {
           icon: 'fas fa-receipt',
           url: 'avoirs',
           matchUrls: ['nouvel-avoir']
+        },
+        {
+          id: '54',
+          titre: 'Factures',
+          icon: 'fas fa-file-invoice-dollar',
+          url: 'factures',
+          matchUrls: ['facture']
         }
       ]
     },

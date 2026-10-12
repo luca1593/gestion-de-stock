@@ -4,7 +4,9 @@ import { forkJoin, Observable } from 'rxjs';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
-import { AdresseDto, ArticleDto, ClientDto, CommandeClientDto, CommandeFournisseurDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
+import { FactureService, SourceTypeFacture, TypeFacture } from 'src/app/services/facture/facture.service';
+import { Encaissement } from 'src/app/composants/encaissement/encaissement.component';
+import { AdresseDto, ArticleDto, ClientDto, CommandeClientDto, CommandeFournisseurDto, FactureDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
 
 @Component({
   selector: 'app-nouvel-cmd-clt-frs',
@@ -37,13 +39,30 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   commandeId: number | null = null;
   submitted: boolean = false;
 
+  /*
+   * Facturation : une nouvelle commande est enregistrée avec sa facture et son
+   * encaissement. En modification, la facture déjà émise n'est pas rejouée —
+   * seul un encaissement complémentaire peut être saisi depuis la liste des
+   * factures.
+   */
+  encaissement: Encaissement = {
+    paiement: { modePaiement: 'ESPECES' },
+    valide: false,
+    messages: []
+  };
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cltFrsService: CltfrsService,
     private articleService: ArtcleService,
-    private commandeCltFrs: CmdCltFrsService
+    private commandeCltFrs: CmdCltFrsService,
+    private factureService: FactureService
     ) { }
+
+  onEncaissementChange(encaissement: Encaissement): void {
+    this.encaissement = encaissement;
+  }
 
   ngOnInit():void {
     this.activatedRoute.data.subscribe(data => {
@@ -174,6 +193,13 @@ export class NouvelCmdCltFrsComponent implements OnInit {
 
     if (this.ligneDeCommandes.length === 0) {
       this.errorMsg = ['Veuillez ajouter au moins un article pour la commande'];
+      return;
+    }
+
+    if (!this.isModification && !this.encaissement.valide) {
+      this.errorMsg = this.encaissement.messages.length
+        ? this.encaissement.messages
+        : ['Renseignez le paiement de la facture'];
       return;
     }
     
@@ -331,7 +357,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     if (this.origin === "client") {
       this.commandeCltFrs.enregistrerCommandeClient(commande as CommandeClientDto, dateTimestamp).subscribe(
         cmd => {
-          this.router.navigate(['commande-client']);
+          this.enregistrerFactureCommande(cmd?.id);
         }, error => {
           this.errorMsg = error.error.errors;
         }
@@ -339,12 +365,49 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     } else {
       this.commandeCltFrs.enregistrerCommandeFournisseur(commande as CommandeFournisseurDto, dateTimestamp).subscribe(
         cmd => {
-          this.router.navigate(['commande-fournisseur']);
+          this.enregistrerFactureCommande(cmd?.id);
         }, error => {
           this.errorMsg = error.error.errors;
         }
       );
     }
+  }
+
+  /**
+   * La commande est enregistrée : on crée sa facture avec le paiement saisi.
+   * Si la facture échoue, la commande reste enregistrée (elle l'est déjà en
+   * base) et l'erreur est affichée à l'utilisateur — on ne perd jamais une
+   * commande parce que la facturation a un souci.
+   */
+  private enregistrerFactureCommande(commandeId?: number): void {
+    if (!commandeId) {
+      this.router.navigate([this.origin === 'client' ? 'commande-client' : 'commande-fournisseur']);
+      return;
+    }
+
+    const type: TypeFacture = this.origin === 'client' ? 'CLIENT' : 'FOURNISSEUR';
+    const sourceType: SourceTypeFacture = this.origin === 'client' ? 'COMMANDE_CLIENT' : 'COMMANDE_FOURNISSEUR';
+
+    const facture: FactureDto = this.factureService.preparerFactureSource({
+      type,
+      sourceType,
+      sourceId: commandeId,
+      codeSource: this.codeCmd,
+      lignes: this.ligneDeCommandes,
+      clientId: type === 'CLIENT' ? this.selectedClientFournisseur?.id : undefined,
+      fournisseurId: type === 'FOURNISSEUR' ? this.selectedClientFournisseur?.id : undefined,
+      paiement: this.encaissement.paiement
+    });
+
+    this.factureService.saveAvecPaiement(facture).subscribe({
+      next: () => this.router.navigate([this.origin === 'client' ? 'commande-client' : 'commande-fournisseur']),
+      error: (error) => {
+        this.errorMsg = [
+          `Commande ${this.codeCmd} enregistrée, mais la facture n'a pas pu être créée :`,
+          ...this.factureService.messagesErreur(error)
+        ];
+      }
+    });
   }
 
   private preparerCommande(): any{

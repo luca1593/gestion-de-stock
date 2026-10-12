@@ -3,7 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { ArticleDto, LigneVenteDto, VenteDto,} from 'src/gs-api/src/models';
+import { FactureService } from 'src/app/services/facture/facture.service';
+import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
+import { Encaissement } from 'src/app/composants/encaissement/encaissement.component';
+import { ClientDto, ArticleDto, FactureDto, LigneVenteDto, PaiementDto, VenteDto,} from 'src/gs-api/src/models';
 
 @Component({
   selector: 'app-pave-vente',
@@ -27,12 +30,28 @@ export class PageVenteComponent implements OnInit {
   codeVente='';
   venteDto: VenteDto={};
 
+  /*
+   * Facturation : la vente est enregistrée avec sa facture et son encaissement.
+   * VenteDto ne porte pas de client, or le backend refuse une facture client
+   * sans clientId : le sélecteur ci-dessous est donc obligatoire tant qu'on
+   * veut une facture traçable.
+   */
+  listClients: Array<ClientDto>=[];
+  clientFacture: ClientDto | null=null;
+  encaissement: Encaissement = {
+    paiement: { modePaiement: 'ESPECES' },
+    valide: false,
+    messages: []
+  };
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private venteService: VenteService,
     private articleService: ArtcleService,
-    private userService: UserService
+    private userService: UserService,
+    private factureService: FactureService,
+    private cltFrsService: CltfrsService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +60,23 @@ export class PageVenteComponent implements OnInit {
     });
     this.searchArticle();
     this.initCodeVente();
+    this.findAllClient();
+  }
+
+  private findAllClient(): void {
+    this.cltFrsService.findAllClient().subscribe(clients => {
+      this.listClients = clients;
+    });
+  }
+
+  onEncaissementChange(encaissement: Encaissement): void {
+    this.encaissement = encaissement;
+  }
+
+  /** ngModel compare les objets par référence : deux listes de clients
+   *  différentes ne désignent pas le même objet. */
+  compareClient(c1: ClientDto | null, c2: ClientDto | null): boolean {
+    return !!c1 && !!c2 && c1.id === c2.id;
   }
 
   initCodeVente() {
@@ -55,9 +91,21 @@ export class PageVenteComponent implements OnInit {
 
   saveClick(): void {
     this.errorMsg = [];
-    
+
     if (!this.ligneDeVentes.length) {
       this.errorMsg.push('Ajouter au moins un article pour la vente');
+      return;
+    }
+
+    if (!this.clientFacture?.id) {
+      this.errorMsg.push('Sélectionnez le client facturé');
+      return;
+    }
+
+    if (!this.encaissement.valide) {
+      this.errorMsg = this.encaissement.messages.length
+        ? this.encaissement.messages
+        : ['Renseignez le paiement de la facture'];
       return;
     }
 
@@ -82,13 +130,43 @@ export class PageVenteComponent implements OnInit {
 
     this.venteService.enregistrerVente(venteData).subscribe({
       next: (vente) => {
-        this.router.navigate(['vente']);
-        window.location.reload();
+        this.enregistrerFactureVente(vente);
       },
       error: (error) => {
         console.error('Erreur vente:', error);
         const errorMessage = error.error?.message || error.error?.errors || 'Erreur lors de l\'enregistrement de la vente';
         this.errorMsg = Array.isArray(errorMessage) ? errorMessage : [errorMessage];
+      }
+    });
+  }
+
+  /**
+   * La vente est enregistrée : on crée sa facture dans la foulée, avec le
+   * paiement saisi. Si la facture échoue, la vente reste enregistrée (elle
+   * l'est déjà côté base) et l'erreur est affichée — on ne fait jamais
+   * perdre une vente parce que la facturation a un souci.
+   */
+  private enregistrerFactureVente(vente: VenteDto): void {
+    if (!vente?.id) {
+      this.router.navigate(['vente']);
+      return;
+    }
+    const facture: FactureDto = this.factureService.preparerFactureSource({
+      type: 'CLIENT',
+      sourceType: 'VENTE',
+      sourceId: vente.id,
+      codeSource: vente.code ?? this.codeVente,
+      lignes: this.ligneDeVentes,
+      clientId: this.clientFacture?.id,
+      paiement: this.encaissement.paiement
+    });
+    this.factureService.saveAvecPaiement(facture).subscribe({
+      next: () => this.router.navigate(['liste-vente']),
+      error: (error) => {
+        this.errorMsg = [
+          `Vente ${vente.code} enregistrée, mais la facture n'a pas pu être créée :`,
+          ...this.factureService.messagesErreur(error)
+        ];
       }
     });
   }

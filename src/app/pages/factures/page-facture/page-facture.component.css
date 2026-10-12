@@ -1,0 +1,345 @@
+/* Page Factures : même gabarit que les autres pages de liste (articles,
+   clients, avoirs…) pour que la navigation reste stable d'un écran à l'autre. */
+
+.factures-container {
+    padding: 0;
+}
+
+.factures-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-color, #e9ecef);
+    background: var(--bg-card, white);
+}
+
+.header-title h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-title h3 i {
+    color: var(--primary-color, #4a90d9);
+}
+
+.alert-danger {
+    margin: 1rem 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+}
+
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-card, white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    color: var(--text-primary, #1f2937);
+}
+
+/* --- Barre de filtres : une seule ligne en tablette et desktop --- */
+
+.filter-card {
+    margin: 1rem 1.5rem;
+    padding: 1.25rem;
+    border-radius: 12px;
+    background: var(--bg-card, white);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color, #e9ecef);
+}
+
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.filter-group .form-control,
+.filter-group .form-select {
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-color, #d1d5db);
+    background: var(--input-bg, white);
+    color: var(--text-primary, #1f2937);
+    transition: all 0.2s;
+}
+
+.filter-group .form-control:focus,
+.filter-group .form-select:focus {
+    border-color: var(--primary-color, #4a90d9);
+    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
+}
+
+.filter-group .input-group-text {
+    background: var(--bg-card, white);
+    border-color: var(--border-color, #d1d5db);
+    color: var(--text-secondary, #6b7280);
+}
+
+.filter-actions {
+    flex: 0 0 auto;
+}
+
+.filter-actions .btn {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #d1d5db);
+    background: var(--bg-card, white);
+    color: var(--text-secondary, #6b7280);
+}
+
+/* Rappel du filtre « liée à une vente / une commande » hérité de l'URL. */
+.source-filtre {
+    margin-top: 0.6rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border-color, #e9ecef);
+    color: var(--text-secondary, #6b7280);
+}
+
+/* --- Tableau --- */
+
+.factures-table-card {
+    margin: 0 1.5rem 1rem;
+    border-radius: 12px;
+    background: var(--bg-card, white);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    border: 1px solid var(--border-color, #e9ecef);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.factures-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.factures-table thead {
+    background: var(--table-header-bg, #e2e8f0);
+}
+
+.factures-table th {
+    padding: 0.5rem 0.4rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-primary, #1f2937);
+    border-bottom: 2px solid var(--border-color, #cbd5e1);
+}
+
+.factures-table td {
+    padding: 0.45rem 0.4rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color, #f1f5f9);
+    color: var(--text-primary, #1f2937);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.facture-row {
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.facture-row:hover {
+    background: var(--table-hover, #f8fafc);
+}
+
+.facture-row.facture-ouverte {
+    background: var(--table-hover, #f8fafc);
+}
+
+/* Le numéro de facture est la référence que l'on cherche à l'œil :
+   monospace et teinte primaire, comme le code article des autres pages. */
+.facture-numero {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--primary-color, #4a90d9);
+    background: rgba(74, 144, 217, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+}
+
+.col-montant {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.col-type,
+.col-statut,
+.col-actions {
+    text-align: center;
+}
+
+/* --- Détail dépliable --- */
+
+.facture-detail td {
+    background: var(--bg-body, #f8fafc);
+    white-space: normal;
+    padding: 0.6rem 0.8rem;
+}
+
+.detail-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted, #9ca3af);
+}
+
+.detail-value {
+    color: var(--text-primary, #1f2937);
+    font-size: 0.85rem;
+}
+
+/* --- État vide et pagination --- */
+
+.empty-state {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text-secondary, #6b7280);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: var(--border-color, #cbd5e1);
+    margin-bottom: 1rem;
+}
+
+.empty-state h5 {
+    color: var(--text-primary, #1f2937);
+}
+
+.empty-state .btn {
+    margin-top: 1rem;
+}
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-card, white);
+    border-top: 1px solid var(--border-color, #e9ecef);
+}
+
+.pagination-info {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #6b7280);
+}
+
+/* --- Thème sombre --- */
+
+body.dark-theme .factures-header,
+body.dark-theme .factures-table-card,
+body.dark-theme .pagination-wrapper {
+    background: var(--bg-card, #16213e);
+    border-color: var(--border-color, #2d3748);
+}
+
+body.dark-theme .filter-card {
+    background: var(--bg-card, #16213e);
+    border-color: var(--border-color, #2d3748);
+}
+
+body.dark-theme .filter-group .form-control,
+body.dark-theme .filter-group .form-select {
+    background: var(--input-bg, #1e1e3f);
+    border-color: var(--border-color, #3a3a5c);
+    color: var(--text-primary, #e4e6eb);
+}
+
+body.dark-theme .facture-detail td {
+    background: var(--bg-body, #1a1a2e);
+}
+
+body.dark-theme .facture-numero {
+    background: rgba(74, 144, 217, 0.18);
+}
+
+body.dark-theme .source-filtre {
+    color: var(--text-secondary, #b0b3b8);
+}
+
+/* --- Responsive --- */
+
+@media (max-width: 768px) {
+    .factures-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .factures-table th,
+    .factures-table td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .pagination-wrapper {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .filter-card {
+        margin: 0.5rem 0;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-group .input-group-text {
+        padding: 0 0.6rem;
+    }
+
+    .filter-actions {
+        align-self: flex-end;
+        /* width:auto annule le width:100% de .filter-group : le bouton
+           reste compact et aligné à droite, comme sur la ligne de bureau,
+           au lieu d'occuper une rangée de 100% à vide. */
+        width: auto;
+    }
+}

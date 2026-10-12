@@ -60,6 +60,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     'nouvel-categorie/:idCategory': { label: 'Catégories', url: '/categories' },
     'nouvel-avoir': { label: 'Avoirs', url: '/avoirs' },
     'nouvel-avoir/:id': { label: 'Avoirs', url: '/avoirs' },
+    'facture/paiement/:idFacture': { label: 'Factures', url: '/factures' },
     'modifier-profil': { label: 'Profil', url: '/profil' },
     'changer-mot-de-passe': { label: 'Profil', url: '/profil' }
   };
