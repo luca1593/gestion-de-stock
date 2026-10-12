@@ -32,6 +32,17 @@
     --input-bg: #ffffff;
     --table-header-bg: linear-gradient(135deg, #4a90d9 0%, #2a5298 100%);
     --table-hover: #edf2f7;
+
+    /*
+     * Teintes claires des boutons d'action, dérivées des couleurs
+     * sémantiques ci-dessus (primary #4a90d9, success #28a745,
+     * danger #dc3545, info #17a2b8). Évite de recopier des rgba en dur
+     * dans chaque composant.
+     */
+    --primary-soft: rgba(74, 144, 217, 0.12);
+    --success-soft: rgba(40, 167, 69, 0.12);
+    --danger-soft: rgba(220, 53, 69, 0.12);
+    --info-soft: rgba(23, 162, 184, 0.12);
     
     /* Scrollbar */
     --scrollbar-track: #f1f1f1;
@@ -1007,16 +1018,108 @@ body.dark-theme .modal-footer {
     border-radius: 2px;
 }
 
-/* Action Buttons */
+/*
+ * Boutons d'action des lignes de tableau (voir / modifier / supprimer / PDF).
+ *
+ * Un seul endroit pour les neuf pages de liste : ce bloc était dupliqué à
+ * l'identique dans chaque composant, avec des couleurs Tailwind (#3b82f6...)
+ * au lieu des tokens du projet, ce qui garantissait une dérive visuelle.
+ * Variantes alignées sur la palette sémantique existante (primary / success /
+ * danger / info) plutôt que sur des hex arbitraires.
+ *
+ * 36px : compromis entre les 44px recommandés pour une cible tactile et la
+ * densité d'une ligne de tableau. État focus-visible ajouté (absent avant),
+ * et recul au clic pour confirmer l'action.
+ */
 .action-buttons {
-    display: flex;
+    display: inline-flex;
+    align-items: center;
     gap: var(--spacing-sm);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
-.action-buttons .btn {
-    padding: 0.4rem 0.8rem;
+.btn-action {
+    width: 36px;
+    height: 36px;
+    /* flex-shrink: 0 : dans une cellule de tableau étroite, un élément flex
+       rétrécit par défaut et l'icône se déformait (32px au lieu de 36). */
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     font-size: 0.85rem;
+    padding: 0;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.12s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+}
+
+.btn-action:active {
+    transform: scale(0.94);
+}
+
+.btn-action:focus-visible {
+    outline: 2px solid var(--primary-color, #4a90d9);
+    outline-offset: 2px;
+}
+
+.btn-action.btn-view {
+    background: var(--primary-soft);
+    color: var(--primary-color, #4a90d9);
+}
+
+.btn-action.btn-view:hover {
+    background: var(--primary-color, #4a90d9);
+    color: #ffffff;
+}
+
+.btn-action.btn-edit {
+    background: var(--success-soft);
+    color: var(--success-color, #28a745);
+}
+
+.btn-action.btn-edit:hover {
+    background: var(--success-color, #28a745);
+    color: #ffffff;
+}
+
+.btn-action.btn-delete {
+    background: var(--danger-soft);
+    color: var(--danger-color, #dc3545);
+}
+
+.btn-action.btn-delete:hover {
+    background: var(--danger-color, #dc3545);
+    color: #ffffff;
+}
+
+/* Variantes métier (mouvement de stock, avoirs) : même traitement,
+   rattachées à une couleur sémantique existante. */
+.btn-action.btn-correct,
+.btn-action.btn-details {
+    background: var(--info-soft);
+    color: var(--info-color, #17a2b8);
+}
+
+.btn-action.btn-correct:hover,
+.btn-action.btn-details:hover {
+    background: var(--info-color, #17a2b8);
+    color: #ffffff;
+}
+
+.btn-action.btn-pdf {
+    background: var(--danger-soft);
+    color: var(--danger-color, #dc3545);
+}
+
+.btn-action.btn-pdf:hover {
+    background: var(--danger-color, #dc3545);
+    color: #ffffff;
 }
 
 /* Badges */
@@ -1047,7 +1150,13 @@ body.dark-theme .modal-footer {
     color: white;
 }
 
-/* Pagination */
+/*
+ * Conteneur de pagination. Ce n'est qu'un repli : les six pages de liste
+ * redéfinissent .pagination-wrapper (info à gauche, pagination à droite), mais
+ * page-cmd-clt-frs, liste-vente et detail-client-fournisseur ne le font pas et
+ * s'appuient sur ces valeurs -- sans display:flex, leur texte d'information
+ * passait au-dessus de la pagination au lieu d'être à côté.
+ */
 .pagination-wrapper {
     display: flex;
     justify-content: center;
@@ -1055,25 +1164,79 @@ body.dark-theme .modal-footer {
     gap: var(--spacing-xs);
 }
 
-.pagination {
-    border-radius: 8px;
-    overflow: hidden;
+/*
+ * Pagination (ngx-pagination).
+ *
+ * La librairie embarque ses styles avec ViewEncapsulation.None, donc SANS
+ * attribut d'encapsulation : mais elle est injectée dans le <head> APRÈS cette
+ * feuille globale. À spécificité égale, c'est elle qui gagne (bleu #2199e8 et
+ * padding en dur conservés). D'où le préfixe `pagination-controls` sur chaque
+ * sélecteur : il fait passer la spécificité au-dessus et laisse la main au
+ * design du projet.
+ *
+ * Note : les templates liaient ces options en EVENT binding -- (responsive)=
+ * "true" -- ce qui ne transmettait rien. Corrigé en [responsive]="true", le
+ * mode responsive masque les numéros sous 601px au lieu de les laisser
+ * déborder sur plusieurs lignes.
+ */
+pagination-controls .ngx-pagination {
+    margin-bottom: var(--spacing-lg);
 }
 
-.page-link {
-    border: none;
-    padding: 0.5rem 1rem;
-    color: var(--primary-color);
-    transition: all var(--transition-speed);
+pagination-controls .ngx-pagination li {
+    margin-right: var(--spacing-xs);
 }
 
-.page-link:hover {
-    background: var(--primary-color);
-    color: white;
+pagination-controls .ngx-pagination a,
+pagination-controls .ngx-pagination .current,
+pagination-controls .ngx-pagination .disabled,
+pagination-controls .ngx-pagination .small-screen {
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
 }
 
-.page-item.active .page-link {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+pagination-controls .ngx-pagination .current {
+    background: var(--primary-color, #4a90d9);
+    color: #ffffff;
+}
+
+pagination-controls .ngx-pagination .disabled {
+    color: var(--text-muted, #718096);
+}
+
+pagination-controls .ngx-pagination a:hover {
+    background: var(--table-hover, #edf2f7);
+    color: var(--primary-color, #4a90d9);
+}
+
+/* Tablette : pagination plus compacte pour tenir sur une ligne. */
+@media (max-width: 992px) {
+    pagination-controls .ngx-pagination {
+        font-size: 0.85rem;
+    }
+
+    pagination-controls .ngx-pagination a,
+    pagination-controls .ngx-pagination .current,
+    pagination-controls .ngx-pagination .disabled,
+    pagination-controls .ngx-pagination .small-screen {
+        padding: 0.3rem 0.55rem;
+    }
+}
+
+/* Mobile : encore plus dense, pour éviter que « Suivant » passe à la ligne
+   sous les numéros de page. */
+@media (max-width: 768px) {
+    pagination-controls .ngx-pagination {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    pagination-controls .ngx-pagination a,
+    pagination-controls .ngx-pagination .current,
+    pagination-controls .ngx-pagination .disabled,
+    pagination-controls .ngx-pagination .small-screen {
+        padding: 0.28rem 0.45rem;
+    }
 }
 
 /* Alerts */
@@ -1142,6 +1305,88 @@ body.dark-theme .modal-footer {
 .p-4 { padding: var(--spacing-lg) !important; }
 .p-5 { padding: var(--spacing-xl) !important; }
 
+/* ========== EN-TÊTES DE PAGE RESPONSIVE ========== */
+
+/*
+ * Toutes les pages de liste (articles, catégories, clients, fournisseurs,
+ * utilisateurs, avoirs) partagent la même structure : un titre à gauche et
+ * les boutons Importer/Exporter/Nouveau à droite. Sur mobile, cette ligne ne
+ * tient pas : le titre était écrasé et les boutons entassés.
+ *
+ * Une seule règle pour les six pages grâce à la classe commune .page-header,
+ * plutôt qu'une copie du même bloc dans six fichiers de composant.
+ *
+ * !important nécessaire : les règles de base (.categories-header, etc.) sont
+ * dans le CSS de chaque composant, donc porteuses de l'attribut
+ * d'encapsulation Angular -- leur spécificité (0,2,0) bat un sélecteur global
+ * simple, et elles sont injectées après la feuille globale.
+ */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+        padding: 1rem !important;
+    }
+
+    .page-header .header-title h3 {
+        font-size: 1.15rem;
+    }
+
+    .page-header .header-actions {
+        width: 100%;
+    }
+
+    /*
+     * Les trois boutons du composant app-bouton-action (Importer / Exporter /
+     * Nouveau) étaient entasses et le texte rogne. Chaque bouton occupe un
+     * tiers de la largeur, passe a la ligne si l'espace manque vraiment, et
+     * son intitule n'est jamais coupe.
+     */
+    .page-header .header-actions .d-flex {
+        flex-wrap: wrap;
+    }
+
+    .page-header .header-actions .d-flex > div {
+        flex: 1 1 30%;
+        min-width: 88px;
+    }
+
+    .page-header .header-actions .btn {
+        width: 100%;
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* ========== RESPONSIVE : ECHELLE TYPOGRAPHIQUE ========== */
+
+/*
+ * Réduire la base (html) plutôt que chaque font-size : l'application utilise
+ * le rem presque partout (texte ET tokens d'espacement), donc une seule règle
+ * fait suivre tout le monde de façon cohérente. Toucher les 252 valeurs en dur
+ * serait ingérable et produirait des tailles incohérentes entre composants.
+ *
+ * Tablette : -5%   (confort sur 768-991px)
+ * Mobile  : -10%  (densité sur <=768px)
+ *
+ * Réduction volontairement modérée : au-delà, les petites tailles des
+ * tableaux passent sous 10px et deviennent illisibles. Ces valeurs ont par
+ * ailleurs été remontées à un plancher de 0.75rem dans les composants.
+ */
+@media (max-width: 992px) {
+    html {
+        font-size: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 90%;
+    }
+}
+
 /* Responsive adjustments */
 /*
  * Le rail forcé (width: 80px + libellés masqués) a été retiré d'ici :
@@ -1203,12 +1448,14 @@ body.dark-theme .modal-footer {
         padding: var(--spacing-md);
     }
     
+    /*
+     * Les icônes d'action restent sur une seule ligne : ce bloc(paramètre)
+     * les empilait verticalement dans la cellule du tableau, ce qui donnait
+     * deux icônes puis une sur une troisième ligne.
+     */
     .action-buttons {
-        flex-direction: column;
-    }
-    
-    .action-buttons .btn {
-        width: 100%;
+        flex-direction: row;
+        flex-wrap: nowrap;
     }
 }
 

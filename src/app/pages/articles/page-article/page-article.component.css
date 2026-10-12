@@ -45,13 +45,13 @@
 .filter-row {
     display: flex;
     gap: 1rem;
-    align-items: flex-end;
-    flex-wrap: wrap;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
 .filter-group {
     flex: 1;
-    min-width: 150px;
+    min-width: 0;
 }
 
 .filter-label {
@@ -116,7 +116,7 @@
 .articles-table th {
     padding: 0.5rem 0.4rem;
     text-align: left;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -188,7 +188,7 @@
     display: inline-block;
     padding: 0.2rem 0.5rem;
     border-radius: 20px;
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     font-weight: 500;
     background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
     color: #475569;
@@ -224,7 +224,7 @@
 }
 
 .price-currency {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     color: var(--text-muted, #9ca3af);
     margin-left: 2px;
 }
@@ -279,55 +279,13 @@
 }
 
 .stock-label {
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     color: var(--text-muted, #9ca3af);
 }
 
 .action-buttons {
     display: flex;
     gap: 0.5rem;
-}
-
-.btn-action {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-view {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-}
-
-.btn-view:hover {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn-edit {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-}
-
-.btn-edit:hover {
-    background: #10b981;
-    color: white;
-}
-
-.btn-delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-}
-
-.btn-delete:hover {
-    background: #ef4444;
-    color: white;
 }
 
 .empty-state {
@@ -451,14 +409,6 @@ body.dark-theme .pagination-info {
         gap: 1rem;
     }
     
-    .filter-row {
-        flex-direction: column;
-    }
-    
-    .filter-group {
-        width: 100%;
-    }
-    
     .articles-table th,
     .articles-table td {
         padding: 0.75rem 0.5rem;
@@ -472,5 +422,50 @@ body.dark-theme .pagination-info {
     .pagination-wrapper {
         flex-direction: column;
         gap: 1rem;
+    }
+}
+
+/* ========== RESPONSIVE : BARRE DE FILTRES (MOBILE UNIQUEMENT) ========== */
+/*
+ * La colonne s'applique jusqu'à 767px inclus : à partir de 768px (tablette en
+ * paysage) le menu latéral est replié en tiroir, la largeur utile suffit pour
+ * garder les champs de filtre sur une seule ligne, comme demande. La bascule
+ * était auparavant à 768px, ce qui empilait les champs sur une tablette.
+ *
+ * Règles regroupées ici dans un bloc dédié : elles dupliquaient exactement les
+ * mêmes déclarations dans chaque page, et le seuil de 768px doit rester
+ * identique partout.
+ */
+@media (max-width: 767px) {
+    .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-group .input-group-text {
+        padding: 0 0.6rem;
+    }
+
+    .filter-actions {
+        align-self: flex-end;
+        /* width:auto annule le width:100% de .filter-group : le bouton
+           reste compact et aligné à droite, comme sur la ligne de bureau,
+           au lieu d'occuper une rangée de 100% à vide. */
+        width: auto;
+    }
+
+    /*
+     * Marges latérales supprimées : elles s'ajoutaient à celles de
+     * .content-area et .main-content (93px perdus sur un écran de 348px),
+     * ce qui réduisait les champs de filtre à moins de 30px.
+     */
+    .filter-card {
+        margin: 0.5rem 0;
+        padding: 0.75rem;
     }
 }

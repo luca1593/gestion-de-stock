@@ -9,25 +9,33 @@
     <i class="fas fa-exclamation-circle"></i>
     <span>{{ errorMsg }}</span>
   </div>
-  <div class="commande-header">
-    <h3>Commandes {{origin}}</h3>
-    <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false" [isExporterVisible]="false"></app-bouton-action>
+  <div class="commande-header page-header">
+    <div class="header-title">
+      <h3><i class="fas fa-file-invoice"></i> Commandes {{origin}}</h3>
+    </div>
+    <div class="header-actions">
+      <app-bouton-action (clickEvent)="nouveauCommande()" [isImporterVisible]="false" [isExporterVisible]="false"></app-bouton-action>
+    </div>
   </div>
 
-  <div class="card filter-card">
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label">Code / Libellé</label>
-          <input type="text" class="form-control" placeholder="Rechercher code ou libellé" [(ngModel)]="searchCode" (input)="filtrer()">
+  <div class="filter-card">
+    <div class="filter-row">
+      <div class="filter-group">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+          <input type="text" class="form-control" placeholder="Code / Libellé..." aria-label="Code ou libellé de la commande" [(ngModel)]="searchCode" (input)="filtrer()">
         </div>
-        <div class="col-md-4">
-          <label class="form-label">Client / Fournisseur</label>
-          <input type="text" class="form-control" placeholder="Rechercher par nom" [(ngModel)]="searchClient" (input)="filtrer()">
+      </div>
+      <div class="filter-group">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user"></i></span>
+          <input type="text" class="form-control" placeholder="Client / Fournisseur..." aria-label="Client ou fournisseur" [(ngModel)]="searchClient" (input)="filtrer()">
         </div>
-        <div class="col-md-4">
-          <label class="form-label">État</label>
-          <select class="form-select" [(ngModel)]="searchEtat" (change)="filtrer()">
+      </div>
+      <div class="filter-group">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-circle-half-stroke"></i></span>
+          <select class="form-select" aria-label="État de la commande" [(ngModel)]="searchEtat" (change)="filtrer()">
             <option value="">Tous les états</option>
             <option value="EN_PREPARATION">En préparation</option>
             <option value="VALIDEE">Validée</option>
@@ -35,6 +43,11 @@
             <option value="ANNULEE">Annulée</option>
           </select>
         </div>
+      </div>
+      <div class="filter-group filter-actions">
+        <button class="btn btn-outline-secondary" aria-label="Réinitialiser les filtres" (click)="reinitialiserFiltres()">
+          <i class="fas fa-redo"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -132,8 +145,8 @@
     <pagination-controls 
       previousLabel="Précédent"
       nextLabel="Suivant"
-      (autoHide)="true"
-      (responsive)="true"
+      [autoHide]="true"
+      [responsive]="true"
       (pageChange)="onPageChange($event)">
     </pagination-controls>
   </div>

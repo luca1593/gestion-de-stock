@@ -89,7 +89,7 @@
                                 </span>
                             </td>
                             <td class="col-actions">
-                                <button class="btn-action btn-view" title="Voir détails" (click)="setCommandeSelectione(command.id)" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDetail'">
+                                <button class="btn-action btn-view" title="Voir détails" aria-label="Voir détails" (click)="setCommandeSelectione(command.id)" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDetail'">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </td>
@@ -114,8 +114,8 @@
             <pagination-controls 
                 previousLabel="Précédent"
                 nextLabel="Suivant"
-                (autoHide)="true"
-                (responsive)="true"
+                [autoHide]="true"
+                [responsive]="true"
                 (pageChange)="pageCmd=$event">
             </pagination-controls>
         </div>

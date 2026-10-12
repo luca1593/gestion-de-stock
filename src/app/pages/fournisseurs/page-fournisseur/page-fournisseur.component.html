@@ -5,7 +5,7 @@
             <span>Chargement des fournisseurs...</span>
         </div>
     </div>
-    <div class="fournisseurs-header">
+    <div class="fournisseurs-header page-header">
         <div class="header-title">
             <h3><i class="fas fa-truck"></i> Liste des Fournisseurs</h3>
         </div>
@@ -26,22 +26,22 @@
     <div class="filter-card">
         <div class="filter-row">
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-user"></i> Nom
-                </label>
-                <input type="text" class="form-control" placeholder="Nom du fournisseur..." [(ngModel)]="searchNom" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" placeholder="Nom du fournisseur..." [(ngModel)]="searchNom" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-envelope"></i> Email
-                </label>
-                <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-phone"></i> Téléphone
-                </label>
-                <input type="text" class="form-control" placeholder="Téléphone..." [(ngModel)]="searchTelephone" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    <input type="text" class="form-control" placeholder="Téléphone..." [(ngModel)]="searchTelephone" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group filter-actions">
                 <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
@@ -95,13 +95,13 @@
                         </td>
                         <td class="col-actions">
                             <div class="action-buttons">
-                                <button class="btn-action btn-view" title="Voir détails" (click)="voirFournisseur(fournisseur)">
+                                <button class="btn-action btn-view" title="Voir détails" aria-label="Voir détails" (click)="voirFournisseur(fournisseur)">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn-action btn-edit" title="Modifier" (click)="modifierFournisseur(fournisseur)">
+                                <button class="btn-action btn-edit" title="Modifier" aria-label="Modifier" (click)="modifierFournisseur(fournisseur)">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn-action btn-delete" title="Supprimer" (click)="supprimerFournisseur(fournisseur)">
+                                <button class="btn-action btn-delete" title="Supprimer" aria-label="Supprimer" (click)="supprimerFournisseur(fournisseur)">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -130,8 +130,8 @@
         <pagination-controls 
             previousLabel="Précédent"
             nextLabel="Suivant"
-            (autoHide)="true"
-            (responsive)="true"
+            [autoHide]="true"
+            [responsive]="true"
             (pageChange)="page=$event">
         </pagination-controls>
     </div>

@@ -1,5 +1,5 @@
 <div class="utilisateurs-container">
-    <div class="utilisateurs-header">
+    <div class="utilisateurs-header page-header">
         <div class="header-title">
             <h3><i class="fas fa-users"></i> Liste des Utilisateurs</h3>
         </div>
@@ -28,28 +28,28 @@
     <div class="filter-card" *ngIf="!loading">
         <div class="filter-row">
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-user"></i> Nom
-                </label>
-                <input type="text" class="form-control" placeholder="Nom ou prénom..." [(ngModel)]="searchNom" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" placeholder="Nom ou prénom..." [(ngModel)]="searchNom" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-envelope"></i> Email
-                </label>
-                <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-map-marker-alt"></i> Adresse
-                </label>
-                <input type="text" class="form-control" placeholder="Adresse..." [(ngModel)]="searchAdresse" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                    <input type="text" class="form-control" placeholder="Adresse..." [(ngModel)]="searchAdresse" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-globe"></i> Pays
-                </label>
-                <input type="text" class="form-control" placeholder="Pays..." [(ngModel)]="searchPays" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                    <input type="text" class="form-control" placeholder="Pays..." [(ngModel)]="searchPays" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group filter-actions">
                 <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
@@ -109,13 +109,13 @@
                         </td>
                         <td class="col-actions">
                             <div class="action-buttons">
-                                <button class="btn-action btn-view" title="Voir détails" (click)="voirDetails(user)">
+                                <button class="btn-action btn-view" title="Voir détails" aria-label="Voir détails" (click)="voirDetails(user)">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn-action btn-edit" title="Modifier" (click)="modifierUtilisateur(user)">
+                                <button class="btn-action btn-edit" title="Modifier" aria-label="Modifier" (click)="modifierUtilisateur(user)">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn-action btn-delete" title="Supprimer" (click)="supprimerUtilisateur(user)">
+                                <button class="btn-action btn-delete" title="Supprimer" aria-label="Supprimer" (click)="supprimerUtilisateur(user)">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -144,8 +144,8 @@
         <pagination-controls 
             previousLabel="Précédent"
             nextLabel="Suivant"
-            (autoHide)="true"
-            (responsive)="true"
+            [autoHide]="true"
+            [responsive]="true"
             (pageChange)="page=$event">
         </pagination-controls>
     </div>
