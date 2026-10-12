@@ -124,13 +124,13 @@
                         </td>
                         <td class="col-actions">
                             <div class="action-buttons">
-                                <button class="btn-action btn-view" title="Voir détails" (click)="voirArticle(article)">
+                                <button class="btn-action btn-view" title="Voir détails" aria-label="Voir détails" (click)="voirArticle(article)">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn-action btn-edit" title="Modifier" (click)="modifierArticle(article)">
+                                <button class="btn-action btn-edit" title="Modifier" aria-label="Modifier" (click)="modifierArticle(article)">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn-action btn-delete" title="Supprimer" (click)="supprimerArticle(article)">
+                                <button class="btn-action btn-delete" title="Supprimer" aria-label="Supprimer" (click)="supprimerArticle(article)">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -159,8 +159,8 @@
         <pagination-controls 
             previousLabel="Précédent"
             nextLabel="Suivant"
-            (autoHide)="true"
-            (responsive)="true"
+            [autoHide]="true"
+            [responsive]="true"
             (pageChange)="page=$event">
         </pagination-controls>
     </div>

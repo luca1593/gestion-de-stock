@@ -78,13 +78,13 @@
                         </td>
                         <td class="col-actions">
                             <div class="action-buttons">
-                                <button class="btn-action btn-view" title="Voir détails" (click)="voirDetails(category)">
+                                <button class="btn-action btn-view" title="Voir détails" aria-label="Voir détails" (click)="voirDetails(category)">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn-action btn-edit" title="Modifier" (click)="modiferCategorie(category.id)">
+                                <button class="btn-action btn-edit" title="Modifier" aria-label="Modifier" (click)="modiferCategorie(category.id)">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn-action btn-delete" title="Supprimer" (click)="openDeleteModal(category.id!)">
+                                <button class="btn-action btn-delete" title="Supprimer" aria-label="Supprimer" (click)="openDeleteModal(category.id!)">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>

@@ -18,22 +18,24 @@
         <span>{{ errorMessage }}</span>
     </div>
 
-    <div class="card filter-card">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-5">
-                    <label class="form-label">Code</label>
-                    <input type="text" class="form-control" placeholder="Rechercher par code" [(ngModel)]="searchCode" (input)="filtrer()">
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="filter-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                    <input type="text" class="form-control" placeholder="Code..." aria-label="Code de la vente" [(ngModel)]="searchCode" (input)="filtrer()">
                 </div>
-                <div class="col-md-5">
-                    <label class="form-label">Date</label>
-                    <input type="date" class="form-control" [(ngModel)]="searchDate" (input)="filtrer()">
+            </div>
+            <div class="filter-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                    <input type="date" class="form-control" aria-label="Date de la vente" [(ngModel)]="searchDate" (input)="filtrer()">
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button class="btn btn-outline-secondary w-100" (click)="reinitialiserFiltres()">
-                        <i class="fas fa-redo"></i> Réinitialiser
-                    </button>
-                </div>
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" aria-label="Réinitialiser les filtres" (click)="reinitialiserFiltres()">
+                    <i class="fas fa-redo"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -135,8 +137,8 @@
         <pagination-controls 
             previousLabel="Précédent"
             nextLabel="Suivant"
-            (autoHide)="true"
-            (responsive)="true"
+            [autoHide]="true"
+            [responsive]="true"
             (pageChange)="onPageChange($event)">
         </pagination-controls>
     </div>
