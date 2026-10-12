@@ -70,20 +70,24 @@
 
         <div class="row mb-2">
           <div class="col-12 col-md-6 col-lg-4">
-            <select class="form-control form-control-sm" name="clientFacture" aria-label="Client facturé"
-                    [(ngModel)]="clientFacture" [compareWith]="compareClient" required>
-              <option [ngValue]="null">Sélectionnez le client facturé *</option>
+            <!--
+  Le client est facultatif en vente : beaucoup de ventes se font avec un client
+  de passage, non enregistré. Sans client, aucune facture n'est émise — le
+  backend refuse une facture client sans clientId. L'encaissement n'apparaît
+  donc que si un client est choisi, puisque c'est lui qui porte la facture.
+-->
+<select class="form-control form-control-sm" name="clientFacture" aria-label="Client facturé (facultatif)"
+                    [(ngModel)]="clientFacture" [compareWith]="compareClient">
+              <option [ngValue]="null">Client passager (pas de facture)</option>
               <option *ngFor="let client of listClients" [ngValue]="client">
                 {{ client.nom }}&nbsp;{{ client.prenom }}
               </option>
             </select>
-            <div class="text-danger small mt-1" *ngIf="!clientFacture">
-              Ce champ est obligatoire
-            </div>
           </div>
         </div>
 
         <app-encaissement
+          *ngIf="clientFacture"
           [montantDu]="totalVente"
           libelleMontant="Total de la vente"
           (encaissementChange)="onEncaissementChange($event)"></app-encaissement>
@@ -92,8 +96,8 @@
           <button class="btn btn-danger mx-1 btn-sm" (click)="cancelClick()">
             <i class="fas fa-ban"></i>&nbsp;Annuler
           </button>
-          <button class="btn btn-success mx-1 btn-sm" (click)="saveClick()" [disabled]="!clientFacture">
-            <i class="fas fa-save"></i>&nbsp;Encaisser la vente
+          <button class="btn btn-success mx-1 btn-sm" (click)="saveClick()">
+            <i class="fas fa-save"></i>&nbsp;{{ clientFacture ? 'Encaisser la vente' : 'Enregistrer la vente' }}
           </button>
         </div>
       </div>

@@ -31,10 +31,13 @@ export class PageVenteComponent implements OnInit {
   venteDto: VenteDto={};
 
   /*
-   * Facturation : la vente est enregistrée avec sa facture et son encaissement.
-   * VenteDto ne porte pas de client, or le backend refuse une facture client
-   * sans clientId : le sélecteur ci-dessous est donc obligatoire tant qu'on
-   * veut une facture traçable.
+   * Facturation : facultative en vente.
+   *
+   * Une vente se fait très bien avec un client passager, non enregistré : le
+   * champ client laisse donc être laissé vide. Le backend refusant une facture
+   * client sans clientId (« Veuillez selectionner un client pour la facture »),
+   * une vente sans client est simplement enregistrée SANS facture — ce qui est
+   * le comportement attendu d'une vente au comptoir.
    */
   listClients: Array<ClientDto>=[];
   clientFacture: ClientDto | null=null;
@@ -97,12 +100,9 @@ export class PageVenteComponent implements OnInit {
       return;
     }
 
-    if (!this.clientFacture?.id) {
-      this.errorMsg.push('Sélectionnez le client facturé');
-      return;
-    }
-
-    if (!this.encaissement.valide) {
+    // L'encaissement n'a de sens que s'il produit une facture, donc seulement
+    // quand un client est rattaché à la vente.
+    if (this.clientFacture?.id && !this.encaissement.valide) {
       this.errorMsg = this.encaissement.messages.length
         ? this.encaissement.messages
         : ['Renseignez le paiement de la facture'];
@@ -142,13 +142,22 @@ export class PageVenteComponent implements OnInit {
 
   /**
    * La vente est enregistrée : on crée sa facture dans la foulée, avec le
-   * paiement saisi. Si la facture échoue, la vente reste enregistrée (elle
-   * l'est déjà côté base) et l'erreur est affichée — on ne fait jamais
-   * perdre une vente parce que la facturation a un souci.
+   * paiement saisi.
+   *
+   * Vente sans client (client passager) : aucune facture, c'est normal — le
+   * backend de toute façon refuse une facture client sans clientId.
+   *
+   * Si la facture échoue alors que la vente est enregistrée, on ne fait pas
+   * perdre la vente : l'erreur est affichée et l'utilisateur peut relancer.
    */
   private enregistrerFactureVente(vente: VenteDto): void {
+    if (!this.clientFacture?.id) {
+      this.router.navigate(['liste-vente']);
+      return;
+    }
+
     if (!vente?.id) {
-      this.router.navigate(['vente']);
+      this.router.navigate(['liste-vente']);
       return;
     }
     const facture: FactureDto = this.factureService.preparerFactureSource({
