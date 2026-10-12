@@ -29,16 +29,16 @@
     <div class="filter-card" *ngIf="categoryDtoListFiltre.length > 0">
         <div class="filter-row">
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-barcode"></i> Code
-                </label>
-                <input type="text" class="form-control" placeholder="Code catégorie..." [(ngModel)]="searchCode" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                    <input type="text" class="form-control" placeholder="Code catégorie..." [(ngModel)]="searchCode" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-tag"></i> Désignation
-                </label>
-                <input type="text" class="form-control" placeholder="Désignation..." [(ngModel)]="searchDesignation" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                    <input type="text" class="form-control" placeholder="Désignation..." [(ngModel)]="searchDesignation" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group filter-actions">
                 <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">

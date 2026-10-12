@@ -174,6 +174,21 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
     this.page = 1;
   }
 
+  /**
+   * Vide les trois champs de la barre de filtres et restaure la liste
+   * complète. Le tri courant est conservé (applySort) pour ne pas désorienter
+   * l'utilisateur, seule la page repart à 1 comme après chaque filtrage.
+   */
+  reinitialiserFiltres(): void {
+    this.searchCode = '';
+    this.searchClient = '';
+    this.searchEtat = '';
+    this.listCommandesFilter = this.listCommandes;
+    this.applySort();
+    this.totalItems = this.listCommandesFilter.length;
+    this.page = 1;
+  }
+
    toggleCommande(cmdId: number): void {
      const switching = this.selectedCommandeId !== cmdId;
      this.selectedCommandeId = switching ? cmdId : null;

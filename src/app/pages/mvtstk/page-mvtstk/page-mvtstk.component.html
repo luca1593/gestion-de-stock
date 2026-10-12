@@ -13,22 +13,22 @@
     <div class="filter-card">
         <div class="filter-row">
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-barcode"></i> Code
-                </label>
-                <input type="text" class="form-control" placeholder="Code article..." [(ngModel)]="searchCode" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                    <input type="text" class="form-control" placeholder="Code article..." [(ngModel)]="searchCode" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-tag"></i> Désignation
-                </label>
-                <input type="text" class="form-control" placeholder="Libellé..." [(ngModel)]="searchLibelle" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                    <input type="text" class="form-control" placeholder="Libellé..." [(ngModel)]="searchLibelle" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-layer-group"></i> Catégorie
-                </label>
-                <input type="text" class="form-control" placeholder="Catégorie..." [(ngModel)]="searchCategory" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
+                    <input type="text" class="form-control" placeholder="Catégorie..." [(ngModel)]="searchCategory" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group filter-actions">
                 <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">

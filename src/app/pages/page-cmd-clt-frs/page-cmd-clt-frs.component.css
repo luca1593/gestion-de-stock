@@ -17,32 +17,67 @@
 }
 
 /* Filter Card */
+/* Marge alignée sur .list-card pour que filtres et liste partagent le même
+   retrait horizontal que le wrapper (.commande-wrapper padding: 0 1rem). */
 .filter-card {
-  border: none;
+  margin: 0 0 1rem;
+  padding: 1.25rem;
   border-radius: 12px;
   box-shadow: var(--shadow-sm);
-  margin-bottom: 1rem;
   background: var(--bg-card);
+  border: 1px solid var(--border-color, #e9ecef);
 }
 
-.filter-card .form-label {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  font-weight: 500;
+/*
+ * Barre de filtres sur une seule ligne (768px et au-dessus) : les champs
+ * partagent la largeur disponible grâce à flex: 1 + min-width: 0, ce qui évite
+ * tout débordement horizontal quand le texte d'un placeholder est long. La
+ * colonne est réservée au mobile (voir bloc @media en fin de fichier).
+ */
+.filter-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
-.filter-card .form-control,
-.filter-card .form-select {
+.filter-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-group .form-control,
+.filter-group .form-select {
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-color, #d1d5db);
   background: var(--input-bg);
-  border-color: var(--border-color);
   color: var(--text-primary);
+  transition: all 0.2s;
 }
 
-.filter-card .form-control:focus,
-.filter-card .form-select:focus {
-  background: var(--input-bg);
+.filter-group .form-control:focus,
+.filter-group .form-select:focus {
   border-color: var(--primary-color);
-  color: var(--text-primary);
+  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
+}
+
+.filter-group .input-group-text {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.filter-actions {
+  flex: 0 0 auto;
+}
+
+.filter-actions .btn {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #d1d5db);
+  background: var(--bg-card);
+  color: var(--text-secondary);
 }
 
 /* List Card */
@@ -434,4 +469,39 @@ body.dark-theme .table td {
 
 body.dark-theme .table td .text-primary {
   color: var(--primary-color);
+}
+
+/* ========== RESPONSIVE : BARRE DE FILTRES (MOBILE UNIQUEMENT) ========== */
+/*
+ * Même règle et même seuil que les autres pages de liste : la colonne
+ * s'applique jusqu'à 767px inclus, la tablette (768px et au-dessus) garde les
+ * champs sur une seule ligne.
+ */
+@media (max-width: 767px) {
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-group .input-group-text {
+    padding: 0 0.6rem;
+  }
+
+  .filter-actions {
+    align-self: flex-end;
+      /* width:auto annule le width:100% de .filter-group : le bouton
+         reste compact et aligné à droite, comme sur la ligne de bureau,
+         au lieu d'occuper une rangée de 100% à vide. */
+      width: auto;
+  }
+
+  .filter-card {
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+  }
 }

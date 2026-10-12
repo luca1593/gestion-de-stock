@@ -28,28 +28,28 @@
     <div class="filter-card" *ngIf="!loading">
         <div class="filter-row">
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-user"></i> Nom
-                </label>
-                <input type="text" class="form-control" placeholder="Nom ou prénom..." [(ngModel)]="searchNom" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" placeholder="Nom ou prénom..." [(ngModel)]="searchNom" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-envelope"></i> Email
-                </label>
-                <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="text" class="form-control" placeholder="Email..." [(ngModel)]="searchEmail" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-map-marker-alt"></i> Adresse
-                </label>
-                <input type="text" class="form-control" placeholder="Adresse..." [(ngModel)]="searchAdresse" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                    <input type="text" class="form-control" placeholder="Adresse..." [(ngModel)]="searchAdresse" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label">
-                    <i class="fas fa-globe"></i> Pays
-                </label>
-                <input type="text" class="form-control" placeholder="Pays..." [(ngModel)]="searchPays" (input)="filtrer()">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                    <input type="text" class="form-control" placeholder="Pays..." [(ngModel)]="searchPays" (input)="filtrer()">
+                </div>
             </div>
             <div class="filter-group filter-actions">
                 <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()">
