@@ -76,10 +76,19 @@ export class PageVenteComponent implements OnInit {
     this.encaissement = encaissement;
   }
 
-  /** ngModel compare les objets par référence : deux listes de clients
-   *  différentes ne désignent pas le même objet. */
+  /**
+   * ngModel compare les objets par référence : deux listes de clients
+   * différentes ne désignent pas le même objet, on compare donc les id.
+   *
+   * Le cas null / null doit aussi renvoyer true : c'est lui qui sélectionne
+   * l'option « Client passager » du sélecteur. Sans cela, le menu déroulant
+   * s'afficherait vide au chargement alors qu'aucun client n'est choisi.
+   */
   compareClient(c1: ClientDto | null, c2: ClientDto | null): boolean {
-    return !!c1 && !!c2 && c1.id === c2.id;
+    if (!c1 || !c2) {
+      return !c1 && !c2;
+    }
+    return c1.id === c2.id;
   }
 
   initCodeVente() {
@@ -100,12 +109,12 @@ export class PageVenteComponent implements OnInit {
       return;
     }
 
-    // L'encaissement n'a de sens que s'il produit une facture, donc seulement
-    // quand un client est rattaché à la vente.
-    if (this.clientFacture?.id && !this.encaissement.valide) {
+    // L'encaissement est saisi dans tous les cas, comme sur les commandes :
+    // montant payé, montant donné et monnaie à rendre.
+    if (!this.encaissement.valide) {
       this.errorMsg = this.encaissement.messages.length
         ? this.encaissement.messages
-        : ['Renseignez le paiement de la facture'];
+        : ['Renseignez le paiement de la vente'];
       return;
     }
 
@@ -144,8 +153,11 @@ export class PageVenteComponent implements OnInit {
    * La vente est enregistrée : on crée sa facture dans la foulée, avec le
    * paiement saisi.
    *
-   * Vente sans client (client passager) : aucune facture, c'est normal — le
-   * backend de toute façon refuse une facture client sans clientId.
+   * Vente en client passager : le backend refuse une facture client sans
+   * clientId (« Veuillez selectionner un client pour la facture »), aucune
+   * facture n'est donc émise. La vente et le montant encaissé restent
+   * enregistrés dans le ticket de caisse, la monnaie à rendre a déjà été
+   * affichée à l'écran au moment de la saisie.
    *
    * Si la facture échoue alors que la vente est enregistrée, on ne fait pas
    * perdre la vente : l'erreur est affichée et l'utilisateur peut relancer.
