@@ -54,13 +54,25 @@
     </div>
 
     <div class="encaissement-pied d-flex justify-content-between align-items-center flex-wrap mt-2">
-        <span class="small-text text-muted">Les champs marqués de * sont obligatoires</span>
+        <span class="small-text text-muted" *ngIf="!resteApresDonne">
+            Les champs marqués de * sont obligatoires
+        </span>
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <span class="small-text" *ngIf="resteDu > 0">
+            <!--
+              Reste après l'encaissement : ce que le client doit encore. Ne
+              s'affiche que si la somme versée ne couvre pas le total — sinon
+              il fait doublon avec la monnaie à rendre.
+            -->
+            <span class="small-text" *ngIf="resteApresDonne">
                 <i class="fas fa-exclamation-triangle text-warning"></i>
                 Reste après cet encaissement&nbsp;:&nbsp;
-                <strong>{{ resteDu | number:'1.2-2':'fr' }}&nbsp;Ar</strong>
+                <strong>{{ resteApresDonne | number:'1.2-2':'fr' }}&nbsp;Ar</strong>
             </span>
+            <!--
+              La monnaie se calcule sur le TOTAL de la vente, pas sur le
+              montant payé : c'est la somme rendue par le client, pas le
+              montant saisi.
+            -->
             <div class="monnaie" [class.monnaie-alerte]="monnaie > 0">
                 <span class="small-text">{{ afficheMontantDonne ? 'Monnaie à rendre' : 'Montant exact encaissé' }}</span>
                 <strong>{{ monnaie | number:'1.2-2':'fr' }}&nbsp;Ar</strong>

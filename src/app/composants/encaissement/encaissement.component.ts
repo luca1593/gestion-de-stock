@@ -108,21 +108,38 @@ export class EncaissementComponent implements OnChanges {
     return this.arrondi(this.montantDu);
   }
 
-  /** Reste dû si le montant payé est inférieur au montant dû. */
-  get resteDu(): number {
-    return this.arrondi(Math.max(0, this.montantDu - (this.montant ?? 0)));
+  /**
+   * Reste dû après l'encaissement : le total de la vente moins ce que le
+   * client a réellement versé (montant donné quand il est connu, montant
+   * payé sinon pour les modes sans somme rendue).
+   *
+   * Renvoyer `null` quand il n'y a rien à signaler évite d'afficher un
+   * « reste 0,00 Ar » à côté d'une monnaie à rendre non nulle.
+   */
+  get resteApresDonne(): number | null {
+    const verse = this.afficheMontantDonne ? (this.montantDonne ?? 0) : (this.montant ?? 0);
+    const reste = this.arrondi(Math.max(0, this.montantDu - verse));
+    return reste > 0 ? reste : null;
   }
 
   /**
-   * Monnaie à rendre : la différence entre ce que le client donne et ce que
-   * la facture vaut. Jamais négative — un montant donné inférieur au dû est
-   * un paiement partiel, pas une monnaie.
+   * Monnaie à rendre : ce que le client donne MOINS le total des articles.
+   *
+   * C'est le total de la vente qui sert de référence, pas le montant payé :
+   * le montant payé peut être inférieur (paiement partiel, acompte) et dans
+   * ce cas le client n'a rien à recevoir — il doit au contraire le reste.
+   * Calculer la monnaie sur le montant payé afficherait un chiffre faux dans
+   * ce cas, en affichant comme « monnaie à rendre » ce qui est en fait une
+   * somme restant due.
+   *
+   * Jamais négative : un montant donné inférieur au total est un paiement
+   * partiel, pas une monnaie.
    */
   get monnaie(): number {
     if (!this.afficheMontantDonne) {
       return 0;
     }
-    return this.arrondi(Math.max(0, (this.montantDonne ?? 0) - (this.montant ?? 0)));
+    return this.arrondi(Math.max(0, (this.montantDonne ?? 0) - this.montantDu));
   }
 
   /* ------------------------------------------------------------------ */
@@ -173,10 +190,15 @@ export class EncaissementComponent implements OnChanges {
   }
 
   /**
-   * Règles de saisie. Le montant payé peut être inférieur au dû (paiement
-   * partiel, acompte) mais jamais négatif, et le montant donné ne peut pas
-   * être inférieur au montant payé — ce serait un défaut de paiement, pas une
-   * monnaie.
+   * Règles de saisie.
+   *
+   * Le montant payé peut être inférieur au total (paiement partiel, acompte,
+   * vente à crédit) mais jamais négatif ni supérieur au total.
+   *
+   * Le montant donné se compare au MONTANT PAYÉ, pas au total : donner moins
+   * que ce qu'on règle est une erreur de saisie, alors que donner moins que
+   * le total est un paiement partiel légitime. Bloquer ce dernier cas
+   * empêcherait d'enregistrer une vente à crédit.
    */
   private validation(): string[] {
     const messages: string[] = [];
