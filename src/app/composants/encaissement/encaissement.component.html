@@ -18,11 +18,11 @@
                 <option *ngFor="let mode of modes" [value]="mode.value">{{ mode.label }}</option>
             </select>
         </div>
-        <div class="col-12 col-md-6 col-lg-3">
-            <input type="number" class="form-control" name="montant" min="0" step="0.01"
-                   placeholder="Montant payé *" aria-label="Montant payé"
-                   [(ngModel)]="montant" (ngModelChange)="onMontantChange()" (keydown)="onKeydown($event)" required>
-        </div>
+        <!--
+          Montant donné AVANT montant payé : c'est l'ordre du geste au
+          comptoir. Le client tend ses billets, le caissier en compte ce
+          qu'il a reçu, puis calcule la monnaie à rendre par rapport au total.
+        -->
         <div class="col-12 col-md-6 col-lg-3" *ngIf="afficheMontantDonne">
             <div class="input-group">
                 <input type="number" class="form-control" name="montantDonne" min="0" step="0.01"
@@ -33,6 +33,11 @@
                     <i class="fas fa-equals"></i>
                 </button>
             </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <input type="number" class="form-control" name="montant" min="0" step="0.01"
+                   placeholder="Montant payé *" aria-label="Montant payé"
+                   [(ngModel)]="montant" (ngModelChange)="onMontantChange()" (keydown)="onKeydown($event)" required>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
             <input type="date" class="form-control" name="datePaiement"
