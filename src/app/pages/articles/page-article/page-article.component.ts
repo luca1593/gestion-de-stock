@@ -10,6 +10,7 @@ import { CategoryDto } from 'src/gs-api/src/models/category-dto';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-article',
@@ -97,6 +98,10 @@ export class PageArticleComponent implements OnInit, OnDestroy {
         this.listArticle = this.photoSyncService.mergePhotos('article', resp);
         this.listArticleFiltre = this.listArticle;
         this.applySort();
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.page = pageValide(this.page, this.listArticleFiltre.length, this.pageSize);
         this.loading = false;
       },
       error: (err) => {

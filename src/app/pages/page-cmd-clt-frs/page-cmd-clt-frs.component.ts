@@ -8,6 +8,7 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
 import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
 import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-cmd-clt-frs',
@@ -83,6 +84,10 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
           this.listCommandes=commandes;
           this.listCommandesFilter=commandes;
           this.totalItems=commandes.length;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+          this.page = pageValide(this.page, this.totalItems, this.pageSize);
           this.findAllLigneCommande();
           this.loading = false;
         },
@@ -98,6 +103,10 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
           this.listCommandes=commandes;
           this.listCommandesFilter=commandes;
           this.totalItems=commandes.length;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+          this.page = pageValide(this.page, this.totalItems, this.pageSize);
           this.findAllLigneCommande();
           this.loading = false;
         },

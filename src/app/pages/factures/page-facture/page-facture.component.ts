@@ -6,6 +6,7 @@ import { FactureService, SourceTypeFacture, TypeFacture } from 'src/app/services
 import { ExportExcelService } from 'src/app/services/export.service';
 import { FactureDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-facture',
@@ -68,6 +69,10 @@ export class PageFactureComponent implements OnInit, OnDestroy {
         this.listFacture = factures;
         this.listFactureFiltre = factures;
         this.applySort();
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.page = pageValide(this.page, this.listFactureFiltre.length, this.pageSize);
         this.loading = false;
         this.cdr.markForCheck();
       },

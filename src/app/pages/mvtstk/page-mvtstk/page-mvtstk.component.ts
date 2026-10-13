@@ -6,6 +6,7 @@ import { MvtStkService } from 'src/app/services/mvtstk/mvt-stk.service';
 import { ArticleDto, MvtStkDto } from 'src/gs-api/src/models';
 import { ArtcleService } from 'src/app/services/article/artcle.service';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-mvtstk',
@@ -60,6 +61,10 @@ export class PageMvtstkComponent implements OnInit, OnDestroy {
         this.listArticle = list;
         this.listArticleFiltre = list;
         this.applySort();
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.page = pageValide(this.page, this.listArticleFiltre.length, this.pageSize);
         list.forEach(article => {
           if (article.id) {
             this.mvtStkService.setArticleStock(article.id, article.stock || 0);

@@ -9,6 +9,7 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-hisistorique-vente',
@@ -58,6 +59,10 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
         this.listVentes = ventes.sort((a, b) => new Date(b.dateVente || 0).getTime() - new Date(a.dateVente || 0).getTime());
         this.listVentesFiltre = [...this.listVentes];
         this.totalItems = this.listVentes.length;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.pageCmd = pageValide(this.pageCmd, this.listVentesFiltre.length, this.pageSize);
         this.findAllLigneVente();
       },
       error: (err) => {

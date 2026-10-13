@@ -7,6 +7,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-avoir',
@@ -49,6 +50,10 @@ export class PageHaveurComponent implements OnInit {
       next: (data: any) => {
         this.listAvoirs = data || [];
         this.listAvoirsFiltre = this.listAvoirs;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.page = pageValide(this.page, this.listAvoirsFiltre.length, this.pageSize);
         this.applySort();
         this.isLoading = false;
         this.cdr.markForCheck();

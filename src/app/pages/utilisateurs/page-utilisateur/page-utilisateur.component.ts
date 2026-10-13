@@ -7,6 +7,7 @@ import { UtilisateurDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import * as ExcelJS from 'exceljs';
 import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-utilisateur',
@@ -56,6 +57,10 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
       next: (list) => {
         this.listUtilisateur = list;
         this.listUtilisateurFiltre = sortByProperty(list, 'nom', 'asc');
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.page = pageValide(this.page, this.listUtilisateurFiltre.length, this.pageSize);
         this.loading = false;
       },
       error: (error) => {
