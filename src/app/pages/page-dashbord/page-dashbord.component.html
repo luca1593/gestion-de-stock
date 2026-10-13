@@ -9,6 +9,13 @@
         </aside>
         <div class="sidebar-backdrop" *ngIf="sidebarOpen" (click)="fermerSidebar()"></div>
 
+        <!--
+            Boite de confirmation unique de l'application. Elle est montee ici,
+            dans le shell qui enveloppe toutes les pages, pour que n'importe
+            quel ecran puisse l'ouvrir sans embarquer sa propre modale.
+        -->
+        <app-confirmation-dialog></app-confirmation-dialog>
+
         <!-- Main Content -->
         <main class="main-content" [class.menu-collapsed]="menuCollapsed">
             <!-- Header -->

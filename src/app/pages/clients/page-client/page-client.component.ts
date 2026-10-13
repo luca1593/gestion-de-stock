@@ -9,6 +9,7 @@ import { ClientDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import * as ExcelJS from 'exceljs';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 
 @Component({
   selector: 'app-page-client',
@@ -38,6 +39,7 @@ export class PageClientComponent implements OnInit, OnDestroy {
     private exportService: ExportExcelService,
     private photoSyncService: PhotoSyncService,
     private notificationService: NotificationService,
+    private confirmation: ConfirmationService,
     private cdr: ChangeDetectorRef
     ) { }
 
@@ -115,16 +117,24 @@ export class PageClientComponent implements OnInit, OnDestroy {
     this.router.navigate(['nouveau-client', client.id]);
   }
 
-  supprimerClient(client: ClientDto): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le client "${client.nom}" ?`)) {
-      this.cltfrsService.deleteClient(client.id!).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.photoSyncService.clearEntity('client', client.id!);
-          this.finfAllClient();
-        },
-        error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
-      });
-    }
+  async supprimerClient(client: ClientDto): Promise<void> {
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer ce client ?',
+      message: 'Voulez-vous vraiment supprimer ce client ?',
+      element: [client.nom, client.prenom].filter(Boolean).join(' '),
+      consequence: 'Il disparaîtra des listes et de la recherche. Ses ventes et factures resteront enregistrées.',
+      icone: 'fas fa-user-tie'
+    });
+    if (!ok) return;
+
+    this.cltfrsService.deleteClient(client.id!).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.photoSyncService.clearEntity('client', client.id!);
+        this.finfAllClient();
+        this.notificationService.addSuccess('Suppression', 'Client supprimé');
+      },
+      error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
+    });
   }
 
   ngOnDestroy(): void {

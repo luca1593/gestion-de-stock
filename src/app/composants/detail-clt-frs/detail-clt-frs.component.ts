@@ -4,6 +4,8 @@ import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { ModalService } from 'src/app/services/modal/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Component({
   selector: 'app-detail-clt-frs',
@@ -26,7 +28,9 @@ export class DetailCltFrsComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private cltFrsService: CltfrsService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -40,45 +44,43 @@ export class DetailCltFrsComponent implements OnInit, OnDestroy {
     }
   }
 
-  openDeleteModal(): void {
-    const modalId = 'modalConfirmDelete' + this.clientFournisseur.id;
-    this.modalService.openModal(modalId);
-  }
+  async openDeleteModal(): Promise<void> {
+    const estClient = this.origin === "client";
+    const nomComplet = [this.clientFournisseur?.nom, this.clientFournisseur?.prenom]
+      .filter(Boolean).join(' ');
 
-  supprimerClltFrs(): void {
-    if (this.origin === "client") {
-      this.cltFrsService.deleteClient(this.clientFournisseur.id).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.suppressioResult.emit("success");
-          this.closeDeleteModal();
-        },
-        error: (err) => {
-          this.suppressioResult.emit(err.error?.message);
-          this.closeDeleteModal();
-        }
-      });
-    } else if (this.origin === "fournisseur") {
-      this.cltFrsService.deleteFournisseur(this.clientFournisseur.id).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.suppressioResult.emit("success");
-          this.closeDeleteModal();
-        },
-        error: (err) => {
-          this.suppressioResult.emit(err.error?.message);
-          this.closeDeleteModal();
-        }
-      });
+    const ok = await this.confirmation.demander({
+      titre: estClient ? 'Supprimer ce client ?' : 'Supprimer ce fournisseur ?',
+      message: 'Voulez-vous vraiment supprimer ' + (estClient ? 'ce client' : 'ce fournisseur') + ' ?',
+      element: nomComplet || null,
+      consequence: estClient
+        ? 'Ses ventes et factures resteront enregistrées, mais la fiche disparaît des listes.'
+        : 'Ses commandes resteront enregistrées, mais la fiche disparaît des listes.',
+      icone: estClient ? 'fas fa-user-tie' : 'fas fa-dolly'
+    });
+    if (!ok) return;
+
+    const surSucces = () => {
+      this.suppressioResult.emit("success");
+      this.notificationService.addSuccess('Suppression', estClient ? 'Client supprimé' : 'Fournisseur supprimé');
+    };
+    const surErreur = (err: any) => {
+      this.suppressioResult.emit(err.error?.message);
+      this.notificationService.addError('Erreur', err.error?.message || 'Erreur lors de la suppression');
+    };
+
+    if (estClient) {
+      this.cltFrsService.deleteClient(this.clientFournisseur.id).pipe(takeUntil(this.destroy$))
+        .subscribe({ next: surSucces, error: surErreur });
+    } else {
+      this.cltFrsService.deleteFournisseur(this.clientFournisseur.id).pipe(takeUntil(this.destroy$))
+        .subscribe({ next: surSucces, error: surErreur });
     }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  closeDeleteModal(): void {
-    const modalId = 'modalConfirmDelete' + this.clientFournisseur.id;
-    this.modalService.closeModal(modalId);
   }
 
   detailCltFrs(){

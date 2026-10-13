@@ -31,6 +31,7 @@ import { PageFournisseurComponent } from './pages/fournisseurs/page-fournisseur/
 import { NouveauCltFrsComponent } from './composants/nouveau-clt-frs/nouveau-clt-frs.component';
 import { DetailsCmdCltFrsComponent } from './composants/details-cmd-clt-frs/details-cmd-clt-frs.component';
 import { DetailsCmdComponent } from './composants/details-cmd/details-cmd.component';
+import { ConfirmationDialogComponent } from './composants/confirmation/confirmation-dialog.component';
 import { PageCmdCltFrsComponent } from './pages/page-cmd-clt-frs/page-cmd-clt-frs.component';
 import { NouvelCmdCltFrsComponent } from './composants/nouvel-cmd-clt-frs/nouvel-cmd-clt-frs.component';
 import { PageCategorieComponent } from './pages/categories/page-categorie/page-categorie.component';
@@ -83,6 +84,7 @@ registerLocaleData(localeFr, 'fr');
     NouveauCltFrsComponent,
     DetailsCmdCltFrsComponent,
     DetailsCmdComponent,
+    ConfirmationDialogComponent,
     PageCmdCltFrsComponent,
     NouvelCmdCltFrsComponent,
     PageCategorieComponent,

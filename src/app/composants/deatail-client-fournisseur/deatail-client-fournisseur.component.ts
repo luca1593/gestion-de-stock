@@ -8,6 +8,8 @@ import { jsPDF } from 'jspdf';
 import autoTable, { RowInput } from 'jspdf-autotable';
 import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
 import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Component({
   selector: 'app-deatail-client-fournisseur',
@@ -40,6 +42,8 @@ export class DeatailClientFournisseurComponent implements OnInit {
     private cltFrsService: CltfrsService,
     private cmdCltFrsService: CmdCltFrsService,
     private activatedRouter: ActivatedRoute,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -228,19 +232,34 @@ export class DeatailClientFournisseurComponent implements OnInit {
     this.router.navigate(["nouveau-" + this.origin, this.clientFrournisseurDTO.id]);
   }
 
-  supprimerClient(): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ce ${this.origin} ?`)) {
-      if (this.origin === "client") {
-        this.cltFrsService.deleteClient(this.clientFrournisseurDTO.id).subscribe({
-          next: () => this.router.navigate(['clients']),
-          error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
-        });
-      } else {
-        this.cltFrsService.deleteFournisseur(this.clientFrournisseurDTO.id).subscribe({
-          next: () => this.router.navigate(['fournisseurs']),
-          error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
-        });
-      }
+  async supprimerClient(): Promise<void> {
+    const estClient = this.origin === "client";
+    const nomComplet = [this.clientFrournisseurDTO?.nom, this.clientFrournisseurDTO?.prenom]
+      .filter(Boolean).join(' ');
+
+    const ok = await this.confirmation.demander({
+      titre: estClient ? 'Supprimer ce client ?' : 'Supprimer ce fournisseur ?',
+      message: 'Voulez-vous vraiment supprimer ' + (estClient ? 'ce client' : 'ce fournisseur') + ' ?',
+      element: nomComplet || null,
+      consequence: estClient
+        ? 'Ses ventes et factures resteront enregistrées, mais la fiche disparaît des listes et de la recherche.'
+        : 'Ses commandes resteront enregistrées, mais la fiche disparaît des listes et de la recherche.',
+      icone: estClient ? 'fas fa-user-tie' : 'fas fa-dolly'
+    });
+    if (!ok) return;
+
+    const surSucces = () => {
+      this.notificationService.addSuccess('Suppression', estClient ? 'Client supprimé' : 'Fournisseur supprimé');
+      this.router.navigate([estClient ? 'clients' : 'fournisseurs']);
+    };
+    const surErreur = (err: any) => {
+      this.errorMsg = err.error?.message || "Erreur lors de la suppression";
+    };
+
+    if (estClient) {
+      this.cltFrsService.deleteClient(this.clientFrournisseurDTO.id).subscribe({ next: surSucces, error: surErreur });
+    } else {
+      this.cltFrsService.deleteFournisseur(this.clientFrournisseurDTO.id).subscribe({ next: surSucces, error: surErreur });
     }
   }
 

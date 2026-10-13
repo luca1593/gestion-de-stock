@@ -6,6 +6,8 @@ import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service
 import { CommandeClientDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Component({
   selector: 'app-page-cmd-clt-frs',
@@ -42,6 +44,8 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private commandeCltFrsService: CmdCltFrsService,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
     ) { }
 
@@ -218,27 +222,30 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
      }
    }
 
-   supprimerCommande(id: number): void {
-     if (confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
-       if(this.origin === "client"){
-         this.commandeCltFrsService.supprimerCommandeClient(id).pipe(takeUntil(this.destroy$)).subscribe({
-           next: () => {
-             this.finAllCommandeCltFrs();
-           },
-           error: (err: any) => {
-             this.errorMsg = err.error?.error || "Erreur lors de la suppression";
-           }
-         });
-       } else if(this.origin === "fournisseur"){
-         this.commandeCltFrsService.supprimerCommandeFournisseur(id).pipe(takeUntil(this.destroy$)).subscribe({
-           next: () => {
-             this.finAllCommandeCltFrs();
-           },
-           error: (err: any) => {
-             this.errorMsg = err.error?.error || "Erreur lors de la suppression";
-           }
-         });
+   async supprimerCommande(id: number): Promise<void> {
+     const libelle = this.origin === "fournisseur" ? "cette commande fournisseur" : "cette commande client";
+     const ok = await this.confirmation.demander({
+       titre: 'Supprimer la commande ?',
+       message: 'Voulez-vous vraiment supprimer ' + libelle + ' ?',
+       consequence: "Les articles qui y figuraient seront de nouveau disponibles au stock.",
+       icone: 'fas fa-file-invoice'
+     });
+     if (!ok) return;
+
+     const rafraichir = {
+       next: () => {
+         this.finAllCommandeCltFrs();
+         this.notificationService.addSuccess('Suppression', 'Commande supprimée');
+       },
+       error: (err: any) => {
+         this.errorMsg = err.error?.error || "Erreur lors de la suppression";
        }
+     };
+
+     if(this.origin === "client"){
+       this.commandeCltFrsService.supprimerCommandeClient(id).pipe(takeUntil(this.destroy$)).subscribe(rafraichir);
+     } else if(this.origin === "fournisseur"){
+       this.commandeCltFrsService.supprimerCommandeFournisseur(id).pipe(takeUntil(this.destroy$)).subscribe(rafraichir);
      }
    }
 

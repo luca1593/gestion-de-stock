@@ -1,0 +1,43 @@
+<div class="confirm-backdrop" *ngIf="confirmation.etat.visible">
+  <div class="confirm-dialog"
+       role="alertdialog"
+       aria-modal="true"
+       [attr.aria-labelledby]="titreId"
+       [attr.aria-describedby]="messageId"
+       (click)="$event.stopPropagation()">
+
+    <div class="confirm-icone" [class.confirm-icone-danger]="confirmation.etat.danger"
+         [class.confirm-icone-neutre]="!confirmation.etat.danger">
+      <i [class]="confirmation.etat.icone"></i>
+    </div>
+
+    <div class="confirm-corps">
+      <h5 class="confirm-titre" [id]="titreId">{{ confirmation.etat.titre }}</h5>
+
+      <p class="confirm-message" [id]="messageId">{{ confirmation.etat.message }}</p>
+
+      <div class="confirm-element" *ngIf="confirmation.etat.element">
+        <i class="fas fa-tag"></i>
+        <span>{{ confirmation.etat.element }}</span>
+      </div>
+
+      <p class="confirm-consequence" *ngIf="confirmation.etat.consequence">
+        <i class="fas fa-circle-info"></i>
+        <span>{{ confirmation.etat.consequence }}</span>
+      </p>
+    </div>
+
+    <div class="confirm-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="confirmation.annuler()">
+        <i class="fas fa-times"></i>&nbsp;{{ confirmation.etat.cancelLabel }}
+      </button>
+      <button type="button"
+              class="btn"
+              [class.btn-danger]="confirmation.etat.danger"
+              [class.btn-primary]="!confirmation.etat.danger"
+              (click)="confirmation.valider()">
+        <i class="fas" [class.fa-trash-alt]="confirmation.etat.danger" [class.fa-check]="!confirmation.etat.danger"></i>&nbsp;{{ confirmation.etat.confirmLabel }}
+      </button>
+    </div>
+  </div>
+</div>

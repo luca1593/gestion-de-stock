@@ -6,6 +6,8 @@ import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
 import { FournisseurDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Component({
   selector: 'app-page-fournisseur',
@@ -33,6 +35,8 @@ export class PageFournisseurComponent implements OnInit, OnDestroy {
     private router: Router,
     private cltfrsService: CltfrsService,
     private photoSyncService: PhotoSyncService,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -108,16 +112,24 @@ export class PageFournisseurComponent implements OnInit, OnDestroy {
     this.router.navigate(['nouveau-fournisseur', fournisseur.id]);
   }
 
-  supprimerFournisseur(fournisseur: FournisseurDto): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le fournisseur "${fournisseur.nom}" ?`)) {
-      this.cltfrsService.deleteFournisseur(fournisseur.id!).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.photoSyncService.clearEntity('fournisseur', fournisseur.id!);
-          this.findAllFournisseur();
-        },
-        error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
-      });
-    }
+  async supprimerFournisseur(fournisseur: FournisseurDto): Promise<void> {
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer ce fournisseur ?',
+      message: 'Voulez-vous vraiment supprimer ce fournisseur ?',
+      element: [fournisseur.nom, fournisseur.prenom].filter(Boolean).join(' '),
+      consequence: 'Il disparaîtra des listes et de la recherche. Ses commandes resteront enregistrées.',
+      icone: 'fas fa-dolly'
+    });
+    if (!ok) return;
+
+    this.cltfrsService.deleteFournisseur(fournisseur.id!).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.photoSyncService.clearEntity('fournisseur', fournisseur.id!);
+        this.findAllFournisseur();
+        this.notificationService.addSuccess('Suppression', 'Fournisseur supprimé');
+      },
+      error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
+    });
   }
 
   formatAdresse(fournisseur: FournisseurDto): string {

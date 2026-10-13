@@ -8,6 +8,8 @@ import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service
 import { ArticleDto } from 'src/gs-api/src/models';
 import { CategoryDto } from 'src/gs-api/src/models/category-dto';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Component({
   selector: 'app-page-article',
@@ -54,16 +56,24 @@ export class PageArticleComponent implements OnInit, OnDestroy {
     this.router.navigate(["nouvel-article", article.id]);
   }
 
-  supprimerArticle(article: ArticleDto): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'article "${article.designation}" ?`)) {
-      this.articleService.delete(article.id!).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.photoSyncService.clearEntity('article', article.id!);
-          this.findAllArticle();
-        },
-        error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
-      });
-    }
+  async supprimerArticle(article: ArticleDto): Promise<void> {
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer cet article ?',
+      message: 'Voulez-vous vraiment supprimer cet article ?',
+      element: article.designation,
+      consequence: 'Il disparaîtra des listes, de la recherche et des commandes en cours.',
+      icone: 'fas fa-box'
+    });
+    if (!ok) return;
+
+    this.articleService.delete(article.id!).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.photoSyncService.clearEntity('article', article.id!);
+        this.findAllArticle();
+        this.notificationService.addSuccess('Suppression', 'Article supprimé');
+      },
+      error: (err) => this.errorMsg = err.error?.message || "Erreur lors de la suppression"
+    });
   }
 
   constructor(
@@ -71,6 +81,8 @@ export class PageArticleComponent implements OnInit, OnDestroy {
     private articleService: ArtcleService,
     private exportService: ExportExcelService,
     private photoSyncService: PhotoSyncService,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) { }
 

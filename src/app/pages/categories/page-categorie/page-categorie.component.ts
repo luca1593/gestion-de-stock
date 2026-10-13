@@ -10,6 +10,7 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
 import { forkJoin, of, firstValueFrom } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import * as ExcelJS from 'exceljs';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 
 @Component({
   selector: 'app-page-categorie',
@@ -20,7 +21,6 @@ export class PageCategorieComponent implements OnInit {
 
   categoryDtoList: Array<CategoryDto> = [];
   categoryDtoListFiltre: Array<CategoryDto> = [];
-  categoryIdToDelete?: number = -1;
   errorMsg: string = "";
   loading = true;
 page: number = 1;
@@ -42,6 +42,7 @@ page: number = 1;
     private notificationService: NotificationService,
     private articleService: ArtcleService,
     private exportService: ExportExcelService,
+    private confirmation: ConfirmationService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -124,38 +125,27 @@ page: number = 1;
     this.modalService.openModal('modalDetailCat');
   }
 
-  openDeleteModal(id: number): void {
-    this.categoryIdToDelete = id;
-    const modalId = 'modalConfirmDeleteCat';
-    this.modalService.openModal(modalId);
-  }
+  async openDeleteModal(id: number): Promise<void> {
+    const categorie = (this.categoryDtoList || []).find(c => c.id === id);
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer cette catégorie ?',
+      message: 'Voulez-vous vraiment supprimer cette catégorie ?',
+      element: categorie ? `${categorie.code} — ${categorie.designation || ''}`.trim() : null,
+      consequence: "Les articles qui y sont rattachés n'appartiendront plus à aucune catégorie.",
+      icone: 'fas fa-layer-group'
+    });
+    if (!ok || !id || id === -1) return;
 
-  supprimerCategorie() {
-    if (this.categoryIdToDelete && this.categoryIdToDelete !== -1) {
-      this.categoryService.delete(this.categoryIdToDelete).subscribe({
-        next: () => {
-          this.findAllCategory();
-          this.categoryIdToDelete = -1;
-          this.closeDeleteModal();
-          this.notificationService.addSuccess('Succès', 'Catégorie supprimée avec succès');
-        },
-        error: (err) => {
-          this.errorMsg = err.error?.message || 'Une erreur est survenue';
-          this.notificationService.addError('Erreur', this.errorMsg);
-          this.closeDeleteModal();
-        }
-      });
-    }
-  }
-
-  closeDeleteModal(): void {
-    const modalId = 'modalConfirmDeleteCat';
-    this.modalService.closeModal(modalId);
-  }
-
-  annulerSuppression() {
-    this.categoryIdToDelete = -1;
-    this.closeDeleteModal();
+    this.categoryService.delete(id).subscribe({
+      next: () => {
+        this.findAllCategory();
+        this.notificationService.addSuccess('Suppression', 'Catégorie supprimée');
+      },
+      error: (err) => {
+        this.errorMsg = err.error?.message || 'Une erreur est survenue';
+        this.notificationService.addError('Erreur', this.errorMsg);
+      }
+    });
   }
 
   exporterCategories(): void {
