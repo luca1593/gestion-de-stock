@@ -7,6 +7,7 @@ import { FactureService } from 'src/app/services/facture/facture.service';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { Encaissement } from 'src/app/composants/encaissement/encaissement.component';
 import { ClientDto, ArticleDto, FactureDto, LigneVenteDto, PaiementDto, VenteDto,} from 'src/gs-api/src/models';
+import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
 
 @Component({
   selector: 'app-pave-vente',
@@ -272,11 +273,11 @@ export class PageVenteComponent implements OnInit {
 
     this.ligneDeVentes.forEach((ligne) => {
       if (ligne.prixUnitaire && ligne.quantite) {
-        totalCmd += ligne.prixUnitaire * ligne.quantite;
+        totalCmd += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         totalQnt += ligne.quantite;
       }
     });
-    this.totalVente=Math.floor(totalCmd);
+    this.totalVente=arrondiMonetaire(totalCmd);
     this.quantiteListArticle=totalQnt;
     this.searchedArticle={};
     this.codeArticle='';
@@ -325,11 +326,11 @@ export class PageVenteComponent implements OnInit {
     let totalQnt = 0;
     this.ligneDeVentes.forEach((ligne) => {
       if (ligne.prixUnitaire && ligne.quantite) {
-        totalCmd += ligne.prixUnitaire * ligne.quantite;
+        totalCmd += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         totalQnt += ligne.quantite;
       }
     });
-    this.totalVente = Math.floor(totalCmd);
+    this.totalVente = arrondiMonetaire(totalCmd);
     this.quantiteListArticle = totalQnt;
   }
 }

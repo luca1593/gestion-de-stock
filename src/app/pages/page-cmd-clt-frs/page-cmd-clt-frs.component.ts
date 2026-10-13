@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 import { CommandeClientDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
 
 @Component({
   selector: 'app-page-cmd-clt-frs',
@@ -314,11 +315,11 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
     let nmbArticle=0;
     list.forEach(ligne => {
       if(ligne.prixUnitaire && ligne.quantite){
-        totalTtc += ligne.prixUnitaire * ligne.quantite;
+        totalTtc += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         nmbArticle += ligne.quantite;
       }
     });
-    this.mapTotalTtc.set(idCommande, Math.floor(totalTtc));
+    this.mapTotalTtc.set(idCommande, arrondiMonetaire(totalTtc));
     this.mapNmbrArticle.set(idCommande, nmbArticle);
   }
 

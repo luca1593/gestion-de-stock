@@ -25,6 +25,9 @@ export class NouveauCltFrsComponent implements OnInit {
   loading = true;
   isEditMode = false;
 
+  // verrou anti double-clic : sans lui, deux clics rapides creaient deux fiches
+  saving = false;
+
   /**
  * Format d'e-mail vérifiable dans le template : le bouton de sauvegarde doit
  * rester grisé sur une adresse invalide, sinon le message d'erreur s'affiche
@@ -156,11 +159,13 @@ constructor(
       return;
     }
 
+    this.saving = true;
     if(this.origin === "client"){
       this.cltfrsService.enregistreClient(this.mapToClient()).subscribe(resp =>{
         this.clientFournisseur = resp;
         this.savePhoto(resp.id, resp.nom + "_" + resp.prenom);
       }, error => {
+        this.saving = false;
         this.errorMsgs=error.error.errors;
       });
     }else if(this.origin === "fournisseur"){
@@ -168,6 +173,7 @@ constructor(
         this.clientFournisseur = resp;
         this.savePhoto(resp.id, resp.nom + "_" + resp.prenom);
       }, error => {
+        this.saving = false;
         this.errorMsgs=error.error.errors;
       });
     }

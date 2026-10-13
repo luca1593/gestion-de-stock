@@ -6,6 +6,7 @@ import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service
 import { ArticleDto, CategoryDto } from 'src/gs-api/src/models';
 import { PhotoService } from 'src/gs-api/src/services';
 import SavePhotoParams=PhotoService.SavePhotoParams;
+import { arrondiMonetaire } from 'src/app/composants/money-utils';
 
 @Component({
   selector: 'app-nouvel-article',
@@ -32,6 +33,14 @@ export class NouvelArticleComponent implements OnInit {
   loading = true;
   submitted = false;
   isEditMode = false;
+
+  /*
+   * Verrou d'enregistrement. Sans lui, quatre clics rapides sur
+   * « Sauvegarder » envoyaient quatre POST et creaient quatre articles
+   * identiques : le contredoublon n'aidait pas, la liste des codes
+   * existants n'etant rechargee qu'a l'ouverture de la page.
+   */
+  saving = false;
 
   constructor(
     private articleService: ArtcleService,
@@ -150,10 +159,12 @@ export class NouvelArticleComponent implements OnInit {
       return;
     }
 
+    this.saving = true;
     this.articleService.enregistrerArticle(this.articleDto).subscribe(art => {
       this.articleDto = art;
       this.savePhoto(art.id, art.codeArticle);
     }, error => {
+      this.saving = false;
       this.errorMsgs=error.error.errors;
     });
   }
@@ -171,7 +182,9 @@ export class NouvelArticleComponent implements OnInit {
   calculerPrixTTC(): void {
     if (this.articleDto.prixUnitaireht != null && this.articleDto.tauxTva != null) {
       const ht = +this.articleDto.prixUnitaireht;
-      this.articleDto.prixTtc = ht + (ht * (+this.articleDto.tauxTva / 100));
+      // arrondi a deux decimales : sans cela 99.99 a 5,5 % de TVA
+      // affichait « 105.48944999999999 » dans le champ
+      this.articleDto.prixTtc = arrondiMonetaire(ht + (ht * (+this.articleDto.tauxTva / 100)));
     }
   }
 

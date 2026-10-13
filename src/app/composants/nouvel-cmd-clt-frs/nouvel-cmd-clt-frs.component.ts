@@ -7,6 +7,7 @@ import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service
 import { FactureService, SourceTypeFacture, TypeFacture } from 'src/app/services/facture/facture.service';
 import { Encaissement } from 'src/app/composants/encaissement/encaissement.component';
 import { AdresseDto, ArticleDto, ClientDto, CommandeClientDto, CommandeFournisseurDto, FactureDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
+import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
 
 @Component({
   selector: 'app-nouvel-cmd-clt-frs',
@@ -145,11 +146,11 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     let qnt = 0;
     this.ligneDeCommandes.forEach(ligne => {
       if (ligne.prixUnitaire && ligne.quantite) {
-        total += ligne.prixUnitaire * ligne.quantite;
+        total += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         qnt += ligne.quantite;
       }
     });
-    this.totalCommande = Math.floor(total);
+    this.totalCommande = arrondiMonetaire(total);
     this.quantiteListArticle = qnt;
   }
 
@@ -538,11 +539,11 @@ export class NouvelCmdCltFrsComponent implements OnInit {
 
     this.ligneDeCommandes.forEach(ligne => {
       if(ligne.prixUnitaire && ligne.quantite){
-        totalCmd += ligne.prixUnitaire * ligne.quantite;
+        totalCmd += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         totalQnt += ligne.quantite;
       }
     });
-    this.totalCommande=Math.floor(totalCmd);
+    this.totalCommande=arrondiMonetaire(totalCmd);
     this.quantiteListArticle=totalQnt;
     this.searchedArticle={};
     this.codeArticle="";

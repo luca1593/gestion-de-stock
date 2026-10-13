@@ -31,8 +31,8 @@
             <button class="btn btn-danger mx-1" (click)="cancelClick()">
                 <i class="fas fa-ban"></i>&nbsp;Annuler
             </button>
-            <button class="btn btn-success mx-1" (click)="saveClick()" [disabled]="!categoryDto.code">
-                <i class="fas fa-save"></i>&nbsp;Sauvegarder
+            <button class="btn btn-success mx-1" (click)="saveClick()" [disabled]="saving || !categoryDto.code">
+                <i class="fas" [class.fa-save]="!saving" [class.fa-spinner]="saving" [class.fa-spin]="saving"></i>&nbsp;{{ saving ? 'Enregistrement...' : 'Sauvegarder' }}
             </button>
         </div>
     </div>

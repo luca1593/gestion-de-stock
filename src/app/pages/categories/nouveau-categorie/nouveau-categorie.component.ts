@@ -16,6 +16,9 @@ export class NouveauCategorieComponent implements OnInit {
   submitted = false;
   isEditMode = false;
 
+  // verrou anti double-clic : sans lui, deux clics rapides creaient deux categories
+  saving = false;
+
   /*
    * Codes de categories deja pris. Le backend n'en impose pas l'unicite :
    * la base contenait douze categories au code « POSTMAN », impossible a
@@ -69,10 +72,12 @@ export class NouveauCategorieComponent implements OnInit {
       return;
     }
 
+    this.saving = true;
     this.categoryService.enregistrer(this.categoryDto).subscribe(resp =>{
       this.notificationService.addSuccess('Succès', 'Catégorie enregistrée avec succès');
       this.router.navigate(["categories"]);
     }, error => {
+      this.saving = false;
       this.errorMsg=error.error.errors;
       this.notificationService.addError('Erreur', this.errorMsg.join(', '));
     });

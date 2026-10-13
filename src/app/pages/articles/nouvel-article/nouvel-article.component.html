@@ -97,8 +97,8 @@
                 <i class="fas fa-ban"></i>&nbsp;Annuler
             </button>
             <button class="btn btn-success mx-1" (click)="saveClick()"
-                [disabled]="!articleDto.codeArticle || !articleDto.designation || articleDto.prixUnitaireht == null || articleDto.prixUnitaireht < 0 || articleDto.tauxTva == null || articleDto.tauxTva < 0 || articleDto.prixTtc == null || articleDto.prixTtc < 0 || !categoryDto.id">
-                <i class="fas fa-save"></i>&nbsp;Sauvegarder
+                [disabled]="saving || !articleDto.codeArticle || !articleDto.designation || articleDto.prixUnitaireht == null || articleDto.prixUnitaireht < 0 || articleDto.tauxTva == null || articleDto.tauxTva < 0 || articleDto.prixTtc == null || articleDto.prixTtc < 0 || !categoryDto.id">
+                <i class="fas" [class.fa-save]="!saving" [class.fa-spinner]="saving" [class.fa-spin]="saving"></i>&nbsp;{{ saving ? 'Enregistrement...' : 'Sauvegarder' }}
             </button>
         </div>
     </div>

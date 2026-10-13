@@ -220,6 +220,17 @@
         width: 260px;
     }
 
+    /*
+     * Le chevron « Replier le menu » est une affordance du bureau : il agit
+     * sur menuCollapsed, un etat qui n'a pas de sens dans un tiroir. Sur un
+     * telephone il laissait le tiroir a moitie ouvert (-70px) avec un titre
+     * « Replier le menu », alors que c'est le bouton du header (#sidebarToggle)
+     * qui pilote l'ouverture. On le masque.
+     */
+    .sidebar .menu-toggle {
+        display: none;
+    }
+
     .main-content {
         margin-left: 0;
     }
