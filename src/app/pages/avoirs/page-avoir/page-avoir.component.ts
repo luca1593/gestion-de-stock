@@ -101,6 +101,7 @@ export class PageHaveurComponent implements OnInit {
 
   getEtatClass(etat: string | undefined): string {
     switch (etat) {
+      case 'BROUILLON': return 'etat-default';
       case 'EN_ATTENTE': return 'etat-warning';
       case 'VALIDE': return 'etat-success';
       case 'ANNULE': return 'etat-danger';
@@ -110,6 +111,7 @@ export class PageHaveurComponent implements OnInit {
 
   getEtatLabel(etat: string | undefined): string {
     switch (etat) {
+      case 'BROUILLON': return 'Brouillon';
       case 'EN_ATTENTE': return 'En attente';
       case 'VALIDE': return 'Validé';
       case 'ANNULE': return 'Annulé';

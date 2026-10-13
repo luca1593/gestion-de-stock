@@ -4,6 +4,7 @@ import { HaveurService } from 'src/app/services/avoir/avoir.service';
 import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { VenteService } from 'src/app/services/vente/vente.service';
 import { ClientDto, VenteDto, AvoirDto } from 'src/gs-api/src/models';
+import { arrondiMonetaire } from 'src/app/composants/money-utils';
 
 @Component({
   selector: 'app-nouvel-avoir',
@@ -20,6 +21,7 @@ export class NouvelAvoirComponent implements OnInit {
   errorMsg: string = '';
   isLoading = false;
   successMsg: string = '';
+  submitted = false;
 
   constructor(
     private router: Router,
@@ -39,6 +41,8 @@ export class NouvelAvoirComponent implements OnInit {
     const day = String(today.getDate()).padStart(2, '0');
     this.avoirDto.dateAvoir = `${year}-${month}-${day}`;
     
+    // BROUILLON est l'etat par defaut cote backend : c'est lui qui prevails
+    // sur les avoirs deja enregistres
     this.avoirDto.etat = 'BROUILLON';
     this.avoirDto.code = 'AV-' + Date.now();
   }
@@ -65,53 +69,61 @@ export class NouvelAvoirComponent implements OnInit {
     });
   }
 
-  onClientChange(event: any): void {
-    const clientId = event.target.value;
-    if (clientId) {
-      this.avoirDto.client = { id: parseInt(clientId) };
-    } else {
-      this.avoirDto.client = null;
-    }
+  /*
+   * ngModelChange transmet la valeur et non l'evenement DOM : ces deux
+   * methodes lisaient event.target.value alors qu'elles recoyaient un
+   * nombre, d'ou un undefined qui laissait avoirDto.client a null meme apres
+   * un choix valide.
+   */
+  onClientChange(clientId: number | string | null): void {
+    this.avoirDto.client = clientId ? { id: Number(clientId) } : null;
   }
 
-  onVenteChange(event: any): void {
-    const venteId = event.target.value;
-    if (venteId) {
-      this.avoirDto.vente = { id: parseInt(venteId) };
-    } else {
-      this.avoirDto.vente = null;
-    }
+  onVenteChange(venteId: number | string | null): void {
+    this.avoirDto.vente = venteId ? { id: Number(venteId) } : null;
   }
 
   save(): void {
+    this.submitted = true;
     this.isLoading = true;
     this.errorMsg = '';
     this.successMsg = '';
 
-    // Envoyer uniquement les champs simples, pas d'objets imbriqués
+    // verification avant l'envoi : un formulaire incomplet partait au serveur
+    // et le bouton semblait sans effet si la reponse etait muette
+    const manquants: string[] = [];
+    if (!this.avoirDto.client) manquants.push('client');
+    if (!this.avoirDto.dateAvoir) manquants.push("date de l'avoir");
+    if (!this.avoirDto.montant && this.avoirDto.montant !== 0) manquants.push('montant');
+    if (this.avoirDto.montant < 0) manquants.push('montant (il ne peut pas etre negatif)');
+    if (!this.avoirDto.etat) manquants.push('etat');
+    if (!this.avoirDto.raison) manquants.push('raison');
+    if (manquants.length) {
+      this.errorMsg = 'Merci de renseigner : ' + manquants.join(', ');
+      this.isLoading = false;
+      return;
+    }
+
+    // n'envoyer que les champs simples, pas d'objets imbriques
     const avoirClean: any = {
       code: this.avoirDto.code,
       dateAvoir: this.avoirDto.dateAvoir,
-      montant: parseFloat(this.avoirDto.montant) || 0,
+      montant: arrondiMonetaire(parseFloat(this.avoirDto.montant)),
       raison: this.avoirDto.raison,
       etat: this.avoirDto.etat,
       client: this.avoirDto.client ? { id: this.avoirDto.client.id } : null,
       vente: this.avoirDto.vente ? { id: this.avoirDto.vente.id } : null
     };
 
-    console.log('Données envoyées:', JSON.stringify(avoirClean, null, 2));
-
     this.avoirService.save(avoirClean).subscribe({
-      next: (data) => {
-        console.log('Réponse:', data);
-        this.successMsg = 'Avoir créé avec succès';
+      next: () => {
+        this.successMsg = 'Avoir cree avec succes';
         setTimeout(() => {
           this.router.navigate(['/avoirs']);
         }, 1500);
       },
       error: (err) => {
-        console.error('Erreur création avoir:', err);
-        this.errorMsg = err.error?.message || err.message || 'Erreur lors de la création';
+        this.errorMsg = err.error?.errors?.[0] || err.error?.message || err.message || 'Erreur lors de la creation';
         this.isLoading = false;
       }
     });

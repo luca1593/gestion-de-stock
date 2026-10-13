@@ -12,65 +12,86 @@
           <div class="alert alert-success" *ngIf="successMsg">
             <i class="fas fa-check-circle"></i> {{successMsg}}
           </div>
-          
+
           <form>
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Client *</label>
-                <select class="form-select" (change)="onClientChange($event)" required>
-                  <option value="">Sélectionner un client</option>
-                  <option *ngFor="let client of listClients" [value]="client.id">
+              <div class="col-md-6 mb-2">
+                <!-- Pas de <label> : l'obligation est dans le placeholder,
+                     conformément aux autres formulaires de l'application. -->
+                <select class="form-control" [(ngModel)]="avoirDto.client" name="client" required
+                        #clientField="ngModel" (ngModelChange)="onClientChange($event)">
+                  <option [ngValue]="null">Sélectionnez un client *</option>
+                  <option *ngFor="let client of listClients" [ngValue]="client.id">
                     {{client.nom}} {{client.prenom || ''}}
                   </option>
                 </select>
+                <div class="text-danger small mt-1" *ngIf="clientField.invalid && (clientField.dirty || clientField.touched || submitted)">
+                  Ce champ est obligatoire
+                </div>
               </div>
-              
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Vente associée</label>
-                <select class="form-select" (change)="onVenteChange($event)">
-                  <option value="">Sélectionner une vente (optionnel)</option>
-                  <option *ngFor="let vente of listVentes" [value]="vente.id">
+
+              <div class="col-md-6 mb-2">
+                <select class="form-control" [(ngModel)]="avoirDto.vente" name="vente"
+                        (ngModelChange)="onVenteChange($event)">
+                  <option [ngValue]="null">Sélectionnez une vente (facultatif)</option>
+                  <option *ngFor="let vente of listVentes" [ngValue]="vente.id">
                     Vente #{{vente.id}} - {{vente.dateVente | date:'dd/MM/yyyy'}}
                   </option>
                 </select>
               </div>
             </div>
-            
+
             <div class="row">
-              <div class="col-md-4 mb-3">
-                <label class="form-label">Date de l'avoir *</label>
-                <input type="date" class="form-control" [(ngModel)]="avoirDto.dateAvoir" name="dateAvoir" required>
+              <div class="col-md-4 mb-2">
+                <input type="date" class="form-control" [(ngModel)]="avoirDto.dateAvoir" name="dateAvoir"
+                        placeholder="Date de l'avoir *" required #dateField="ngModel">
+                <div class="text-danger small mt-1" *ngIf="dateField.invalid && (dateField.dirty || dateField.touched || submitted)">
+                  Ce champ est obligatoire
+                </div>
               </div>
-              
-              <div class="col-md-4 mb-3">
-                <label class="form-label">Montant (Ar) *</label>
-                <input type="number" class="form-control" [(ngModel)]="avoirDto.montant" name="montant" min="0" required>
+
+              <div class="col-md-4 mb-2">
+                <input type="number" class="form-control" [(ngModel)]="avoirDto.montant" name="montant"
+                       placeholder="Montant (Ar) *" min="0" required #montantField="ngModel"
+                       (keydown)="$event.key === '-' ? $event.preventDefault() : true">
+                <div class="text-danger small mt-1" *ngIf="(montantField.invalid || avoirDto.montant < 0) && (montantField.dirty || montantField.touched || submitted)">
+                  <span *ngIf="!avoirDto.montant && avoirDto.montant !== 0">Ce champ est obligatoire</span>
+                  <span *ngIf="avoirDto.montant < 0">Le montant ne peut pas être négatif</span>
+                </div>
               </div>
-              
-              <div class="col-md-4 mb-3">
-                <label class="form-label">État *</label>
-                <select class="form-select" [(ngModel)]="avoirDto.etat" name="etat" required>
-                  <option value="EN_ATTENTE">En attente</option>
-                  <option value="VALIDE">Validé</option>
-                  <option value="ANNULE">Annulé</option>
+
+              <div class="col-md-4 mb-2">
+                <select class="form-control" [(ngModel)]="avoirDto.etat" name="etat" required #etatField="ngModel">
+                  <option value="BROUILLON">Brouillon *</option>
+                  <option value="EN_ATTENTE">En attente *</option>
+                  <option value="VALIDE">Validé *</option>
+                  <option value="ANNULE">Annulé *</option>
                 </select>
+                <div class="text-danger small mt-1" *ngIf="etatField.invalid && (etatField.dirty || etatField.touched || submitted)">
+                  Ce champ est obligatoire
+                </div>
               </div>
             </div>
-            
+
             <div class="row">
-              <div class="col-12 mb-3">
-                <label class="form-label">Raison de l'avoir *</label>
-                <textarea class="form-control" [(ngModel)]="avoirDto.raison" name="raison" rows="3" 
-                          placeholder="Motif du retour/remise..." required></textarea>
+              <div class="col-12 mb-2">
+                <textarea class="form-control" [(ngModel)]="avoirDto.raison" name="raison" rows="3"
+                          placeholder="Raison de l'avoir *" required #raisonField="ngModel"></textarea>
+                <div class="text-danger small mt-1" *ngIf="raisonField.invalid && (raisonField.dirty || raisonField.touched || submitted)">
+                  Ce champ est obligatoire
+                </div>
               </div>
             </div>
-            
-            <div class="row mt-4">
+
+            <p class="text-muted small mt-2">Les champs marqués de * sont obligatoires</p>
+
+            <div class="row mt-2">
               <div class="col-12 text-end">
-                <button type="button" class="btn btn-secondary me-2" (click)="cancel()">
+                <button type="button" class="btn btn-secondary me-2" (click)="cancel()" [disabled]="isLoading">
                   <i class="fas fa-times"></i> Annuler
                 </button>
-                <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isLoading">
+                <button type="button" class="btn btn-primary" (click)="save()"
+                        [disabled]="isLoading || !avoirDto.client || !avoirDto.dateAvoir || !avoirDto.montant || avoirDto.montant < 0 || !avoirDto.etat || !avoirDto.raison">
                   <i class="fas fa-save"></i> {{isLoading ? 'Enregistrement...' : 'Enregistrer'}}
                 </button>
               </div>
