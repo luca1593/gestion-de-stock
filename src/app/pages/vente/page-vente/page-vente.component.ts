@@ -235,7 +235,11 @@ export class PageVenteComponent implements OnInit {
     const qteExistante = ligneExistante ? (ligneExistante.quantite || 0) : 0;
     if (qteExistante + this.quantite > stockDispo) {
       this.errorMsg = [];
-      this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+      // le message annonçait le stock total alors qu'une partie était déjà
+      // réservée par une autre ligne du même article : « il reste 339 »
+      // alors que 5 articles étaient déjà pris sur la vente
+      this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste '
+        + (stockDispo - qteExistante) + ' en stock';
       return;
     }
 
@@ -295,7 +299,9 @@ export class PageVenteComponent implements OnInit {
     if (event.delta > 0) {
       const stockDispo = event.ligne.article?.stock || 0;
       if (nouvelleQte > stockDispo) {
-        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        // stock encore disponible une fois la ligne courante deduite
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste '
+          + (stockDispo - (event.ligne.quantite || 0)) + ' en stock';
         return;
       }
     }

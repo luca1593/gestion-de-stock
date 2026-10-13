@@ -4,6 +4,7 @@ import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { AdresseDto, ClientDto, FournisseurDto } from 'src/gs-api/src/models';
 import { PhotoService } from 'src/gs-api/src/services';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
+import { Observable } from 'rxjs';
 import SavePhotoParams=PhotoService.SavePhotoParams;
 
 @Component({
@@ -42,11 +43,41 @@ constructor(
     private photoSyncService: PhotoSyncService
     ) { }
 
+  /*
+   * Adresses e-mail deja utilisees. Le backend accepte plusieurs fiches
+   * pour une meme adresse : on obtenait trois clients « postman.client@t.com »
+   * sans moyen de les distinguer. L'e-mail sert d'identifiant dans les
+   * listes et les factures, il doit donc rester unique.
+   */
+  private emailsExistants = new Set<string>();
+
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(data => {
       this.origin=data['origin'];
     });
     this.findCltfrs();
+    this.chargerEmailsExistants();
+  }
+
+  private chargerEmailsExistants(): void {
+    const id = this.activatedRoute.snapshot.params['id'];
+    const source = this.origin === 'fournisseur'
+      ? this.cltfrsService.findAllFournisseurs()
+      : this.cltfrsService.findAllClient();
+    // meme forme de donnee des deux côtés (ClientDto / FournisseurDto)
+    const sourceTypée: Observable<Array<{ id?: number, email?: string }>> = source as unknown as Observable<Array<{ id?: number, email?: string }>>;
+
+    sourceTypée.subscribe({
+      next: (liste: any[]) => {
+        this.emailsExistants = new Set(
+          (liste || [])
+            .filter(x => !id || String(x.id) !== String(id))
+            .map(x => (x.email || '').trim().toLowerCase())
+            .filter(Boolean)
+        );
+      },
+      error: () => undefined
+    });
   }
 
   findCltfrs():void{
@@ -92,6 +123,8 @@ constructor(
 
   enregistrer(): void {
     this.submitted = true;
+    // l'erreur de la tentative précédente disparaît dès qu'on réessaie
+    this.errorMsgs = [];
 
     // Le backend refuse l'enregistrement sans prénom, e-mail et téléphone
     // (« Veuillez renseigner le prenom du client »…). On les contrôle ici pour
@@ -114,6 +147,12 @@ constructor(
 
     if (!this.emailValide()) {
       this.errorMsgs = ['Le format de l\'adresse e-mail est invalide'];
+      return;
+    }
+
+    if (this.emailsExistants.has(this.clientFournisseur.email.trim().toLowerCase())) {
+      this.errorMsgs = ['Un ' + this.origin + ' utilise déjà l\'adresse '
+        + this.clientFournisseur.email + '. Saisissez une autre adresse e-mail.'];
       return;
     }
 

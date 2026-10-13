@@ -201,7 +201,7 @@ class VenteService extends __BaseService {
     let __body: any=null;
     let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `v1/vente/detele/${encodeURIComponent(String(idVente))}`,
+      this.rootUrl + `v1/vente/delete/${encodeURIComponent(String(idVente))}`,
       __body,
       {
         headers: __headers,

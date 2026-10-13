@@ -47,29 +47,36 @@
                     <input type="number" name="prixht" class="form-control" [(ngModel)]="articleDto.prixUnitaireht"
                         (input)="calculerPrixTTC()" id="prixht" placeholder="Prix unitaire HT *" required min="0" step="0.01"
                         #prixhtField="ngModel" (keydown)="$event.key === '-' ? $event.preventDefault() : true">
-                    <div class="text-danger small mt-1" *ngIf="(prixhtField.invalid || (articleDto.prixUnitaireht != null && articleDto.prixUnitaireht < 0)) && (prixhtField.dirty || prixhtField.touched || submitted)">
-                        Ce champ est obligatoire
+                    <div class="text-danger small mt-1" *ngIf="prixhtField.invalid && (prixhtField.dirty || prixhtField.touched || submitted)">
+                        <span *ngIf="articleDto.prixUnitaireht == null">Ce champ est obligatoire</span>
+                        <span *ngIf="articleDto.prixUnitaireht != null">Le prix ne peut pas être négatif</span>
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="number" name="tva" class="form-control" (input)="calculerPrixTTC()"
                         [(ngModel)]="articleDto.tauxTva" id="tva" placeholder="Taux TVA *" required min="0" max="100" step="0.1"
                         #tvaField="ngModel" (keydown)="$event.key === '-' ? $event.preventDefault() : true">
-                    <div class="text-danger small mt-1" *ngIf="(tvaField.invalid || (articleDto.tauxTva != null && articleDto.tauxTva < 0)) && (tvaField.dirty || tvaField.touched || submitted)">
-                        Ce champ est obligatoire
+                    <div class="text-danger small mt-1" *ngIf="tvaField.invalid && (tvaField.dirty || tvaField.touched || submitted)">
+                        <span *ngIf="articleDto.tauxTva == null">Ce champ est obligatoire</span>
+                        <span *ngIf="articleDto.tauxTva != null && articleDto.tauxTva < 0">Le taux ne peut pas être négatif</span>
+                        <span *ngIf="articleDto.tauxTva != null && articleDto.tauxTva > 100">Le taux ne peut pas dépasser 100 %</span>
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="number" name="prixttc" class="form-control" [(ngModel)]="articleDto.prixTtc" id="prixttc"
                         placeholder="Prix unitaire TTC *" required min="0" step="0.01" #prixttcField="ngModel"
                         (keydown)="$event.key === '-' ? $event.preventDefault() : true">
-                    <div class="text-danger small mt-1" *ngIf="(prixttcField.invalid || (articleDto.prixTtc != null && articleDto.prixTtc < 0)) && (prixttcField.dirty || prixttcField.touched || submitted)">
-                        Ce champ est obligatoire
+                    <div class="text-danger small mt-1" *ngIf="prixttcField.invalid && (prixttcField.dirty || prixttcField.touched || submitted)">
+                        <span *ngIf="articleDto.prixTtc == null">Ce champ est obligatoire</span>
+                        <span *ngIf="articleDto.prixTtc != null">Le prix ne peut pas être négatif</span>
                     </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="number" name="stock" class="form-control" [(ngModel)]="articleDto.stock" id="stock"
-                        placeholder="Stock" min="0" (keydown)="$event.key === '-' ? $event.preventDefault() : true">
+                        placeholder="Stock" min="0" #stockField="ngModel" (keydown)="$event.key === '-' ? $event.preventDefault() : true">
+                    <div class="text-danger small mt-1" *ngIf="stockField.invalid && (stockField.dirty || stockField.touched || submitted)">
+                        Le stock ne peut pas être négatif
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <select class="form-control" name="categorie" id="categorie" [(ngModel)]="categoryDto.id"

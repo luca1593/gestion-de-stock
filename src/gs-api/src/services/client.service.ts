@@ -13,7 +13,7 @@ import { ClientDto } from '../models/client-dto';
 })
 class ClientService extends __BaseService {
   static readonly FindAllPath='v1/client/all';
-  static readonly DeleteDELETEPath='v1/client/detele/{idClient}';
+  static readonly DeleteDELETEPath='v1/client/delete/{idClient}';
   static readonly FindbyEmailClientPath='v1/client/email/{emailClient}';
   static readonly FindbyNomClientPath='v1/client/nom/{nomClient}';
   static readonly SavePOSTPath='v1/client/save';
@@ -195,7 +195,7 @@ class ClientService extends __BaseService {
 
     let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `v1/client/detele/${encodeURIComponent(String(idClient))}`,
+      this.rootUrl + `v1/client/delete/${encodeURIComponent(String(idClient))}`,
       __body,
       {
         headers: __headers,

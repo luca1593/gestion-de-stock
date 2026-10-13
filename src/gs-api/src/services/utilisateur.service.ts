@@ -17,7 +17,7 @@ class UtilisateurService extends __BaseService {
   static readonly UtilisateurApiFindByNomUtilisateurGETPath='v1/utilisateur/nom/{nomUtilisateur}';
   static readonly UtilisateurApiSavePOSTPath='v1/utilisateur/save';
 
-  static readonly UtilisateurApiDELETEPath='v1/utilisateur/detele/{idUtilisateur}';
+  static readonly UtilisateurApiDELETEPath='v1/utilisateur/delete/{idUtilisateur}';
   static readonly UtilisateurApiFindByEmailUtilisateurGETPath='v1/utilisateur/email/{emailUtilisateur}';
   static readonly UtilisateurApiFindByIdGETPath='v1/utilisateur/{idUtilisateur}';
 
@@ -204,7 +204,7 @@ class UtilisateurService extends __BaseService {
     let __body: any=null;
     let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `v1/utilisateur/detele/${encodeURIComponent(String(idUtilisateur))}`,
+      this.rootUrl + `v1/utilisateur/delete/${encodeURIComponent(String(idUtilisateur))}`,
       __body,
       {
         headers: __headers,

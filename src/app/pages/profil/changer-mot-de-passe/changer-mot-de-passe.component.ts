@@ -15,6 +15,20 @@ export class ChangerMotDePasseComponent implements OnInit {
   ancienMdp="";
   utilisateurDto: any={};
   photoUtilisateur: string | null = null;
+  errorMsg = "";
+  successMsg = "";
+  loading = false;
+  submitted = false;
+
+  /*
+   * Le DTO du backend ne contient que id / motDePasse / confirmMotDePasse :
+   * l'ancien mot de passe n'est jamais transmis et ne peut donc pas être
+   * vérifié. Le champ reste affiché parce qu'il est attendu dans le parcours,
+   * mais l'interface annonce explicitement qu'il ne protège rien.
+   */
+  readonly ancienMdpNonVerifie = true;
+
+  readonly longueurMin = 4;
 
   constructor(
     private router: Router,
@@ -47,9 +61,44 @@ export class ChangerMotDePasseComponent implements OnInit {
   }
 
   saveClick(): void {
-    this.changerMotdePasse.id =this.userService.getConnectedUser().id;
-    this.userService.changerMotDePasse(this.changerMotdePasse).subscribe(data=>{
-      this.router.navigate(['profil']);
+    this.submitted = true;
+    this.errorMsg = "";
+    this.successMsg = "";
+
+    const nouveau = this.changerMotdePasse.motDePasse ?? '';
+    const confirmation = this.changerMotdePasse.confirmMotDePasse ?? '';
+
+    if (!nouveau || !confirmation) {
+      this.errorMsg = 'Merci de saisir le nouveau mot de passe et sa confirmation.';
+      return;
+    }
+    if (nouveau.length < this.longueurMin) {
+      this.errorMsg = 'Le nouveau mot de passe doit contenir au moins ' + this.longueurMin + ' caractères.';
+      return;
+    }
+    if (nouveau !== confirmation) {
+      this.errorMsg = 'Les deux mots de passe ne correspondent pas.';
+      return;
+    }
+
+    this.loading = true;
+    this.changerMotdePasse.id = this.userService.getConnectedUser().id;
+    this.userService.changerMotDePasse(this.changerMotdePasse).subscribe({
+      next: () => {
+        this.loading = false;
+        this.successMsg = 'Mot de passe modifié.';
+        // laisse le temps de lire la confirmation avant de quitter la page
+        setTimeout(() => this.router.navigate(['profil']), 1200);
+      },
+      /*
+       * Sans ce bloc d'erreur, un mot de passe non conforme ou une
+       * confirmation differente renvoyait un 400 silencieusement : le
+       * bouton paraissait sans effet et l'utilisateur recommençait a l'aveugle.
+       */
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = err?.error?.message || 'Le mot de passe n\'a pas pu être modifié.';
+      }
     });
   }
 

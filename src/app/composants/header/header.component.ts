@@ -114,6 +114,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /*
+   * Le champ de recherche affiche un « ⌘K » mais aucun raccourci n'etait
+   * ecoute : l'indication ne menait nulle part. On ecoute les deux
+   * conventions (Cmd sur macOS, Ctrl ailleurs) et on place le curseur dans
+   * le champ, en vidant la recherche precedente pour repartir de zero.
+   */
+  @HostListener('document:keydown', ['$event'])
+  onRaccourciRecherche(event: KeyboardEvent): void {
+    if ((event.key === 'k' || event.key === 'K') && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      const champ = document.querySelector<HTMLInputElement>('.search-input');
+      if (champ) {
+        this.searchQuery = '';
+        this.searchResults = [];
+        this.showSearchResults = false;
+        champ.focus();
+      }
+    }
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;

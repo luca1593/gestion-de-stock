@@ -509,7 +509,9 @@ export class NouvelCmdCltFrsComponent implements OnInit {
       const qteTotale = qteExistante + this.quantite;
       if (qteTotale > stockDispo) {
         this.errorMsg = [];
-        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        // stock restant apres deduction de ce que la commande contient deja
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste '
+          + (stockDispo - qteExistante) + ' en stock';
         return;
       }
     }
@@ -565,7 +567,9 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     if (this.origin === 'client' && event.delta > 0) {
       const stockDispo = event.ligne.article?.stock || 0;
       if (nouvelleQte > stockDispo) {
-        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        // stock encore disponible une fois la ligne courante deduite
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste '
+          + (stockDispo - (event.ligne.quantite || 0)) + ' en stock';
         return;
       }
     }
