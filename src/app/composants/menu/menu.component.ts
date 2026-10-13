@@ -147,7 +147,7 @@ export class MenuComponent implements OnInit {
           titre: 'Catégories',
           icon: 'fas fa-tags',
           url: 'categories',
-          matchUrls: ['nouvel-categorie']
+          matchUrls: ['nouveau-categorie']
         },
         {
           id: '62',

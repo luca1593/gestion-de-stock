@@ -24,7 +24,17 @@ export class NouveauCltFrsComponent implements OnInit {
   loading = true;
   isEditMode = false;
 
-  constructor(
+  /**
+ * Format d'e-mail vérifiable dans le template : le bouton de sauvegarde doit
+ * rester grisé sur une adresse invalide, sinon le message d'erreur s'affiche
+ * sous le champ tout en laissant partir la requête.
+ */
+emailValide(): boolean {
+  const email = (this.clientFournisseur.email ?? '').trim();
+  return email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cltfrsService: CltfrsService,
@@ -83,8 +93,27 @@ export class NouveauCltFrsComponent implements OnInit {
   enregistrer(): void {
     this.submitted = true;
 
-    if (!this.clientFournisseur.nom || !this.adresseDto.adresse1 || !this.adresseDto.ville || !this.adresseDto.codePostal || !this.adresseDto.pays) {
-      this.errorMsgs = ['Veuillez remplir tous les champs obligatoires'];
+    // Le backend refuse l'enregistrement sans prénom, e-mail et téléphone
+    // (« Veuillez renseigner le prenom du client »…). On les contrôle ici pour
+    // que le message apparaisse sous le bon champ, au lieu d'une alerte
+    // générique renvoyée par le serveur après coup.
+    const manquants: string[] = [];
+    if (!this.clientFournisseur.nom) manquants.push('nom');
+    if (!this.clientFournisseur.prenom) manquants.push('prénom');
+    if (!this.clientFournisseur.email) manquants.push('e-mail');
+    if (!this.clientFournisseur.numTel) manquants.push('numéro de téléphone');
+    if (!this.adresseDto.adresse1) manquants.push('adresse 1');
+    if (!this.adresseDto.ville) manquants.push('ville');
+    if (!this.adresseDto.codePostal) manquants.push('code postal');
+    if (!this.adresseDto.pays) manquants.push('pays');
+
+    if (manquants.length) {
+      this.errorMsgs = ['Merci de renseigner : ' + manquants.join(', ')];
+      return;
+    }
+
+    if (!this.emailValide()) {
+      this.errorMsgs = ['Le format de l\'adresse e-mail est invalide'];
       return;
     }
 

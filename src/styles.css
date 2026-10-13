@@ -1151,6 +1151,22 @@ body.dark-theme .modal-footer {
 }
 
 /*
+ * Bootstrap 5 a supprimé .badge-primary et .badge-secondary (remplacées par
+ * .bg-* / .text-bg-*). Sans ces deux règles, un badge qui les utilise se
+ * retrouvait en texte blanc sur fond transparent, donc invisible. Elles
+ * reprennent les mêmes dégradés que les autres badges ci-dessus.
+ */
+.badge-primary {
+    background: linear-gradient(135deg, var(--primary-color, #4a90d9) 0%, var(--primary-dark, #2a5298) 100%);
+    color: white;
+}
+
+.badge-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+}
+
+/*
  * Conteneur de pagination. Ce n'est qu'un repli : les six pages de liste
  * redéfinissent .pagination-wrapper (info à gauche, pagination à droite), mais
  * page-cmd-clt-frs, liste-vente et detail-client-fournisseur ne le font pas et

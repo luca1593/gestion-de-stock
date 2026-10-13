@@ -52,20 +52,34 @@ export class UserService {
     try {
       const storedToken = this.storage.getItem(this.TOKEN_KEY);
       const storedUser = this.storage.getItem(this.USER_KEY);
-      
-      if (storedToken && storedUser) {
+
+      // Le jeton valide suffit à autoriser la navigation : c'est lui que
+      // vérifie isUserLogedAndAccessTokenValid. Exiger aussi la fiche
+      // utilisateur déconnectait à chaque rechargement de page dès que
+      // celle-ci n'avait pas été persistée — alors même que le jeton
+      // restait valide, et clearSession() détruisait ce jeton.
+      if (storedToken) {
         const tokenData = JSON.parse(storedToken);
         if (this.isTokenValid(tokenData)) {
-          const user = JSON.parse(storedUser);
-          this.connectedUserSubject.next(user);
           this.isAuthenticatedSubject.next(true);
+
+          // La fiche utilisateur est un confort d'affichage : absente, elle
+          // est reconstruite au premier appel de getConnectedUser() (qui
+          // repart sur le backend via le jeton).
+          if (storedUser) {
+            try {
+              this.connectedUserSubject.next(JSON.parse(storedUser));
+            } catch {
+              // fiche illisible : on l'ignore, le jeton reste valable
+            }
+          }
           return;
         }
       }
     } catch (e) {
-      this.clearSession();
+      // donnees de session corrompues : on repart d'une session propre
     }
-    
+
     this.clearSession();
   }
 
@@ -138,7 +152,7 @@ export class UserService {
   getConnectedUser(): UtilisateurDto{
     const user = this.connectedUserSubject.value;
     if (user) return user;
-    
+
     const stored = this.storage.getItem(this.USER_KEY);
     if (stored) {
       try {
@@ -149,6 +163,7 @@ export class UserService {
         return {} as UtilisateurDto;
       }
     }
+
     return {} as UtilisateurDto;
   }
 

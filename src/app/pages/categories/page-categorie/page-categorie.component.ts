@@ -101,11 +101,11 @@ page: number = 1;
   }
 
   nouveauCategorie(): void {
-    this.router.navigate(["nouvel-categorie"]);
+    this.router.navigate(["nouveau-categorie"]);
   }
 
   modiferCategorie(id?: number): void {
-    this.router.navigate(["nouvel-categorie", id]);
+    this.router.navigate(["nouveau-categorie", id]);
   }
 
   voirDetails(category: CategoryDto): void {

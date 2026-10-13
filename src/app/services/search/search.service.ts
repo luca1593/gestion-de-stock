@@ -132,7 +132,7 @@ export class SearchService {
           label: c.code || '',
           description: c.designation || '',
           id: c.id || 0,
-          url: `nouvel-categorie/${c.id}`
+          url: `nouveau-categorie/${c.id}`
         }))
       ),
       catchError(() => of([]))
@@ -254,7 +254,7 @@ export class SearchService {
           const items: SearchResult[] = [];
           categories.slice(0, 5).forEach(c => {
             if (c.code?.toLowerCase().includes(query) || c.designation?.toLowerCase().includes(query)) {
-              items.push({ type: 'categorie', label: c.code || '', description: c.designation || '', id: c.id || 0, url: `nouvel-categorie/${c.id}` });
+              items.push({ type: 'categorie', label: c.code || '', description: c.designation || '', id: c.id || 0, url: `nouveau-categorie/${c.id}` });
             }
           });
           return items;
