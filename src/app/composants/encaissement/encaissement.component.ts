@@ -43,30 +43,28 @@ export class EncaissementComponent implements OnChanges {
   submitted = false;
 
   modePaiement: ModePaiement = 'ESPECES';
-  montant: number | null = null;
   montantDonne: number | null = null;
   reference = '';
   datePaiement: string = this.aujourdhui();
   note = '';
 
-  /**
-   * Passés à true dès que l'utilisateur touche au champ (ngModelChange) : les
-   * montants cessent alors de suivre automatiquement le total.
-   */
-  montantSaisi = false;
+  /** Mis à true dès que l'utilisateur touche au champ : le montant donné
+   *  cesse alors de suivre automatiquement le total. */
   montantDonneSaisi = false;
 
   constructor(public factureService: FactureService) { }
 
   /**
-   * Tant que l'utilisateur n'a pas saisi de montant, il suit le total : le
-   * panier change à chaque ligne ajoutée ou retirée, et un montant figé
-   * serait faux dès la première modification. Dès que la saisie est manuelle
-   * (paiement partiel, acompte), le montant reste figé.
+   * Le montant payé n'est plus saisi : il EST le total à payer. Le champ a
+   * été retiré du formulaire parce qu'il n'apportait rien — il était rempli
+   * par le calcul et sa seule vraie variable était le montant donné.
+   *
+   * On garde le suivi automatique du montant donné tant qu'il n'est pas
+   * saisi : le panier change à chaque ligne ajoutée ou retirée, et une valeur
+   * figée serait fausse dès la première modification.
    */
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['montantDu'] && !this.montantSaisi) {
-      this.montant = this.montantDu;
+    if (changes['montantDu']) {
       if (this.afficheMontantDonne && !this.montantDonneSaisi) {
         this.montantDonne = this.montantDu;
       }
@@ -77,12 +75,6 @@ export class EncaissementComponent implements OnChanges {
   /* ------------------------------------------------------------------ */
   /* Valeurs dérivées                                                     */
   /* ------------------------------------------------------------------ */
-
-  /** Le montant payé a été saisi manuellement : on ne le suit plus. */
-  onMontantChange(): void {
-    this.montantSaisi = true;
-    this.diffuser();
-  }
 
   /** Le montant donné a été saisi manuellement : on ne le suit plus. */
   onMontantDonneChange(): void {
@@ -106,6 +98,16 @@ export class EncaissementComponent implements OnChanges {
 
   get montantDuArrondi(): number {
     return this.arrondi(this.montantDu);
+  }
+
+  /**
+   * Montant payé : toujours égal au total à payer, jamais saisi.
+   *
+   * Un paiement partiel se saisit en donnant un montant inférieur au total
+   * via le montant donné : le reste dû est alors calculé et affiché.
+   */
+  get montant(): number {
+    return this.montantDuArrondi;
   }
 
   /**
@@ -148,9 +150,7 @@ export class EncaissementComponent implements OnChanges {
 
   /** Le client donne exactement le montant dû : plus de saisie à faire. */
   remplirMontantExact(): void {
-    this.montant = this.montantDu;
     this.montantDonne = this.afficheMontantDonne ? this.montantDu : null;
-    this.montantSaisi = false;
     this.montantDonneSaisi = false;
     this.diffuser();
   }
@@ -176,7 +176,7 @@ export class EncaissementComponent implements OnChanges {
     const messages = this.validation();
     this.encaissementChange.emit({
       paiement: {
-        montant: this.arrondi(this.montant ?? 0),
+        montant: this.montant,
         montantDonne: this.afficheMontantDonne ? this.arrondi(this.montantDonne ?? 0) : undefined,
         monnaie: this.monnaie,
         datePaiement: this.datePaiement,
@@ -192,32 +192,25 @@ export class EncaissementComponent implements OnChanges {
   /**
    * Règles de saisie.
    *
-   * Le montant payé peut être inférieur au total (paiement partiel, acompte,
-   * vente à crédit) mais jamais négatif ni supérieur au total.
+   * Le montant payé n'est plus saisi, il découle du total : il n'y a donc
+   * rien à valider de ce côté, seulement à vérifier que le total est bien
+   * positif (sinon le panier est vide et rien ne peut être enregistré).
    *
-   * Le montant donné se compare au MONTANT PAYÉ, pas au total : donner moins
-   * que ce qu'on règle est une erreur de saisie, alors que donner moins que
-   * le total est un paiement partiel légitime. Bloquer ce dernier cas
-   * empêcherait d'enregistrer une vente à crédit.
+   * Le montant donné reste libre : il peut être supérieur au total (monnaie
+   * à rendre) ou inférieur (paiement partiel, vente à crédit). Aucun des deux
+   * cas n'est bloqué, le second est une vente normale.
    */
   private validation(): string[] {
     const messages: string[] = [];
-    const montant = this.montant;
 
-    if (montant === null || montant === undefined || isNaN(montant)) {
-      messages.push('Veuillez renseigner le montant payé');
-    } else if (montant <= 0) {
-      messages.push('Le montant payé doit être supérieur à 0');
-    } else if (montant > this.montantDu) {
-      messages.push('Le montant payé ne peut pas dépasser le total à payer');
+    if (this.montant <= 0) {
+      messages.push('Le total à payer doit être supérieur à 0');
     }
 
     if (this.afficheMontantDonne) {
       const donne = this.montantDonne;
       if (donne === null || donne === undefined || isNaN(donne)) {
         messages.push('Veuillez renseigner le montant donné');
-      } else if (donne < (montant ?? 0)) {
-        messages.push('Le montant donné ne peut pas être inférieur au montant payé');
       }
     }
 
