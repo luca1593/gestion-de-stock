@@ -48,8 +48,14 @@ interface WorkflowStep {
               <a class="dropdown-item"
                  (click)="onChange(step.key)"
                  [class.active]="etat === step.key"
-                 [class.disabled]="isStepDesactive(step.key)">
+                 [class.disabled]="isStepDesactive(step.key)"
+                 [attr.aria-disabled]="isStepDesactive(step.key)">
                 <span class="badge" [style.background-color]="step.color">{{ step.label }}</span>
+                <i class="fas fa-lock ms-2"
+                   *ngIf="isStepDesactive(step.key)"
+                   [title]="etat === steps[steps.length - 1]?.key
+                      ? 'Dernière étape du parcours'
+                      : 'Le parcours ne peut pas revenir en arrière'"></i>
               </a>
             </li>
           </ul>
@@ -305,7 +311,23 @@ export class EtatoWorkflowComponent {
   }
 
   isStepDesactive(key: string): boolean {
-    return this.stepsDesactivees.includes(key);
+    if (this.stepsDesactivees.includes(key)) return true;
+    // Une commande n'avance que d'un cran a la fois, et jamais a rebours :
+    // une commande livree ne peut pas repasser « validee », une commande
+    // validee ne peut pas repasser « en preparation ». Sans cette regle,
+    // le menu deroulant permettait de remonter le workflow et le clic sur
+    // une etape anterieure faisait l'inverse de l'attendu.
+    return !this.peutAllerVers(key);
+  }
+
+  /** Seul l'etape immediatement suivant est accessible. */
+  peutAllerVers(key: string): boolean {
+    return this.getStepIndex(key) === this.getStepIndex(this.etat) + 1;
+  }
+
+  /** Libelle de la seule transition possible, pour l'infobulle du menu. */
+  getProchaineEtat(): WorkflowStep | undefined {
+    return this.steps[this.getStepIndex(this.etat) + 1];
   }
 
   getCurrentStep(): WorkflowStep | undefined {
@@ -318,14 +340,12 @@ export class EtatoWorkflowComponent {
   }
 
   onStepClick(step: WorkflowStep, index: number): void {
-    if (index < this.getStepIndex(this.etat)) {
-      this.onChange(step.key);
-    }
+    this.onChange(step.key);
   }
 
   onChange(newEtat: string): void {
-    if (newEtat !== this.etat && !this.isStepDesactive(newEtat)) {
-      this.etatChange.emit(newEtat);
-    }
+    if (newEtat === this.etat) return;
+    if (this.isStepDesactive(newEtat)) return;
+    this.etatChange.emit(newEtat);
   }
 }

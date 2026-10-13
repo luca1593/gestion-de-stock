@@ -164,6 +164,43 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     return steps.slice(0, currentIndex);
   }
 
+  /**
+   * Contenu fige. Des la validation, la commande fait foi : on ne touche
+   * plus au client, aux articles, aux quantites ni aux prix, seule l'etat
+   * peut avancer vers « livree ». Le composant de workflow interdit deja le
+   * retour en arriere.
+   */
+  get contenuVerrouille(): boolean {
+    return this.isModification && this.etatCommande !== 'EN_PREPARATION';
+  }
+
+  /**
+   * Une commande deja enregistree comme livree est figee, etat compris.
+   * On se base sur l'etat enregistre et non sur celui affiche : sinon, en
+   * faisant passer la commande de « validee » a « livree », le bouton
+   * Enregistrer se desactivait dans la seconde et la transition ne pouvait
+   * plus jamais etre enregistree.
+   */
+  get commandeLivree(): boolean {
+    return this.etatCommandeOriginal === 'LIVREE';
+  }
+
+  /** Message affiché en tête de formulaire quand le contenu est fige. */
+  get messageVerrou(): string {
+    if (this.commandeLivree) {
+      return 'Cette commande est livrée : elle n\'est plus modifiable.';
+    }
+    if (this.etatCommande === 'LIVREE' && this.etatCommandeOriginal === 'VALIDEE') {
+      return 'Le contenu est figé depuis la validation. Enregistrez pour marquer '
+        + 'la commande comme livrée : elle ne pourra plus être modifiée ensuite.';
+    }
+    if (this.contenuVerrouille) {
+      return 'Cette commande est validée : son contenu (client, articles et quantités) '
+        + 'n\'est plus modifiable. Seule l\'état peut passer à « Livrée ».';
+    }
+    return '';
+  }
+
   onEtatChange(newEtat: string): void {
     this.etatCommande = newEtat;
   }
@@ -212,6 +249,36 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   private processModification(): void {
+    /*
+     * Commande validee ou livree : le contenu est fige. Seul l'etat peut
+     * changer, et encore vers l'avant. On ne renvoie donc aucune ligne a
+     * l'API, sinon une ligne ajoutee avant le verrou (ou par un appel
+     * direct) partirait en base.
+     */
+    if (this.contenuVerrouille) {
+      this.errorMsg = [];
+      if (this.etatCommande === this.etatCommandeOriginal) {
+        this.finirModification();
+        return;
+      }
+      if (this.origin === 'client') {
+        this.commandeCltFrs.updateEtatCommandeClient(this.commandeId!, this.etatCommande).subscribe({
+          next: () => this.finirModification(),
+          error: (err) => {
+            this.errorMsg = err.error?.errors || ['Erreur lors de la mise à jour de l\'état'];
+          }
+        });
+      } else {
+        this.commandeCltFrs.updateEtatCommandeFournisseur(this.commandeId!, this.etatCommande).subscribe({
+          next: () => this.finirModification(),
+          error: (err) => {
+            this.errorMsg = err.error?.errors || ['Erreur lors de la mise à jour de l\'état'];
+          }
+        });
+      }
+      return;
+    }
+
     if (this.ligneDeCommandes.length === 0) {
       this.errorMsg = ['Veuillez ajouter au moins un article pour la commande'];
       return;
@@ -245,6 +312,11 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     } else {
       this.processLignesModification();
     }
+  }
+
+  /** Fin de modification : retour a la liste une fois l'ecat a jour. */
+  private finirModification(): void {
+    this.router.navigate([this.origin === 'client' ? 'commande-client' : 'commande-fournisseur']);
   }
 
   private processLignesModification(): void {
@@ -553,6 +625,10 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   onDeleteLigne(ligne: any): void {
+    if (this.contenuVerrouille) {
+      this.errorMsg = ['Le contenu de cette commande est figé : seule l\'état peut évoluer.'];
+      return;
+    }
     const index = this.ligneDeCommandes.indexOf(ligne);
     if (index > -1) {
       this.ligneDeCommandes.splice(index, 1);
@@ -562,6 +638,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   onQuantiteChange(event: {ligne: any, delta: number}): void {
+    if (this.contenuVerrouille) return;
     const nouvelleQte = (event.ligne.quantite || 0) + event.delta;
     if (nouvelleQte < 1) return;
 

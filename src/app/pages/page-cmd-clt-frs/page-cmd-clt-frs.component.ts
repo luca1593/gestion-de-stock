@@ -219,8 +219,21 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
      });
    }
 
+   /**
+    * Verrou de suppression : une commande validee ou livree n'est plus
+    * supprimable, elle fait foi pour les factures et le stock.
+    */
    isCommandeVerrouillee(etat: string | undefined): boolean {
      return etat === 'LIVREE' || etat === 'VALIDEE';
+   }
+
+   /**
+    * Une commande livree est figee : plus aucune modification possible, le
+    * bouton est grise. Une commande validee reste en revanche accessible,
+    * mais uniquement pour faire avancer l'etat jusqu'a « livree ».
+    */
+   estCommandeLivree(etat: string | undefined): boolean {
+     return etat === 'LIVREE';
    }
 
    modifierCommande(id: number): void {
