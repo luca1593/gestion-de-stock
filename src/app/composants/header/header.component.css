@@ -35,35 +35,97 @@ body.dark-theme .header-wrapper {
     border-bottom: 1px solid var(--border-color);
 }
 
-body.dark-theme .search-box {
-    background: rgba(30, 30, 30, 0.95);
-    border: 2px solid #4a4a5a;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+/*
+ * Champ de recherche global.
+ *
+ * Il occupait 54px de haut : 0.6rem de marge interne doublée d'une bordure
+ * de 2px, dans une capsule de 30px de rayon, avec une ombre permanente. Le
+ * bandeau « Ctrl K » n'ayant pas white-space: nowrap, il passait à la ligne
+ * et devenait un pavé qui étirait encore la hauteur.
+ *
+ * Il fait maintenant 38px, bord 1px et rayon aligné sur celui des cartes.
+ * Les variables --bg-card, --border-color et --text-muted suffisent au thème
+ * sombre : plus besoin d'une seconde série de règles en dur, qui
+ * dupliquait celles-ci et pouvait contredire la nouvelle bordure.
+ */
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 38px;
+    padding: 0 0.7rem;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 0.5rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-body:not(.dark-theme) .search-box {
-    background: #ffffff;
-    border: 2px solid #dee2e6;
+.search-box:hover {
+    border-color: var(--primary-color, #4a90d9);
 }
 
-body.dark-theme .search-box:hover {
-    background: rgba(40, 40, 40, 0.95);
-    border-color: var(--primary-color);
+.search-box:focus-within {
+    border-color: var(--primary-color, #4a90d9);
+    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
 }
 
-body.dark-theme .search-box:focus-within {
-    background: rgba(40, 40, 40, 0.95);
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.25);
+.search-box > i {
+    color: var(--text-muted, #718096);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.search-box:focus-within > i {
+    color: var(--primary-color, #4a90d9);
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    min-width: 0;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-primary, #2c3e50);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted, #718096);
+    font-weight: 400;
+}
+
+/* Rappel du raccourci : discret, sur une seule ligne, et effacé dès que
+   l'utilisateur tape — le raccourci ne sert plus a rien a ce moment. */
+.search-kbd {
+    flex-shrink: 0;
+    white-space: nowrap;
+    background: transparent;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.35rem;
+    font-size: 0.65rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text-muted, #718096);
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.search-box:focus-within .search-kbd,
+.search-box:has(.search-input:not(:placeholder-shown)) .search-kbd {
+    opacity: 0;
+    pointer-events: none;
 }
 
 body.dark-theme .search-input {
-    color: #f0f0f0 !important;
-    background: transparent !important;
+    color: var(--text-primary);
+    background: transparent;
 }
 
 body.dark-theme .search-input::placeholder {
-    color: #888888 !important;
+    color: var(--text-muted);
 }
 
 body.dark-theme .search-input:-webkit-autofill,
@@ -73,27 +135,9 @@ body.dark-theme .search-input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0px 1000px rgba(40, 40, 40, 0.95) inset !important;
 }
 
-body.dark-theme .search-kbd {
-    background: #2a2a2a;
-    border-color: #3a3a3a;
-    color: #888888;
-}
-
-body.dark-theme .search-box {
-    background: var(--input-bg);
-    border-color: var(--border-color);
-}
-
-body.dark-theme .search-input {
-    color: var(--text-primary);
-}
-
-body.dark-theme .search-kbd {
-    background: var(--input-bg);
-    border-color: var(--border-color);
-    color: var(--text-muted);
-}
-
+/* Le thème sombre est déjà couvert par --bg-card, --border-color et
+   --text-muted dans les règles ci-dessus ; ces trois blocs en dur étaient
+   redondants et secondaient une bordure de 1px désormais. */
 body.dark-theme .btn-icon {
     background: var(--input-bg);
     color: var(--text-secondary);
@@ -252,7 +296,7 @@ body.dark-theme .user-greeting {
     /* max-width en CSS (plus de valeur en dur dans le markup) + min-width: 0
        pour que le champ puisse rétrécir sur mobile au lieu de pousser la ligne. */
     width: 100%;
-    max-width: 400px;
+    max-width: 340px;
     min-width: 0;
     flex-grow: 1;
 }
@@ -293,61 +337,6 @@ body.dark-theme .user-greeting {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 30px;
-    padding: 0.6rem 1.25rem;
-    transition: all 0.3s;
-    border: 2px solid #ced4da;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.search-box:hover {
-    border-color: var(--primary-color, #4a90d9);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    transform: translateY(-1px);
-}
-
-.search-box:focus-within {
-    background: white;
-    border-color: #4a90d9;
-    box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.15), 0 4px 12px rgba(74, 144, 217, 0.2);
-}
-
-.search-box i {
-    color: #4a90d9;
-    margin-right: 0.75rem;
-    font-size: 1rem;
-}
-
-.search-input {
-    border: none;
-    background: transparent;
-    outline: none;
-    width: 100%;
-    font-size: 0.95rem;
-    color: #2c3e50;
-    font-weight: 500;
-}
-
-.search-input::placeholder {
-    color: #95a5a6;
-    font-weight: 400;
-}
-
-.search-kbd {
-    background: linear-gradient(135deg, #e9ecef, #dee2e6);
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    color: #6c757d;
-    border: 1px solid #ced4da;
     font-weight: 500;
 }
 
