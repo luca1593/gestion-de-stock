@@ -136,14 +136,25 @@
         </div>
       </div>
 
-      <div *ngIf="listCommandes.length === 0" class="empty-state">
-        <i class="fas fa-inbox"></i>
-        <p>Aucune commande trouvée</p>
+      <!--
+        Etat vide. La condition portait sur listCommandes (liste complete) et
+        non sur listCommandesFilter : un filtre qui ne renvoyait rien laissait
+        une page entierement vide, sans message ni moyen de revenir en arriere.
+      -->
+      <div *ngIf="listCommandesFilter.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-inbox"></i>
+        </div>
+        <h5>Aucune commande trouvée</h5>
+        <p>Modifiez vos critères de recherche ou créez une nouvelle commande.</p>
+        <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+          <i class="fas fa-redo"></i> Réinitialiser les filtres
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="pagination-wrapper">
+  <div class="pagination-wrapper" *ngIf="!loading && listCommandesFilter.length > 0">
     <pagination-controls 
       previousLabel="Précédent"
       nextLabel="Suivant"

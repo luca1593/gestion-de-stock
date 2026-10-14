@@ -83,12 +83,15 @@ export class ConfirmationDialogComponent {
 
   ngAfterViewChecked(): void {
     if (!this.confirmation.etat.visible) return;
-    // le bouton de validation reçoit le focus : l'utilisateur valide ou
-    // echappe sans avoir a Souris, et unifier accidentel sur la suppression
-    // ne peut plus se produire
-    const validation = this.host.nativeElement.querySelector<HTMLButtonElement>('.btn-danger, .btn-primary');
-    if (validation && document.activeElement !== validation) {
-      validation.focus();
+    /*
+     * Le focus va sur « Annuler », pas sur « Supprimer ». Une touche Entree
+     * — celle que l'utilisateur enfonce machinalement en croyant valider un
+     * formulaire — ne doit pas supprimer un client, un article ou une
+     * commande. Pour valider, il faut viser le bouton rouge.
+     */
+    const annuler = this.host.nativeElement.querySelector<HTMLButtonElement>('.confirm-actions .btn-outline-secondary');
+    if (annuler && document.activeElement !== annuler) {
+      annuler.focus();
     }
   }
 }

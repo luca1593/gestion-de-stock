@@ -102,7 +102,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         this.etatCommande = cmd.etatcommande || 'EN_PREPARATION';
         this.etatCommandeOriginal = cmd.etatcommande || 'EN_PREPARATION';
         this.selectedClientFournisseur = cmd.client ? {...cmd.client} : null;
-        console.log('Client chargé:', this.selectedClientFournisseur);
+
         if (cmd.dateCommande) {
           const date = new Date(cmd.dateCommande);
           this.dateCmd = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '/' +
@@ -112,7 +112,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         this.commandeCltFrs.findAllLigneCommandeClient(idCmd).subscribe(lignes => {
           this.ligneDeCommandes = lignes || [];
           this.ligneDeCommandesOriginales = JSON.parse(JSON.stringify(lignes || []));
-          console.log('Lignes de commande:', this.ligneDeCommandes);
+
           this.calculateTotal();
         });
         this.findAllArticle();
@@ -123,7 +123,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         this.etatCommande = cmd.etatcommande || 'EN_PREPARATION';
         this.etatCommandeOriginal = cmd.etatcommande || 'EN_PREPARATION';
         this.selectedClientFournisseur = cmd.fournisseur ? {...cmd.fournisseur} : null;
-        console.log('Fournisseur chargé:', this.selectedClientFournisseur);
+
         if (cmd.dateCommande) {
           const date = new Date(cmd.dateCommande);
           this.dateCmd = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '/' +
@@ -133,7 +133,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         this.commandeCltFrs.findAllLigneCommandeFournisseur(idCmd).subscribe(lignes => {
           this.ligneDeCommandes = lignes || [];
           this.ligneDeCommandesOriginales = JSON.parse(JSON.stringify(lignes || []));
-          console.log('Lignes de commande:', this.ligneDeCommandes);
+
           this.calculateTotal();
         });
         this.findAllArticle();
@@ -165,13 +165,17 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   /**
-   * Contenu fige. Des la validation, la commande fait foi : on ne touche
-   * plus au client, aux articles, aux quantites ni aux prix, seule l'etat
-   * peut avancer vers « livree ». Le composant de workflow interdit deja le
-   * retour en arriere.
+   * Contenu fige. Des la validation enregistree, la commande fait foi : on
+   * ne touche plus au client, aux articles, aux quantites ni aux prix,
+   * seule l'etat peut avancer vers « livree ».
+   *
+   * On se base sur l'etat deja enregistre et non sur celui affiche. Sinon
+   * un retour en arriere — que le menu deroulant interdit mais qu'un appel
+   * direct a la methode permet encore — suffirait a lever le verrou et a
+   * rendre le formulaire entierement editable.
    */
   get contenuVerrouille(): boolean {
-    return this.isModification && this.etatCommande !== 'EN_PREPARATION';
+    return this.isModification && this.etatCommandeOriginal !== 'EN_PREPARATION';
   }
 
   /**
@@ -201,7 +205,19 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     return '';
   }
 
+  /**
+   * Le menu deroulant bloque deja les retours en arriere, mais la regle est
+   * reprise ici : on n'avance que d'un cran, jamais on ne redescend. Le
+   * backend accepte pourtant VALIDEE vers EN_PREPARATION, la garantie ne peut
+   * donc pas reposer sur lui seul.
+   */
   onEtatChange(newEtat: string): void {
+    const etats = ['EN_PREPARATION', 'VALIDEE', 'LIVREE'];
+    const cible = etats.indexOf(newEtat);
+    const courant = etats.indexOf(this.etatCommande);
+    if (cible !== courant + 1) {
+      return;
+    }
     this.etatCommande = newEtat;
   }
 
@@ -287,7 +303,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.errorMsg = [];
     
     if (this.etatCommande !== this.etatCommandeOriginal) {
-      console.log('État modifié:', this.etatCommandeOriginal, '->', this.etatCommande);
+
       if (this.origin === 'client') {
         this.commandeCltFrs.updateEtatCommandeClient(this.commandeId!, this.etatCommande)
           .subscribe({
@@ -323,14 +339,14 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     const nouvellesLignes = this.ligneDeCommandes.filter(l => !l.id);
     
     if (nouvellesLignes.length > 0) {
-      console.log('Nouvelles lignes à ajouter:', nouvellesLignes);
+
       const commande = this.preparerCommandePourModification();
       const dateTimestamp = new Date().getTime();
       if (this.origin === 'client') {
         this.commandeCltFrs.updateCommandeClient(commande as CommandeClientDto, dateTimestamp)
           .subscribe({
             next: () => {
-              console.log('Commande mise à jour avec succès');
+
               this.router.navigate(['commande-client']);
             },
             error: (err) => {
@@ -342,7 +358,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         this.commandeCltFrs.updateCommandeFournisseur(commande as CommandeFournisseurDto, dateTimestamp)
           .subscribe({
             next: () => {
-              console.log('Commande mise à jour avec succès');
+
               this.router.navigate(['commande-fournisseur']);
             },
             error: (err) => {
@@ -359,7 +375,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     this.ligneDeCommandesOriginales.forEach(ligneOrig => {
       const ligneActuelle = this.ligneDeCommandes.find(l => l.id === ligneOrig.id);
       if (!ligneActuelle) {
-        console.log('Ligne supprimée:', ligneOrig.id);
+
         if (this.origin === 'client') {
           calls.push(this.commandeCltFrs.deleteLigneCommandeClient(this.commandeId!, ligneOrig.id!));
         } else {
@@ -367,7 +383,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
         }
       } else {
         if (ligneActuelle.quantite !== ligneOrig.quantite) {
-          console.log('Quantité modifiée:', ligneOrig.quantite, '->', ligneActuelle.quantite);
+
           if (this.origin === 'client') {
             calls.push(this.commandeCltFrs.updateQuantiteCommandeClient(this.commandeId!, ligneOrig.id!, ligneActuelle.quantite));
           } else {
@@ -375,7 +391,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
           }
         }
         if (ligneActuelle.article?.id !== ligneOrig.article?.id) {
-          console.log('Article modifié:', ligneOrig.article?.id, '->', ligneActuelle.article?.id);
+
           if (this.origin === 'client') {
             calls.push(this.commandeCltFrs.updateArticleCommandeClient(this.commandeId!, ligneOrig.id!, ligneActuelle.article?.id!));
           } else {
@@ -386,14 +402,14 @@ export class NouvelCmdCltFrsComponent implements OnInit {
     });
 
     if (calls.length === 0) {
-      console.log('Aucune modification détectée');
+
       this.router.navigate([this.origin === 'client' ? 'commande-client' : 'commande-fournisseur']);
       return;
     }
 
     forkJoin(calls).subscribe({
       next: () => {
-        console.log('Modifications terminées');
+
         this.router.navigate([this.origin === 'client' ? 'commande-client' : 'commande-fournisseur']);
       },
       error: (err) => {
@@ -555,10 +571,11 @@ export class NouvelCmdCltFrsComponent implements OnInit {
   }
 
   addLigneCommande():void {
-    console.log('searchedArticle:', this.searchedArticle);
-    console.log('codeArticle:', this.codeArticle);
-    console.log('quantite:', this.quantite);
-    
+    if (this.contenuVerrouille) {
+      this.errorMsg = ['Le contenu de cette commande est figé : seule l\'état peut évoluer.'];
+      return;
+    }
+
     if (!this.searchedArticle || !this.searchedArticle.id) {
       this.errorMsg = ['Veuillez sélectionner un article valide'];
       return;
@@ -607,7 +624,7 @@ export class NouvelCmdCltFrsComponent implements OnInit {
       this.ligneDeCommandes.push(ligneDeCommande);
     }
     
-    console.log('ligneDeCommandes après ajout:', this.ligneDeCommandes);
+
 
     this.ligneDeCommandes.forEach(ligne => {
       if(ligne.prixUnitaire && ligne.quantite){

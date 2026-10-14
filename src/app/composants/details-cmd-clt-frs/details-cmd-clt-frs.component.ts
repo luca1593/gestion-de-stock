@@ -130,9 +130,9 @@ export class DetailsCmdCltFrsComponent implements OnInit, OnDestroy {
   calculerPrixTotalCommande() : number {
     let total=0;
     if(this.commande){
-      console.log(this.lineDeCommande);
+
     }
-    console.log(this.commande.ligneCommandeFournisseurs);
+
     this.commande.ligneCommandeFournisseurs?.forEach((ligne: { prixUnitaire: number; quantite: number; }) => {
       if(ligne.prixUnitaire && ligne.quantite) {
         total += (ligne.quantite * ligne.prixUnitaire);

@@ -1173,6 +1173,43 @@ body.dark-theme .modal-footer {
  * s'appuient sur ces valeurs -- sans display:flex, leur texte d'information
  * passait au-dessus de la pagination au lieu d'être à côté.
  */
+/*
+ * Etat vide des listes. Isole dans une page de composant CSS, il n'existait
+ * que sur deux pages : les neuf autres affichaient un tableau vide sans aucun
+ * message quand un filtre ne renvoyait rien, ce qui donne l'impression d'une
+ * page cassee plutot que d'une recherche sans resultat.
+ */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: var(--bg-card, #f8fafc);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-icon i {
+    font-size: 2rem;
+    color: var(--text-muted, #cbd5e1);
+}
+
+.empty-state h5 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary, #1f2937);
+}
+
+.empty-state p {
+    color: var(--text-muted, #9ca3af);
+    margin-bottom: 1.5rem;
+}
+
 .pagination-wrapper {
     display: flex;
     justify-content: center;
