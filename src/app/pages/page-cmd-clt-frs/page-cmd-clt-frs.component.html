@@ -67,13 +67,13 @@
             <strong>{{ getClientName(cmd) }}</strong>
           </div>
           <div class="col-auto text-muted small">
-            {{ cmd.dateCommande | date:'dd/MM/yyyy' }}
+            {{ dateLisible(cmd.dateCommande) }}
           </div>
           <div class="col-auto">
             <span class="badge" [ngClass]="getBadgeClass(cmd.etatcommande)">{{ getEtatLabel(cmd.etatcommande) }}</span>
           </div>
           <div class="col-auto text-end">
-            <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.0-0':'fr' }}€</strong>
+            <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.2-2':'fr' }} Ar</strong>
           </div>
           <div class="col-auto action-buttons">
             <button class="btn btn-sm btn-outline-primary px-1" (click)="modifierCommande(cmd.id)" title="Modifier"
@@ -96,7 +96,7 @@
               <span>{{ calculNombreArticleCommande(cmd.id) }} article(s)</span>
             </div>
             <div class="detail-info">
-              <span>Total: <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.2-2':'fr' }} €</strong></span>
+              <span>Total: <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.2-2':'fr' }} Ar</strong></span>
             </div>
           </div>
           <div class="table-wrapper">
@@ -127,8 +127,8 @@
                     <span>{{ ligne.article?.codeArticle }} - {{ ligne.article?.designation }}</span>
                   </td>
                   <td class="text-end">{{ ligne.quantite }}</td>
-                  <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
-                  <td class="text-end">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
+                  <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} Ar</td>
+                  <td class="text-end">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} Ar</td>
                 </tr>
               </tbody>
             </table>

@@ -97,12 +97,12 @@
                         <td class="col-code">
                             <span class="avoir-code">{{avoir.code || 'N/A'}}</span>
                         </td>
-                        <td class="col-date">{{avoir.dateAvoir | date:'dd/MM/yyyy'}}</td>
+                        <td class="col-date">{{ dateLisible(avoir.dateAvoir) }}</td>
                         <td class="col-client">
                             <span class="client-name">{{avoir.client?.nom || 'N/A'}}</span>
                         </td>
                         <td class="col-montant">
-                            <span class="montant-value">{{avoir.montant | number:'1.0-0':'fr'}} Ar</span>
+                            <span class="montant-value">{{avoir.montant | number:'1.2-2':'fr'}} Ar</span>
                         </td>
                         <td class="col-raison">
                             <span class="raison-text">{{avoir.raison || '-'}}</span>
@@ -191,7 +191,7 @@
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Montant</span>
-                            <span class="detail-value montant-value">{{selectedAvoir.montant | number:'1.0-0':'fr'}} Ar</span>
+                            <span class="detail-value montant-value">{{selectedAvoir.montant | number:'1.2-2':'fr'}} Ar</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Raison</span>

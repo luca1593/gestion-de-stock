@@ -218,14 +218,14 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (ctx.dataset.yAxisID === 'y1') {
                   return label + ': ' + value.toFixed(2);
                 }
-                return label + ': ' + this.formatNumber(value, 2) + ' €';
+                return label + ': ' + this.formatNumber(value, 2) + ' Ar';
               }
             }
           }
         },
         scales: {
           x: { grid: { display: false }, ticks: { maxRotation: 0 } },
-          y: { position: 'left', grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: (v: any) => Number(v).toFixed(2) + ' €' } },
+          y: { position: 'left', grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: (v: any) => Number(v).toFixed(2) + ' Ar' } },
           y1: { position: 'right', grid: { display: false }, ticks: { callback: (v: any) => Number(v).toFixed(2) } }
         }
       }
@@ -390,7 +390,7 @@ export class StatistiquesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   formatCurrency(value: number | undefined): string {
-    return this.formatNumber(value, 2) + ' €';
+    return this.formatNumber(value, 2) + ' Ar';
   }
 
   formatPercent(value: number | undefined): string {

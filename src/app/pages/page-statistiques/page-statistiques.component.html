@@ -61,7 +61,7 @@
                     <span class="metric-title">Chiffre d'Affaires</span>
                     <i class="fas fa-dollar-sign text-success"></i>
                 </div>
-                <div class="metric-value">{{formatNumber(stats?.chiffreAffaires || 0)}} €</div>
+                <div class="metric-value">{{formatNumber(stats?.chiffreAffaires || 0)}} Ar</div>
                 <div class="metric-subtitle">Total des ventes</div>
             </div>
         </div>
@@ -71,7 +71,7 @@
                     <span class="metric-title">Valeur du Stock</span>
                     <i class="fas fa-warehouse text-primary"></i>
                 </div>
-                <div class="metric-value">{{formatNumber(stats?.valeurStock || 0)}} €</div>
+                <div class="metric-value">{{formatNumber(stats?.valeurStock || 0)}} Ar</div>
                 <div class="metric-subtitle">Valeur totale</div>
             </div>
         </div>
@@ -279,7 +279,7 @@
                                         {{article.stock}}
                                     </span>
                                 </td>
-                                <td>{{formatNumber(article.prixUnitaire)}} €</td>
+                                <td>{{formatNumber(article.prixUnitaire)}} Ar</td>
                                 <td><span class="badge bg-success">{{article.nbVentes}}</span></td>
                             </tr>
                             <tr *ngIf="topArticles.length === 0">

@@ -8,7 +8,7 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
 import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
 import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
-import { pageValide } from 'src/app/composants/list-utils';
+import { pageValide, dateLisible } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-cmd-clt-frs',
@@ -16,6 +16,7 @@ import { pageValide } from 'src/app/composants/list-utils';
   styleUrls: ['./page-cmd-clt-frs.component.css']
 })
 export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
+  readonly dateLisible = dateLisible;
 
   private destroy$ = new Subject<void>();
 

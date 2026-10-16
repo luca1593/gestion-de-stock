@@ -278,9 +278,16 @@ export class PageStatistiquesComponent implements OnInit {
     this.selectedChartType = value;
   }
 
+  /**
+   * Les trois usages (chiffre d'affaires, valeur du stock, prix unitaire)
+   * sont des montants : garder deux decimales comme le reste de
+   * l'application. Sans cela un chiffre d'affaires de 12 480,50 s'affichait
+   * « 12 481 », ce qui explique un ecart avec la somme des ventes affichee
+   * sur les autres pages.
+   */
   formatNumber(value: number | undefined): string {
     if (value === undefined || value === null) return '0';
-    return value.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    return value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   getMonthLabel(item: any): string {
@@ -429,7 +436,7 @@ export class PageStatistiquesComponent implements OnInit {
       case 'commandes-client':
       case 'commandes-fournisseur':
       case 'mvt-stock': return '';
-      default: return ' €';
+      default: return ' Ar';
     }
   }
 

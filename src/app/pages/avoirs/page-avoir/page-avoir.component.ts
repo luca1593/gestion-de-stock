@@ -7,7 +7,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
-import { pageValide } from 'src/app/composants/list-utils';
+import { pageValide, dateLisible } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-avoir',
@@ -15,6 +15,7 @@ import { pageValide } from 'src/app/composants/list-utils';
   styleUrls: ['./page-avoir.component.css']
 })
 export class PageHaveurComponent implements OnInit {
+  readonly dateLisible = dateLisible;
   listAvoirs: AvoirDto[] = [];
   listAvoirsFiltre: AvoirDto[] = [];
   error = '';

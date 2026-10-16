@@ -174,11 +174,33 @@
                                         <div class="detail-label">Entreprise</div>
                                         <div class="detail-value">{{ facture.entrepriseNom || '—' }}</div>
                                     </div>
-                                    <div class="col-12 col-md-6" *ngIf="facture.paiement">
+                                    <!-- Paiements de la facture. L'API ne les joint pas a la facture, ils
+                                         sont charges a l'ouverture du detail ; l'historique
+                                         complet est affiche, pas seulement le dernier. -->
+                                    <div class="col-12" *ngIf="paiementsDe(facture).length > 0">
+                                        <div class="detail-label">
+                                            Paiements ({{ paiementsDe(facture).length }})
+                                        </div>
+                                        <div class="detail-value">
+                                            <div *ngFor="let p of paiementsDe(facture)">
+                                                {{ p.montant | number:'1.2-2':'fr' }} Ar
+                                                — {{ libelleModePaiement(p.modePaiement) }}
+                                                <span *ngIf="p.datePaiement">
+                                                    ({{ p.datePaiement | date:'dd/MM/yyyy' }})
+                                                </span>
+                                                <span *ngIf="p.montantDonne != null && p.montantDonne > (p.montant ?? 0)">
+                                                    — donné {{ p.montantDonne | number:'1.2-2':'fr' }},
+                                                    monnaie {{ p.monnaie | number:'1.2-2':'fr' }}
+                                                </span>
+                                                <span *ngIf="p.reference"> — réf. {{ p.reference }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6" *ngIf="facture.paiement && paiementsDe(facture).length === 0">
                                         <div class="detail-label">Dernier paiement</div>
                                         <div class="detail-value">
                                             {{ facture.paiement.montant | number:'1.2-2':'fr' }} Ar
-                                            — {{ facture.paiement.modePaiement }}
+                                            — {{ libelleModePaiement(facture.paiement.modePaiement) }}
                                             <span *ngIf="facture.paiement.datePaiement">
                                                 ({{ facture.paiement.datePaiement | date:'dd/MM/yyyy' }})
                                             </span>

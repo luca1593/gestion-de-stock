@@ -391,7 +391,7 @@ export class ExportExcelService {
       // ── Row 4: Column headers ──
       const headerRow = ws.getRow(4);
       headerRow.height = 22;
-      const headers = ['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (€)', 'Total (€)'];
+      const headers = ['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (Ar)', 'Total (Ar)'];
       headers.forEach((h, i) => {
         const cell = headerRow.getCell(i + 1);
         cell.value = h;
@@ -704,8 +704,8 @@ export class ExportExcelService {
         l.article?.codeArticle || '-',
         l.article?.designation || '-',
         l.quantite.toString(),
-        l.prixUnitaire.toFixed(2) + ' €',
-        (l.prixUnitaire * l.quantite).toFixed(2) + ' €',
+        l.prixUnitaire.toFixed(2) + ' Ar',
+        (l.prixUnitaire * l.quantite).toFixed(2) + ' Ar',
       ]);
 
       autoTable(doc, {
@@ -742,7 +742,7 @@ export class ExportExcelService {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
-      doc.text(`Total ${vente.code || '-'} : ${venteTotal.toFixed(2)} €  (${venteQte} article${venteQte > 1 ? 's' : ''})`, mg + 14, printY + 5);
+      doc.text(`Total ${vente.code || '-'} : ${venteTotal.toFixed(2)} Ar  (${venteQte} article${venteQte > 1 ? 's' : ''})`, mg + 14, printY + 5);
       printY += 10;
 
       // ── Séparateur entre ventes ──
@@ -775,7 +775,7 @@ export class ExportExcelService {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text('MONTANT TOTAL DES VENTES', mg + 8, printY + 29);
-    doc.text(grandTotal.toFixed(2) + ' €', pw - mg - 8, printY + 29, { align: 'right' });
+    doc.text(grandTotal.toFixed(2) + ' Ar', pw - mg - 8, printY + 29, { align: 'right' });
 
     // ── Pied de page ──
     doc.setTextColor(COLORS.muted[0], COLORS.muted[1], COLORS.muted[2]);
@@ -1002,8 +1002,8 @@ export class ExportExcelService {
           l.article?.codeArticle || '-',
           l.article?.designation || '-',
           (l.quantite ?? 0).toString(),
-          (l.prixUnitaire ?? 0).toFixed(2) + ' €',
-          ((l.quantite ?? 0) * (l.prixUnitaire ?? 0)).toFixed(2) + ' €',
+          (l.prixUnitaire ?? 0).toFixed(2) + ' Ar',
+          ((l.quantite ?? 0) * (l.prixUnitaire ?? 0)).toFixed(2) + ' Ar',
         ]);
 
         autoTable(doc, {
@@ -1043,7 +1043,7 @@ export class ExportExcelService {
     const tableBody = [
       ['Code', avoir.code || '-'],
       ['Date', formatDate(avoir.dateAvoir)],
-      ['Montant HT', (avoir.montant ?? 0).toFixed(2) + ' €'],
+      ['Montant HT', (avoir.montant ?? 0).toFixed(2) + ' Ar'],
       ['Raison', avoir.raison || '-'],
       ['Statut', etatLabel(avoir.etat)],
     ];
@@ -1085,7 +1085,7 @@ export class ExportExcelService {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('MONTANT TOTAL', mg + 8, finalY + 10);
-    doc.text((avoir.montant ?? 0).toFixed(2) + ' €', pw - mg - 8, finalY + 10, { align: 'right' });
+    doc.text((avoir.montant ?? 0).toFixed(2) + ' Ar', pw - mg - 8, finalY + 10, { align: 'right' });
 
     // ── Pied de page ──
     doc.setTextColor(COLORS.muted[0], COLORS.muted[1], COLORS.muted[2]);

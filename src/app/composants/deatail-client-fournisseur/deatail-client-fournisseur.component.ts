@@ -8,6 +8,7 @@ import { jsPDF } from 'jspdf';
 import autoTable, { RowInput } from 'jspdf-autotable';
 import { SortState, sortByProperty } from 'src/app/composants/sort-utils';
 import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
+import { dateLisible } from 'src/app/composants/list-utils';
 import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 
@@ -17,6 +18,7 @@ import { NotificationService } from 'src/app/services/notification/notification.
   styleUrls: ['./deatail-client-fournisseur.component.css']
 })
 export class DeatailClientFournisseurComponent implements OnInit {
+  readonly dateLisible = dateLisible;
 
   origin="";
   page=1;

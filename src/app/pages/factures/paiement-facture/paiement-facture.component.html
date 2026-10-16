@@ -63,6 +63,20 @@
         </div>
 
         <div *ngIf="facture">
+            <!-- Facture deja soldee : on explique pourquoi le formulaire ne
+                 sert a rien plutot que de laisser un formulaire actif dont le
+                 bouton reste grise. -->
+            <div class="alert alert-success d-flex align-items-center" *ngIf="factureSoldee">
+                <i class="fas fa-check-circle me-2"></i>
+                <span>
+                    Cette facture est entièrement réglée
+                    <ng-container *ngIf="facture?.montantPaye != null">
+                        ({{ facture?.montantPaye | number:'1.2-2':'fr' }} Ar encaissés)
+                    </ng-container>
+                    : aucun paiement complémentaire n'est possible.
+                </span>
+            </div>
+
             <app-encaissement
                 [montantDu]="montantRestant"
                 libelleMontant="Reste à payer"
@@ -72,7 +86,7 @@
                 <button class="btn btn-outline-secondary mx-1" (click)="annuler()">
                     <i class="fas fa-ban"></i>&nbsp;Annuler
                 </button>
-                <button class="btn btn-success mx-1" (click)="enregistrer()" [disabled]="!encaissement.valide">
+                <button class="btn btn-success mx-1" (click)="enregistrer()" [disabled]="!encaissement.valide || factureSoldee">
                     <i class="fas fa-save"></i>&nbsp;Enregistrer le paiement
                 </button>
             </div>

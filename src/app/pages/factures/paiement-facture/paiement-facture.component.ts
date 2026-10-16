@@ -75,9 +75,24 @@ export class PaiementFactureComponent implements OnInit {
     return Math.max(0, (this.facture.montantTTC ?? 0) - (this.facture.montantPaye ?? 0));
   }
 
+  /**
+   * Facture entierement soldee. Le bouton d'enregistrement est deja grise,
+   * mais le formulaire restait editable sans aucune explication : mieux vaut
+   * dire pourquoi la page ne sert a rien, plutot que laisser l'utilisateur
+   * saisir un montant pour un bouton inerte.
+   */
+  get factureSoldee(): boolean {
+    return this.montantRestant <= 0;
+  }
+
   enregistrer(): void {
     this.submitted = true;
     this.errorMsg = [];
+
+    if (this.factureSoldee) {
+      this.errorMsg = ["Cette facture est déjà entièrement réglée : aucun paiement complémentaire n'est possible."];
+      return;
+    }
 
     if (!this.facture) {
       this.errorMsg = ['Facture introuvable'];

@@ -53,7 +53,7 @@ interface WorkflowStep {
                 <span class="badge" [style.background-color]="step.color">{{ step.label }}</span>
                 <i class="fas fa-lock ms-2"
                    *ngIf="isStepDesactive(step.key)"
-                   [title]="etat === steps[steps.length - 1]?.key
+                   [title]="etat === derniereEtape().key
                       ? 'Dernière étape du parcours'
                       : 'Le parcours ne peut pas revenir en arrière'"></i>
               </a>
@@ -323,6 +323,11 @@ export class EtatoWorkflowComponent {
   /** Seul l'etape immediatement suivant est accessible. */
   peutAllerVers(key: string): boolean {
     return this.getStepIndex(key) === this.getStepIndex(this.etat) + 1;
+  }
+
+  /** Derniere etape du parcours : au-dela, plus rien n'est possible. */
+  derniereEtape(): WorkflowStep {
+    return this.steps[this.steps.length - 1];
   }
 
   /** Libelle de la seule transition possible, pour l'infobulle du menu. */

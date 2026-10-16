@@ -101,13 +101,26 @@ export class EncaissementComponent implements OnChanges {
   }
 
   /**
-   * Montant payé : toujours égal au total à payer, jamais saisi.
+   * Montant payé. Jamais saisi directement : c'est la somme donnée quand elle
+   * est connue, plafonnée au montant dû.
    *
-   * Un paiement partiel se saisit en donnant un montant inférieur au total
-   * via le montant donné : le reste dû est alors calculé et affiché.
+   * Le plafond sert sur une facture partiellement payée : il y a 700 Ar à
+   * régler et le client donne 300. Sans lui, le paiement partait sur 700 avec
+   * une somme remise de 300, et le backend le refusait (« La somme remise par
+   * le payeur est inferieure au montant du paiement »). Le champ « montant
+   * payé » avait été supprimé parce qu'il valait toujours le total lors d'une
+   * création, ce qui n'est plus vrai dès qu'on encaisse un acompte.
    */
   get montant(): number {
-    return this.montantDuArrondi;
+    const total = this.montantDuArrondi;
+    if (!this.afficheMontantDonne) {
+      return total;
+    }
+    const donne = this.montantDonne ?? 0;
+    if (donne <= 0) {
+      return total;
+    }
+    return Math.min(this.arrondi(donne), total);
   }
 
   /**

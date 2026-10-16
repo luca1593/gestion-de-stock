@@ -9,7 +9,7 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
-import { pageValide } from 'src/app/composants/list-utils';
+import { pageValide, dateLisible } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-hisistorique-vente',
@@ -17,6 +17,7 @@ import { pageValide } from 'src/app/composants/list-utils';
   styleUrls: ['./hisistorique-vente.component.css']
 })
 export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
+  readonly dateLisible = dateLisible;
 
   listVentes: Array<VenteDto> = [];
   listVentesFiltre: Array<VenteDto> = [];

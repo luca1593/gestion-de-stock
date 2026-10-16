@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FactureService, SourceTypeFacture, TypeFacture } from 'src/app/services/facture/facture.service';
 import { ExportExcelService } from 'src/app/services/export.service';
-import { FactureDto } from 'src/gs-api/src/models';
+import { FactureDto, PaiementDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import { pageValide } from 'src/app/composants/list-utils';
 
@@ -33,6 +33,9 @@ export class PageFactureComponent implements OnInit, OnDestroy {
 
   /** Facture ouverte en détail sous le tableau (une seule à la fois). */
   factureDetailId: number | null = null;
+
+  /** Paiementscharges a la demande, par identifiant de facture. */
+  paiementsParFacture: Record<number, PaiementDto[]> = {};
 
   /** Facture d'une vente ou d'une commande, utilisée en entrée d'URL. */
   private sourceFiltre: { sourceType: SourceTypeFacture; sourceId: number } | null = null;
@@ -150,11 +153,51 @@ export class PageFactureComponent implements OnInit, OnDestroy {
 
   /** Détail d'une facture, ouvert sous sa ligne. */
   basculerDetail(facture: FactureDto): void {
-    this.factureDetailId = this.factureDetailId === facture.id ? null : (facture.id ?? null);
+    const meme = this.factureDetailId === facture.id;
+    this.factureDetailId = meme ? null : (facture.id ?? null);
+    if (!meme && facture.id) {
+      this.chargerPaiements(facture);
+    } else if (meme) {
+      this.paiementsParFacture = {};
+    }
   }
 
   estOuverte(facture: FactureDto): boolean {
     return this.factureDetailId === facture.id;
+  }
+
+  /**
+   * L'API renvoie les factures sans leur paiement : le bloc « Dernier
+   * paiement » du détail restait donc vide sur une facture pourtant encaissée.
+   * On va le chercher au moment de l'ouverture, sur l'endpoint
+   * /v1/paiements/facture/{id} qui expose deja l'historique complet.
+   */
+  private chargerPaiements(facture: FactureDto): void {
+    if (!facture.id) return;
+    this.factureService.getPaiementsFacture(facture.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (paiements) => {
+          this.paiementsParFacture = {
+            ...this.paiementsParFacture,
+            [facture.id!]: paiements || []
+          };
+          if (!paiements || paiements.length === 0) {
+            return;
+          }
+          // le modèle attend un paiement unique : on garde le plus récent
+          const tri = [...paiements].sort((a, b) =>
+            new Date(b.datePaiement || 0).getTime() - new Date(a.datePaiement || 0).getTime());
+          facture.paiement = tri[0];
+        },
+        error: () => undefined
+      });
+  }
+
+  /** Paiements chargés pour le détail affiché. */
+  paiementsDe(facture: FactureDto): PaiementDto[] {
+    if (!facture.id) return [];
+    return this.paiementsParFacture[facture.id] || [];
   }
 
   /** Encaissement complémentaire sur une facture non soldée. */
@@ -213,6 +256,11 @@ export class PageFactureComponent implements OnInit, OnDestroy {
 
   libelleSource(sourceType?: string): string {
     return this.factureService.libelleSource(sourceType);
+  }
+
+  /** « ESPECES » affiché « Espèces », comme dans les formulaires d'encaissement. */
+  libelleModePaiement(mode?: string): string {
+    return this.factureService.modesPaiement.find(m => m.value === mode)?.label || (mode || '—');
   }
 
   /** Libellé du filtre « liée à … » appliqué à l'entrée, pour l'affichage. */
