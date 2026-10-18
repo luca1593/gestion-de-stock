@@ -31,6 +31,7 @@ import { PageFournisseurComponent } from './pages/fournisseurs/page-fournisseur/
 import { NouveauCltFrsComponent } from './composants/nouveau-clt-frs/nouveau-clt-frs.component';
 import { DetailsCmdCltFrsComponent } from './composants/details-cmd-clt-frs/details-cmd-clt-frs.component';
 import { DetailsCmdComponent } from './composants/details-cmd/details-cmd.component';
+import { ConfirmationDialogComponent } from './composants/confirmation/confirmation-dialog.component';
 import { PageCmdCltFrsComponent } from './pages/page-cmd-clt-frs/page-cmd-clt-frs.component';
 import { NouvelCmdCltFrsComponent } from './composants/nouvel-cmd-clt-frs/nouvel-cmd-clt-frs.component';
 import { PageCategorieComponent } from './pages/categories/page-categorie/page-categorie.component';
@@ -51,6 +52,9 @@ import { CalculatorComponent } from './composants/calculator/calculator.componen
 import { HisistoriqueVenteComponent } from './pages/vente/hisistorique-vente/hisistorique-vente.component';
 import { PageVenteComponent } from './pages/vente/page-vente/page-vente.component';
 import { PageHaveurComponent } from './pages/avoirs/page-avoir/page-avoir.component';
+import { PageFactureComponent } from './pages/factures/page-facture/page-facture.component';
+import { PaiementFactureComponent } from './pages/factures/paiement-facture/paiement-facture.component';
+import { EncaissementComponent } from './composants/encaissement/encaissement.component';
 import { NouvelAvoirComponent } from './pages/avoirs/nouvel-avoir/nouvel-avoir.component';
 import { EtatoWorkflowComponent } from './composants/etat-workflow/etat-workflow.component';
 import { BreadcrumbComponent } from './composants/breadcrumb/breadcrumb.component';
@@ -80,6 +84,7 @@ registerLocaleData(localeFr, 'fr');
     NouveauCltFrsComponent,
     DetailsCmdCltFrsComponent,
     DetailsCmdComponent,
+    ConfirmationDialogComponent,
     PageCmdCltFrsComponent,
     NouvelCmdCltFrsComponent,
     PageCategorieComponent,
@@ -100,7 +105,10 @@ registerLocaleData(localeFr, 'fr');
     PageHaveurComponent,
     NouvelAvoirComponent,
    EtatoWorkflowComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    PageFactureComponent,
+    PaiementFactureComponent,
+    EncaissementComponent
   ],
   imports: [
     BrowserModule,

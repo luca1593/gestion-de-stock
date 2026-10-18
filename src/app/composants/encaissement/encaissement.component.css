@@ -1,0 +1,82 @@
+.encaissement {
+    padding: 0.75rem 1rem 0.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-card, white);
+}
+
+.encaissement-titre {
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+}
+
+/*
+ * Le montant dû est la donnée de référence de tout le panneau : il est aligné
+ * à droite et mis en valeur, le reste de la saisie restant neutre.
+ */
+.encaissement-total {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.encaissement-total strong {
+    font-size: 1.05rem;
+    color: var(--primary-color, #4a90d9);
+}
+
+/*
+ * La monnaie à rendre est le seul élément coloré du panneau : c'est le moment
+ * où le caissier se trompe le plus facilement, elle doit sauter aux yeux
+ * dès qu'elle est non nulle. Teinte douce (pas d'alarme rouge : un rendu de
+ * monnaie est normal, pas une erreur).
+ */
+.monnaie {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.3rem 0.7rem;
+    border: 1px dashed var(--border-color, #d1d5db);
+    border-radius: 8px;
+    background: var(--bg-body, #f8f9fa);
+    color: var(--text-secondary, #6b7280);
+    min-height: 38px;
+}
+
+.monnaie strong {
+    font-size: 1.05rem;
+    color: var(--text-primary, #1f2937);
+}
+
+.monnaie-alerte {
+    border-style: solid;
+    border-color: var(--success-color, #28a745);
+    background: rgba(40, 167, 69, 0.12);
+}
+
+.monnaie-alerte strong {
+    color: var(--success-color, #28a745);
+}
+
+.encaissement-pied {
+    border-top: 1px solid var(--border-color, #e9ecef);
+    padding-top: 0.4rem;
+}
+
+body.dark-theme .encaissement {
+    background: var(--bg-card);
+}
+
+body.dark-theme .monnaie {
+    background: var(--bg-body, #1a1a2e);
+}
+
+@media (max-width: 576px) {
+    .encaissement-header {
+        gap: 0.25rem;
+    }
+
+    .monnaie {
+        width: 100%;
+    }
+}

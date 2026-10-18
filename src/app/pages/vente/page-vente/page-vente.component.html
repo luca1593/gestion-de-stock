@@ -68,12 +68,36 @@
           </div>
         </div>
 
+        <!--
+  Client facultatif : une vente se fait avec un client de passage, non
+  enregistré. Le champ n'est donc pas bloquant. En revanche le panneau
+  d'encaissement reste toujours présent, comme sur les commandes client et
+  fournisseur : on saisit le montant donné et on lit la monnaie à rendre
+  dans tous les cas.
+-->
+<div class="row mb-2">
+          <div class="col-12 col-md-6 col-lg-4">
+            <select class="form-control form-control-sm" name="clientFacture" aria-label="Client facturé (facultatif)"
+                    [(ngModel)]="clientFacture" [compareWith]="compareClient">
+              <option [ngValue]="null">Client passager (pas de facture)</option>
+              <option *ngFor="let client of listClients" [ngValue]="client">
+                {{ client.nom }}&nbsp;{{ client.prenom }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <app-encaissement
+          [montantDu]="totalVente"
+          libelleMontant="Total de la vente"
+          (encaissementChange)="onEncaissementChange($event)"></app-encaissement>
+
         <div class="col-md-12 text-end">
           <button class="btn btn-danger mx-1 btn-sm" (click)="cancelClick()">
             <i class="fas fa-ban"></i>&nbsp;Annuler
           </button>
           <button class="btn btn-success mx-1 btn-sm" (click)="saveClick()">
-            <i class="fas fa-save"></i>&nbsp;Sauvegarder
+            <i class="fas fa-save"></i>&nbsp;Encaisser la vente
           </button>
         </div>
       </div>

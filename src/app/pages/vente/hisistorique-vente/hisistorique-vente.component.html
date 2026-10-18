@@ -60,13 +60,13 @@
                         <span class="badge bg-secondary">{{ vente.code }}</span>
                     </div>
                     <div class="col text-truncate">
-                        <span class="text-muted small">{{ vente.dateVente | date:'dd/MM/yyyy' }}</span>
+                        <span class="text-muted small">{{ dateLisible(vente.dateVente) }}</span>
                     </div>
                     <div class="col-auto text-muted small">
                         {{ calculNombreArticleVente(vente.id!) }} article(s)
                     </div>
                     <div class="col-auto text-end">
-                        <strong class="text-success">{{ calculTotalVente(vente.id!) | number:'1.0-0':'fr' }} €</strong>
+                        <strong class="text-success">{{ calculTotalVente(vente.id!) | number:'1.2-2':'fr' }} Ar</strong>
                     </div>
                     <div class="col-auto action-buttons">
                         <button class="btn btn-sm btn-outline-secondary px-1" (click)="toggleVente(vente.id!)" [attr.aria-expanded]="shouldExpandVente(vente.id!)">
@@ -79,11 +79,11 @@
                     <div class="vente-details-header">
                         <div class="detail-info">
                             <span><strong>{{ vente.code }}</strong></span>
-                            <span>{{ vente.dateVente | date:'dd/MM/yyyy' }}</span>
+                            <span>{{ dateLisible(vente.dateVente) }}</span>
                         </div>
                         <div class="detail-info">
                             <span>{{ calculNombreArticleVente(vente.id!) }} article(s)</span>
-                            <span>Total: <strong class="text-success">{{ calculTotalVente(vente.id!) | number:'1.2-2':'fr' }} €</strong></span>
+                            <span>Total: <strong class="text-success">{{ calculTotalVente(vente.id!) | number:'1.2-2':'fr' }} Ar</strong></span>
                         </div>
                         <div class="detail-info" *ngIf="vente.commentaire">
                             <span class="text-muted">Commentaire: {{ vente.commentaire }}</span>
@@ -117,8 +117,8 @@
                                         <span>{{ ligne.article?.codeArticle }} - {{ ligne.article?.designation }}</span>
                                     </td>
                                     <td class="text-end">{{ ligne.quantite }}</td>
-                                    <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
-                                    <td class="text-end">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
+                                    <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} Ar</td>
+                                    <td class="text-end">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} Ar</td>
                                 </tr>
                             </tbody>
                         </table>

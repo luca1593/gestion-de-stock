@@ -3,8 +3,9 @@ import { ExportService as ApiExportService } from 'src/gs-api/src/services/expor
 import { HaveurService } from './avoir/avoir.service';
 import { UserService } from './user/user.service';
 import { VenteService } from './vente/vente.service';
+import { FactureService } from './facture/facture.service';
 import { NotificationService } from './notification/notification.service';
-import { AvoirDto, CategoryDto } from 'src/gs-api/src/models';
+import { AvoirDto, CategoryDto, FactureDto } from 'src/gs-api/src/models';
 import { firstValueFrom } from 'rxjs';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -30,8 +31,235 @@ export class ExportExcelService {
     private avoirService: HaveurService,
     private userService: UserService,
     private venteService: VenteService,
+    private factureService: FactureService,
     private notificationService: NotificationService
   ) {}
+
+  /**
+   * Export Excel des factures (liste filtrée à l'écran).
+   *
+   * Aucune endpoint d'export factures côté API : le fichier est construit ici,
+   * comme pour les catégories et les ventes.
+   */
+  async exportFactures(factures: FactureDto[]): Promise<void> {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'Gestion de Stock';
+      workbook.created = new Date();
+
+      const ws = workbook.addWorksheet('Factures', {
+        pageSetup: {
+          orientation: 'landscape',
+          fitToPage: true,
+          margins: { left: 0.5, right: 0.5, top: 0.5, bottom: 0.5, header: 0.3, footer: 0.3 }
+        }
+      });
+
+      const columns = [
+        { header: 'N° facture', key: 'numero', width: 18 },
+        { header: 'Date', key: 'date', width: 12 },
+        { header: 'Échéance', key: 'echeance', width: 12 },
+        { header: 'Type', key: 'type', width: 13 },
+        { header: 'Client / Fournisseur', key: 'tiers', width: 28 },
+        { header: 'Origine', key: 'source', width: 22 },
+        { header: 'HT', key: 'ht', width: 12 },
+        { header: 'TVA', key: 'tva', width: 12 },
+        { header: 'TTC', key: 'ttc', width: 12 },
+        { header: 'Payé', key: 'paye', width: 12 },
+        { header: 'Restant', key: 'restant', width: 12 },
+        { header: 'Statut', key: 'statut', width: 20 },
+      ];
+      ws.columns = columns;
+
+      const formatDate = (d?: string): string =>
+        d ? new Date(d).toLocaleDateString('fr-FR') : '';
+
+      const restant = (f: FactureDto): number =>
+        f.montantRestant ?? Math.max(0, (f.montantTTC ?? 0) - (f.montantPaye ?? 0));
+
+      factures.forEach(f => {
+        const row = ws.addRow({
+          numero: f.numeroFacture ?? '',
+          date: formatDate(f.dateFacture),
+          echeance: formatDate(f.dateEcheance),
+          type: this.factureService.libelleType(f.typeFacture),
+          tiers: (f.typeFacture === 'FOURNISSEUR' ? f.fournisseurNom : f.clientNom) ?? '',
+          source: f.sourceType ? `${this.factureService.libelleSource(f.sourceType)} #${f.sourceId}` : '',
+          ht: f.montantHT ?? 0,
+          tva: f.montantTVA ?? 0,
+          ttc: f.montantTTC ?? 0,
+          paye: f.montantPaye ?? 0,
+          restant: restant(f),
+          statut: this.factureService.libelleStatut(f.statut),
+        });
+        ['ht', 'tva', 'ttc', 'paye', 'restant'].forEach(key => {
+          row.getCell(key).numFmt = '#,##0.00';
+        });
+      });
+
+      // En-tête en gras sur fond bleu, aligné sur le reste des exports.
+      ws.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      ws.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2962BA' } };
+      ws.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+      ws.getRow(1).height = 22;
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      this.downloadBlob(blob, 'factures_' + this.getDateString() + '.xlsx');
+    } catch (err) {
+      console.error('Erreur export factures', err);
+      this.notificationService.addError('Export', 'Erreur lors de l\'export des factures');
+    }
+  }
+
+  /** Facture seule au format PDF (une page, lisible par le client). */
+  async exportPdfFacture(facture: FactureDto): Promise<void> {
+    try {
+      const doc = new jsPDF('portrait', 'mm', 'a4');
+      const pw = doc.internal.pageSize.getWidth();
+      const ph = doc.internal.pageSize.getHeight();
+      const mg = 14;
+      const ct = pw / 2;
+
+      const formatDate = (d?: string): string =>
+        d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
+
+      // Bandeau : le document doit se lire comme une facture, pas comme un export.
+      doc.setFillColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+      doc.rect(0, 0, pw, 38, 'F');
+      doc.setTextColor(COLORS.white[0], COLORS.white[1], COLORS.white[2]);
+      doc.setFontSize(24);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FACTURE', ct, 18, { align: 'center' });
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.text(facture.typeFacture === 'FOURNISSEUR' ? 'FACTURE FOURNISSEUR' : 'FACTURE CLIENT', ct, 28, { align: 'center' });
+
+      const user = this.userService.getConnectedUser();
+      const entreprise = user?.entreprise;
+
+      doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
+      doc.setFontSize(9);
+
+      let leftCol = mg + 2;
+      let topY = 48;
+      if (entreprise) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.text(entreprise.nom || 'Entreprise', leftCol, topY);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        topY += 6;
+        if (entreprise.email) { doc.text('Email : ' + entreprise.email, leftCol, topY); topY += 4.5; }
+        if (entreprise.numTel) { doc.text('Tél : ' + entreprise.numTel, leftCol, topY); topY += 4.5; }
+      }
+
+      const rightCol = ct + 10;
+      let refY = 48;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('RÉFÉRENCE', rightCol, refY);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      refY += 6;
+
+      const refs: [string, string][] = [
+        ['N°', facture.numeroFacture || '-'],
+        ['Date', formatDate(facture.dateFacture)],
+        ['Échéance', formatDate(facture.dateEcheance)],
+        ['Statut', this.factureService.libelleStatut(facture.statut)],
+      ];
+      if (facture.sourceType) {
+        refs.push(['Origine', `${this.factureService.libelleSource(facture.sourceType)} #${facture.sourceId}`]);
+      }
+      refs.forEach(([l, v]) => {
+        doc.setFont('helvetica', 'bold');
+        doc.text(l, rightCol, refY);
+        doc.setFont('helvetica', 'normal');
+        doc.text(v, rightCol + 25, refY);
+        refY += 6;
+      });
+
+      const sepY = Math.max(topY, refY) + 6;
+      doc.setDrawColor(COLORS.border[0], COLORS.border[1], COLORS.border[2]);
+      doc.setLineWidth(0.5);
+      doc.line(mg, sepY, pw - mg, sepY);
+
+      // Client / fournisseur
+      let y = sepY + 12;
+      const tiers = facture.typeFacture === 'FOURNISSEUR' ? facture.fournisseurNom : facture.clientNom;
+      doc.setFillColor(COLORS.lightBg[0], COLORS.lightBg[1], COLORS.lightBg[2]);
+      doc.rect(mg, y - 5, pw - 2 * mg, 8, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+      doc.text(facture.typeFacture === 'FOURNISSEUR' ? 'FOURNISSEUR' : 'CLIENT', mg + 3, y);
+      doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
+      doc.setFontSize(9);
+      y += 10;
+      doc.setFont('helvetica', 'bold');
+      doc.text('Nom :', mg + 3, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(tiers || '-', mg + 22, y);
+
+      // Récapitulatif des montants
+      const restant = facture.montantRestant ?? Math.max(0, (facture.montantTTC ?? 0) - (facture.montantPaye ?? 0));
+      const tableY = y + 16;
+      autoTable(doc, {
+        startY: tableY,
+        head: [['Désignation', 'Montant']],
+        body: [
+          ['Montant HT', (facture.montantHT ?? 0).toFixed(2) + ' Ar'],
+          ['TVA', (facture.montantTVA ?? 0).toFixed(2) + ' Ar'],
+          ['Montant TTC', (facture.montantTTC ?? 0).toFixed(2) + ' Ar'],
+          ['Déjà payé', (facture.montantPaye ?? 0).toFixed(2) + ' Ar'],
+          ['Reste à payer', restant.toFixed(2) + ' Ar'],
+        ],
+        theme: 'grid',
+        headStyles: {
+          fillColor: COLORS.primary as [number, number, number],
+          textColor: 255,
+          fontStyle: 'bold',
+          fontSize: 10,
+          halign: 'center',
+        },
+        bodyStyles: { fontSize: 9, textColor: COLORS.dark as [number, number, number] },
+        alternateRowStyles: { fillColor: COLORS.lightBg as [number, number, number] },
+        columnStyles: {
+          0: { cellWidth: 90, halign: 'left' },
+          1: { cellWidth: 60, halign: 'right' },
+        },
+        margin: { left: mg, right: mg },
+        tableLineColor: COLORS.border as [number, number, number],
+        tableLineWidth: 0.3,
+      });
+
+      // Bloc total : le montant TTC est ce que le client doit.
+      const finalY = (doc as any).lastAutoTable.finalY + 10;
+      doc.setFillColor(COLORS.accent[0], COLORS.accent[1], COLORS.accent[2]);
+      doc.rect(mg, finalY, pw - 2 * mg, 16, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.text('MONTANT TTC', mg + 8, finalY + 11);
+      doc.text((facture.montantTTC ?? 0).toFixed(2) + ' Ar', pw - mg - 8, finalY + 11, { align: 'right' });
+
+      // Pied de page
+      doc.setTextColor(COLORS.muted[0], COLORS.muted[1], COLORS.muted[2]);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      const footerY = ph - 12;
+      doc.line(mg, footerY - 3, pw - mg, footerY - 3);
+      doc.text('Généré le ' + formatDate(new Date().toISOString()) + ' - Gestion de Stock', ct, footerY + 4, { align: 'center' });
+
+      doc.save('facture_' + (facture.numeroFacture || facture.id) + '_' + this.getDateString() + '.pdf');
+    } catch (err) {
+      console.error('Erreur génération PDF facture', err);
+      this.notificationService.addError('Export PDF', 'Erreur lors de la génération du PDF de la facture');
+    }
+  }
 
   exportArticles(): void {
     this.exportApiService.ExportApiExcelArticlesGET().subscribe(blob => {
@@ -163,7 +391,7 @@ export class ExportExcelService {
       // ── Row 4: Column headers ──
       const headerRow = ws.getRow(4);
       headerRow.height = 22;
-      const headers = ['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (€)', 'Total (€)'];
+      const headers = ['Code Vente', 'Date Vente', 'Code Article', 'Désignation', 'Quantité', 'PU (Ar)', 'Total (Ar)'];
       headers.forEach((h, i) => {
         const cell = headerRow.getCell(i + 1);
         cell.value = h;
@@ -476,8 +704,8 @@ export class ExportExcelService {
         l.article?.codeArticle || '-',
         l.article?.designation || '-',
         l.quantite.toString(),
-        l.prixUnitaire.toFixed(2) + ' €',
-        (l.prixUnitaire * l.quantite).toFixed(2) + ' €',
+        l.prixUnitaire.toFixed(2) + ' Ar',
+        (l.prixUnitaire * l.quantite).toFixed(2) + ' Ar',
       ]);
 
       autoTable(doc, {
@@ -514,7 +742,7 @@ export class ExportExcelService {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
-      doc.text(`Total ${vente.code || '-'} : ${venteTotal.toFixed(2)} €  (${venteQte} article${venteQte > 1 ? 's' : ''})`, mg + 14, printY + 5);
+      doc.text(`Total ${vente.code || '-'} : ${venteTotal.toFixed(2)} Ar  (${venteQte} article${venteQte > 1 ? 's' : ''})`, mg + 14, printY + 5);
       printY += 10;
 
       // ── Séparateur entre ventes ──
@@ -547,7 +775,7 @@ export class ExportExcelService {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text('MONTANT TOTAL DES VENTES', mg + 8, printY + 29);
-    doc.text(grandTotal.toFixed(2) + ' €', pw - mg - 8, printY + 29, { align: 'right' });
+    doc.text(grandTotal.toFixed(2) + ' Ar', pw - mg - 8, printY + 29, { align: 'right' });
 
     // ── Pied de page ──
     doc.setTextColor(COLORS.muted[0], COLORS.muted[1], COLORS.muted[2]);
@@ -774,8 +1002,8 @@ export class ExportExcelService {
           l.article?.codeArticle || '-',
           l.article?.designation || '-',
           (l.quantite ?? 0).toString(),
-          (l.prixUnitaire ?? 0).toFixed(2) + ' €',
-          ((l.quantite ?? 0) * (l.prixUnitaire ?? 0)).toFixed(2) + ' €',
+          (l.prixUnitaire ?? 0).toFixed(2) + ' Ar',
+          ((l.quantite ?? 0) * (l.prixUnitaire ?? 0)).toFixed(2) + ' Ar',
         ]);
 
         autoTable(doc, {
@@ -815,7 +1043,7 @@ export class ExportExcelService {
     const tableBody = [
       ['Code', avoir.code || '-'],
       ['Date', formatDate(avoir.dateAvoir)],
-      ['Montant HT', (avoir.montant ?? 0).toFixed(2) + ' €'],
+      ['Montant HT', (avoir.montant ?? 0).toFixed(2) + ' Ar'],
       ['Raison', avoir.raison || '-'],
       ['Statut', etatLabel(avoir.etat)],
     ];
@@ -857,7 +1085,7 @@ export class ExportExcelService {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('MONTANT TOTAL', mg + 8, finalY + 10);
-    doc.text((avoir.montant ?? 0).toFixed(2) + ' €', pw - mg - 8, finalY + 10, { align: 'right' });
+    doc.text((avoir.montant ?? 0).toFixed(2) + ' Ar', pw - mg - 8, finalY + 10, { align: 'right' });
 
     // ── Pied de page ──
     doc.setTextColor(COLORS.muted[0], COLORS.muted[1], COLORS.muted[2]);

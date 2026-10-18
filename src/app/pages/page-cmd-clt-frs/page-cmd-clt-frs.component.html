@@ -67,16 +67,18 @@
             <strong>{{ getClientName(cmd) }}</strong>
           </div>
           <div class="col-auto text-muted small">
-            {{ cmd.dateCommande | date:'dd/MM/yyyy' }}
+            {{ dateLisible(cmd.dateCommande) }}
           </div>
           <div class="col-auto">
             <span class="badge" [ngClass]="getBadgeClass(cmd.etatcommande)">{{ getEtatLabel(cmd.etatcommande) }}</span>
           </div>
           <div class="col-auto text-end">
-            <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.0-0':'fr' }}€</strong>
+            <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.2-2':'fr' }} Ar</strong>
           </div>
           <div class="col-auto action-buttons">
-            <button class="btn btn-sm btn-outline-primary px-1" (click)="modifierCommande(cmd.id)" title="Modifier" [disabled]="isCommandeVerrouillee(cmd.etatcommande)">
+            <button class="btn btn-sm btn-outline-primary px-1" (click)="modifierCommande(cmd.id)" title="Modifier"
+                    [disabled]="estCommandeLivree(cmd.etatcommande)"
+                    [attr.title]="estCommandeLivree(cmd.etatcommande) ? 'Commande livrée : modification impossible' : 'Modifier'">
               <i class="fas fa-edit"></i>
             </button>
             <button class="btn btn-sm btn-outline-danger px-1" (click)="supprimerCommande(cmd.id)" title="Supprimer" [disabled]="isCommandeVerrouillee(cmd.etatcommande)">
@@ -94,7 +96,7 @@
               <span>{{ calculNombreArticleCommande(cmd.id) }} article(s)</span>
             </div>
             <div class="detail-info">
-              <span>Total: <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.2-2':'fr' }} €</strong></span>
+              <span>Total: <strong class="text-success">{{ calculTotalCommande(cmd.id) | number:'1.2-2':'fr' }} Ar</strong></span>
             </div>
           </div>
           <div class="table-wrapper">
@@ -125,8 +127,8 @@
                     <span>{{ ligne.article?.codeArticle }} - {{ ligne.article?.designation }}</span>
                   </td>
                   <td class="text-end">{{ ligne.quantite }}</td>
-                  <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
-                  <td class="text-end">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} €</td>
+                  <td class="text-end">{{ ligne.prixUnitaire | number:'1.2-2':'fr' }} Ar</td>
+                  <td class="text-end">{{ ligne.quantite * ligne.prixUnitaire | number:'1.2-2':'fr' }} Ar</td>
                 </tr>
               </tbody>
             </table>
@@ -134,14 +136,25 @@
         </div>
       </div>
 
-      <div *ngIf="listCommandes.length === 0" class="empty-state">
-        <i class="fas fa-inbox"></i>
-        <p>Aucune commande trouvée</p>
+      <!--
+        Etat vide. La condition portait sur listCommandes (liste complete) et
+        non sur listCommandesFilter : un filtre qui ne renvoyait rien laissait
+        une page entierement vide, sans message ni moyen de revenir en arriere.
+      -->
+      <div *ngIf="listCommandesFilter.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-inbox"></i>
+        </div>
+        <h5>Aucune commande trouvée</h5>
+        <p>Modifiez vos critères de recherche ou créez une nouvelle commande.</p>
+        <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+          <i class="fas fa-redo"></i> Réinitialiser les filtres
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="pagination-wrapper">
+  <div class="pagination-wrapper" *ngIf="!loading && listCommandesFilter.length > 0">
     <pagination-controls 
       previousLabel="Précédent"
       nextLabel="Suivant"

@@ -1,0 +1,247 @@
+<div class="factures-container">
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Chargement des factures...</span>
+        </div>
+    </div>
+
+    <div class="factures-header page-header">
+        <div class="header-title">
+            <h3><i class="fas fa-file-invoice-dollar"></i> Factures</h3>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline-secondary" (click)="exporterFactures()" [disabled]="listFactureFiltre.length === 0"
+                    title="Exporter en Excel" aria-label="Exporter les factures en Excel">
+                <i class="fas fa-file-excel"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMsg }}</span>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="filter-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                    <input type="text" class="form-control" placeholder="N° facture..." aria-label="Numéro de facture"
+                           [(ngModel)]="searchNumero" (input)="filtrer()">
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" placeholder="Client / Fournisseur..." aria-label="Client ou fournisseur"
+                           [(ngModel)]="searchTiers" (input)="filtrer()">
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-circle-half-stroke"></i></span>
+                    <select class="form-select" aria-label="Statut de la facture" [(ngModel)]="searchStatut" (change)="filtrer()">
+                        <option value="">Tous les statuts</option>
+                        <option *ngFor="let statut of statuts" [value]="statut.value">{{ statut.label }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                    <select class="form-select" aria-label="Type de facture" [(ngModel)]="searchType" (change)="filtrer()">
+                        <option value="">Client et fournisseur</option>
+                        <option *ngFor="let type of types" [value]="type.value">{{ type.label }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-group filter-actions">
+                <button class="btn btn-outline-secondary" (click)="reinitialiserFiltres()" aria-label="Réinitialiser les filtres">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </div>
+        <div class="source-filtre small-text" *ngIf="sourceAffiche">
+            <i class="fas fa-link blue-color"></i>&nbsp;
+            Factures liées à <strong>{{ sourceAffiche }}</strong>
+            <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="reinitialiserFiltres()">
+                retirer le filtre
+            </button>
+        </div>
+    </div>
+
+    <div class="factures-table-card">
+        <div class="table-container" *ngIf="listFactureFiltre.length > 0">
+            <table class="factures-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" (click)="sort('numeroFacture')">
+                            N°
+                            <span class="sort-arrow" *ngIf="sortState.column === 'numeroFacture'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="sortable" (click)="sort('dateFacture')">
+                            Date
+                            <span class="sort-arrow" *ngIf="sortState.column === 'dateFacture'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="col-type sortable" (click)="sort('typeFacture')">
+                            Type
+                            <span class="sort-arrow" *ngIf="sortState.column === 'typeFacture'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="sortable" (click)="sort('clientNom')">
+                            Client / Fournisseur
+                            <span class="sort-arrow" *ngIf="sortState.column === 'clientNom'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="col-montant sortable" (click)="sort('montantTTC')">
+                            TTC
+                            <span class="sort-arrow" *ngIf="sortState.column === 'montantTTC'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="col-montant sortable" (click)="sort('montantPaye')">
+                            Payé
+                            <span class="sort-arrow" *ngIf="sortState.column === 'montantPaye'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="col-montant sortable" (click)="sort('montantRestant')">
+                            Restant
+                            <span class="sort-arrow" *ngIf="sortState.column === 'montantRestant'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="col-statut sortable" (click)="sort('statut')">
+                            Statut
+                            <span class="sort-arrow" *ngIf="sortState.column === 'statut'">{{ sortState.direction === 'asc' ? '▲' : '▼' }}</span>
+                        </th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let facture of listFactureFiltre | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: listFactureFiltre.length }">
+                        <tr class="facture-row" [class.facture-ouverte]="estOuverte(facture)" (click)="basculerDetail(facture)">
+                            <td>
+                                <span class="facture-numero">{{ facture.numeroFacture || '—' }}</span>
+                            </td>
+                            <td>{{ facture.dateFacture | date:'dd/MM/yyyy' }}</td>
+                            <td class="col-type">
+                                <span class="badge" [ngClass]="facture.typeFacture === 'FOURNISSEUR' ? 'badge-info' : 'badge-primary'">
+                                    {{ libelleType(facture.typeFacture) }}
+                                </span>
+                            </td>
+                            <td>
+                                {{ tiers(facture) }}
+                                <div class="small-text text-muted" *ngIf="facture.sourceType">
+                                    {{ libelleSource(facture.sourceType) }} #{{ facture.sourceId }}
+                                </div>
+                            </td>
+                            <td class="col-montant">{{ facture.montantTTC | number:'1.2-2':'fr' }}</td>
+                            <td class="col-montant text-success">{{ paye(facture) | number:'1.2-2':'fr' }}</td>
+                            <td class="col-montant">
+                                <span [class.text-danger]="restant(facture) > 0">{{ restant(facture) | number:'1.2-2':'fr' }}</span>
+                            </td>
+                            <td class="col-statut">
+                                <span class="badge" [ngClass]="classeBadge(facture.statut)">{{ libelleStatut(facture.statut) }}</span>
+                            </td>
+                            <td class="col-actions" (click)="$event.stopPropagation()">
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-correct" title="Encaisser" aria-label="Encaisser un paiement"
+                                            *ngIf="restant(facture) > 0 && facture.statut !== 'ANNULEE'"
+                                            (click)="encaisser(facture)">
+                                        <i class="fas fa-hand-holding-dollar"></i>
+                                    </button>
+                                    <button class="btn-action btn-pdf" title="Télécharger le PDF" aria-label="Télécharger la facture en PDF"
+                                            (click)="exporterPdf(facture)">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="facture-detail" *ngIf="estOuverte(facture)">
+                            <td colspan="9">
+                                <div class="row g-2">
+                                    <div class="col-12 col-md-3">
+                                        <div class="detail-label">Montant HT</div>
+                                        <div class="detail-value">{{ facture.montantHT | number:'1.2-2':'fr' }} Ar</div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="detail-label">TVA</div>
+                                        <div class="detail-value">{{ facture.montantTVA | number:'1.2-2':'fr' }} Ar</div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="detail-label">Date d'échéance</div>
+                                        <div class="detail-value">{{ (facture.dateEcheance | date:'dd/MM/yyyy') || '—' }}</div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="detail-label">Entreprise</div>
+                                        <div class="detail-value">{{ facture.entrepriseNom || '—' }}</div>
+                                    </div>
+                                    <!-- Paiements de la facture. L'API ne les joint pas a la facture, ils
+                                         sont charges a l'ouverture du detail ; l'historique
+                                         complet est affiche, pas seulement le dernier. -->
+                                    <div class="col-12" *ngIf="paiementsDe(facture).length > 0">
+                                        <div class="detail-label">
+                                            Paiements ({{ paiementsDe(facture).length }})
+                                        </div>
+                                        <div class="detail-value">
+                                            <div *ngFor="let p of paiementsDe(facture)">
+                                                {{ p.montant | number:'1.2-2':'fr' }} Ar
+                                                — {{ libelleModePaiement(p.modePaiement) }}
+                                                <span *ngIf="p.datePaiement">
+                                                    ({{ p.datePaiement | date:'dd/MM/yyyy' }})
+                                                </span>
+                                                <span *ngIf="p.montantDonne != null && p.montantDonne > (p.montant ?? 0)">
+                                                    — donné {{ p.montantDonne | number:'1.2-2':'fr' }},
+                                                    monnaie {{ p.monnaie | number:'1.2-2':'fr' }}
+                                                </span>
+                                                <span *ngIf="p.reference"> — réf. {{ p.reference }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6" *ngIf="facture.paiement && paiementsDe(facture).length === 0">
+                                        <div class="detail-label">Dernier paiement</div>
+                                        <div class="detail-value">
+                                            {{ facture.paiement.montant | number:'1.2-2':'fr' }} Ar
+                                            — {{ libelleModePaiement(facture.paiement.modePaiement) }}
+                                            <span *ngIf="facture.paiement.datePaiement">
+                                                ({{ facture.paiement.datePaiement | date:'dd/MM/yyyy' }})
+                                            </span>
+                                            <span *ngIf="facture.paiement.reference"> — réf. {{ facture.paiement.reference }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6 text-end" *ngIf="facture.sourceType">
+                                        <button class="btn btn-outline-secondary btn-sm" (click)="ouvrirSource(facture)">
+                                            <i class="fas fa-external-link-alt"></i>&nbsp;Ouvrir la {{ libelleSource(facture.sourceType) | lowercase }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" *ngIf="!loading && listFactureFiltre.length === 0">
+            <div class="empty-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <h5>Aucune facture trouvée</h5>
+            <p>Les factures sont créées automatiquement à l'enregistrement d'une vente ou d'une commande encaissée.</p>
+            <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+                <i class="fas fa-redo"></i> Réinitialiser les filtres
+            </button>
+        </div>
+    </div>
+
+    <div class="pagination-wrapper" *ngIf="listFactureFiltre.length > 0">
+        <div class="pagination-info">
+            Affichage de {{((page - 1) * pageSize) + 1}} à {{page * pageSize > listFactureFiltre.length ? listFactureFiltre.length : page * pageSize}} sur {{listFactureFiltre.length}} factures
+        </div>
+        <pagination-controls
+            previousLabel="Précédent"
+            nextLabel="Suivant"
+            [autoHide]="true"
+            [responsive]="true"
+            (pageChange)="page=$event">
+        </pagination-controls>
+    </div>
+</div>

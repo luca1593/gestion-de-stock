@@ -126,6 +126,13 @@ export class MenuComponent implements OnInit {
           icon: 'fas fa-receipt',
           url: 'avoirs',
           matchUrls: ['nouvel-avoir']
+        },
+        {
+          id: '54',
+          titre: 'Factures',
+          icon: 'fas fa-file-invoice-dollar',
+          url: 'factures',
+          matchUrls: ['facture']
         }
       ]
     },
@@ -140,7 +147,7 @@ export class MenuComponent implements OnInit {
           titre: 'Catégories',
           icon: 'fas fa-tags',
           url: 'categories',
-          matchUrls: ['nouvel-categorie']
+          matchUrls: ['nouveau-categorie']
         },
         {
           id: '62',

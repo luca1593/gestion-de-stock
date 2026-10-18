@@ -82,7 +82,7 @@ class MvtstkService extends __BaseService {
 
     let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `v1/mvtstk/detele/${encodeURIComponent(String(typeMvt))}`,
+      this.rootUrl + `v1/mvtstk/delete/${encodeURIComponent(String(typeMvt))}`,
       __body,
       {
         headers: __headers,

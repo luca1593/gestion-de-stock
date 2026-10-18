@@ -1,0 +1,84 @@
+<div class="encaissement custom-border">
+    <div class="encaissement-header d-flex align-items-center justify-content-between flex-wrap">
+        <div>
+            <i class="fas fa-cash-register blue-color"></i>&nbsp;
+            <span class="encaissement-titre">Encaissement</span>
+            <span class="small-text text-muted">&nbsp;— la facture est enregistrée avec ce paiement</span>
+        </div>
+        <div class="encaissement-total">
+            <span class="small-text">{{ libelleMontant }}&nbsp;:</span>
+            <strong>{{ montantDuArrondi | number:'1.2-2':'fr' }}&nbsp;Ar</strong>
+        </div>
+    </div>
+
+    <div class="row g-2 mt-1">
+        <div class="col-12 col-md-6 col-lg-3">
+            <select class="form-control" name="modePaiement" aria-label="Mode de paiement"
+                    [(ngModel)]="modePaiement" (ngModelChange)="onModeChange()" required>
+                <option *ngFor="let mode of modes" [value]="mode.value">{{ mode.label }}</option>
+            </select>
+        </div>
+        <!--
+          Seul le montant donné est saisi : le montant payé EST le total
+          affiché en haut du panneau, il n'y a donc rien à recopier. C'est
+          aussi l'ordre du geste au comptoir — le client tend ses billets,
+          le caissier en compte ce qu'il a reçu, puis calcule la monnaie à
+          rendre par rapport au total.
+        -->
+        <div class="col-12 col-md-6 col-lg-3" *ngIf="afficheMontantDonne">
+            <div class="input-group">
+                <input type="number" class="form-control" name="montantDonne" min="0" step="0.01"
+                       placeholder="Montant donné *" aria-label="Montant donné par le client"
+                       [(ngModel)]="montantDonne" (ngModelChange)="onMontantDonneChange()" (keydown)="onKeydown($event)" required>
+                <button class="btn btn-outline-secondary" type="button" title="Prendre le montant exact"
+                        aria-label="Prendre le montant exact" (click)="remplirMontantExact()">
+                    <i class="fas fa-equals"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <input type="date" class="form-control" name="datePaiement"
+                   placeholder="Date du paiement *" aria-label="Date du paiement"
+                   [(ngModel)]="datePaiement" required>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+            <input type="text" class="form-control" name="reference"
+                   [placeholder]="referenceObligatoire ? 'Référence *' : 'Référence (facultatif)'"
+                   aria-label="Référence du paiement"
+                   [(ngModel)]="reference">
+        </div>
+        <div class="col-12 col-md-6 col-lg-6">
+            <input type="text" class="form-control" name="noteEncaissement"
+                   placeholder="Note (facultatif)" aria-label="Note sur le paiement"
+                   [(ngModel)]="note">
+        </div>
+    </div>
+
+    <div class="encaissement-pied d-flex justify-content-between align-items-center flex-wrap mt-2">
+        <span class="small-text text-muted" *ngIf="!resteApresDonne">
+            Les champs marqués de * sont obligatoires
+        </span>
+        <div class="d-flex align-items-center flex-wrap gap-3">
+            <!--
+              Reste après l'encaissement : ce que le client doit encore. Ne
+              s'affiche que si la somme versée ne couvre pas le total — sinon
+              il fait doublon avec la monnaie à rendre.
+            -->
+            <span class="small-text" *ngIf="resteApresDonne">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                Reste après cet encaissement&nbsp;:&nbsp;
+                <strong>{{ resteApresDonne | number:'1.2-2':'fr' }}&nbsp;Ar</strong>
+            </span>
+            <!--
+              La monnaie se calcule sur le TOTAL de la vente, pas sur le
+              montant payé : c'est la somme rendue par le client, pas le
+              montant saisi.
+            -->
+            <div class="monnaie" [class.monnaie-alerte]="monnaie > 0">
+                <span class="small-text">{{ afficheMontantDonne ? 'Monnaie à rendre' : 'Montant exact encaissé' }}</span>
+                <strong>{{ monnaie | number:'1.2-2':'fr' }}&nbsp;Ar</strong>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,7 +17,7 @@ class FournisseurService extends __BaseService {
   static readonly FournisseurApiFindByEmailFournisseurGETPath='v1/fournisseur/email/{emailFournisseur}';
   static readonly FournisseurApiFindByIdGETPath='v1/fournisseur/{idFournisseur}';
 
-  static readonly FournisseurApiDeleteDELETEPath='v1/fournisseur/detele/{idFournisseur}';
+  static readonly FournisseurApiDeleteDELETEPath='v1/fournisseur/delete/{idFournisseur}';
   static readonly FournisseurApiFindByNomFournisseurGETPath='v1/fournisseur/nom/{nomFournisseur}';
 
   constructor(
@@ -203,7 +203,7 @@ class FournisseurService extends __BaseService {
       let __body: any=null;
       let req=new HttpRequest<any>(
         'DELETE',
-        this.rootUrl + `v1/fournisseur/detele/${encodeURIComponent(String(idFournisseur))}`,
+        this.rootUrl + `v1/fournisseur/delete/${encodeURIComponent(String(idFournisseur))}`,
         __body,
         {
           headers: __headers,

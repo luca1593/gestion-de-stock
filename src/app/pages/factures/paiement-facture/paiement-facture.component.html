@@ -1,0 +1,95 @@
+<div class="paiement-facture col p-3 mb-3">
+    <div class="col-md-10 mx-auto">
+        <div class="col-md-12 mb-3">
+            <h2><i class="fas fa-hand-holding-dollar blue-color"></i>&nbsp;Encaisser la facture</h2>
+        </div>
+
+        <div class="loading-overlay" *ngIf="loading">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Chargement de la facture...</span>
+            </div>
+        </div>
+
+        <div class="alert alert-danger" *ngIf="errorMsg.length">
+            <div *ngFor="let msg of errorMsg">
+                <span>{{ msg }}</span>
+            </div>
+        </div>
+
+        <div class="card custom-border mb-3" *ngIf="facture">
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-12 col-md-4">
+                        <div class="detail-label">Numéro</div>
+                        <div class="detail-value">{{ facture.numeroFacture || '—' }}</div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="detail-label">Date</div>
+                        <div class="detail-value">{{ facture.dateFacture | date:'dd/MM/yyyy' }}</div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="detail-label">Statut</div>
+                        <div class="detail-value">
+                            <span class="badge" [ngClass]="classeBadge(facture.statut)">{{ libelleStatut(facture.statut) }}</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="detail-label">{{ facture.typeFacture === 'FOURNISSEUR' ? 'Fournisseur' : 'Client' }}</div>
+                        <div class="detail-value">
+                            {{ (facture.typeFacture === 'FOURNISSEUR' ? facture.fournisseurNom : facture.clientNom) || '—' }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6" *ngIf="facture.sourceType">
+                        <div class="detail-label">Origine</div>
+                        <div class="detail-value">
+                            {{ libelleSource(facture.sourceType) }} #{{ facture.sourceId }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="detail-label">Montant TTC</div>
+                        <div class="detail-value">{{ facture.montantTTC | number:'1.2-2':'fr' }} Ar</div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="detail-label">Déjà payé</div>
+                        <div class="detail-value">{{ (facture.montantPaye || 0) | number:'1.2-2':'fr' }} Ar</div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="detail-label">Reste à payer</div>
+                        <div class="detail-value reste">{{ montantRestant | number:'1.2-2':'fr' }} Ar</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="facture">
+            <!-- Facture deja soldee : on explique pourquoi le formulaire ne
+                 sert a rien plutot que de laisser un formulaire actif dont le
+                 bouton reste grise. -->
+            <div class="alert alert-success d-flex align-items-center" *ngIf="factureSoldee">
+                <i class="fas fa-check-circle me-2"></i>
+                <span>
+                    Cette facture est entièrement réglée
+                    <ng-container *ngIf="facture?.montantPaye != null">
+                        ({{ facture?.montantPaye | number:'1.2-2':'fr' }} Ar encaissés)
+                    </ng-container>
+                    : aucun paiement complémentaire n'est possible.
+                </span>
+            </div>
+
+            <app-encaissement
+                [montantDu]="montantRestant"
+                libelleMontant="Reste à payer"
+                (encaissementChange)="onEncaissementChange($event)"></app-encaissement>
+
+            <div class="text-end">
+                <button class="btn btn-outline-secondary mx-1" (click)="annuler()">
+                    <i class="fas fa-ban"></i>&nbsp;Annuler
+                </button>
+                <button class="btn btn-success mx-1" (click)="enregistrer()" [disabled]="!encaissement.valide || factureSoldee">
+                    <i class="fas fa-save"></i>&nbsp;Enregistrer le paiement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

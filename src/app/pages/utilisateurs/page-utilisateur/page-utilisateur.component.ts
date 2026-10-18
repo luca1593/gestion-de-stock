@@ -6,6 +6,8 @@ import { NotificationService } from 'src/app/services/notification/notification.
 import { UtilisateurDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import * as ExcelJS from 'exceljs';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { pageValide } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-utilisateur',
@@ -32,7 +34,8 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private userService: UserService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private confirmation: ConfirmationService
   ) { }
 
   ngOnInit(): void {
@@ -54,6 +57,10 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
       next: (list) => {
         this.listUtilisateur = list;
         this.listUtilisateurFiltre = sortByProperty(list, 'nom', 'asc');
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.page = pageValide(this.page, this.listUtilisateurFiltre.length, this.pageSize);
         this.loading = false;
       },
       error: (error) => {
@@ -116,18 +123,27 @@ export class PageUtilisateurComponent implements OnInit, OnDestroy {
     this.router.navigate(["modifier-utilisateur", user.id]);
   }
 
-  supprimerUtilisateur(user: UtilisateurDto): void {
+  async supprimerUtilisateur(user: UtilisateurDto): Promise<void> {
     if (!user.id) return;
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur "${user.nom}" ?`)) {
-      this.userService.delete(user.id).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.findAllUtilisateur();
-        },
-        error: (err) => {
-          this.errorMsg = err.error?.error || 'Erreur lors de la suppression';
-        }
-      });
-    }
+
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer cet utilisateur ?',
+      message: 'Voulez-vous vraiment supprimer cet utilisateur ?',
+      element: [user.nom, user.prenom].filter(Boolean).join(' '),
+      consequence: 'Cet utilisateur ne pourra plus se connecter à l\'application.',
+      icone: 'fas fa-user-cog'
+    });
+    if (!ok) return;
+
+    this.userService.delete(user.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.findAllUtilisateur();
+        this.notificationService.addSuccess('Suppression', 'Utilisateur supprimé');
+      },
+      error: (err) => {
+        this.errorMsg = err.error?.error || 'Erreur lors de la suppression';
+      }
+    });
   }
 
   exporterUtilisateurs(): void {

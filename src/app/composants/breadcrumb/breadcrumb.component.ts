@@ -56,10 +56,11 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     'utilisateur/:id': { label: 'Utilisateurs', url: '/utilisateurs' },
     'nouvel-utilisateur': { label: 'Utilisateurs', url: '/utilisateurs' },
     'modifier-utilisateur/:id': { label: 'Utilisateurs', url: '/utilisateurs' },
-    'nouvel-categorie': { label: 'Catégories', url: '/categories' },
-    'nouvel-categorie/:idCategory': { label: 'Catégories', url: '/categories' },
+    'nouveau-categorie': { label: 'Catégories', url: '/categories' },
+    'nouveau-categorie/:idCategory': { label: 'Catégories', url: '/categories' },
     'nouvel-avoir': { label: 'Avoirs', url: '/avoirs' },
     'nouvel-avoir/:id': { label: 'Avoirs', url: '/avoirs' },
+    'facture/paiement/:idFacture': { label: 'Factures', url: '/factures' },
     'modifier-profil': { label: 'Profil', url: '/profil' },
     'changer-mot-de-passe': { label: 'Profil', url: '/profil' }
   };
@@ -261,7 +262,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
         load: (id) => this.avoirService.getById(id),
         labelOf: (e) => this.trimOrNull(e?.code)
       },
-      'nouvel-categorie/:idCategory': {
+      'nouveau-categorie/:idCategory': {
         param: 'idCategory',
         load: (id) => this.findInList(this.categoryService.findAll(), id),
         labelOf: (e) => this.trimOrNull(e?.designation)

@@ -4,6 +4,8 @@ import { ModalService } from 'src/app/services/modal/modal.service';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Component({
   selector: 'app-details-cmd-clt-frs',
@@ -25,12 +27,18 @@ export class DetailsCmdCltFrsComponent implements OnInit, OnDestroy {
   @Output()
   etatChanged = new EventEmitter<{id: number, etat: string}>();
 
+  /** Emis apres une suppression reussie, pour que la liste se recharge. */
+  @Output()
+  supprimChanged = new EventEmitter<boolean>();
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
     private modalService: ModalService,
-    private commandeCltFrs: CmdCltFrsService
+    private commandeCltFrs: CmdCltFrsService,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -63,29 +71,41 @@ export class DetailsCmdCltFrsComponent implements OnInit, OnDestroy {
     this.modalService.closeModal(modalId);
   }
 
-   supprimer(idCommande: number){
-     if (idCommande && confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
-       if (this.origin === "client") {
-         this.commandeCltFrs.supprimerCommandeClient(idCommande).pipe(takeUntil(this.destroy$)).subscribe({
-           next: () => {
-             this.modalService.closeModal('modalDetail' + this.commande.code);
-           },
-           error: (err) => {
-             alert("Erreur lors de la suppression: " + (err.error?.error || err.message));
-           }
-         });
-       } else if(this.origin === "fournisseur"){
-         this.commandeCltFrs.supprimerCommandeFournisseur(idCommande).pipe(takeUntil(this.destroy$)).subscribe({
-           next: () => {
-             this.modalService.closeModal('modalDetail' + this.commande.code);
-           },
-           error: (err) => {
-             alert("Erreur lors de la suppression: " + (err.error?.error || err.message));
-           }
-         });
-       }
-     }
-   }
+  async supprimer(idCommande: number): Promise<void> {
+    if (!idCommande) return;
+
+    const libelle = this.origin === "fournisseur" ? "cette commande fournisseur" : "cette commande client";
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer la commande ?',
+      message: 'Voulez-vous vraiment supprimer ' + libelle + ' ?',
+      element: this.commande?.code || null,
+      consequence: "Les articles qui y figuraient seront de nouveau disponibles au stock.",
+      icone: 'fas fa-file-invoice'
+    });
+    if (!ok) return;
+
+    const traiter = {
+      next: () => {
+        this.modalService.closeModal('modalDetail' + this.commande.code);
+        this.supprimChanged.emit(true);
+        this.notificationService.addSuccess('Suppression', 'Commande supprimée');
+      },
+      error: (err: any) => {
+        // alert() du navigateur : bloquant, non stylable, et invisible
+        // pour un utilisateur qui filtre la page
+        this.notificationService.addError(
+          'Erreur',
+          err.error?.error || err.message || "Erreur lors de la suppression"
+        );
+      }
+    };
+
+    if (this.origin === "client") {
+      this.commandeCltFrs.supprimerCommandeClient(idCommande).pipe(takeUntil(this.destroy$)).subscribe(traiter);
+    } else if (this.origin === "fournisseur") {
+      this.commandeCltFrs.supprimerCommandeFournisseur(idCommande).pipe(takeUntil(this.destroy$)).subscribe(traiter);
+    }
+  }
 
   onEtatChange(event: {id: number, etat: string}): void {
     this.commande.etatcommande = event.etat;
@@ -110,9 +130,9 @@ export class DetailsCmdCltFrsComponent implements OnInit, OnDestroy {
   calculerPrixTotalCommande() : number {
     let total=0;
     if(this.commande){
-      console.log(this.lineDeCommande);
+
     }
-    console.log(this.commande.ligneCommandeFournisseurs);
+
     this.commande.ligneCommandeFournisseurs?.forEach((ligne: { prixUnitaire: number; quantite: number; }) => {
       if(ligne.prixUnitaire && ligne.quantite) {
         total += (ligne.quantite * ligne.prixUnitaire);

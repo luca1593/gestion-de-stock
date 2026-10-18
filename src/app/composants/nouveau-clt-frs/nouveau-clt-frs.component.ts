@@ -4,6 +4,7 @@ import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
 import { AdresseDto, ClientDto, FournisseurDto } from 'src/gs-api/src/models';
 import { PhotoService } from 'src/gs-api/src/services';
 import { PhotoSyncService } from 'src/app/services/photo-sync/photo-sync.service';
+import { Observable } from 'rxjs';
 import SavePhotoParams=PhotoService.SavePhotoParams;
 
 @Component({
@@ -24,7 +25,20 @@ export class NouveauCltFrsComponent implements OnInit {
   loading = true;
   isEditMode = false;
 
-  constructor(
+  // verrou anti double-clic : sans lui, deux clics rapides creaient deux fiches
+  saving = false;
+
+  /**
+ * Format d'e-mail vérifiable dans le template : le bouton de sauvegarde doit
+ * rester grisé sur une adresse invalide, sinon le message d'erreur s'affiche
+ * sous le champ tout en laissant partir la requête.
+ */
+emailValide(): boolean {
+  const email = (this.clientFournisseur.email ?? '').trim();
+  return email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cltfrsService: CltfrsService,
@@ -32,11 +46,41 @@ export class NouveauCltFrsComponent implements OnInit {
     private photoSyncService: PhotoSyncService
     ) { }
 
+  /*
+   * Adresses e-mail deja utilisees. Le backend accepte plusieurs fiches
+   * pour une meme adresse : on obtenait trois clients « postman.client@t.com »
+   * sans moyen de les distinguer. L'e-mail sert d'identifiant dans les
+   * listes et les factures, il doit donc rester unique.
+   */
+  private emailsExistants = new Set<string>();
+
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(data => {
       this.origin=data['origin'];
     });
     this.findCltfrs();
+    this.chargerEmailsExistants();
+  }
+
+  private chargerEmailsExistants(): void {
+    const id = this.activatedRoute.snapshot.params['id'];
+    const source = this.origin === 'fournisseur'
+      ? this.cltfrsService.findAllFournisseurs()
+      : this.cltfrsService.findAllClient();
+    // meme forme de donnee des deux côtés (ClientDto / FournisseurDto)
+    const sourceTypée: Observable<Array<{ id?: number, email?: string }>> = source as unknown as Observable<Array<{ id?: number, email?: string }>>;
+
+    sourceTypée.subscribe({
+      next: (liste: any[]) => {
+        this.emailsExistants = new Set(
+          (liste || [])
+            .filter(x => !id || String(x.id) !== String(id))
+            .map(x => (x.email || '').trim().toLowerCase())
+            .filter(Boolean)
+        );
+      },
+      error: () => undefined
+    });
   }
 
   findCltfrs():void{
@@ -82,17 +126,46 @@ export class NouveauCltFrsComponent implements OnInit {
 
   enregistrer(): void {
     this.submitted = true;
+    // l'erreur de la tentative précédente disparaît dès qu'on réessaie
+    this.errorMsgs = [];
 
-    if (!this.clientFournisseur.nom || !this.adresseDto.adresse1 || !this.adresseDto.ville || !this.adresseDto.codePostal || !this.adresseDto.pays) {
-      this.errorMsgs = ['Veuillez remplir tous les champs obligatoires'];
+    // Le backend refuse l'enregistrement sans prénom, e-mail et téléphone
+    // (« Veuillez renseigner le prenom du client »…). On les contrôle ici pour
+    // que le message apparaisse sous le bon champ, au lieu d'une alerte
+    // générique renvoyée par le serveur après coup.
+    const manquants: string[] = [];
+    if (!this.clientFournisseur.nom) manquants.push('nom');
+    if (!this.clientFournisseur.prenom) manquants.push('prénom');
+    if (!this.clientFournisseur.email) manquants.push('e-mail');
+    if (!this.clientFournisseur.numTel) manquants.push('numéro de téléphone');
+    if (!this.adresseDto.adresse1) manquants.push('adresse 1');
+    if (!this.adresseDto.ville) manquants.push('ville');
+    if (!this.adresseDto.codePostal) manquants.push('code postal');
+    if (!this.adresseDto.pays) manquants.push('pays');
+
+    if (manquants.length) {
+      this.errorMsgs = ['Merci de renseigner : ' + manquants.join(', ')];
       return;
     }
 
+    if (!this.emailValide()) {
+      this.errorMsgs = ['Le format de l\'adresse e-mail est invalide'];
+      return;
+    }
+
+    if (this.emailsExistants.has(this.clientFournisseur.email.trim().toLowerCase())) {
+      this.errorMsgs = ['Un ' + this.origin + ' utilise déjà l\'adresse '
+        + this.clientFournisseur.email + '. Saisissez une autre adresse e-mail.'];
+      return;
+    }
+
+    this.saving = true;
     if(this.origin === "client"){
       this.cltfrsService.enregistreClient(this.mapToClient()).subscribe(resp =>{
         this.clientFournisseur = resp;
         this.savePhoto(resp.id, resp.nom + "_" + resp.prenom);
       }, error => {
+        this.saving = false;
         this.errorMsgs=error.error.errors;
       });
     }else if(this.origin === "fournisseur"){
@@ -100,6 +173,7 @@ export class NouveauCltFrsComponent implements OnInit {
         this.clientFournisseur = resp;
         this.savePhoto(resp.id, resp.nom + "_" + resp.prenom);
       }, error => {
+        this.saving = false;
         this.errorMsgs=error.error.errors;
       });
     }

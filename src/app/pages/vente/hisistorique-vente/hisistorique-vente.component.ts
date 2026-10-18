@@ -8,6 +8,8 @@ import { LigneVenteDto, VenteDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
+import { pageValide, dateLisible } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-hisistorique-vente',
@@ -15,6 +17,7 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./hisistorique-vente.component.css']
 })
 export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
+  readonly dateLisible = dateLisible;
 
   listVentes: Array<VenteDto> = [];
   listVentesFiltre: Array<VenteDto> = [];
@@ -57,6 +60,10 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
         this.listVentes = ventes.sort((a, b) => new Date(b.dateVente || 0).getTime() - new Date(a.dateVente || 0).getTime());
         this.listVentesFiltre = [...this.listVentes];
         this.totalItems = this.listVentes.length;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.pageCmd = pageValide(this.pageCmd, this.listVentesFiltre.length, this.pageSize);
         this.findAllLigneVente();
       },
       error: (err) => {
@@ -200,11 +207,11 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
     let nmbArticle = 0;
     lignes.forEach(ligne => {
       if (ligne.prixUnitaire && ligne.quantite) {
-        totalTtc += ligne.prixUnitaire * ligne.quantite;
+        totalTtc += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         nmbArticle += ligne.quantite;
       }
     });
-    this.mapTotalTtc.set(idVente, Math.floor(totalTtc));
+    this.mapTotalTtc.set(idVente, arrondiMonetaire(totalTtc));
     this.mapNmbrArticle.set(idVente, nmbArticle);
   }
 
@@ -220,7 +227,7 @@ export class HisistoriqueVenteComponent implements OnInit, OnDestroy {
     this.mapListLigneVente.get(idVente)?.forEach((ligne: LigneVenteDto) => {
       if (ligne.article?.id && ligne.article.prixTtc && ligne.quantite) {
         const total = ligne.article.prixTtc * ligne.quantite;
-        this.mapTotalArticle.set(ligne.article.id, Math.floor(total));
+        this.mapTotalArticle.set(ligne.article.id, arrondiMonetaire(total));
       }
     });
   }

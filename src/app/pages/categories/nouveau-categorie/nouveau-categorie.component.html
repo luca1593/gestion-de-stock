@@ -13,8 +13,11 @@
             <form class="row">
                 <div class="col-md-12 mb-2">
                     <input type="text" class="form-control" id="codecategorie"
-                    name="codeCategory" [(ngModel)]="categoryDto.code"
-                     placeholder="Code categorie">
+                    name="codeCategory" [(ngModel)]="categoryDto.code" required #codeField="ngModel"
+                     placeholder="Code catégorie *">
+                    <div class="text-danger small mt-1" *ngIf="codeField.invalid && (codeField.dirty || codeField.touched || submitted)">
+                        Ce champ est obligatoire
+                    </div>
                 </div>
                 <div class="col-md-12 mb-2">
                     <input type="text" class="form-control" id="description"
@@ -22,13 +25,14 @@
                      placeholder="Description">
                 </div>
             </form>
+            <p class="text-muted small mt-2">Les champs marqués de * sont obligatoires</p>
         </div>
         <div class="col-md-12 text-end">
             <button class="btn btn-danger mx-1" (click)="cancelClick()">
                 <i class="fas fa-ban"></i>&nbsp;Annuler
             </button>
-            <button class="btn btn-success mx-1" (click)="saveClick()">
-                <i class="fas fa-save"></i>&nbsp;Sauvegarder
+            <button class="btn btn-success mx-1" (click)="saveClick()" [disabled]="saving || !categoryDto.code">
+                <i class="fas" [class.fa-save]="!saving" [class.fa-spinner]="saving" [class.fa-spin]="saving"></i>&nbsp;{{ saving ? 'Enregistrement...' : 'Sauvegarder' }}
             </button>
         </div>
     </div>

@@ -1,0 +1,174 @@
+/*
+ * Boite de confirmation de l'application.
+ *
+ * Fond assombri + carte centree, dans les memes tons que les cartes du
+ * tableau de bord, et une largeur bornee pour que les messages courts ne
+ * s'etirent pas sur toute la largeur d'un ecran large.
+ */
+
+.confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(2px);
+    animation: confirmFade 0.15s ease;
+}
+
+@keyframes confirmFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.confirm-dialog {
+    width: 100%;
+    max-width: 30rem;
+    background: var(--bg-card, #ffffff);
+    color: var(--text-primary, #212529);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color, #dee2e6);
+    box-shadow: 0 1.25rem 2.5rem rgba(15, 23, 42, 0.35);
+    padding: 1.5rem 1.5rem 1.25rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "icone corps"
+        "actions actions";
+    gap: 1rem 1rem;
+    animation: confirmRise 0.18s ease;
+}
+
+@keyframes confirmRise {
+    from { transform: translateY(0.75rem) scale(0.98); opacity: 0; }
+    to   { transform: none; opacity: 1; }
+}
+
+.confirm-icone {
+    grid-area: icone;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.confirm-icone-danger {
+    background: rgba(220, 53, 69, 0.12);
+    color: var(--danger-color, #dc3545);
+}
+
+.confirm-icone-neutre {
+    background: rgba(74, 144, 217, 0.14);
+    color: var(--primary-color, #4a90d9);
+}
+
+.confirm-corps {
+    grid-area: corps;
+    min-width: 0;
+}
+
+.confirm-titre {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.confirm-message {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-primary, #212529);
+}
+
+/* Nom de l'element : sert a ne pas confondre deux lignes identiques */
+.confirm-element {
+    margin-top: 0.65rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: var(--bg-body, #f8f9fa);
+    border: 1px solid var(--border-color, #dee2e6);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+    word-break: break-word;
+}
+
+.confirm-element i {
+    color: var(--text-muted, #6c757d);
+    font-size: 0.75rem;
+}
+
+.confirm-consequence {
+    margin: 0.65rem 0 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-muted, #6c757d);
+}
+
+.confirm-consequence i {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+}
+
+.confirm-actions {
+    grid-area: actions;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color, #dee2e6);
+}
+
+.confirm-actions .btn {
+    white-space: nowrap;
+}
+
+/* Sous 768px, les boutons passent sur deux lignes pleine largeur : le pouce
+   atteint les deux, et les libelles ne sont plus tronques. */
+@media (max-width: 767px) {
+    .confirm-dialog {
+        max-width: none;
+        padding: 1.25rem 1rem 1rem;
+    }
+
+    .confirm-actions {
+        flex-direction: column-reverse;
+    }
+
+    .confirm-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Theme sombre : les variables --bg-card et --border-color suffisent, la
+   carte suit automatiquement le reste de l'interface. */
+body.dark-theme .confirm-dialog {
+    box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.6);
+}
+
+body.dark-theme .confirm-backdrop {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .confirm-backdrop,
+    .confirm-dialog {
+        animation: none;
+    }
+}

@@ -16,7 +16,7 @@ class CategoryService extends __BaseService {
 
   static readonly CategoryApiFindAllGETPath='v1/category/all';
   static readonly CategoryApiSavePOSTPath='v1/category/save';
-  static readonly CategoryApiDeleteDELETEPath='v1/category/detele/{idCategory}';
+  static readonly CategoryApiDeleteDELETEPath='v1/category/delete/{idCategory}';
   static readonly CategoryApiFindByIdGETPath='v1/category/{idCategory}';
 
   constructor(
@@ -157,7 +157,7 @@ class CategoryService extends __BaseService {
     let __body: any=null;
     let req=new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `v1/category/detele/${encodeURIComponent(String(idCategory))}`,
+      this.rootUrl + `v1/category/delete/${encodeURIComponent(String(idCategory))}`,
       __body,
       {
         headers: __headers,

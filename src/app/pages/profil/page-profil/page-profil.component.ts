@@ -165,10 +165,10 @@ export class PageProfilComponent implements OnInit {
   }
 
   private processFile(file: File): void {
-    console.log('processFile called:', file.name, file.type);
+
     if (!file.type.startsWith('image/')) return;
     this.selectedPhotoFile = file;
-    console.log('selectedPhotoFile set:', this.selectedPhotoFile);
+
     const reader = new FileReader();
     reader.onload = () => {
       this.utilisateurDto.photo = reader.result as string;

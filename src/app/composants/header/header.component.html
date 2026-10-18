@@ -21,7 +21,7 @@
                            (input)="onSearchInput()"
                            (focus)="onSearchFocus()"
                            (blur)="onSearchBlur()">
-                    <kbd class="search-kbd">⌘K</kbd>
+                    <kbd class="search-kbd" title="Rechercher (Ctrl K)" (click)="onClicRaccourci($event)">Ctrl K</kbd>
                 </div>
                 <div class="search-results-dropdown" *ngIf="showSearchResults">
                     <div class="search-result-item" 

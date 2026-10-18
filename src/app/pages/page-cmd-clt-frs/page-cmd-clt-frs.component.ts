@@ -5,6 +5,10 @@ import { takeUntil } from 'rxjs/operators';
 import { CmdCltFrsService } from 'src/app/services/cmdcltfrs/cmd-clt-frs.service';
 import { CommandeClientDto, LigneCommandeClientDto } from 'src/gs-api/src/models';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
+import { pageValide, dateLisible } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-cmd-clt-frs',
@@ -12,6 +16,7 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
   styleUrls: ['./page-cmd-clt-frs.component.css']
 })
 export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
+  readonly dateLisible = dateLisible;
 
   private destroy$ = new Subject<void>();
 
@@ -41,6 +46,8 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private commandeCltFrsService: CmdCltFrsService,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
     ) { }
 
@@ -78,6 +85,10 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
           this.listCommandes=commandes;
           this.listCommandesFilter=commandes;
           this.totalItems=commandes.length;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+          this.page = pageValide(this.page, this.totalItems, this.pageSize);
           this.findAllLigneCommande();
           this.loading = false;
         },
@@ -93,6 +104,10 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
           this.listCommandes=commandes;
           this.listCommandesFilter=commandes;
           this.totalItems=commandes.length;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+          this.page = pageValide(this.page, this.totalItems, this.pageSize);
           this.findAllLigneCommande();
           this.loading = false;
         },
@@ -205,8 +220,21 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
      });
    }
 
+   /**
+    * Verrou de suppression : une commande validee ou livree n'est plus
+    * supprimable, elle fait foi pour les factures et le stock.
+    */
    isCommandeVerrouillee(etat: string | undefined): boolean {
      return etat === 'LIVREE' || etat === 'VALIDEE';
+   }
+
+   /**
+    * Une commande livree est figee : plus aucune modification possible, le
+    * bouton est grise. Une commande validee reste en revanche accessible,
+    * mais uniquement pour faire avancer l'etat jusqu'a « livree ».
+    */
+   estCommandeLivree(etat: string | undefined): boolean {
+     return etat === 'LIVREE';
    }
 
    modifierCommande(id: number): void {
@@ -217,27 +245,30 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
      }
    }
 
-   supprimerCommande(id: number): void {
-     if (confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
-       if(this.origin === "client"){
-         this.commandeCltFrsService.supprimerCommandeClient(id).pipe(takeUntil(this.destroy$)).subscribe({
-           next: () => {
-             this.finAllCommandeCltFrs();
-           },
-           error: (err: any) => {
-             this.errorMsg = err.error?.error || "Erreur lors de la suppression";
-           }
-         });
-       } else if(this.origin === "fournisseur"){
-         this.commandeCltFrsService.supprimerCommandeFournisseur(id).pipe(takeUntil(this.destroy$)).subscribe({
-           next: () => {
-             this.finAllCommandeCltFrs();
-           },
-           error: (err: any) => {
-             this.errorMsg = err.error?.error || "Erreur lors de la suppression";
-           }
-         });
+   async supprimerCommande(id: number): Promise<void> {
+     const libelle = this.origin === "fournisseur" ? "cette commande fournisseur" : "cette commande client";
+     const ok = await this.confirmation.demander({
+       titre: 'Supprimer la commande ?',
+       message: 'Voulez-vous vraiment supprimer ' + libelle + ' ?',
+       consequence: "Les articles qui y figuraient seront de nouveau disponibles au stock.",
+       icone: 'fas fa-file-invoice'
+     });
+     if (!ok) return;
+
+     const rafraichir = {
+       next: () => {
+         this.finAllCommandeCltFrs();
+         this.notificationService.addSuccess('Suppression', 'Commande supprimée');
+       },
+       error: (err: any) => {
+         this.errorMsg = err.error?.error || "Erreur lors de la suppression";
        }
+     };
+
+     if(this.origin === "client"){
+       this.commandeCltFrsService.supprimerCommandeClient(id).pipe(takeUntil(this.destroy$)).subscribe(rafraichir);
+     } else if(this.origin === "fournisseur"){
+       this.commandeCltFrsService.supprimerCommandeFournisseur(id).pipe(takeUntil(this.destroy$)).subscribe(rafraichir);
      }
    }
 
@@ -314,11 +345,11 @@ export class PageCmdCltFrsComponent implements OnInit, OnDestroy {
     let nmbArticle=0;
     list.forEach(ligne => {
       if(ligne.prixUnitaire && ligne.quantite){
-        totalTtc += ligne.prixUnitaire * ligne.quantite;
+        totalTtc += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         nmbArticle += ligne.quantite;
       }
     });
-    this.mapTotalTtc.set(idCommande, Math.floor(totalTtc));
+    this.mapTotalTtc.set(idCommande, arrondiMonetaire(totalTtc));
     this.mapNmbrArticle.set(idCommande, nmbArticle);
   }
 

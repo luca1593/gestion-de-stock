@@ -24,8 +24,7 @@ export class DetailUtilisateurComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private utilisateurApi: UtilisateurService,
-    private userService: UserService,
-    private modalService: ModalService
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -46,10 +45,4 @@ export class DetailUtilisateurComponent implements OnInit {
     this.router.navigate(['modifier-utilisateur', this.utilisateur.id]);
   }
 
-  openDeleteModal(): void {
-    if (this.utilisateur.id) {
-      const modalId = 'modalConfirmDelete' + this.utilisateur.id;
-      this.modalService.openModal(modalId);
-    }
-  }
 }

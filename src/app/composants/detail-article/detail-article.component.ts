@@ -5,6 +5,8 @@ import { ModalService } from 'src/app/services/modal/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ArticleDto } from 'src/gs-api/src/models';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 
 @Component({
   selector: 'app-detail-article',
@@ -24,7 +26,9 @@ export class DetailArticleComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private articleService: ArtcleService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -34,31 +38,33 @@ export class DetailArticleComponent implements OnInit, OnDestroy {
     this.router.navigate(["nouvel-article", this.articleDTO.id]);
   }
 
-  openDeleteModal(): void {
-    const modalId = 'modalConfirmDelete' + this.articleDTO.id;
-    this.modalService.openModal(modalId);
-  }
+  async openDeleteModal(): Promise<void> {
+    if (!this.articleDTO.id) return;
 
-  supprimerArticle(): void {
-    if(this.articleDTO.id){
-      this.articleService.delete(this.articleDTO.id).pipe(takeUntil(this.destroy$)).subscribe( resp => {
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer cet article ?',
+      message: 'Voulez-vous vraiment supprimer cet article ?',
+      element: this.articleDTO.designation,
+      consequence: 'Il disparaîtra des listes, de la recherche et des commandes en cours.',
+      icone: 'fas fa-box'
+    });
+    if (!ok) return;
+
+    this.articleService.delete(this.articleDTO.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
         this.suppressioResult.emit("success");
-        this.closeDeleteModal();
-      }, error => {
+        this.notificationService.addSuccess('Suppression', 'Article supprimé');
+      },
+      error: (error) => {
         this.suppressioResult.emit(error.error.message);
-        this.closeDeleteModal();
-      });
-    }
+        this.notificationService.addError('Erreur', error.error?.message || 'Erreur lors de la suppression');
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  closeDeleteModal(): void {
-    const modalId = 'modalConfirmDelete' + this.articleDTO.id;
-    this.modalService.closeModal(modalId);
   }
 
   detailArticle() {

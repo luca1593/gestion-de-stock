@@ -1151,12 +1151,65 @@ body.dark-theme .modal-footer {
 }
 
 /*
+ * Bootstrap 5 a supprimé .badge-primary et .badge-secondary (remplacées par
+ * .bg-* / .text-bg-*). Sans ces deux règles, un badge qui les utilise se
+ * retrouvait en texte blanc sur fond transparent, donc invisible. Elles
+ * reprennent les mêmes dégradés que les autres badges ci-dessus.
+ */
+.badge-primary {
+    background: linear-gradient(135deg, var(--primary-color, #4a90d9) 0%, var(--primary-dark, #2a5298) 100%);
+    color: white;
+}
+
+.badge-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+}
+
+/*
  * Conteneur de pagination. Ce n'est qu'un repli : les six pages de liste
  * redéfinissent .pagination-wrapper (info à gauche, pagination à droite), mais
  * page-cmd-clt-frs, liste-vente et detail-client-fournisseur ne le font pas et
  * s'appuient sur ces valeurs -- sans display:flex, leur texte d'information
  * passait au-dessus de la pagination au lieu d'être à côté.
  */
+/*
+ * Etat vide des listes. Isole dans une page de composant CSS, il n'existait
+ * que sur deux pages : les neuf autres affichaient un tableau vide sans aucun
+ * message quand un filtre ne renvoyait rien, ce qui donne l'impression d'une
+ * page cassee plutot que d'une recherche sans resultat.
+ */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: var(--bg-card, #f8fafc);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-icon i {
+    font-size: 2rem;
+    color: var(--text-muted, #cbd5e1);
+}
+
+.empty-state h5 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary, #1f2937);
+}
+
+.empty-state p {
+    color: var(--text-muted, #9ca3af);
+    margin-bottom: 1.5rem;
+}
+
 .pagination-wrapper {
     display: flex;
     justify-content: center;

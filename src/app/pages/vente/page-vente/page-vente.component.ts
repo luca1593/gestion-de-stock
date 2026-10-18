@@ -3,7 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VenteService } from 'src/app/services/vente/vente.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { ArticleDto, LigneVenteDto, VenteDto,} from 'src/gs-api/src/models';
+import { FactureService } from 'src/app/services/facture/facture.service';
+import { CltfrsService } from 'src/app/services/cltfrs/cltfrs.service';
+import { Encaissement } from 'src/app/composants/encaissement/encaissement.component';
+import { ClientDto, ArticleDto, FactureDto, LigneVenteDto, PaiementDto, VenteDto,} from 'src/gs-api/src/models';
+import { arrondiMonetaire, sousTotalLigne } from 'src/app/composants/money-utils';
 
 @Component({
   selector: 'app-pave-vente',
@@ -27,12 +31,31 @@ export class PageVenteComponent implements OnInit {
   codeVente='';
   venteDto: VenteDto={};
 
+  /*
+   * Facturation : facultative en vente.
+   *
+   * Une vente se fait très bien avec un client passager, non enregistré : le
+   * champ client laisse donc être laissé vide. Le backend refusant une facture
+   * client sans clientId (« Veuillez selectionner un client pour la facture »),
+   * une vente sans client est simplement enregistrée SANS facture — ce qui est
+   * le comportement attendu d'une vente au comptoir.
+   */
+  listClients: Array<ClientDto>=[];
+  clientFacture: ClientDto | null=null;
+  encaissement: Encaissement = {
+    paiement: { modePaiement: 'ESPECES' },
+    valide: false,
+    messages: []
+  };
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private venteService: VenteService,
     private articleService: ArtcleService,
-    private userService: UserService
+    private userService: UserService,
+    private factureService: FactureService,
+    private cltFrsService: CltfrsService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +64,32 @@ export class PageVenteComponent implements OnInit {
     });
     this.searchArticle();
     this.initCodeVente();
+    this.findAllClient();
+  }
+
+  private findAllClient(): void {
+    this.cltFrsService.findAllClient().subscribe(clients => {
+      this.listClients = clients;
+    });
+  }
+
+  onEncaissementChange(encaissement: Encaissement): void {
+    this.encaissement = encaissement;
+  }
+
+  /**
+   * ngModel compare les objets par référence : deux listes de clients
+   * différentes ne désignent pas le même objet, on compare donc les id.
+   *
+   * Le cas null / null doit aussi renvoyer true : c'est lui qui sélectionne
+   * l'option « Client passager » du sélecteur. Sans cela, le menu déroulant
+   * s'afficherait vide au chargement alors qu'aucun client n'est choisi.
+   */
+  compareClient(c1: ClientDto | null, c2: ClientDto | null): boolean {
+    if (!c1 || !c2) {
+      return !c1 && !c2;
+    }
+    return c1.id === c2.id;
   }
 
   initCodeVente() {
@@ -55,9 +104,18 @@ export class PageVenteComponent implements OnInit {
 
   saveClick(): void {
     this.errorMsg = [];
-    
+
     if (!this.ligneDeVentes.length) {
       this.errorMsg.push('Ajouter au moins un article pour la vente');
+      return;
+    }
+
+    // L'encaissement est saisi dans tous les cas, comme sur les commandes :
+    // montant payé, montant donné et monnaie à rendre.
+    if (!this.encaissement.valide) {
+      this.errorMsg = this.encaissement.messages.length
+        ? this.encaissement.messages
+        : ['Renseignez le paiement de la vente'];
       return;
     }
 
@@ -82,13 +140,55 @@ export class PageVenteComponent implements OnInit {
 
     this.venteService.enregistrerVente(venteData).subscribe({
       next: (vente) => {
-        this.router.navigate(['vente']);
-        window.location.reload();
+        this.enregistrerFactureVente(vente);
       },
       error: (error) => {
         console.error('Erreur vente:', error);
         const errorMessage = error.error?.message || error.error?.errors || 'Erreur lors de l\'enregistrement de la vente';
         this.errorMsg = Array.isArray(errorMessage) ? errorMessage : [errorMessage];
+      }
+    });
+  }
+
+  /**
+   * La vente est enregistrée : on crée sa facture dans la foulée, avec le
+   * paiement saisi.
+   *
+   * Vente en client passager : le backend refuse une facture client sans
+   * clientId (« Veuillez selectionner un client pour la facture »), aucune
+   * facture n'est donc émise. La vente et le montant encaissé restent
+   * enregistrés dans le ticket de caisse, la monnaie à rendre a déjà été
+   * affichée à l'écran au moment de la saisie.
+   *
+   * Si la facture échoue alors que la vente est enregistrée, on ne fait pas
+   * perdre la vente : l'erreur est affichée et l'utilisateur peut relancer.
+   */
+  private enregistrerFactureVente(vente: VenteDto): void {
+    if (!this.clientFacture?.id) {
+      this.router.navigate(['liste-vente']);
+      return;
+    }
+
+    if (!vente?.id) {
+      this.router.navigate(['liste-vente']);
+      return;
+    }
+    const facture: FactureDto = this.factureService.preparerFactureSource({
+      type: 'CLIENT',
+      sourceType: 'VENTE',
+      sourceId: vente.id,
+      codeSource: vente.code ?? this.codeVente,
+      lignes: this.ligneDeVentes,
+      clientId: this.clientFacture?.id,
+      paiement: this.encaissement.paiement
+    });
+    this.factureService.saveAvecPaiement(facture).subscribe({
+      next: () => this.router.navigate(['liste-vente']),
+      error: (error) => {
+        this.errorMsg = [
+          `Vente ${vente.code} enregistrée, mais la facture n'a pas pu être créée :`,
+          ...this.factureService.messagesErreur(error)
+        ];
       }
     });
   }
@@ -136,7 +236,11 @@ export class PageVenteComponent implements OnInit {
     const qteExistante = ligneExistante ? (ligneExistante.quantite || 0) : 0;
     if (qteExistante + this.quantite > stockDispo) {
       this.errorMsg = [];
-      this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+      // le message annonçait le stock total alors qu'une partie était déjà
+      // réservée par une autre ligne du même article : « il reste 339 »
+      // alors que 5 articles étaient déjà pris sur la vente
+      this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste '
+        + (stockDispo - qteExistante) + ' en stock';
       return;
     }
 
@@ -169,11 +273,11 @@ export class PageVenteComponent implements OnInit {
 
     this.ligneDeVentes.forEach((ligne) => {
       if (ligne.prixUnitaire && ligne.quantite) {
-        totalCmd += ligne.prixUnitaire * ligne.quantite;
+        totalCmd += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         totalQnt += ligne.quantite;
       }
     });
-    this.totalVente=Math.floor(totalCmd);
+    this.totalVente=arrondiMonetaire(totalCmd);
     this.quantiteListArticle=totalQnt;
     this.searchedArticle={};
     this.codeArticle='';
@@ -196,7 +300,9 @@ export class PageVenteComponent implements OnInit {
     if (event.delta > 0) {
       const stockDispo = event.ligne.article?.stock || 0;
       if (nouvelleQte > stockDispo) {
-        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste ' + stockDispo + ' en stock';
+        // stock encore disponible une fois la ligne courante deduite
+        this.stockErrorMsg = 'Le stock pour cet article est insuffisant pour cette commande, il reste '
+          + (stockDispo - (event.ligne.quantite || 0)) + ' en stock';
         return;
       }
     }
@@ -220,11 +326,11 @@ export class PageVenteComponent implements OnInit {
     let totalQnt = 0;
     this.ligneDeVentes.forEach((ligne) => {
       if (ligne.prixUnitaire && ligne.quantite) {
-        totalCmd += ligne.prixUnitaire * ligne.quantite;
+        totalCmd += sousTotalLigne(ligne.prixUnitaire, ligne.quantite);
         totalQnt += ligne.quantite;
       }
     });
-    this.totalVente = Math.floor(totalCmd);
+    this.totalVente = arrondiMonetaire(totalCmd);
     this.quantiteListArticle = totalQnt;
   }
 }

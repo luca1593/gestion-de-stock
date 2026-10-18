@@ -41,7 +41,10 @@
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="prenom" name="prenom"
-                    placeholder="Prénom" [(ngModel)]="clientFournisseur.prenom">
+                    placeholder="Prénom *" [(ngModel)]="clientFournisseur.prenom" required #prenomField="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="prenomField.invalid && (prenomField.dirty || prenomField.touched || submitted)">
+                        Ce champ est obligatoire
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="adress2" name="adresse2"
@@ -49,7 +52,11 @@
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="email" class="form-control" id="mail" name="email"
-                    placeholder="E-mail" [(ngModel)]="clientFournisseur.email">
+                    placeholder="E-mail *" [(ngModel)]="clientFournisseur.email" required email #emailField="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="emailField.invalid && (emailField.dirty || emailField.touched || submitted)">
+                        <span *ngIf="emailField.errors?.['required']">Ce champ est obligatoire</span>
+                        <span *ngIf="emailField.errors?.['email']">Format d'adresse e-mail invalide</span>
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="ville" name="ville"
@@ -60,7 +67,10 @@
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="numtel" name="numetel"
-                    placeholder="Téléphone" [(ngModel)]="clientFournisseur.numTel">
+                    placeholder="Téléphone *" [(ngModel)]="clientFournisseur.numTel" required #numTelField="ngModel">
+                    <div class="text-danger small mt-1" *ngIf="numTelField.invalid && (numTelField.dirty || numTelField.touched || submitted)">
+                        Ce champ est obligatoire
+                    </div>
                 </div>
                 <div class="col-md-6 mb-2">
                     <input type="text" class="form-control" id="codepostale" name="codepostale"
@@ -86,8 +96,8 @@
                 <i class="fas fa-ban"></i>&nbsp;Annuler
             </button>
             <button class="btn btn-success mx-1" (click)="enregistrer()"
-                [disabled]="!clientFournisseur.nom || !adresseDto.adresse1 || !adresseDto.ville || !adresseDto.codePostal || !adresseDto.pays">
-                <i class="fas fa-save"></i>&nbsp;Sauvegarder
+                [disabled]="saving || !clientFournisseur.nom || !clientFournisseur.prenom || !emailValide() || !clientFournisseur.numTel || !adresseDto.adresse1 || !adresseDto.ville || !adresseDto.codePostal || !adresseDto.pays">
+                <i class="fas" [class.fa-save]="!saving" [class.fa-spinner]="saving" [class.fa-spin]="saving"></i>&nbsp;{{ saving ? 'Enregistrement...' : 'Sauvegarder' }}
             </button>
         </div>
     </div>

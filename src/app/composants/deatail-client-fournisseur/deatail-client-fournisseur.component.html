@@ -47,6 +47,9 @@
         <div class="orders-header">
             <h3><i class="fas fa-shopping-cart"></i> Commandes</h3>
             <div class="orders-actions">
+                <button class="btn btn-sm" title="Voir les factures" (click)="voirFactures()">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </button>
                 <button class="btn btn-sm" title="Nouvelle commande" (click)="nouveauxCommande()">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -80,9 +83,9 @@
                             <td class="col-code">
                                 <span class="order-code">{{command.code}}</span>
                             </td>
-                            <td class="col-date">{{command.dateCommande | date:'dd/MM/yyyy'}}</td>
+                            <td class="col-date">{{ dateLisible(command.dateCommande) }}</td>
                             <td class="col-num">{{calculNombreArticleCommande(command.id)}}</td>
-                            <td class="col-total">{{calculTotalCommande(command.id) | number:'1.2-2':'fr'}} €</td>
+                            <td class="col-total">{{calculTotalCommande(command.id) | number:'1.2-2':'fr'}} Ar</td>
                             <td class="col-state">
                                 <span class="state-badge" [class]="getStateClass(command.etatcommande)">
                                     {{command.etatcommande}}
@@ -145,7 +148,7 @@
                     </div>
                     <div class="summary-item">
                         <label>Date</label>
-                        <span>{{cmdCltFrs.dateCommande | date:'dd/MM/yyyy'}}</span>
+                        <span>{{ dateLisible(cmdCltFrs.dateCommande) }}</span>
                     </div>
                     <div class="summary-item">
                         <label>État</label>
@@ -175,9 +178,9 @@
                             </td>
                             <td>{{ligne.article?.category?.designation}}</td>
                             <td class="text-center">{{ligne.quantite}}</td>
-                            <td class="text-end">{{ligne.article?.prixTtc | number:'1.2-2':'fr'}} €</td>
+                            <td class="text-end">{{ligne.article?.prixTtc | number:'1.2-2':'fr'}} Ar</td>
                             <td class="text-end fw-bold">
-                                {{ligne.article?.prixTtc && ligne.quantite ? parseData(ligne.article?.prixTtc * ligne.quantite) : 0 | number:'1.2-2':'fr'}} €
+                                {{ligne.article?.prixTtc && ligne.quantite ? parseData(ligne.article?.prixTtc * ligne.quantite) : 0 | number:'1.2-2':'fr'}} Ar
                             </td>
                         </tr>
                     </tbody>
@@ -186,7 +189,7 @@
                             <td colspan="3"></td>
                             <td class="text-end"><strong>Net à payer:</strong></td>
                             <td class="text-end fw-bold text-primary">
-                                {{mapTotalTtc.get(idCommandeSelectione) | number:'1.2-2':'fr'}} €
+                                {{mapTotalTtc.get(idCommandeSelectione) | number:'1.2-2':'fr'}} Ar
                             </td>
                         </tr>
                     </tfoot>

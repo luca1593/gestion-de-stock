@@ -5,6 +5,9 @@ import { ExportExcelService } from 'src/app/services/export.service';
 import { AvoirDto } from 'src/gs-api/src/models';
 import { ChangeDetectorRef } from '@angular/core';
 import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-utils';
+import { ConfirmationService } from 'src/app/composants/confirmation/confirmation.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
+import { pageValide, dateLisible } from 'src/app/composants/list-utils';
 
 @Component({
   selector: 'app-page-avoir',
@@ -12,6 +15,7 @@ import { SortState, sortByProperty, matchSearch } from 'src/app/composants/sort-
   styleUrls: ['./page-avoir.component.css']
 })
 export class PageHaveurComponent implements OnInit {
+  readonly dateLisible = dateLisible;
   listAvoirs: AvoirDto[] = [];
   listAvoirsFiltre: AvoirDto[] = [];
   error = '';
@@ -32,6 +36,8 @@ export class PageHaveurComponent implements OnInit {
     private avoirService: HaveurService,
     private exportService: ExportExcelService,
     private router: Router,
+    private confirmation: ConfirmationService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -45,6 +51,10 @@ export class PageHaveurComponent implements OnInit {
       next: (data: any) => {
         this.listAvoirs = data || [];
         this.listAvoirsFiltre = this.listAvoirs;
+        // le filtre saisi reste affiche dans le champ : on le reapplique
+        // plutot que de reafficher la liste complete sous ses yeux
+        this.filtrer();
+        this.page = pageValide(this.page, this.listAvoirsFiltre.length, this.pageSize);
         this.applySort();
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -101,6 +111,7 @@ export class PageHaveurComponent implements OnInit {
 
   getEtatClass(etat: string | undefined): string {
     switch (etat) {
+      case 'BROUILLON': return 'etat-default';
       case 'EN_ATTENTE': return 'etat-warning';
       case 'VALIDE': return 'etat-success';
       case 'ANNULE': return 'etat-danger';
@@ -110,6 +121,7 @@ export class PageHaveurComponent implements OnInit {
 
   getEtatLabel(etat: string | undefined): string {
     switch (etat) {
+      case 'BROUILLON': return 'Brouillon';
       case 'EN_ATTENTE': return 'En attente';
       case 'VALIDE': return 'Validé';
       case 'ANNULE': return 'Annulé';
@@ -133,17 +145,26 @@ export class PageHaveurComponent implements OnInit {
     document.body.style.overflow = '';
   }
 
-  deleteAvoir(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet avoir?')) {
-      this.avoirService.delete(id).subscribe({
-        next: () => {
-          this.loadAvoirs();
-        },
-        error: (err: any) => {
-          this.error = err.error?.message || 'Erreur lors de la suppression';
-        }
-      });
-    }
+  async deleteAvoir(id: number): Promise<void> {
+    const avoir = (this.listAvoirs || []).find(a => a.id === id);
+    const ok = await this.confirmation.demander({
+      titre: 'Supprimer cet avoir ?',
+      message: 'Voulez-vous vraiment supprimer cet avoir ?',
+      element: avoir ? `${avoir.code} — ${avoir.montant ?? 0} Ar` : null,
+      consequence: 'Cet avoir ne sera plus opposable au client.',
+      icone: 'fas fa-receipt'
+    });
+    if (!ok) return;
+
+    this.avoirService.delete(id).subscribe({
+      next: () => {
+        this.loadAvoirs();
+        this.notificationService.addSuccess('Suppression', 'Avoir supprimé');
+      },
+      error: (err: any) => {
+        this.error = err.error?.message || 'Erreur lors de la suppression';
+      }
+    });
   }
 
   exportPdf(id: number): void {

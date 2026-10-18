@@ -27,6 +27,8 @@ import { PageVenteComponent } from './pages/vente/page-vente/page-vente.componen
 import { HisistoriqueVenteComponent } from './pages/vente/hisistorique-vente/hisistorique-vente.component';
 import { PageHaveurComponent } from './pages/avoirs/page-avoir/page-avoir.component';
 import { NouvelAvoirComponent } from './pages/avoirs/nouvel-avoir/nouvel-avoir.component';
+import { PageFactureComponent } from './pages/factures/page-facture/page-facture.component';
+import { PaiementFactureComponent } from './pages/factures/paiement-facture/paiement-facture.component';
 import { ApplicationGuardService } from './services/guard/application-guard.service';
 
 const routes: Routes=[
@@ -64,11 +66,13 @@ const routes: Routes=[
       { path: 'vente', component: PageVenteComponent, canActivate: [ApplicationGuardService], data: { origin: 'vente', breadcrumb: 'Vente' } },
       { path: 'liste-vente', component: HisistoriqueVenteComponent, canActivate: [ApplicationGuardService], data: { origin: 'vente', breadcrumb: 'Historique des ventes' } },
       { path: 'avoirs', component: PageHaveurComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Avoirs' } },
+      { path: 'factures', component: PageFactureComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Factures' } },
+      { path: 'facture/paiement/:idFacture', component: PaiementFactureComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Encaisser une facture' } },
       { path: 'nouvel-avoir', component: NouvelAvoirComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Nouvel avoir' } },
       { path: 'nouvel-avoir/:id', component: NouvelAvoirComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Modifier avoir' } },
       { path: 'categories', component: PageCategorieComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Catégories' } },
-      { path: 'nouvel-categorie', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Nouvelle catégorie' } },
-      { path: 'nouvel-categorie/:idCategory', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Modifier catégorie' } },
+      { path: 'nouveau-categorie', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Nouvelle catégorie' } },
+      { path: 'nouveau-categorie/:idCategory', component: NouveauCategorieComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Modifier catégorie' } },
       { path: 'utilisateurs', component: PageUtilisateurComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Utilisateurs' } },
       { path: 'utilisateur/:id', component: DetailUtilisateurComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Détail utilisateur' } },
       { path: 'nouvel-utilisateur', component: NouvelUtilisateurComponent, canActivate: [ApplicationGuardService], data: { breadcrumb: 'Nouvel utilisateur' } },
