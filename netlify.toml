@@ -1,0 +1,7 @@
+[build]
+  publish = "dist/gestion-de-stock"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
