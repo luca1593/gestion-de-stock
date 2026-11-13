@@ -48,3 +48,6 @@ Thumbs.db
 # Outils d'agents IA (configuration locale, non versionnée)
 .claude/
 .opencode/
+AGENTS.md
+AGENTS.md
+.gitignore
