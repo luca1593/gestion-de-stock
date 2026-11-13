@@ -90,7 +90,8 @@
               "browserTarget": "gestion-de-stock:build:production"
             },
             "development": {
-              "browserTarget": "gestion-de-stock:build:development"
+              "browserTarget": "gestion-de-stock:build:development",
+              "proxy": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
