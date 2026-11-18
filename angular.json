@@ -47,7 +47,8 @@
               "core-js/modules/web.dom-collections.iterator.js",
               "jspdf-autotable",
               "rgbcolor",
-              "raf"
+              "raf",
+              "exceljs"
             ]
           },
           "configurations": {

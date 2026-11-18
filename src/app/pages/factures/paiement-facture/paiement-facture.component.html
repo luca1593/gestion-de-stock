@@ -71,7 +71,7 @@
                 <span>
                     Cette facture est entièrement réglée
                     <ng-container *ngIf="facture?.montantPaye != null">
-                        ({{ facture?.montantPaye | number:'1.2-2':'fr' }} Ar encaissés)
+                        ({{ facture.montantPaye | number:'1.2-2':'fr' }} Ar encaissés)
                     </ng-container>
                     : aucun paiement complémentaire n'est possible.
                 </span>
